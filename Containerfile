@@ -11,7 +11,7 @@
 # Base refs are FULLY QUALIFIED (docker.io/library/...): the daemon builds this on customer
 # hosts whose /etc/containers/registries.conf may define no unqualified-search-registries
 # (stock Ubuntu Podman refuses short names non-interactively).
-FROM docker.io/library/maven:3.9-eclipse-temurin-21 AS build
+FROM docker.io/library/maven:3.9-eclipse-temurin-26 AS build
 WORKDIR /src
 COPY pom.xml .
 COPY src ./src
