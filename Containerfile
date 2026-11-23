@@ -25,7 +25,7 @@ RUN mvn -q -DskipTests package
 # release, together with the daemon's SandboxLanguage defaults.
 FROM docker.io/library/node:26.13.1-bookworm-slim AS nodebin
 
-FROM docker.io/library/eclipse-temurin:21-jdk-jammy
+FROM docker.io/library/eclipse-temurin:22-jdk-jammy
 # python3: daemon helper broker + script-mode.
 # curl: stateful launcher + helper UDS.
 # ca-certificates: TLS if a node hits HTTPS.
