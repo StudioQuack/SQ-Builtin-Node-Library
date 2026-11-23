@@ -1,0 +1,304 @@
+{
+  "_id": "ded8465f-4083-4ec4-9a9d-9a08638186ae",
+  "version": "1.0.0",
+  "name": "monday",
+  "label": "monday.com GraphQL API 2026-07 — boards and items",
+  "description": "Official monday.com platform GraphQL API. Single HTTP endpoint POST https://api.monday.com/v2 (not REST). Handler: OfficialApiNode. Auth: header Authorization with the raw token (no Bearer prefix). extraHeaders send API-Version: {api_version} (default 2026-07, Current until 2026-10-01; then 2026-10). https://developer.monday.com/api-reference/docs/api-versioning. Sales CRM is a board template on this same API. OfficialApiNode does not inject GraphQL documents — INPUT must include query and optional variables. trigger.listen is BPMN ingress. Customer owns the monday account. Never log token or column_values.",
+  "icon": "view_kanban",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "34a6c821-b19d-48f0-a77f-27266b0749aa",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example keys match api_spec.json required/queryFrom/bodyFrom.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "board.create",
+          "description": "Overrides config operation when non-blank. EXACT: board.create | board.get | board.list | board.archive | column.create | column.list | group.create | group.list | group.delete | item.create | item.get | item.list | item.update | item.delete | item.move | item.changeColumn | item.changeColumns | item.addUpdate | item.byColumn | trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GraphQL query or mutation string for every Monday API call (POST /v2). Official Monday.com API is GraphQL-only. Example: mutation { create_item(board_id: 123, item_name: \"Task\") { id } }.",
+          "children": []
+        },
+        {
+          "shortCode": "variables",
+          "label": "variables",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "GraphQL variables object matching the query. Example: {\"board_id\":123,\"item_name\":\"Task\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "board_kind",
+          "label": "board_kind",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Board kind for board.create (public | private | share). Wired to variables.board_kind.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Column title for column.create. Wired to variables.title.",
+          "children": []
+        },
+        {
+          "shortCode": "column_type",
+          "label": "column_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Column type for column.create (e.g. text, status, date). Wired to variables.column_type.",
+          "children": []
+        },
+        {
+          "shortCode": "group_name",
+          "label": "group_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Group name for group.create. Wired to variables.group_name.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Update body text for item.addUpdate. Wired to variables.body.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "66e7ab58-fc20-4436-8f0a-3d0ba9c1555f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Size-capped. Never log secrets or raw PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "51ce2533-7a80-463a-ae94-6aa3e0a6bb4b",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: board.create | board.get | board.list | board.archive | column.create | column.list | group.create | group.list | group.delete | item.create | item.get | item.list | item.update | item.delete | item.move | item.changeColumn | item.changeColumns | item.addUpdate | item.byColumn | trigger.listen.",
+      "value": "board.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "board.create",
+        "board.get",
+        "board.list",
+        "board.archive",
+        "column.create",
+        "column.list",
+        "group.create",
+        "group.list",
+        "group.delete",
+        "item.create",
+        "item.get",
+        "item.list",
+        "item.update",
+        "item.delete",
+        "item.move",
+        "item.changeColumn",
+        "item.changeColumns",
+        "item.addUpdate",
+        "item.byColumn",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "76b00e07-461c-43ca-95dc-4ecbe4422ee4",
+      "shortCode": "token",
+      "label": "API token",
+      "type": "password",
+      "description": "Personal API token or OAuth access token minted outside StudioQuack (StudioQuack secret). Sent as Authorization: {token} with no Bearer prefix. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7dcea685-a636-4251-9ab4-7061f1ada9bf",
+      "shortCode": "api_version",
+      "label": "API version",
+      "type": "string",
+      "description": "API-Version header YYYY-MM. Current is 2026-07 until 2026-10-01, then 2026-10. extraHeaders sends this on every GraphQL call. https://developer.monday.com/api-reference/docs/api-versioning",
+      "value": "2026-07",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4d467df3-3c5f-4238-8b3c-f1e58f9569c1",
+      "shortCode": "board_kind",
+      "label": "Board Kind",
+      "type": "string",
+      "description": "Board kind for board.create (public | private | share). Wired to variables.board_kind.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "7f20bfa4-efa6-495b-bd81-f3ecfdab85a0",
+      "shortCode": "title",
+      "label": "Title",
+      "type": "string",
+      "description": "Column title for column.create. Wired to variables.title.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "d1939291-5314-4323-a1be-879f40070d09",
+      "shortCode": "column_type",
+      "label": "Column Type",
+      "type": "string",
+      "description": "Column type for column.create (e.g. text, status, date). Wired to variables.column_type.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "41cb4ad0-bec9-4878-b173-8e07f84ee353",
+      "shortCode": "group_name",
+      "label": "Group Name",
+      "type": "string",
+      "description": "Group name for group.create. Wired to variables.group_name.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "e01b4b5e-2035-4023-8fff-9e74b762284f",
+      "shortCode": "body",
+      "label": "Body",
+      "type": "string",
+      "description": "Update body text for item.addUpdate. Wired to variables.body.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "79eac6aa-58d6-4746-a874-4bc2e6c79d60",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

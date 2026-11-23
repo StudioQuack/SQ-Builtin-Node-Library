@@ -1,0 +1,202 @@
+{
+  "_id": "d18d89bc-136f-44e6-a05a-d8756fe68cc9",
+  "version": "1.0.0",
+  "name": "Google Perspective",
+  "label": "Perspective API — comment toxicity scores",
+  "description": "Official Jigsaw Perspective Comment Analyzer. POST https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze. operation=analyze returns attribute scores only (TOXICITY and related attributes) — not a ban engine and not a moderator decision. Auth: Google API key as x-goog-api-key. Service remains active until 2026-12-31 (sunset announced). Docs: https://developers.perspectiveapi.com/s/about-the-api-methods.",
+  "icon": "gavel",
+  "tags": [
+    "google",
+    "perspective",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "796dfddd-3d40-4269-98b2-552d22745293",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Official AnalyzeComment JSON. comment.text is required. requestedAttributes typically {\"TOXICITY\":{}}. Do not put api_key here. Example: {\"comment\":{\"text\":\"Thanks for the helpful reply.\"},\"requestedAttributes\":{\"TOXICITY\":{}},\"doNotStore\":true,\"languages\":[\"en\"]}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "comment",
+          "label": "comment",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Comment.text object {text, type?}. Required. type EXACT: PLAIN_TEXT | HTML. Example: {\"text\":\"This is a comment.\",\"type\":\"PLAIN_TEXT\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "requestedAttributes",
+          "label": "requestedAttributes",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Map of attribute→{scoreThreshold?}. Keys: TOXICITY, SEVERE_TOXICITY, IDENTITY_ATTACK, INSULT, PROFANITY, THREAT, … Example: {\"TOXICITY\":{}}.",
+          "children": []
+        },
+        {
+          "shortCode": "languages",
+          "label": "languages",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "ISO 639-1 codes (en, es, fr, …). Omit to auto-detect. Production TOXICITY languages include ar, zh, cs, nl, en, fr, de, hi, id, it, ja, ko, pl, pt, ru, es.",
+          "children": []
+        },
+        {
+          "shortCode": "doNotStore",
+          "label": "doNotStore",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "If true, Perspective must not store comment/context. Set true for private text or content from anyone under 13. Default false on the API if omitted.",
+          "children": []
+        },
+        {
+          "shortCode": "spanAnnotations",
+          "label": "spanAnnotations",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "If true, return per-span scores. Default false.",
+          "children": []
+        },
+        {
+          "shortCode": "context",
+          "label": "context",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `context` for operation: analyze.",
+          "children": []
+        },
+        {
+          "shortCode": "sessionId",
+          "label": "sessionId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `sessionId` for operation: analyze.",
+          "children": []
+        },
+        {
+          "shortCode": "communityId",
+          "label": "communityId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `communityId` for operation: analyze.",
+          "children": []
+        },
+        {
+          "shortCode": "clientToken",
+          "label": "clientToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `clientToken` for operation: analyze.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5852edb7-d6e9-4cf2-85d2-8e97957a9c31",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data.attributeScores (probability scores 0–1). Scores only — the workflow must not treat a score as an automatic ban. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. attributeScores.<NAME>.summaryScore.value is the probability score.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "cacb8ace-8e73-4346-97d9-548d14946a8a",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Perspective / Google Cloud API key. Sent as x-goog-api-key. StudioQuack secret. Never on INPUT. Never logged. New usage requests closed after February 2026; API ends 2026-12-31.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0a7bc74e-0797-453e-b79f-fd312435abdb",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 25. Floor 1.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

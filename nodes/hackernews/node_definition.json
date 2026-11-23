@@ -1,0 +1,288 @@
+{
+  "_id": "ea8652a8-a1f5-4101-aa7d-65a2f9c097d4",
+  "version": "1.0.0",
+  "name": "Hacker News Search",
+  "label": "Hacker News (Algolia) - Developer Community Search",
+  "description": "Search Hacker News stories and comments via the free HN Algolia API at http://hn.algolia.com/api/v1 (http, not https). No authentication and no API key — the Java handler does not send a User-Agent (matching the Python node). EXACT actions: 'search' (default, relevance) | 'search_by_date' (recency, most recent first). Unknown actions still call GET /search. Tag filter defaults to 'story'; also comment, show_hn, ask_hn, poll, front_page, author_USERNAME, story_ID, and AND/OR combinations. Pagination is 0-indexed; hits_per_page is capped at 50. Algolia generally exposes only the first 1,000 hits per query — use created_at_i numericFilters for time-windowed monitoring. Errors land on output.error; there is no separate error port.",
+  "icon": "code",
+  "tags": [
+    "hackernews",
+    "algolia",
+    "news",
+    "search"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Hacker News Algolia search. REQUIRED: query (or alias q). Optional: action, tags, numeric_filters, hits_per_page, page. The daemon delivers this object as inputVariables.input (or currentNode.inputList targetPortValue=input). Empty/missing query fails with output.error='query is required.' before any HTTP call. Example: {\"query\":\"workflow\",\"action\":\"search_by_date\",\"tags\":\"story\",\"page\":0,\"hits_per_page\":30}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Search query string sent as Algolia `query`. REQUIRED unless alias `q` is set (handler uses query, then q). Empty/missing both → output.error 'query is required.' Searches titles, URLs, story text, and comment text depending on tags. Not an HTTP URL. Example: 'workflow engine'. Example: 'automation rate limit'.",
+          "children": []
+        },
+        {
+          "shortCode": "action",
+          "label": "action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which Algolia endpoint to call. EXACT accepted values: 'search' | 'search_by_date' (case-sensitive). Default when omitted/empty: 'search' → GET http://hn.algolia.com/api/v1/search (relevance ranking). 'search_by_date' → GET http://hn.algolia.com/api/v1/search_by_date (recency, most recent first). Any other string still hits /search (not an error). Example: 'search'. Example recency: 'search_by_date'.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Algolia `tags` filter. Default when omitted/empty: 'story'. EXACT tokens (use as-is): 'story', 'comment', 'show_hn', 'ask_hn', 'poll', 'front_page'. Author/story filters: 'author_USERNAME' (replace USERNAME, e.g. 'author_pg'), 'story_ID' (replace ID with the numeric HN item id, e.g. 'story_12345678'). Combinations: comma = AND ('story,show_hn', 'story,author_pg'); parentheses = OR ('(story,comment)', '(show_hn,ask_hn)'). Mixed: 'author_pg,(story,comment)'. Example front page: 'front_page'. Example comments on a thread: 'comment,story_123'.",
+          "children": []
+        },
+        {
+          "shortCode": "numeric_filters",
+          "label": "numeric_filters",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional Algolia `numericFilters` expression. Omitted/empty/falsey is not sent. Fields: points, num_comments, created_at_i (Unix timestamp seconds). Operators: <, <=, >, >=, =. Multiple comma-separated clauses are ANDed. Use created_at_i ranges to stay under the ~1,000-hit pagination ceiling. Example high-signal: 'points>100,num_comments>50'. Example last 24h (replace the timestamp): 'created_at_i>1700000000'. Example window: 'created_at_i>1700000000,created_at_i<1700086400'.",
+          "children": []
+        },
+        {
+          "shortCode": "hits_per_page",
+          "label": "hits_per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Algolia `hitsPerPage` for this call. Optional. When omitted, configuration default_hits_per_page is used (default 30). The handler sends min(hits_per_page, 50) — 50 is the hard cap. Accepted values: integers. Example: 10. Example max page: 50. Values above 50 are clamped to 50; they are not rejected.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Algolia `page` index. 0-indexed (page 0 is the first page, not 1). Default: 0. Optional. Accepted values: integers >= 0. Combined with hits_per_page this is offset pagination; Algolia typically will not return hits past the first 1,000 matches (page * hits_per_page < 1000). Example first page: 0. Example second page: 1. Do not send 1 expecting the first page.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "On success: status='ok' plus total_hits (Algolia nbHits), total_pages (nbPages), stories_returned, stories[]. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Present on success only. EXACT accepted value: 'ok' (the Algolia call returned HTTP 2xx and hits were mapped). Absent when output.error is set. Use this as the success gate together with a missing error key. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "total_hits",
+          "label": "Total Hits",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Algolia nbHits: reported total matches for this query+tags+numericFilters. Integer. May exceed 1,000 even though later pages are empty — treat values above ~1000 as a ceiling signal and narrow with created_at_i. Not the same as stories_returned (that is this page only). Example: 842. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "total_pages",
+          "label": "Total Pages",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Algolia nbPages for the current hitsPerPage. Integer. Page indexes run 0 .. total_pages-1. Because of the ~1,000-hit ceiling, total_pages may not be fully walkable. Example: 28. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "stories_returned",
+          "label": "Stories Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Length of the stories array on this response page (after mapping hits). Integer 0..hits_per_page. Can be 0 on a valid ok response (no matches, or a page past the ceiling). Example: 30. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "stories",
+          "label": "Stories",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Mapped Algolia hits for this page, in API order. Each element is an object with object_id, title (title or story_title or ''), url, points, num_comments, author, created_at, story_text (truncated to 500 chars), comment_text (truncated to 500 chars), hn_url ('https://news.ycombinator.com/item?id={objectID}'). Empty array when there are no hits. Absent on failure. Example item: {\"object_id\":\"123\",\"title\":\"Show HN: …\",\"url\":\"https://…\",\"points\":42,\"num_comments\":7,\"author\":\"pg\",\"created_at\":\"2026-01-01T00:00:00.000Z\",\"story_text\":\"\",\"comment_text\":\"\",\"hn_url\":\"https://news.ycombinator.com/item?id=123\"}.",
+          "children": [
+            {
+              "shortCode": "object_id",
+              "label": "object_id",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Algolia objectID of the item (HN item id as a string). Used to build hn_url. Empty string when the hit omitted objectID. Example: '39926122'.",
+              "children": []
+            },
+            {
+              "shortCode": "title",
+              "label": "title",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Display title: hit.title if non-empty, else hit.story_title, else ''. Comments often have a null title and a story_title of the parent submission. Example: 'Ask HN: Who is hiring?'.",
+              "children": []
+            },
+            {
+              "shortCode": "url",
+              "label": "url",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "External article URL from the hit, or '' for text-only Ask/Show posts and most comments. This is not the HN discussion URL (see hn_url). Example: 'https://example.com/blog'.",
+              "children": []
+            },
+            {
+              "shortCode": "points",
+              "label": "points",
+              "type": "number",
+              "required": false,
+              "value": "",
+              "description": "HN score (upvotes). Integer; 0 when the hit omitted points (common on some comment records). Example: 256.",
+              "children": []
+            },
+            {
+              "shortCode": "num_comments",
+              "label": "num_comments",
+              "type": "number",
+              "required": false,
+              "value": "",
+              "description": "Comment count on the submission. Integer; 0 when omitted (typical for comment hits). Example: 84.",
+              "children": []
+            },
+            {
+              "shortCode": "author",
+              "label": "author",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "HN username of the item author. Empty string when omitted. Example: 'pg'.",
+              "children": []
+            },
+            {
+              "shortCode": "created_at",
+              "label": "created_at",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Algolia created_at timestamp string (typically ISO-8601 UTC). Empty string when omitted. Example: '2026-03-15T12:04:00.000Z'. For numeric filters use created_at_i (Unix seconds), not this field.",
+              "children": []
+            },
+            {
+              "shortCode": "story_text",
+              "label": "story_text",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Self-post body text, truncated to 500 characters (no ellipsis). Empty string when the hit has no story_text. Example: first 500 chars of an Ask HN body.",
+              "children": []
+            },
+            {
+              "shortCode": "comment_text",
+              "label": "comment_text",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Comment HTML/text, truncated to 500 characters (no ellipsis). Empty string for story hits. Example: first 500 chars of a comment when tags includes 'comment'.",
+              "children": []
+            },
+            {
+              "shortCode": "hn_url",
+              "label": "hn_url",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Canonical HN discussion URL: 'https://news.ycombinator.com/item?id={objectID}'. Always https. Built even when object_id is empty (then '...id='). Example: 'https://news.ycombinator.com/item?id=39926122'.",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "3c4d5e6f-7a8b-4c9d-0e1f-2a3b4c5d6e7f",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP request timeout in seconds (connect+read) for the Algolia GET. Default: 25. Accepted values: positive integers. 0 or negative fall back to 25. Example: 25. Example for a slow path: 45. On expiry output.error is 'HackerNews Algolia API Error: timed out after {n}s'. Keep this at or below the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4d5e6f7a-8b9c-4d0e-1f2a-3b4c5d6e7f8a",
+      "shortCode": "default_hits_per_page",
+      "label": "Default Hits Per Page",
+      "type": "number",
+      "description": "Default Algolia hitsPerPage when input.hits_per_page is omitted. Range: 1-50. Default: 30. The handler still clamps the value sent to min(n, 50). Example: 30. Example compact pages: 10. Instance-editable so a workflow can lower payload size without changing every input.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {
+        "min": 1,
+        "max": 50
+      }
+    }
+  ],
+  "cdate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

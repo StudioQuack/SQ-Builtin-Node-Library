@@ -1,0 +1,65 @@
+{
+  "baseUrl": "https://{region}",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "userKey": "username",
+    "configKey": "password"
+  },
+  "operations": {
+    "session_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/payments/v1/sessions",
+      "bodyFrom": [
+        "purchase_country",
+        "purchase_currency",
+        "order_amount",
+        "order_lines",
+        "order_tax_amount",
+        "locale",
+        "merchant_urls",
+        "billing_address",
+        "shipping_address"
+      ]
+    },
+    "order_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/ordermanagement/v1/orders/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "order_capture": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/ordermanagement/v1/orders/{id}/captures",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "captured_amount",
+        "description",
+        "order_lines"
+      ]
+    },
+    "order_refund": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/ordermanagement/v1/orders/{id}/refunds",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "refunded_amount",
+        "description",
+        "order_lines"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

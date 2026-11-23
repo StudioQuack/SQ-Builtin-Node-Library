@@ -1,0 +1,104 @@
+{
+  "baseUrl": "https://api.mailjet.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "api_secret",
+    "userKey": "api_key"
+  },
+  "operations": {
+    "send-email": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v3.1/send",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "Messages",
+        "From",
+        "FromName",
+        "To",
+        "ToName",
+        "cc",
+        "bcc",
+        "Subject",
+        "TextPart",
+        "HTMLPart"
+      ],
+      "bodyMap": {
+        "Messages": "Messages[0]",
+        "From": "Messages[0].From.Email",
+        "FromName": "Messages[0].From.Name",
+        "To": "Messages[0].To[0].Email",
+        "ToName": "Messages[0].To[0].Name",
+        "cc": "Messages[0].Cc[0].Email",
+        "bcc": "Messages[0].Bcc[0].Email",
+        "Subject": "Messages[0].Subject",
+        "TextPart": "Messages[0].TextPart",
+        "HTMLPart": "Messages[0].HTMLPart"
+      },
+      "required": [
+        "From",
+        "To"
+      ]
+    },
+    "send-email-template": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v3.1/send",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "Messages",
+        "From",
+        "FromName",
+        "To",
+        "ToName",
+        "cc",
+        "bcc",
+        "Subject",
+        "TextPart",
+        "HTMLPart",
+        "TemplateID",
+        "Variables"
+      ],
+      "bodyMap": {
+        "Messages": "Messages[0]",
+        "From": "Messages[0].From.Email",
+        "FromName": "Messages[0].From.Name",
+        "To": "Messages[0].To[0].Email",
+        "ToName": "Messages[0].To[0].Name",
+        "cc": "Messages[0].Cc[0].Email",
+        "bcc": "Messages[0].Bcc[0].Email",
+        "Subject": "Messages[0].Subject",
+        "TextPart": "Messages[0].TextPart",
+        "HTMLPart": "Messages[0].HTMLPart",
+        "TemplateID": "Messages[0].TemplateID",
+        "Variables": "Messages[0].Variables"
+      },
+      "required": [
+        "From",
+        "To",
+        "TemplateID"
+      ]
+    },
+    "send-sms": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v4/sms-send",
+      "contentType": "application/json",
+      "extraHeaders": {
+        "Authorization": "Bearer {sms_token}"
+      },
+      "bodyFrom": [
+        "From",
+        "To",
+        "Text"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

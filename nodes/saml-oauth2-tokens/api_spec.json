@@ -1,0 +1,120 @@
+{
+  "baseUrl": "https://",
+  "defaultTimeout": 20,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "client_secret",
+    "userKey": "client_id"
+  },
+  "operations": {
+    "oauth-authorize-url": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{authHost}{authPath}?response_type=code",
+      "required": [
+        "authHost",
+        "authPath"
+      ],
+      "queryFrom": [
+        "client_id",
+        "redirect_uri",
+        "scope",
+        "state"
+      ]
+    },
+    "oauth-exchange-code": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{tokenHost}{tokenPath}",
+      "required": [
+        "tokenHost",
+        "tokenPath",
+        "code"
+      ],
+      "bodyFrom": [
+        "grant_type",
+        "code",
+        "redirect_uri",
+        "client_id",
+        "code_verifier"
+      ],
+      "contentType": "application/x-www-form-urlencoded",
+      "bodyDefaults": {
+        "grant_type": "authorization_code"
+      }
+    },
+    "oauth-client-credentials": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{tokenHost}{tokenPath}",
+      "required": [
+        "tokenHost",
+        "tokenPath"
+      ],
+      "bodyFrom": [
+        "grant_type",
+        "scope",
+        "client_id"
+      ],
+      "contentType": "application/x-www-form-urlencoded",
+      "bodyDefaults": {
+        "grant_type": "client_credentials"
+      }
+    },
+    "oauth-refresh": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{tokenHost}{tokenPath}",
+      "required": [
+        "tokenHost",
+        "tokenPath",
+        "refresh_token"
+      ],
+      "bodyFrom": [
+        "grant_type",
+        "refresh_token",
+        "scope",
+        "client_id"
+      ],
+      "contentType": "application/x-www-form-urlencoded",
+      "bodyDefaults": {
+        "grant_type": "refresh_token"
+      }
+    },
+    "oauth-introspect": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{introspectionHost}{introspectionPath}",
+      "required": [
+        "introspectionHost",
+        "introspectionPath",
+        "token"
+      ],
+      "bodyFrom": [
+        "token",
+        "token_type_hint",
+        "client_id"
+      ],
+      "contentType": "application/x-www-form-urlencoded"
+    },
+    "oauth-revoke": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{revokeHost}{revokePath}",
+      "required": [
+        "revokeHost",
+        "revokePath",
+        "token"
+      ],
+      "bodyFrom": [
+        "token",
+        "token_type_hint",
+        "client_id"
+      ],
+      "contentType": "application/x-www-form-urlencoded"
+    }
+  }
+}

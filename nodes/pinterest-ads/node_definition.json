@@ -1,0 +1,437 @@
+{
+  "_id": "0aed89c4-27b4-4d53-8270-f4a4bc64e574",
+  "version": "1.0.0",
+  "name": "Pinterest Ads",
+  "label": "Pinterest API v5 — ad accounts, campaigns, analytics, conversions",
+  "description": "Official Pinterest API v5 (only supported version; v3 retired) at https://api.pinterest.com/v5. Handler: OfficialApiNode. Ads under the same /v5 host with ads scopes. Organic Pins belong in Social — not this node. Auth: Bearer access_token (or conversion token for conversion.upload). Customer owns the Pinterest ad account. Hash customer-list identifiers; never log Bearer, emails, or MAIDs. Ads write/analytics need Standard access (operator completes review).",
+  "icon": "campaign",
+  "tags": [
+    "ads",
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "2475ca9b-ccb8-4bd0-8e15-0f23eaec5a1c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example keys match api_spec.json required/queryFrom/bodyFrom.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "adAccount.list",
+          "description": "Overrides config operation when non-blank. EXACT: adAccount.list | campaign.create | campaign.list | adGroup.create | adGroup.list | ad.create | ad.list | analytics.get | audience.create | conversion.upload.",
+          "children": []
+        },
+        {
+          "shortCode": "ad_account_id",
+          "label": "ad_account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Overrides config. Path /ad_accounts/{ad_account_id}/…",
+          "children": []
+        },
+        {
+          "shortCode": "campaigns",
+          "label": "campaigns",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "campaign.create official array of CampaignCreateRequest. Each item: name (required), objective_type (AWARENESS|CONSIDERATION|WEB_CONVERSION|CATALOG_SALES|WEB_SESSIONS|VIDEO_COMPLETION), status (ACTIVE|PAUSED), daily_spend_cap / lifetime_spend_cap in microcurrency, start_time, end_time, tracking_urls. Example: [{\"name\":\"Q4\",\"objective_type\":\"WEB_CONVERSION\",\"status\":\"ACTIVE\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "ad_groups",
+          "label": "ad_groups",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "adGroup.create official array. Each item: name, campaign_id, billable_event (CLICKTHROUGH|IMPRESSION|VIDEO_V_50_MRC), bid_in_micro_currency, budget_in_micro_currency, budget_type (DAILY|CBO_ADGROUP), targeting_spec, start_time, end_time, status. Example: [{\"name\":\"US\",\"campaign_id\":\"123\",\"billable_event\":\"CLICKTHROUGH\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "ads",
+          "label": "ads",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "ad.create official array of AdsCreateRequest. Each item: ad_group_id, creative_type, pin_id, name, status (ACTIVE|PAUSED|ARCHIVED), destination_url, tracking_urls, collection_items_destination_url_template, customizable_cta_type. Example: [{\"ad_group_id\":\"456\",\"pin_id\":\"789\",\"creative_type\":\"REGULAR\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page size; cap 100.",
+          "children": []
+        },
+        {
+          "shortCode": "bookmark",
+          "label": "bookmark",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination bookmark. One page per node run.",
+          "children": []
+        },
+        {
+          "shortCode": "start_date",
+          "label": "start_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "analytics.get YYYY-MM-DD UTC.",
+          "children": []
+        },
+        {
+          "shortCode": "end_date",
+          "label": "end_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "analytics.get YYYY-MM-DD. ≤ 90 days after start.",
+          "children": []
+        },
+        {
+          "shortCode": "columns",
+          "label": "columns",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "analytics.get required metric list. Common: SPEND_IN_DOLLAR, IMPRESSION_1, CLICKTHROUGH_1, ENGAGEMENT_1, TOTAL_CONVERSIONS. Sent as the columns query value. Example: [\"SPEND_IN_DOLLAR\",\"IMPRESSION_1\"].",
+          "children": []
+        },
+        {
+          "shortCode": "granularity",
+          "label": "granularity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "analytics.get required. EXACT: TOTAL | DAY | HOUR | WEEK | MONTH. Example: DAY.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "audience.create list name.",
+          "children": []
+        },
+        {
+          "shortCode": "list_type",
+          "label": "list_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "audience.create customer-list type. EXACT: EMAIL | MAID | LR_ID | PINTEREST_USER_ID. Records must already be SHA-256 hashed. Example: EMAIL.",
+          "children": []
+        },
+        {
+          "shortCode": "records",
+          "label": "records",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Hashed identifiers only. Never raw emails. Large lists: split; async jobs out of v1.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "conversion.upload one event object escape hatch merged into data[0]. Named event_name/action_source/event_time/… win.",
+          "children": []
+        },
+        {
+          "shortCode": "test",
+          "label": "test",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "conversion.upload query. true = validate without recording. Send true. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "entity_statuses",
+          "label": "entity_statuses",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List filter. Comma-separated ACTIVE,PAUSED,ARCHIVED. campaign.list / adGroup.list / ad.list. Example: ACTIVE,PAUSED.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_ids",
+          "label": "campaign_ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated campaign ids filter for campaign.list / adGroup.list / ad.list. Example: 111,222.",
+          "children": []
+        },
+        {
+          "shortCode": "ad_group_ids",
+          "label": "ad_group_ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated ad group ids filter for adGroup.list / ad.list. Example: 333.",
+          "children": []
+        },
+        {
+          "shortCode": "ad_ids",
+          "label": "ad_ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated ad ids filter for ad.list. Example: 444.",
+          "children": []
+        },
+        {
+          "shortCode": "click_window_days",
+          "label": "click_window_days",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "analytics.get attribution click window. EXACT: 0 | 1 | 7 | 14 | 30 | 60. Example: 30.",
+          "children": []
+        },
+        {
+          "shortCode": "engagement_window_days",
+          "label": "engagement_window_days",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "analytics.get engagement window. EXACT: 0 | 1 | 7 | 14 | 30 | 60. Example: 30.",
+          "children": []
+        },
+        {
+          "shortCode": "view_window_days",
+          "label": "view_window_days",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "analytics.get view window. EXACT: 0 | 1 | 7 | 14 | 30 | 60. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "conversion_report_time",
+          "label": "conversion_report_time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "analytics.get. EXACT: TIME_OF_AD_ACTION | TIME_OF_CONVERSION. Example: TIME_OF_AD_ACTION.",
+          "children": []
+        },
+        {
+          "shortCode": "event_name",
+          "label": "event_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "conversion.upload event_name. Wired to data[0].event_name. checkout | add_to_cart | page_visit | signup | watch_video | lead | search | view_category | custom.",
+          "children": []
+        },
+        {
+          "shortCode": "action_source",
+          "label": "action_source",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "conversion.upload action_source. Wired to data[0].action_source. EXACT: web | app_android | app_ios | offline.",
+          "children": []
+        },
+        {
+          "shortCode": "event_time",
+          "label": "event_time",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "conversion.upload unix seconds. Wired to data[0].event_time.",
+          "children": []
+        },
+        {
+          "shortCode": "event_id",
+          "label": "event_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "conversion.upload dedup id. Wired to data[0].event_id.",
+          "children": []
+        },
+        {
+          "shortCode": "user_data",
+          "label": "user_data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "conversion.upload user_data. Wired to data[0].user_data. SHA-256 em / hashed_maids or IP+UA. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_data",
+          "label": "custom_data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "conversion.upload custom_data {value, currency, order_id, content_ids, …}. Wired to data[0].custom_data.",
+          "children": []
+        },
+        {
+          "shortCode": "event_source_url",
+          "label": "event_source_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "conversion.upload page URL. Wired to data[0].event_source_url.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "de7cb7e4-7d22-4ce1-a9c3-b06840ebc99f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Size-capped. Never log secrets or raw PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c6911321-5b4e-4175-8d3a-99cb3028bb2b",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: adAccount.list | campaign.create | campaign.list | adGroup.create | adGroup.list | ad.create | ad.list | analytics.get | audience.create | conversion.upload.",
+      "value": "adAccount.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "adAccount.list",
+        "campaign.create",
+        "campaign.list",
+        "adGroup.create",
+        "adGroup.list",
+        "ad.create",
+        "ad.list",
+        "analytics.get",
+        "audience.create",
+        "conversion.upload"
+      ]
+    },
+    {
+      "_id": "ada0bdc2-01e6-4ecd-8f9a-1c921594017d",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "OAuth access token minted outside StudioQuack (or conversion access token). Never on INPUT. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "15974f3f-bca2-4322-94de-e0620133c2ac",
+      "shortCode": "ad_account_id",
+      "label": "Ad account id",
+      "type": "string",
+      "description": "Advertiser / ad account id. Path param when INPUT omits it. Required for all ops except adAccount.list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c1b5a740-1400-4e35-bfbe-529385728e42",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,501 @@
+{
+  "_id": "cd2f1bdc-660e-531e-9796-c5ea5517077d",
+  "version": "1.0.0",
+  "name": "WooCommerce",
+  "label": "WooCommerce REST wc/v3 — customers, orders, products",
+  "description": "Merchant WooCommerce Admin REST /wp-json/wc/v3 over HTTPS Basic (consumer_key:consumer_secret). store_host is hostname only. trigger is ingress. HTTPS required. Never log keys or order PII.",
+  "icon": "storefront",
+  "tags": [
+    "woocommerce",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "98347289-b191-5e00-84f3-a8ea076a9fd6",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "customer_create",
+          "description": "Official API verb. EXACT: customer_create | customer_get | customer_list | customer_update | customer_delete | order_create | order_get | order_list | order_update | order_delete | product_create | product_get | product_list | product_update | product_delete | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id for get/update/delete path {id} when that operation needs it.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer email. Required on customer_create; used on customer_update. PII — do not log. Example: john.doe@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "first_name",
+          "label": "first_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer first name. customer_create/update. Example: John.",
+          "children": []
+        },
+        {
+          "shortCode": "last_name",
+          "label": "last_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer last name. customer_create/update. Example: Doe.",
+          "children": []
+        },
+        {
+          "shortCode": "username",
+          "label": "username",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "WP username. customer_create (cannot change later). Example: john.doe.",
+          "children": []
+        },
+        {
+          "shortCode": "billing",
+          "label": "billing",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Billing address object {first_name,last_name,company,address_1,address_2,city,state,postcode,country,email,phone}. customer_create/update and order_create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "shipping",
+          "label": "shipping",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Shipping address object {first_name,last_name,company,address_1,address_2,city,state,postcode,country}. customer_create/update and order_create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page` for operations: customer_list, order_list, product_list.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `per_page` for operations: customer_list, order_list, product_list.",
+          "children": []
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `search` for operations: customer_list, product_list.",
+          "children": []
+        },
+        {
+          "shortCode": "force",
+          "label": "force",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `force` for operations: customer_delete, order_delete, product_delete.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Order or product status. Orders: pending | processing | on-hold | completed | cancelled | refunded | failed | trash. Products: draft | pending | private | publish. Used on order_create/update, product_create/update, and order_list query.",
+          "children": []
+        },
+        {
+          "shortCode": "password",
+          "label": "password",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer password for customer_create/update. Write-only. Never log. Example: a generated secret.",
+          "children": []
+        },
+        {
+          "shortCode": "currency",
+          "label": "currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 4217 currency for order_create/update. Example: USD.",
+          "children": []
+        },
+        {
+          "shortCode": "customer_id",
+          "label": "customer_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Existing WP user id for order_create/update. Example: 2.",
+          "children": []
+        },
+        {
+          "shortCode": "payment_method",
+          "label": "payment_method",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Payment method id for order_create/update. Example: bacs.",
+          "children": []
+        },
+        {
+          "shortCode": "payment_method_title",
+          "label": "payment_method_title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Payment method title for order_create/update. Example: Direct Bank Transfer.",
+          "children": []
+        },
+        {
+          "shortCode": "set_paid",
+          "label": "set_paid",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "order_create/update. true marks the order paid (status processing, stock reduced). Default false.",
+          "children": []
+        },
+        {
+          "shortCode": "line_items",
+          "label": "line_items",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Order line items [{product_id, quantity, variation_id?}]. order_create/update. Example: [{\"product_id\":93,\"quantity\":2}]. https://developer.woocommerce.com/docs/apis/rest-api/v3/orders",
+          "children": []
+        },
+        {
+          "shortCode": "shipping_lines",
+          "label": "shipping_lines",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Order shipping lines [{method_id, method_title, total}]. order_create/update. Example: [{\"method_id\":\"flat_rate\",\"method_title\":\"Flat Rate\",\"total\":\"10.00\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "fee_lines",
+          "label": "fee_lines",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Order fee lines. order_create/update. Example: [{\"name\":\"Fee\",\"total\":\"5.00\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "coupon_lines",
+          "label": "coupon_lines",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Order coupon lines [{code}]. order_create/update. Example: [{\"code\":\"SAVE10\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "customer_note",
+          "label": "customer_note",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note from the customer. order_create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product name. product_create/update. Example: Premium Hoodie.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product type. EXACT: simple | grouped | external | variable. product_create/update. Default simple.",
+          "children": []
+        },
+        {
+          "shortCode": "regular_price",
+          "label": "regular_price",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product regular price as a decimal string. product_create/update. Example: 29.99.",
+          "children": []
+        },
+        {
+          "shortCode": "sale_price",
+          "label": "sale_price",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product sale price as a decimal string. product_create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product long description (HTML allowed). product_create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "short_description",
+          "label": "short_description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product short description. product_create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "sku",
+          "label": "sku",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product SKU. product_create/update. Example: HOODIE-1.",
+          "children": []
+        },
+        {
+          "shortCode": "manage_stock",
+          "label": "manage_stock",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "product_create/update. true to track stock_quantity.",
+          "children": []
+        },
+        {
+          "shortCode": "stock_quantity",
+          "label": "stock_quantity",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Stock count when manage_stock is true. product_create/update. Example: 12.",
+          "children": []
+        },
+        {
+          "shortCode": "stock_status",
+          "label": "stock_status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "EXACT: instock | outofstock | onbackorder. product_create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "categories",
+          "label": "categories",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Product categories [{id}]. product_create/update. Example: [{\"id\":9}].",
+          "children": []
+        },
+        {
+          "shortCode": "images",
+          "label": "images",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Product images [{src}]. product_create/update. Example: [{\"src\":\"https://example.com/a.jpg\"}].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9159abbf-eeca-5493-a14c-2dfa59f7f40e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "98847fb4-cdca-5a20-9d5c-17c327952ba7",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: customer_create | customer_get | customer_list | customer_update | customer_delete | order_create | order_get | order_list | order_update | order_delete | product_create | product_get | product_list | product_update | product_delete | trigger. trigger does not open a socket.",
+      "value": "customer_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "customer_create",
+        "customer_get",
+        "customer_list",
+        "customer_update",
+        "customer_delete",
+        "order_create",
+        "order_get",
+        "order_list",
+        "order_update",
+        "order_delete",
+        "product_create",
+        "product_get",
+        "product_list",
+        "product_update",
+        "product_delete",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "8f45e86f-1dd8-5a60-b9b3-0d0a887a33c0",
+      "shortCode": "consumer_secret",
+      "label": "Consumer Secret",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type basic. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9dd77225-e3c5-502b-acf9-d8ac1b408500",
+      "shortCode": "consumer_key",
+      "label": "Consumer Key",
+      "type": "password",
+      "description": "Auth username / companion key (consumer_key).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e74cf9cf-fdb3-5882-a640-bf23627029b3",
+      "shortCode": "store_host",
+      "label": "Store Host",
+      "type": "string",
+      "description": "Store hostname only (shop.example.com), no scheme.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a1f20f37-c0dd-568d-bef4-a2d86d6ecf10",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

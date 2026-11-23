@@ -1,0 +1,45 @@
+{
+  "baseUrl": "https://",
+  "defaultTimeout": 60,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "read": {
+      "kind": "http",
+      "method": "POST",
+      "path": "r.jina.ai/",
+      "required": ["url"],
+      "bodyFrom": ["url"]
+    },
+    "search": {
+      "kind": "http",
+      "method": "POST",
+      "path": "s.jina.ai/",
+      "required": ["q"],
+      "bodyFrom": ["q", "gl", "hl", "num", "site", "location", "page"]
+    },
+    "deep_research": {
+      "kind": "http",
+      "method": "POST",
+      "path": "deepsearch.jina.ai/v1/chat/completions",
+      "required": ["messages"],
+      "bodyFrom": ["model", "messages", "stream", "reasoning_effort", "budget_tokens"],
+      "bodyDefaults": {
+        "model": "jina-deepsearch-v1"
+      }
+    },
+    "embed": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://api.jina.ai",
+      "path": "/v1/embeddings",
+      "required": ["input"],
+      "bodyFrom": ["model", "input", "task", "dimensions", "embedding_type", "normalized", "late_chunking", "truncate"]
+    }
+  }
+}

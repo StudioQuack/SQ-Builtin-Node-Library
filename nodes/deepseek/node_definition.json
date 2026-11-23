@@ -1,0 +1,675 @@
+{
+  "_id": "57bed254-ec75-4f44-878f-877e0f68e7ce",
+  "version": "1.0.0",
+  "name": "DeepSeek",
+  "label": "DeepSeek",
+  "description": "Official DeepSeek Chat Completions on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). operation selects chat (POST /chat/completions) or list_models (GET /models). There is no reason RPC — thinking is a chat body (thinking + reasoning_effort) on deepseek-v4-flash / deepseek-v4-pro / deepseek-v4-flash-vision-exp. Catalog reason is dropped. Legacy deepseek-reasoner / deepseek-chat were discontinued 2026-07-24. Auth is StudioQuack secret api_key sent as Bearer. Docs: https://api-docs.deepseek.com/. Terms: https://cdn.deepseek.com/policies/en-US/deepseek-open-platform-terms-of-service.html. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "deepseek",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "213fbeed-25f3-4790-810e-ab834e1a2c40",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, stream?, model?, thinking?, reasoning_effort?}. Text on deepseek-v4-flash / deepseek-v4-pro; image input on deepseek-v4-flash-vision-exp (released 2026-08-21). Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "chat messages [{role, content}]. Required for chat. Official messages.",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional function tools (max 128). Omit or [] sends no tools.",
+          "children": []
+        },
+        {
+          "shortCode": "thinking",
+          "label": "thinking",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Thinking mode object {type: enabled|disabled}. Platform default is enabled. Not a separate HTTP operation.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "tool_choice",
+          "label": "tool_choice",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tool_choice` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "reasoning_effort",
+          "label": "reasoning_effort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `reasoning_effort` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "temperature",
+          "label": "temperature",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "chat sampling temperature 0–2. Official temperature. Example: 0.7.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "chat nucleus sampling 0–1. Official top_p.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "chat max_tokens (completion budget).",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `user_id` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "logprobs",
+          "label": "logprobs",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `logprobs` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_logprobs",
+          "label": "top_logprobs",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `top_logprobs` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "chat stop sequences, strings. Official stop.",
+          "children": []
+        },
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which call to run. EXACT: chat | list_models. Blank uses config.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ddb1aceb-8e9f-4baf-be3e-dffe40dae741",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Thinking mode maps message.reasoning_content. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed DeepSeek JSON (chat message with optional reasoning_content, or models list).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ff62b9e1-a71e-4d8e-9eb6-86ad2964b5e0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official DeepSeek verb. EXACT values: chat | list_models. Default chat = POST /chat/completions. There is no reason operation.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "list_models"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "chat",
+          "targets": [
+            {
+              "param": "model",
+              "visible": true
+            },
+            {
+              "param": "temperature",
+              "visible": true
+            },
+            {
+              "param": "response_format",
+              "visible": true
+            },
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "messages",
+              "visible": true
+            },
+            {
+              "param": "reasoning_effort",
+              "visible": true
+            },
+            {
+              "param": "stop",
+              "visible": true
+            },
+            {
+              "param": "logprobs",
+              "visible": true
+            },
+            {
+              "param": "thinking",
+              "visible": true
+            },
+            {
+              "param": "max_tokens",
+              "visible": true
+            },
+            {
+              "param": "tool_choice",
+              "visible": true
+            },
+            {
+              "param": "top_logprobs",
+              "visible": true
+            },
+            {
+              "param": "tools",
+              "visible": true
+            },
+            {
+              "param": "top_p",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "0d04a000-80a1-4b3f-92c9-433ba0b409da",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "DeepSeek Open Platform API key. Sent as Authorization: Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1d831d5f-5249-4421-a4ee-6c1cb6890d4c",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Official ids: deepseek-v4-pro (DeepSeek-V4-Pro-0813, default), deepseek-v4-flash (DeepSeek-V4-Flash-0731), deepseek-v4-flash-vision-exp (experimental vision, 2026-08-21). Do not default discontinued deepseek-reasoner / deepseek-chat (cutoff 2026-07-24). Docs: https://api-docs.deepseek.com/quick_start/pricing .",
+      "value": "deepseek-v4-pro",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "deepseek-v4-pro",
+        "deepseek-v4-flash",
+        "deepseek-v4-flash-vision-exp"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "039d28ef-95fe-4f33-af42-22271047ed54",
+      "shortCode": "base_url",
+      "label": "Base URL",
+      "type": "string",
+      "description": "HTTPS origin substituted as OfficialApiNode baseUrl. Default https://api.deepseek.com (official curl has no /v1 prefix). Do not default the Anthropic twin https://api.deepseek.com/anthropic.",
+      "value": "https://api.deepseek.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "84e5812c-228d-4752-8fbb-33c2497ffce3",
+      "shortCode": "temperature",
+      "label": "Temperature",
+      "type": "number",
+      "description": "chat sampling temperature 0–2. Official temperature. Example: 0.7.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b06449f5-288f-4b50-b84a-a7adbb180456",
+      "shortCode": "response_format",
+      "label": "Response Format",
+      "type": "string",
+      "description": "Request-body parameter `response_format` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b6965cf7-67d1-46d5-8151-edaa6f9f47b3",
+      "shortCode": "user_id",
+      "label": "User ID",
+      "type": "string",
+      "description": "Request-body parameter `user_id` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d5c0e515-a705-465f-afcb-b1d27fc057e8",
+      "shortCode": "messages",
+      "label": "Messages",
+      "type": "list",
+      "description": "chat messages [{role, content}]. Required for chat. Official messages.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ccc2d2fc-8682-4105-ae43-0f2dd5f3ba88",
+      "shortCode": "reasoning_effort",
+      "label": "Reasoning Effort",
+      "type": "string",
+      "description": "Request-body parameter `reasoning_effort` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "aa08a535-fb1f-40ae-b879-4464cf7547a9",
+      "shortCode": "stop",
+      "label": "Stop",
+      "type": "list",
+      "description": "chat stop sequences, strings. Official stop.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a0e63941-4d25-4199-a437-b6b49587659c",
+      "shortCode": "logprobs",
+      "label": "Logprobs",
+      "type": "boolean",
+      "description": "Request-body parameter `logprobs` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d0d49e93-be3a-4bf5-ab81-6abb74380ea9",
+      "shortCode": "thinking",
+      "label": "Thinking",
+      "type": "object",
+      "description": "Thinking mode object {type: enabled|disabled}. Platform default is enabled. Not a separate HTTP operation.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d5a53a22-4876-44a1-9a3e-4df38dc15c69",
+      "shortCode": "max_tokens",
+      "label": "Max Tokens",
+      "type": "number",
+      "description": "chat max_tokens (completion budget).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6903c730-ef8e-4040-ac0b-40bd56a1c64d",
+      "shortCode": "tool_choice",
+      "label": "Tool Choice",
+      "type": "string",
+      "description": "Request-body parameter `tool_choice` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8523f8bd-712b-4c2c-86f2-e35bccd7f9b4",
+      "shortCode": "top_logprobs",
+      "label": "Top Logprobs",
+      "type": "number",
+      "description": "Request-body parameter `top_logprobs` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "54331834-ceaf-4a8e-818c-69f68f6e2716",
+      "shortCode": "tools",
+      "label": "Tools",
+      "type": "list",
+      "description": "Optional function tools (max 128). Omit or [] sends no tools.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f1ce607c-d3f1-4570-bf33-80b4302cdf4f",
+      "shortCode": "top_p",
+      "label": "Top P",
+      "type": "number",
+      "description": "chat nucleus sampling 0–1. Official top_p.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "24a454d4-1fa5-4401-b5c1-18c964c8c476",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1. Server may keep the socket open up to 10 minutes before inference starts.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "93b7ad56-1c28-4f1a-a189-cd746f6e647d",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether DeepSeek requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

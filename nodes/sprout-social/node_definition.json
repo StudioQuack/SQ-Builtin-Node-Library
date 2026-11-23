@@ -1,0 +1,309 @@
+{
+  "_id": "0f7f1804-3c25-42f2-959c-ee764cc57e40",
+  "version": "1.0.0",
+  "name": "Sprout Social",
+  "label": "Sprout Social Public API v1",
+  "description": "Official Sprout Social Public API v1 at https://api.sproutsocial.com. OfficialApiNode. Draft publishing (message_create), retrieve (message_get), profile analytics (analytics_get), media upload (media_upload). Bearer access_token. customer_id is a path variable. Eligible plan + API Permissions required. Never log access_token.",
+  "icon": "campaign",
+  "tags": [
+    "sprout",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4e69c21f-4c36-49cb-b505-54662c774ad9",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Path vars customer_id and publishing_post_id may come from config. media is type file. Do not put access_token here. Example: {\"operation\":\"message_get\",\"publishing_post_id\":\"…\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "message_create",
+          "description": "Overrides config operation when non-blank. EXACT: 'message_create' | 'message_get' | 'analytics_get' | 'media_upload'.",
+          "children": []
+        },
+        {
+          "shortCode": "customer_id",
+          "label": "customer_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path {customer_id}. Falls back to config. Discover via GET /v1/metadata/client.",
+          "children": []
+        },
+        {
+          "shortCode": "publishing_post_id",
+          "label": "publishing_post_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Calendar post id for message_get. Required for that operation.",
+          "children": []
+        },
+        {
+          "shortCode": "group_id",
+          "label": "group_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Sprout group id. Required for message_create.",
+          "children": []
+        },
+        {
+          "shortCode": "customer_profile_ids",
+          "label": "customer_profile_ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Profile ids in the group. Required for message_create.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Post body. Per-network rules apply.",
+          "children": []
+        },
+        {
+          "shortCode": "is_draft",
+          "label": "is_draft",
+          "type": "boolean",
+          "required": false,
+          "value": true,
+          "description": "Must be true for message_create (draft-only create on Public API v1).",
+          "children": []
+        },
+        {
+          "shortCode": "scheduled_times",
+          "label": "scheduled_times",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "ISO-8601 UTC future times. Seconds rounded down to the minute.",
+          "children": []
+        },
+        {
+          "shortCode": "delivery_type",
+          "label": "delivery_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Only SCHEDULED when scheduling a draft.",
+          "children": []
+        },
+        {
+          "shortCode": "media_ids",
+          "label": "media_ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Array of { media_id, media_type } PHOTO | VIDEO | DOCUMENT.",
+          "children": []
+        },
+        {
+          "shortCode": "tag_ids",
+          "label": "tag_ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional Sprout tag ids.",
+          "children": []
+        },
+        {
+          "shortCode": "filters",
+          "label": "filters",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "analytics_get JSON body (profiles, date range, metrics). Cap date range.",
+          "children": []
+        },
+        {
+          "shortCode": "metrics",
+          "label": "metrics",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "analytics_get Owned Profile Analytics body metrics (with filters). Example: {\"metrics\":[\"lifetime.impressions\"]}.",
+          "children": []
+        },
+        {
+          "shortCode": "media",
+          "label": "media",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for media_upload. Cap 50_000_000 bytes. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "media_type",
+          "label": "media_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Hint PHOTO | VIDEO | DOCUMENT for media_upload.",
+          "children": []
+        },
+        {
+          "shortCode": "delivery",
+          "label": "delivery",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `delivery` for operation: message_create.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3d053c80-9632-422d-afd2-372dd5f6a48e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (posts, analytics, media_id).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "854ae2c3-bb95-431d-9835-cf2291978c5f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: message_create | message_get | analytics_get | media_upload.",
+      "value": "message_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "message_create",
+        "message_get",
+        "analytics_get",
+        "media_upload"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "e422c783-e5d0-4fd0-bb9c-df090fc07997",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Sprout account token or OAuth JWT. Sent as Authorization: Bearer. StudioQuack secret only. Never log or place on INPUT. Settings → Global Features → API.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dafaa287-04bd-4263-befe-b2f1401ba398",
+      "shortCode": "customer_id",
+      "label": "Customer ID",
+      "type": "string",
+      "description": "Sprout customer id used as path {customer_id}. Discover via GET /v1/metadata/client.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "478ed230-f872-4ac1-881e-14a71ad8987f",
+      "shortCode": "metrics",
+      "label": "Metrics",
+      "type": "object",
+      "description": "analytics_get body metrics alongside filters. Example: [\"lifetime.impressions\"].",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "331b263b-0675-49f3-8078-0d0ccdf337ab",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Use 60 for media_upload. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

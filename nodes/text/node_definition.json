@@ -1,0 +1,247 @@
+{
+  "_id": "6a45ada5-d149-4851-9aa3-22456c0b7312",
+  "version": "1.0.0",
+  "name": "Text",
+  "label": "String utilities",
+  "description": "Replace, regex, split, join, case, trim, template, slug, strip_html. ReDoS timeout. strip_html is not a crawler.",
+  "icon": "",
+  "tags": [
+    "text",
+    "regex",
+    "template"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5523d587-6a57-4e98-9f49-d82cbba9f73c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Text operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'replace'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Source text. Required for most ops.",
+          "children": []
+        },
+        {
+          "shortCode": "pattern",
+          "label": "pattern",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Literal search string for operation replace; treated as regex when it contains regex metacharacters (not a lone '.'). With separator, splits on pattern and rejoins with separator.",
+          "children": []
+        },
+        {
+          "shortCode": "replacement",
+          "label": "replacement",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Replacement or template.",
+          "children": []
+        },
+        {
+          "shortCode": "separator",
+          "label": "separator",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "split/join separator.",
+          "children": []
+        },
+        {
+          "shortCode": "case",
+          "label": "case",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "upper | lower | title | camel | snake.",
+          "children": []
+        },
+        {
+          "shortCode": "values",
+          "label": "values",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Template variables for operation template. Example: {\"name\":\"Ana\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "items",
+          "label": "items",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Array to join for operation join (text alone is not enough). Example: [\"a\",\"b\"].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a5caa623-08a0-4ace-b992-327f226cf706",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "1152e769-529f-475e-b3f3-161b20c16d82",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: replace | regex | split | join | case | trim | template | slug | strip_html. Required. Example: 'replace'.",
+      "value": "replace",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "replace",
+        "regex",
+        "split",
+        "join",
+        "case",
+        "trim",
+        "template",
+        "slug",
+        "strip_html"
+      ]
+    },
+    {
+      "_id": "2d514de6-c501-4038-b2f0-3c223eb0da68",
+      "shortCode": "flags",
+      "label": "Flags",
+      "type": "string",
+      "description": "Regex flags: i, m, s. Example: 'i'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "30265a2f-5bd9-4e4e-948f-f97f9071fbc6",
+      "shortCode": "limit",
+      "label": "Limit",
+      "type": "number",
+      "description": "Max splits/replacements. Default 0 (unlimited, still size-capped).",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7cb6d3dd-e315-4710-9840-7c3e8c39beb1",
+      "shortCode": "values",
+      "label": "Values",
+      "type": "object",
+      "description": "Template variables for operation template. Example: {\"name\":\"Ana\"}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "dbb3e16c-da14-4e3a-b95b-6b6f1cbf1c7d",
+      "shortCode": "items",
+      "label": "Items",
+      "type": "list",
+      "description": "Array to join for operation join (text alone is not enough). Example: [\"a\",\"b\"].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "1dcb2e6f-af4a-4000-8cf4-ea1dcaa862f7",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

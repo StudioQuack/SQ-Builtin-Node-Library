@@ -1,0 +1,241 @@
+{
+  "_id": "cc63350b-4d0d-4328-87c0-624f6018d0e1",
+  "version": "1",
+  "name": "Web Browser",
+  "label": "Web Browser",
+  "description": "Fetch one public http/https URL and return readable page text. In-process Java handler `com.studioquack.nodelibrary.nodes.web.WebBrowserNode` uses java.net.http (TLS always verified, HttpClient.Redirect.NORMAL). HTML→text is regex-only (no Jsoup): strip <script>, <style>, comments, then tags, then collapse whitespace. robots.txt is honored by default via `RobotsTxt` with a process-lifetime per-host cache and fail-open (unreachable robots.txt still allows the page GET). Optional location sets Accept-Language. Use this when you already have a URL; use Web Search when you only have a query. Raw HTML is capped at 2000000 bytes; robots.txt at 524288 bytes. Do not use this node to submit forms, run JavaScript, or read authenticated/cookie-gated pages. robots.txt is respected by default and cannot be silently skipped.",
+  "icon": "",
+  "tags": [
+    "http",
+    "fetch",
+    "html",
+    "robots"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f4bd11bb-11ba-4860-90b9-290fe2e92001",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "URL fetch request delivered as inputVariables.input (or currentNode.inputList targetPortValue=input). REQUIRED field: url. OPTIONAL field: max_chars (overrides the instance configurationParameter max_chars for this call only). The Java handler reads a JSON object; a one-element list is unwrapped. Missing/empty url raises INVALID_INPUT 'url is required.'. Do not put configuration knobs here — those are instance configurationParameters (timeout_seconds, user_agent, respect_robots_txt, location). Example: {\"url\":\"https://example.com/docs\",\"max_chars\":8000}.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "_id": "bdb2297a-10dd-485c-b1d7-72785e32b6a1",
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Absolute URL the Java handler GETs with java.net.http. Purpose: identify the document to fetch (and the URL passed to RobotsTxt.canFetch). REQUIRED. Trimmed. Empty/missing raises INVALID_INPUT 'url is required.'. Accepted schemes: exactly 'http' | 'https' (case-insensitive). Parsed with java.net.URI; a blank/missing host, ftp, file, data, javascript, mailto, or scheme-relative URL raises INVALID_INPUT 'url must be http or https.'. Path, query, port, and userinfo may be included; the fragment is not sent. TLS is always verified. Examples: 'https://example.com/docs', 'https://en.wikipedia.org/wiki/Robots.txt', 'http://example.org:8080/path?q=1'. Do not pass a search query here — use the Web Search node.",
+          "children": []
+        },
+        {
+          "_id": "3983482d-d302-4843-a438-169cd94fe23d",
+          "shortCode": "max_chars",
+          "label": "max_chars",
+          "type": "number",
+          "required": false,
+          "value": 0,
+          "description": "Purpose: cap output.content length after regex HTML stripping so the payload stays bounded. OPTIONAL per-call override of configurationParameter max_chars. Accepted values: positive integers (JSON number or numeric string). When omitted, 0, 0.0, or empty string, the instance config max_chars is used (default 12000). Non-numeric non-empty strings fall back to 12000 (not the config value), matching the Python tool. Content longer than this is cut with String.substring and suffixed with '... [truncated]'. Example: 8000. Example to keep more of a long spec: 20000. This is a payload/DoS bound — do not raise it unbounded. Independent of the 2000000-byte raw-HTML cap on the HTTP body.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c8a077e3-4744-41a6-a465-ac518f8f6dcd",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Single OUTPUT port. Success status values: 'ok' (page text in content, title set, metadata.content_type/status_code present) or 'blocked_by_robots' (robots.txt disallowed this user-agent+URL; the page was NOT fetched; this is a successful outcome with error 'Fetch disallowed by robots.txt'). Downstream nodes should branch on status for robots denial, not on HTTP 200 of the invoke. Example ok: {\"status\":\"ok\",\"url\":\"https://example.com/\",\"title\":\"Example Domain\",\"content\":\"Example Domain This domain is for use in illustrative examples in documents.\",\"metadata\":{\"content_type\":\"text/html; charset=utf-8\",\"status_code\":200,\"fetched_at\":\"2026-08-20T18:00:00Z\",\"robots\":\"allowed\"}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "_id": "b9831c1e-e4ff-45ef-b2b4-c045d65ad07e",
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Outcome of this invocation. Purpose: tell downstream nodes whether content is trustworthy. EXACT accepted values on success: 'ok' | 'blocked_by_robots'. 'ok' = java.net.http GET returned 2xx, HTML was regex-stripped, content/title populated. 'blocked_by_robots' = RobotsTxt.canFetch returned false; the page GET did not run; this is not an exception. Validation, non-2xx, timeout/IO, and unexpected exceptions raise a BPMN error. Always present on a successful return. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "_id": "21d74541-f563-4f95-a5cb-2a6e359a45a7",
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL associated with the result. Purpose: show what was actually retrieved (redirects) or what was rejected. On status='ok' this is the final URL after HttpClient.Redirect.NORMAL (HttpResult.url). On status='blocked_by_robots' this is the requested URL unchanged. Example: 'https://example.com/page'.",
+          "children": []
+        },
+        {
+          "_id": "2db67c46-495a-4053-a8da-140872905878",
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Page title extracted from the raw HTML (before full-page strip). Purpose: a short label for the fetched document. Algorithm: first <title>...</title> (case-insensitive, DOTALL), inner HTML regex-stripped; if missing, first <h1>...</h1> stripped; else empty string ''. Present on status='ok'. Absent on blocked_by_robots. Does not decode HTML entities (&amp; stays). Example: 'Example Domain'.",
+          "children": []
+        },
+        {
+          "_id": "6a3f3a2c-83a3-43b7-8633-9ed667d8102e",
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Readable page text produced by the Java regex pipeline (no Jsoup): (1) strip <script>...</script> CASE_INSENSITIVE+DOTALL, (2) strip <style>...</style>, (3) strip <!-- ... -->, (4) strip <[^>]+>, (5) collapse \\s+ to a single space and trim. Purpose: give agents page wording without markup or scripts. Truncated to max_chars with suffix '... [truncated]' when longer. Present on status='ok'. Absent on blocked_by_robots. Scripts that never close may leak as text (same as the Python tool). Example: 'Example Domain This domain is for use in illustrative examples...'.",
+          "children": []
+        },
+        {
+          "_id": "58ad885d-6cd8-4ba7-ad20-18e1e1079a75",
+          "shortCode": "metadata",
+          "label": "metadata",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Fetch diagnostics object. Purpose: record HTTP and robots outcome without putting HTML in logs. Always present on status='ok' and status='blocked_by_robots'. Always includes robots (see child; EXACT values skipped|allowed|disallowed|unreachable) and fetched_at (ISO-8601 UTC from Instant.now().toString()). On status='ok' also includes content_type and status_code. Includes location when the location config is non-empty (trimmed). Example: {\"content_type\":\"text/html; charset=utf-8\",\"status_code\":200,\"fetched_at\":\"2026-08-20T18:00:00Z\",\"robots\":\"allowed\",\"location\":\"us\"}.",
+          "children": [
+            {
+              "_id": "173feb89-524a-4271-beb3-620b1365d322",
+              "shortCode": "content_type",
+              "label": "content_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "HTTP Content-Type response header of the page GET as returned by java.net.http (first value, may include charset). Purpose: tell callers whether the body was HTML, XHTML, or something else that was still regex-stripped. Present on status='ok'. Absent on blocked_by_robots. Empty string when the origin omitted the header. Examples: 'text/html; charset=utf-8', 'application/xhtml+xml', 'text/plain'.",
+              "children": []
+            },
+            {
+              "_id": "76a4d06e-ae3f-490d-8c32-b7118d22d9d2",
+              "shortCode": "status_code",
+              "label": "status_code",
+              "type": "number",
+              "required": false,
+              "value": 0,
+              "description": "HTTP status code of the page GET after redirects. Purpose: confirm the origin accepted the request. Present on status='ok' only (non-2xx raises a BPMN error with message 'Web browser HTTP error: HTTP <code> for url: <finalUrl>'). Accepted values: integers 200–299. Example: 200.",
+              "children": []
+            },
+            {
+              "_id": "a84be9cb-e40b-4674-a145-42d2ad0f4ff6",
+              "shortCode": "fetched_at",
+              "label": "fetched_at",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "UTC timestamp when the robots decision or page fetch completed. Purpose: audit when this snapshot was taken. Format: ISO-8601 from Java Instant.now().toString() (e.g. ending in Z). Present on status='ok' and status='blocked_by_robots'. Example: '2026-08-20T18:02:11.123Z'.",
+              "children": []
+            },
+            {
+              "_id": "88be0367-b7a0-4a9e-8aae-662313a80d8e",
+              "shortCode": "robots",
+              "label": "robots",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "robots.txt outcome for this host. EXACT values: 'allowed' | 'disallowed' | 'unreachable' | 'skipped'. 'allowed' = robots.txt was fetched and permitted this URL. 'disallowed' = blocked_by_robots (page not fetched). 'unreachable' = robots.txt could not be retrieved (fail-open). 'skipped' = robots.txt was not applied for this fetch and a warning was logged. Example: 'allowed'.",
+              "children": []
+            },
+            {
+              "_id": "0b2b7b63-8e98-4f47-baeb-142b5252bf67",
+              "shortCode": "location",
+              "label": "location",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Echo of configurationParameter location when it was non-empty after trim. Purpose: record which Accept-Language mapping was applied. Same codes as the location config (e.g. 'us', 'tr', 'de', 'gb', 'uk'). Absent when location is empty (no Accept-Language header was sent). Example: 'us'.",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "252354a8-a0bf-4230-806e-818e1e9c71c4",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Purpose: cap connect and request time for both the robots.txt GET and the page GET (java.net.http HttpClient.connectTimeout and HttpRequest.timeout; WebNodeSupport.send floors at 1 second). Accepted values: positive integers (JSON number or numeric string). Non-numeric/empty/missing falls back to 25. Default: 25. Example: 25. Example for slow origins: 45. Values that are too large stall the sandbox thread; keep under 60 unless the origin is known-slow. Applies independently to each HTTP call (robots.txt and page), not as a shared wall clock.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "e8e050ec-d2cf-418b-9ff8-3c4d14b3210a",
+      "shortCode": "max_chars",
+      "label": "Default Max Characters",
+      "type": "number",
+      "description": "Purpose: default maximum characters of regex-stripped page text when input.max_chars is omitted, 0, or empty. Accepted values: positive integers. Default: 12000. Example: 12000. Example for short summaries: 4000. Input max_chars overrides this per call. Truncation suffix is exactly '... [truncated]'. This is a payload/DoS bound on the OUTPUT object, separate from the 2000000-byte raw HTML cap. 0 in this config is passed through (Python parity) and will truncate any non-empty page to '... [truncated]'.",
+      "value": "12000",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "8ea35c3e-b5c8-40e8-a97a-ed42899de4c9",
+      "shortCode": "user_agent",
+      "label": "User Agent",
+      "type": "string",
+      "description": "Purpose: HTTP User-Agent sent on the page GET and the robots.txt GET, and passed to RobotsTxt.canFetch (substring match, case-insensitive). Accepted values: any non-empty User-Agent string. Empty/missing uses WebNodeSupport.CHROME_UA. Default: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'. Example (identify the agent): 'StudioQuack-DuckNodeForge/1.0'. robots.txt rules are user-agent-specific — changing this can change blocked_by_robots outcomes. Never log this value if a caller stuffs a secret into it.",
+      "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "44dd1028-8fa8-4887-bee3-06785ab0d482",
+      "shortCode": "respect_robots_txt",
+      "label": "Respect robots.txt",
+      "type": "select",
+      "description": "Default true: WebBrowserNode fetches and honors robots.txt before the page GET (User-Agent match, 524288-byte cap, TLS verified). Unknown or blank values are treated as true. A fetch that is disallowed returns status='blocked_by_robots' and the page is not retrieved. Unreachable robots.txt is fail-open (metadata.robots='unreachable'). Turning this setting off is an operator decision that is logged as a warning on every fetch; the operator remains responsible for the target site's terms. This library does not instruct operators to disable robots.txt. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "false",
+        "true"
+      ]
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-12T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-12T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

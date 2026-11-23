@@ -1,0 +1,335 @@
+{
+  "_id": "5af4fd52-6308-4193-96c3-eee3607329bf",
+  "version": "1.0.0",
+  "name": "Cloudflare",
+  "label": "Cloudflare API",
+  "description": "Cloudflare API v4 via OfficialApiNode. Docs: https://developers.cloudflare.com/api/. Operations: dns_list, dns_create, dns_update, dns_delete, zone_get, cache_purge, worker_list, r2_get, cert_get, cert_upload, listen. Auth secret api_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "cloudflare",
+    "dns",
+    "cdn"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "46c50af0-f53e-41b3-8455-bd5dd4356dc8",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "dns_list",
+          "description": "Which official API call to run. EXACT values: dns_list | dns_create | dns_update | dns_delete | zone_get | cache_purge | worker_list | r2_get | cert_get | cert_upload | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'dns_list'.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DNS record id.",
+          "children": []
+        },
+        {
+          "shortCode": "bucket",
+          "label": "bucket",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "R2 bucket.",
+          "children": []
+        },
+        {
+          "shortCode": "key",
+          "label": "key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "R2 object key. File payloads use type file.",
+          "children": []
+        },
+        {
+          "shortCode": "certificate",
+          "label": "certificate",
+          "type": "longtext",
+          "required": false,
+          "value": "",
+          "description": "PEM certificate chain for cert_upload (body certificate). Paste the full -----BEGIN CERTIFICATE----- text, leaf first. Required for cert_upload. Example: -----BEGIN CERTIFICATE----- MIID... -----END CERTIFICATE-----.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DNS record name for dns_list (filter), dns_create and dns_update (required). Use the full name or @ for the zone apex. Example: www.example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DNS record type for dns_list (filter), dns_create and dns_update (required). EXACT common: A | AAAA | CNAME | MX | TXT | NS | SRV | CAA. Example: A.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page` for operation: dns_list.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `per_page` for operation: dns_list.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DNS record value for dns_create / dns_update: IPv4 for A, IPv6 for AAAA, target host for CNAME, text for TXT. Example: 198.51.100.4.",
+          "children": []
+        },
+        {
+          "shortCode": "ttl",
+          "label": "ttl",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Record TTL in seconds for dns_create / dns_update. 1 means automatic (the default when empty); otherwise 30-86400. Example: 3600.",
+          "children": []
+        },
+        {
+          "shortCode": "proxied",
+          "label": "proxied",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Whether the record is proxied through Cloudflare for dns_create / dns_update. true | false. Only A, AAAA and CNAME records can be proxied. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "purge_everything",
+          "label": "purge_everything",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "cache_purge: true purges every cached file in the zone. Use instead of files / tags / hosts / prefixes. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "files",
+          "label": "files",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "cache_purge: list of full URLs to purge. Example: [\"https://www.example.com/css/app.css\"].",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "cache_purge: list of Cache-Tag values to purge. Example: [\"product-123\",\"homepage\"].",
+          "children": []
+        },
+        {
+          "shortCode": "hosts",
+          "label": "hosts",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "cache_purge: list of hostnames whose cached files are purged. Example: [\"www.example.com\"].",
+          "children": []
+        },
+        {
+          "shortCode": "prefixes",
+          "label": "prefixes",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "cache_purge: list of URL prefixes (host + path, no scheme) to purge. Example: [\"www.example.com/images\"].",
+          "children": []
+        },
+        {
+          "shortCode": "private_key",
+          "label": "private_key",
+          "type": "longtext",
+          "required": false,
+          "value": "",
+          "description": "PEM private key for cert_upload (body private_key) matching certificate. Required for cert_upload. Treat as sensitive: wire it from a secret source, never hard-code it. Example: -----BEGIN PRIVATE KEY----- MIIE... -----END PRIVATE KEY-----.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b710091d-0fad-4645-a796-0df3a445f4b1",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "904c6040-a62c-40da-a8f8-a40626ed3532",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: dns_list, dns_create, dns_update, dns_delete, zone_get, cache_purge, worker_list, r2_get, cert_get, cert_upload, listen. listen is BPMN ingress, not a socket.",
+      "value": "dns_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "dns_list",
+        "dns_create",
+        "dns_update",
+        "dns_delete",
+        "zone_get",
+        "cache_purge",
+        "worker_list",
+        "r2_get",
+        "cert_get",
+        "cert_upload",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "d313e60b-ab4e-4b85-966b-82c78951612e",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "Cloudflare API token (preferred). Do not use the Global API Key.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0194c838-de1d-4bb8-afc3-7b886f0b4988",
+      "shortCode": "accountId",
+      "label": "Accountid",
+      "type": "string",
+      "description": "Account id for Workers/R2.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c8ae3f31-8e96-4889-b062-b6b96496744e",
+      "shortCode": "zoneId",
+      "label": "Zoneid",
+      "type": "string",
+      "description": "Zone id for DNS/cache.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "483cfe84-fb70-414e-971f-2905d411031c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

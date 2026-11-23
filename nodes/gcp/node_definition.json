@@ -1,0 +1,467 @@
+{
+  "_id": "6ac3843b-fac6-47ec-ae32-594a5904a3aa",
+  "version": "1.0.0",
+  "name": "GCP",
+  "label": "Google Cloud APIs",
+  "description": "Google Cloud APIs via OfficialApiNode. Docs: https://cloud.google.com/apis. Operations: object_get, object_put, object_delete, object_list, pubsub_publish, pubsub_pull, run_invoke, functions_call, compute_get, gke_get, secretmanager_get, iam_get, listen. Auth secret access_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "gcp",
+    "gcs",
+    "pubsub",
+    "run"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f3ea0849-71b0-416e-9436-7d099f6b17e7",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "object_get",
+          "description": "Which official API call to run. EXACT values: object_get | object_put | object_delete | object_list | pubsub_publish | pubsub_pull | run_invoke | functions_call | compute_get | gke_get | secretmanager_get | iam_get | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'object_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "bucket",
+          "label": "bucket",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GCS bucket.",
+          "children": []
+        },
+        {
+          "shortCode": "object",
+          "label": "object",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Object name. File payloads type file.",
+          "children": []
+        },
+        {
+          "shortCode": "topic",
+          "label": "topic",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pub/Sub topic id.",
+          "children": []
+        },
+        {
+          "shortCode": "alt",
+          "label": "alt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `alt` for operation: object_get.",
+          "children": []
+        },
+        {
+          "shortCode": "uploadType",
+          "label": "uploadType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GCS upload type for object_put. EXACT: media | multipart | resumable. Default media. Example: media.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `name` for operation: object_put.",
+          "children": []
+        },
+        {
+          "shortCode": "prefix",
+          "label": "prefix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `prefix` for operation: object_list.",
+          "children": []
+        },
+        {
+          "shortCode": "pageToken",
+          "label": "pageToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `pageToken` for operation: object_list.",
+          "children": []
+        },
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "pubsub_publish PubsubMessages: [{data: base64, attributes:{}, orderingKey}]. Official PublishRequest.messages.",
+          "children": []
+        },
+        {
+          "shortCode": "subscription",
+          "label": "subscription",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `subscription` for operation: pubsub_pull. Required by: pubsub_pull.",
+          "children": []
+        },
+        {
+          "shortCode": "maxMessages",
+          "label": "maxMessages",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `maxMessages` for operation: pubsub_pull.",
+          "children": []
+        },
+        {
+          "shortCode": "service_host",
+          "label": "service_host",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `service_host` for operation: run_invoke. Required by: run_invoke.",
+          "children": []
+        },
+        {
+          "shortCode": "location",
+          "label": "location",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `location` for operations: functions_call, gke_get. Required by: functions_call, gke_get.",
+          "children": []
+        },
+        {
+          "shortCode": "function",
+          "label": "function",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `function` for operation: functions_call. Required by: functions_call.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cloud Functions v1 :call request.data — a JSON-encoded string the function receives as its event payload. Official field name (not a generic blob). Used by functions_call. Example: {\"ok\":true}.",
+          "children": []
+        },
+        {
+          "shortCode": "zone",
+          "label": "zone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `zone` for operation: compute_get. Required by: compute_get.",
+          "children": []
+        },
+        {
+          "shortCode": "instance",
+          "label": "instance",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `instance` for operation: compute_get. Required by: compute_get.",
+          "children": []
+        },
+        {
+          "shortCode": "cluster",
+          "label": "cluster",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `cluster` for operation: gke_get. Required by: gke_get.",
+          "children": []
+        },
+        {
+          "shortCode": "secret",
+          "label": "secret",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `secret` for operation: secretmanager_get. Required by: secretmanager_get.",
+          "children": []
+        },
+        {
+          "shortCode": "version",
+          "label": "version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `version` for operation: secretmanager_get. Required by: secretmanager_get.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `email` for operation: iam_get. Required by: iam_get.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Object bytes for object_put (uploadType=media raw body) and optional raw body for run_invoke. Platform file block {mime_type, source, data, name}.",
+          "children": []
+        },
+        {
+          "shortCode": "contentType",
+          "label": "contentType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "MIME type query for object_put (also sent as Content-Type). Example: application/pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "returnImmediately",
+          "label": "returnImmediately",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "pubsub_pull: when true, return even if no messages. Official returnImmediately.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Object bytes for object_put (alias of file) and optional raw body. Platform file block {mime_type, source, data, name}.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cloud Run service URL for run_invoke (alias of service_host). Example: https://my-service-xxxx.run.app.",
+          "children": []
+        },
+        {
+          "shortCode": "resource",
+          "label": "resource",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IAM resource name or service account email for iam_get (path). Example: my-sa@project.iam.gserviceaccount.com.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e0b1fffd-e53c-4559-b0e3-6dccbe35f59d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c239ae83-0f93-41b7-9d16-b2a355125b8e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: object_get, object_put, object_delete, object_list, pubsub_publish, pubsub_pull, run_invoke, functions_call, compute_get, gke_get, secretmanager_get, iam_get, listen. listen is BPMN ingress, not a socket.",
+      "value": "object_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "object_get",
+        "object_put",
+        "object_delete",
+        "object_list",
+        "pubsub_publish",
+        "pubsub_pull",
+        "run_invoke",
+        "functions_call",
+        "compute_get",
+        "gke_get",
+        "secretmanager_get",
+        "iam_get",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "bf0491f5-e0d5-49cf-9f64-034ce1d7d682",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "OAuth access token (or minted SA token). SA JSON stays in the secret manager; OfficialApiNode cannot mint JWT — bind a short-lived access token.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "98abf928-8ad0-41f4-89cb-d6f1d9f05773",
+      "shortCode": "projectId",
+      "label": "Projectid",
+      "type": "string",
+      "description": "GCP project id.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7c3a6fdf-ade8-427b-8114-677be857fedf",
+      "shortCode": "location",
+      "label": "location",
+      "type": "string",
+      "description": "Default Cloud Functions / GKE location when INPUT location is empty. Example: us-central1.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2149ad2f-a828-414c-8118-0ce9c4c5e4e8",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a8924052-e66a-4047-9d25-85ae65dcc1e7",
+      "shortCode": "content",
+      "label": "Content",
+      "type": "file",
+      "description": "Object bytes for object_put (alias of file) and optional raw body. Platform file block {mime_type, source, data, name}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "0b19a311-7239-4b15-832a-e6d528b8e8ad",
+      "shortCode": "url",
+      "label": "Url",
+      "type": "string",
+      "description": "Cloud Run service URL for run_invoke (alias of service_host). Example: https://my-service-xxxx.run.app.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "b7c02df6-4e54-4ff2-b549-639f8cb40758",
+      "shortCode": "resource",
+      "label": "Resource",
+      "type": "string",
+      "description": "IAM resource name or service account email for iam_get (path). Example: my-sa@project.iam.gserviceaccount.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

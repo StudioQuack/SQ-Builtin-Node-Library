@@ -1,0 +1,254 @@
+{
+  "_id": "057c725b-0ea8-5c6b-a2fc-9d84945c76a4",
+  "version": "1.0.0",
+  "name": "FRED",
+  "label": "FRED",
+  "description": "FRED official API via OfficialApiNode (api_spec.json). Operations: series_search, series_get, series_observations, category_get, release_get. Docs: https://fred.stlouisfed.org/docs/api/fred/. St. Louis Fed FRED API. Free key. Attribution to FRED / source agency. file_type=json baked into paths. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "chart",
+  "tags": [
+    "stats",
+    "finance",
+    "fred"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "510efaca-f125-5244-a2c9-8cafa9dc9845",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One FRED request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"series_search\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: series_search | series_get | series_observations | category_get | release_get. Default: first listed or instance operation. Example: 'series_search'.",
+          "children": [],
+          "_id": "53d10cbb-5a41-57bf-949e-652ee29ffc4c"
+        },
+        {
+          "shortCode": "category_id",
+          "label": "category_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `category_id` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "3bfc4ae8-3668-5a5a-ae60-680099033d94"
+        },
+        {
+          "shortCode": "frequency",
+          "label": "frequency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `frequency` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "3718dac4-a809-5a48-a07b-7ab387af49e8"
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "series_search page size (FRED max 1000). Official limit.",
+          "children": [],
+          "_id": "39b530d0-463b-56a2-84ba-caacaf547bac"
+        },
+        {
+          "shortCode": "observation_end",
+          "label": "observation_end",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `observation_end` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "0c7e2e6b-baad-5f47-a464-ba8b104bcda8"
+        },
+        {
+          "shortCode": "observation_start",
+          "label": "observation_start",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `observation_start` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "dd3c631d-d483-5e43-8ccd-cfe11338f212"
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "series_search offset. Official offset.",
+          "children": [],
+          "_id": "70cf99d5-ce7a-5823-9765-f141217ef149"
+        },
+        {
+          "shortCode": "release_id",
+          "label": "release_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `release_id` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "d343e2cd-d541-5578-89cf-caab71f4fe92"
+        },
+        {
+          "shortCode": "search_text",
+          "label": "search_text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `search_text` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "645cf202-30ae-5ec1-85d1-33dad59d9cea"
+        },
+        {
+          "shortCode": "series_id",
+          "label": "series_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `series_id` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "94345552-ef5a-58fe-b8b7-df5c77d12081"
+        },
+        {
+          "shortCode": "units",
+          "label": "units",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `units` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "bdccbbc0-cd48-5ae0-aee8-0832f34c439b"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5305f00d-e928-50c8-a22d-c2392d856b10",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "d1c57a6b-bbb4-50d4-8df7-1cadce538423"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "7cc60d82-eaba-5a68-a962-fc3c691c5a21"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "6a504679-31c0-5fc5-aab2-59af2269d717"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "21832c2d-c038-5fbb-8169-db100182ea55",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: series_search, series_get, series_observations, category_get, release_get.",
+      "value": "series_search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "series_search",
+        "series_get",
+        "series_observations",
+        "category_get",
+        "release_get"
+      ]
+    },
+    {
+      "_id": "76956bc3-dd0a-52af-bd27-3d3beb71746d",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "FRED API key: exactly 32 lowercase letters and digits (register at fred.stlouisfed.org). Query auth only; bind a secret here, never on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "adcebfa8-9a9d-531a-9704-0d4e0da05602",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,89 @@
+{
+  "baseUrl": "https://mandrillapp.com/api/1.0",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "none",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "send-html": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/messages/send.json",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "message",
+        "key",
+        "async",
+        "from_email",
+        "from_name",
+        "to",
+        "subject",
+        "html",
+        "text",
+        "cc",
+        "bcc",
+        "reply_to",
+        "attachments"
+      ],
+      "bodyMap": {
+        "from_email": "message.from_email",
+        "from_name": "message.from_name",
+        "to": "message.to",
+        "subject": "message.subject",
+        "html": "message.html",
+        "text": "message.text",
+        "cc": "message.cc",
+        "bcc": "message.bcc",
+        "reply_to": "message.headers.Reply-To",
+        "attachments": "message.attachments"
+      }
+    },
+    "send-template": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/messages/send-template.json",
+      "contentType": "application/json",
+      "required": [
+        "template_name"
+      ],
+      "bodyFrom": [
+        "key",
+        "template_name",
+        "template_content",
+        "message",
+        "from_email",
+        "from_name",
+        "to",
+        "subject",
+        "html",
+        "text",
+        "cc",
+        "bcc",
+        "reply_to",
+        "attachments"
+      ],
+      "bodyMap": {
+        "from_email": "message.from_email",
+        "from_name": "message.from_name",
+        "to": "message.to",
+        "subject": "message.subject",
+        "html": "message.html",
+        "text": "message.text",
+        "cc": "message.cc",
+        "bcc": "message.bcc",
+        "reply_to": "message.headers.Reply-To",
+        "attachments": "message.attachments"
+      },
+      "bodyDefaults": {
+        "template_content": []
+      }
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

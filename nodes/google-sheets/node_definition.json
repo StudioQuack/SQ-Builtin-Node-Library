@@ -1,0 +1,459 @@
+{
+  "_id": "8a614338-622c-4b2e-b00b-87cf4fa53fa7",
+  "version": "1.0.0",
+  "name": "Google Sheets",
+  "label": "Google Sheets API v4 - Read/Write Spreadsheets",
+  "description": "Read and write Google Sheets via Sheets API v4 using a Google Cloud service-account JWT (RS256 bearer grant; no end-user OAuth). Supports single-range read, batch read, write (overwrite), append rows, clear ranges, and spreadsheet metadata. Auth is the service_account_json key file (PKCS8 private_key + client_email). Official quota is 300 read and 300 write requests/minute per project, plus 60 read and 60 write requests/minute per user per project (a service account counts as one user). Share the spreadsheet with the service account email (Viewer for read/get_metadata; Editor for write/append/clear). The OUTPUT port value is a map of the fields below on success.",
+  "icon": "table_chart",
+  "tags": [
+    "google",
+    "sheets",
+    "spreadsheet",
+    "oauth2"
+  ],
+  "category": "Productivity & Collaboration",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "75e7502e-d990-4509-a1f9-00e457faf050",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Sheets API v4 operation. Required object (delivered as inputVariables.input or currentNode.inputList targetPortValue=input). Choose action, then supply the fields that action needs: range (read/write/append/clear), ranges[] (batch_read), values[][] (write/append). Optional spreadsheet_id overrides the instance config. Optional value_input_option / insert_data_option apply only to write/append. Example: {\"action\":\"read\",\"range\":\"Sheet1!A1:D10\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "action",
+          "label": "action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which Sheets API v4 call to run. EXACT accepted values (case-sensitive): 'read' (default; GET /{spreadsheetId}/values/{range} with valueRenderOption=FORMATTED_VALUE and dateTimeRenderOption=FORMATTED_STRING), 'batch_read' (GET /{spreadsheetId}/values:batchGet with repeated ranges= query params), 'write' (PUT /{spreadsheetId}/values/{range} overwrite), 'append' (POST /{spreadsheetId}/values/{range}:append), 'clear' (POST /{spreadsheetId}/values/{range}:clear body {}), 'get_metadata' (GET /{spreadsheetId}?fields=spreadsheetId,properties.title,sheets.properties). Any other string raises INVALID_INPUT 'Unknown action: <value>. Use read, batch_read, write, append, clear, or get_metadata.'. Example: 'read'.",
+          "children": []
+        },
+        {
+          "shortCode": "spreadsheet_id",
+          "label": "spreadsheet_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Spreadsheet id for THIS invoke. Overrides configuration spreadsheet_id when non-blank. Purpose: identify the workbook. Extract the path segment from https://docs.google.com/spreadsheets/d/{THIS_PART}/edit. EXACT accepted values: a string of A-Z a-z 0-9 _ - only, length >= 20, not containing PLACEHOLDER / YOUR_ / EXAMPLE / TODO (case-insensitive). Typical length ~44. Blank/omitted falls back to config. Invalid values fail with 'Invalid spreadsheet_id: …'. Example: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'.",
+          "children": []
+        },
+        {
+          "shortCode": "range",
+          "label": "range",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "A1 notation range for read, write, append, and clear. Ignored by batch_read (use ranges) and get_metadata. Purpose: select cells. EXACT accepted values: Google A1 strings such as 'Sheet1!A1:D10', 'Sheet1!A:D', 'Keywords_Market!A2:D100', or a named range. The handler path-encodes the range (quote safe='') so Sheet1!A1:D10 becomes Sheet1%21A1%3AD10. Required for read/write/append/clear; missing read → \"range is required for read action (e.g., 'Sheet1!A1:D10').\". Example: 'Sheet1!A1:D10'.",
+          "children": []
+        },
+        {
+          "shortCode": "ranges",
+          "label": "ranges",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "List of A1 notation ranges for batch_read only. Purpose: fetch several ranges in one HTTP call. EXACT accepted values: a JSON array of strings (must be a list; a comma-separated string is rejected). Each element is one A1 range like range. Required for batch_read; missing/non-list/empty → 'ranges (list of A1 notation strings) is required for batch_read.'. Ignored for other actions. Example: ['Sheet1!A:D', 'Sheet2!A1:B20', 'Summary!A1'].",
+          "children": []
+        },
+        {
+          "shortCode": "values",
+          "label": "values",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "2D array of cell values for write and append. Purpose: the rows to store. EXACT accepted values: a JSON array of rows, each row a JSON array of cells (string, number, boolean, or empty). Empty list / omitted is treated as missing. Required together with range for write ('range and values (2D array) are required for write action.') and append (same wording with 'append'). Ignored for read/batch_read/clear/get_metadata. Example: [['Name','Score'],['Ada',98],['Bob',71]].",
+          "children": []
+        },
+        {
+          "shortCode": "value_input_option",
+          "label": "value_input_option",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "How Google interprets write/append cell input (Sheets valueInputOption). EXACT accepted values: 'USER_ENTERED' (default; formulas like =SUM(A1:A2), dates, and numbers are parsed as if typed in the UI) or 'RAW' (store the literal string/number with no parsing). Blank/omitted → USER_ENTERED. Ignored for read/batch_read/clear/get_metadata. Other strings are forwarded to the API and typically yield HTTP 400. Example: 'USER_ENTERED'.",
+          "children": []
+        },
+        {
+          "shortCode": "insert_data_option",
+          "label": "insert_data_option",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Where append places new rows (Sheets insertDataOption). EXACT accepted values: 'INSERT_ROWS' (default; insert new rows for the data) or 'OVERWRITE' (write into the existing grid starting at the range, overwriting cells). Blank/omitted → INSERT_ROWS. Used only for action='append'. Other strings are forwarded to the API and typically yield HTTP 400. Example: 'INSERT_ROWS'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ea87a956-f5b7-4a3a-a54f-6499a6812d4f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Operation result map. Success objects always include status='ok' plus action-specific fields below. Secrets (private_key, JWT, access_token, raw key JSON) are redacted to ***. Example success: {\"status\":\"ok\",\"read_range\":\"Sheet1!A1:D10\",\"major_dimension\":\"ROWS\",\"cell_data\":[[\"A\"]],\"rows_returned\":1}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Present on success. EXACT accepted value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "read_range",
+          "label": "Read Range",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "A1 range Google actually returned for action='read' (may expand Sheet1!A:D to Sheet1!A1:D100). Purpose: confirm which cells were read. Example: 'Sheet1!A1:D10'. Absent for other actions.",
+          "children": []
+        },
+        {
+          "shortCode": "major_dimension",
+          "label": "Major Dimension",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Orientation of cell_data for action='read'. EXACT values from the API: 'ROWS' (default when omitted) or 'COLUMNS'. This node always requests majorDimension ROWS on write/append. Example: 'ROWS'.",
+          "children": []
+        },
+        {
+          "shortCode": "cell_data",
+          "label": "Cell Data",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "2D array of formatted cell values for action='read' (valueRenderOption=FORMATTED_VALUE, dates as FORMATTED_STRING). Empty array [] when the range has no values. Each inner array is one row. Example: [['Name','Score'],['Ada','98']]. Absent for other actions.",
+          "children": []
+        },
+        {
+          "shortCode": "rows_returned",
+          "label": "Rows Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Count of rows in cell_data for action='read' (len(values), integer >= 0). Example: 12. Absent for other actions (batch_read uses per-range rows_returned inside value_ranges).",
+          "children": []
+        },
+        {
+          "shortCode": "ranges_returned",
+          "label": "Ranges Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Number of entries in value_ranges for action='batch_read' (integer >= 0). Example: 2. Absent for other actions.",
+          "children": []
+        },
+        {
+          "shortCode": "value_ranges",
+          "label": "Value Ranges",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Array of per-range objects for action='batch_read'. Each object: range (string A1), values (2D array, [] if empty), rows_returned (number). Example: [{\"range\":\"Sheet1!A1:B2\",\"values\":[[\"a\",\"b\"]],\"rows_returned\":1}]. Absent for other actions.",
+          "children": []
+        },
+        {
+          "shortCode": "updated_range",
+          "label": "Updated Range",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "A1 range Google reports as written for action='write' (updatedRange) or action='append' (updates.updatedRange). Empty string if the API omitted it. Example: 'Sheet1!A1:B3'. Absent for read/clear/get_metadata.",
+          "children": []
+        },
+        {
+          "shortCode": "updated_rows",
+          "label": "Updated Rows",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Row count reported updated for action='write' (updatedRows) or action='append' (updates.updatedRows). Default 0 when omitted. Example: 3.",
+          "children": []
+        },
+        {
+          "shortCode": "updated_columns",
+          "label": "Updated Columns",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Column count reported updated for action='write' only (updatedColumns). Default 0 when omitted. Absent for append (python does not surface it). Example: 4.",
+          "children": []
+        },
+        {
+          "shortCode": "updated_cells",
+          "label": "Updated Cells",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Cell count reported updated for action='write' (updatedCells) or action='append' (updates.updatedCells). Default 0 when omitted. Example: 12.",
+          "children": []
+        },
+        {
+          "shortCode": "cleared_range",
+          "label": "Cleared Range",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "A1 range Google reports as cleared for action='clear' (clearedRange, falling back to the requested range). Example: 'Sheet1!A1:D10'. Absent for other actions.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "Title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Workbook title for action='get_metadata' (properties.title). Empty string when omitted. Example: 'Q3 Market Keywords'. Absent for other actions.",
+          "children": []
+        },
+        {
+          "shortCode": "sheets_count",
+          "label": "Sheets Count",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Number of worksheets in the workbook for action='get_metadata' (len(sheets)). Integer >= 0. Example: 3.",
+          "children": []
+        },
+        {
+          "shortCode": "sheets",
+          "label": "Sheets",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Worksheet list for action='get_metadata'. Each object: sheet_id (number, Sheets sheetId), title (string), index (number, 0-based tab order), row_count (number from gridProperties.rowCount), column_count (number from gridProperties.columnCount). Example: [{\"sheet_id\":0,\"title\":\"Sheet1\",\"index\":0,\"row_count\":1000,\"column_count\":26}].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "df3cd95c-3e61-46a9-a462-d3e5f41d7f8d",
+      "shortCode": "service_account_json",
+      "label": "Service Account JSON",
+      "type": "password",
+      "description": "Google Cloud service-account key (Required). Purpose: mint a per-request OAuth access token via JWT RS256 (iss=client_email, scope=https://www.googleapis.com/auth/spreadsheets, aud=https://oauth2.googleapis.com/token). EXACT accepted values: the full downloaded key JSON as a string, or that object already parsed. Required fields used by the handler: client_email, private_key (PEM PKCS8, -----BEGIN PRIVATE KEY-----). Other usual fields (type=service_account, project_id, private_key_id, client_id, token_uri, auth_uri, auth_provider_x509_cert_url, client_x509_cert_url, universe_domain) are accepted and ignored except as documentation. Setup: console.cloud.google.com → create/select project → enable Google Sheets API → IAM → Service accounts → Keys → Add JSON key. Then share the sheet with client_email. Never log this value. Example (truncated): {\"type\":\"service_account\",\"project_id\":\"my-proj\",\"private_key\":\"-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----\\n\",\"client_email\":\"sheets@my-proj.iam.gserviceaccount.com\",\"token_uri\":\"https://oauth2.googleapis.com/token\"}.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0fd1d383-0fdd-45d7-a214-47d35af57658",
+      "shortCode": "spreadsheet_id",
+      "label": "Default Spreadsheet ID",
+      "type": "string",
+      "description": "Default workbook id when input.spreadsheet_id is blank. Purpose: pin an instance to one spreadsheet. EXACT accepted values: same rules as input.spreadsheet_id (A-Z a-z 0-9 _ -, length >= 20, no PLACEHOLDER/YOUR_/EXAMPLE/TODO). Optional. Get it from docs.google.com/spreadsheets/d/{THIS_PART}/edit. Input overrides this per request. Example: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "37dbc0c7-bb2f-4278-b50a-140470121685",
+      "shortCode": "action",
+      "label": "Action",
+      "type": "select",
+      "description": "Sheets call. EXACT: read, batch_read, write, append, clear, get_metadata.",
+      "value": "read",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "read",
+        "batch_read",
+        "write",
+        "append",
+        "clear",
+        "get_metadata"
+      ],
+      "filterRules": [
+        {
+          "when": "read",
+          "targets": [
+            {
+              "param": "range",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "batch_read",
+          "targets": [
+            {
+              "param": "ranges",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "write",
+          "targets": [
+            {
+              "param": "range",
+              "visible": true
+            },
+            {
+              "param": "values",
+              "visible": true
+            },
+            {
+              "param": "value_input_option",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "append",
+          "targets": [
+            {
+              "param": "range",
+              "visible": true
+            },
+            {
+              "param": "values",
+              "visible": true
+            },
+            {
+              "param": "value_input_option",
+              "visible": true
+            },
+            {
+              "param": "insert_data_option",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "clear",
+          "targets": [
+            {
+              "param": "range",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "c9d8cbe9-f093-48fd-91e0-838f204be4d9",
+      "shortCode": "range",
+      "label": "Range",
+      "type": "string",
+      "description": "A1 range for read, write, append, and clear. Example: Sheet1!A1:D10. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "14757469-6586-491f-a9bd-463cffe61cf5",
+      "shortCode": "ranges",
+      "label": "Ranges",
+      "type": "list",
+      "description": "JSON array of A1 ranges for batch_read. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ab688935-9171-4a8a-80c0-6484cf8525ae",
+      "shortCode": "values",
+      "label": "Values",
+      "type": "list",
+      "description": "2D JSON array for write and append. Example: [[\"Name\",\"Score\"],[\"Ada\",98]]. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9e412a3f-6128-4471-8cf2-6d578b57200c",
+      "shortCode": "value_input_option",
+      "label": "Value input option",
+      "type": "string",
+      "description": "write/append. USER_ENTERED or RAW. Empty uses USER_ENTERED.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9424c1de-1e85-4e0c-adc2-f2eb6d7d5658",
+      "shortCode": "insert_data_option",
+      "label": "Insert data option",
+      "type": "string",
+      "description": "append only. INSERT_ROWS or OVERWRITE. Empty uses INSERT_ROWS.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "22814241-f80a-476a-8dc3-f1b5903e6f21",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-HTTP connect+read timeout for the token POST and every Sheets call. Purpose: bound hung Google APIs. EXACT accepted values: positive integers. Missing, blank, 0, or negative fall back to 25. Does not cache tokens — each invoke also spends this budget on oauth2.googleapis.com/token. Example: 25. Keep at or below the sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,231 @@
+{
+  "_id": "d3d970ba-96a5-4ef3-88c4-795dc4fe94eb",
+  "version": "1.0.0",
+  "name": "Luma",
+  "label": "Luma",
+  "description": "Official Luma Dream Machine API at https://api.lumalabs.ai/dream-machine/v1. generate_video = POST /generations (returns generation id). Poll get_generation = GET /generations/{id} until state completed/failed. Handler: OfficialApiNode. Auth is StudioQuack secret api_key as Authorization Bearer. Image keyframes use HTTPS URLs (type file must be published to a URL Luma can fetch). Docs: https://docs.lumalabs.ai/docs/video-generation. Terms: https://lumalabs.ai/legal/tos. Never log api_key. Video URL is on assets.video when completed.",
+  "icon": "theaters",
+  "tags": [
+    "luma",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "60643da7-9b72-4bce-a86b-2ae7b924cd3a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "generate_video requires prompt. Optional model, resolution, duration, aspect_ratio, loop, keyframes, concepts. Image-to-video: keyframes.frame0 = {type:\"image\", url:\"https://...\"}. get_generation requires id. Do not put api_key here. Example: {\"prompt\":\"an old lady laughing underwater\",\"model\":\"ray-2\",\"resolution\":\"720p\",\"duration\":\"5s\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Text prompt for generate_video. Official prompt. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "keyframes",
+          "label": "keyframes",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official keyframes {frame0:{type,url}, frame1:{type,url}} for image-to-video.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Generation id path for get_generation.",
+          "children": []
+        },
+        {
+          "shortCode": "resolution",
+          "label": "resolution",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official resolution. Typical: 720p | 1080p.",
+          "children": []
+        },
+        {
+          "shortCode": "duration",
+          "label": "duration",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official duration. Typical: 5s | 9s.",
+          "children": []
+        },
+        {
+          "shortCode": "aspect_ratio",
+          "label": "aspect_ratio",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official aspect_ratio. Typical: 16:9 | 9:16 | 1:1.",
+          "children": []
+        },
+        {
+          "shortCode": "loop",
+          "label": "loop",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Official loop.",
+          "children": []
+        },
+        {
+          "shortCode": "concepts",
+          "label": "concepts",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Official concepts [{key}].",
+          "children": []
+        },
+        {
+          "shortCode": "callback_url",
+          "label": "callback_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official callback_url webhook for generate_video.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "2b1fbb21-27fe-4949-abfe-8f0e2f1fc5a7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Create returns id + state (often dreaming). get_generation returns assets.video when completed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx (generation may still be dreaming).",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code. Create is often 201.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (id, state, assets.video, failure_reason).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "d626256f-2edc-4725-8e24-22f31085815e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "EXACT: generate_video | get_generation. Default generate_video = POST /generations. Poll get_generation; do not treat create as the finished video.",
+      "value": "generate_video",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "generate_video",
+        "get_generation"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "add5966e-d50e-4ca5-b95a-d670d56362f4",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Luma API key from https://platform.lumalabs.ai/. Sent as Authorization: Bearer. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9648fd11-5773-4ca3-a039-9c36e3e6a0f5",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Default model id. Official docs list ray-2 and ray-flash-2. Put model on INPUT so it is sent in the JSON body.",
+      "value": "ray-2",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d33c40e0-8bbd-4274-b0f6-bdeeea373db5",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-HTTP-call timeout. Default 60. Floor 1. Poll get_generation for completion.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

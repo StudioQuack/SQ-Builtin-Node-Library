@@ -1,0 +1,54 @@
+{
+  "baseUrl": "https://api.anthropic.com",
+  "defaultTimeout": 300,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "x-api-key",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "chat": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/messages",
+      "required": ["messages"],
+      "bodyFrom": ["model", "max_tokens", "messages", "system", "temperature", "top_p", "top_k", "stop_sequences", "tools", "tool_choice", "stream", "thinking"],
+      "stream": {
+        "format": "anthropic-sse",
+        "extraHeaders": {
+          "anthropic-version": "2023-06-01"
+        }
+      }
+    },
+    "files_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/files",
+      "queryFrom": ["limit", "page"],
+      "required": []
+    },
+    "files_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/files/{file_id}",
+      "required": ["file_id"]
+    },
+    "files_delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/v1/files/{file_id}",
+      "required": ["file_id"]
+    },
+    "files_upload": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/files",
+      "required": ["file"],
+      "bodyFrom": ["file", "filename"],
+      "contentType": "multipart/form-data",
+      "bodyFormat": "multipart"
+    }
+  }
+}

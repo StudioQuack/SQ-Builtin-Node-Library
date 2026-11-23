@@ -1,0 +1,320 @@
+{
+  "_id": "bab3a1c1-151f-4a72-a8c7-bcf7e827f852",
+  "version": "1.0.0",
+  "name": "Vercel",
+  "label": "Vercel REST API",
+  "description": "Vercel REST API via OfficialApiNode. Docs: https://vercel.com/docs/rest-api. Operations: deploy_create, deploy_get, deploy_list, deploy_cancel, deploy_delete, project_get, project_create, env_set, domain_get, listen. Auth secret token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "vercel",
+    "deploy"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "9854fdad-5fb7-414c-9752-17388fdf5293",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "deploy_create",
+          "description": "Which official API call to run. EXACT values: deploy_create | deploy_get | deploy_list | deploy_cancel | deploy_delete | project_get | project_create | env_set | domain_get | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'deploy_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deployment id.",
+          "children": []
+        },
+        {
+          "shortCode": "idOrName",
+          "label": "idOrName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project id or name.",
+          "children": []
+        },
+        {
+          "shortCode": "domain",
+          "label": "domain",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Domain name.",
+          "children": []
+        },
+        {
+          "shortCode": "teamId",
+          "label": "teamId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Overrides config teamId.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project name for deploy_create (required) and project_create (required). Example: marketing-site.",
+          "children": []
+        },
+        {
+          "shortCode": "project",
+          "label": "project",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `project` for operation: deploy_create.",
+          "children": []
+        },
+        {
+          "shortCode": "gitSource",
+          "label": "gitSource",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Git source for deploy_create as a JSON object; use this or files. Example: {\"type\":\"github\",\"repoId\":\"123456\",\"ref\":\"main\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "files",
+          "label": "files",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Inline files for deploy_create when no gitSource is set: list of {file, data} (or {file, sha, size} for pre-uploaded files). Example: [{\"file\":\"index.html\",\"data\":\"<h1>Hi</h1>\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "projectId",
+          "label": "projectId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `projectId` for operation: deploy_list.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: deploy_list.",
+          "children": []
+        },
+        {
+          "shortCode": "framework",
+          "label": "framework",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `framework` for operation: project_create.",
+          "children": []
+        },
+        {
+          "shortCode": "key",
+          "label": "key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Environment variable name for env_set (required). Example: API_URL.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Environment variable value for env_set (required). Example: https://api.example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Environment variable type for env_set (required). EXACT: plain | encrypted | sensitive | system | secret. Example: encrypted.",
+          "children": []
+        },
+        {
+          "shortCode": "target",
+          "label": "target",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "deploy_create: production | staging. env_set: target environments as a JSON array string or list, e.g. [\"production\",\"preview\",\"development\"]. https://vercel.com/docs/rest-api/reference/endpoints/deployments/create-a-new-deployment",
+          "children": []
+        },
+        {
+          "shortCode": "regions",
+          "label": "regions",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional deploy_create region codes. Example: [\"iad1\"].",
+          "children": []
+        },
+        {
+          "shortCode": "gitBranch",
+          "label": "gitBranch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "env_set: preview-branch name when type is sensitive/encrypted and the var is branch-scoped. Example: feat-x.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "73f08bff-7ba6-421f-9340-d0cd6e288c1c",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "7f573b7a-26aa-483a-ae71-a534e03c5c44",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: deploy_create, deploy_get, deploy_list, deploy_cancel, deploy_delete, project_get, project_create, env_set, domain_get, listen. listen is BPMN ingress, not a socket.",
+      "value": "deploy_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "deploy_create",
+        "deploy_get",
+        "deploy_list",
+        "deploy_cancel",
+        "deploy_delete",
+        "project_get",
+        "project_create",
+        "env_set",
+        "domain_get",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "d8c22675-206b-45c2-9ccd-765d5f85a065",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "Vercel access token. Authorization: Bearer.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b8ffa54e-235d-46a4-a8d1-ce8ba7a710b4",
+      "shortCode": "teamId",
+      "label": "Teamid",
+      "type": "string",
+      "description": "Team id query on team-scoped calls.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d295078d-297d-4625-aada-700349423fa9",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

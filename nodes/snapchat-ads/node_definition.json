@@ -1,0 +1,445 @@
+{
+  "_id": "26cf9a3f-e670-4b12-8cc5-e2f9fb6f004c",
+  "version": "1.0.0",
+  "name": "Snapchat Ads",
+  "label": "Snap Marketing API v1 — campaigns, ads, stats, conversions",
+  "description": "Official Snap Marketing API v1 at https://adsapi.snapchat.com/v1 plus CAPI v3 at https://tr.snapchat.com. Docs: https://developers.snap.com/marketing-api/home · https://developers.snap.com/marketing-api/Conversions-API/Parameters. Create ops take official campaigns/adsquads/ads/creatives arrays. conversion.upload takes data[] + test_event_code. Bearer access_token (CAPI also accepts query access_token). Never log tokens or user_data.",
+  "icon": "ads_click",
+  "tags": [
+    "ads"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b7231197-9bf0-42f6-8246-1093ada1fb89",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets (access_token) here. Example: {\"operation\":\"campaign.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "organization.list",
+          "description": "Overrides config operation when non-blank. EXACT: 'organization.list' | 'campaign.create' | 'campaign.list' | 'adsquad.create' | 'adsquad.list' | 'ad.create' | 'ad.list' | 'creative.create' | 'stats.get' | 'conversion.upload'.",
+          "children": []
+        },
+        {
+          "shortCode": "ad_account_id",
+          "label": "ad_account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Ad account UUID. Required for campaign/adsquad/ad/creative ops unless set in config.",
+          "children": []
+        },
+        {
+          "shortCode": "campaigns",
+          "label": "campaigns",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "One campaign object escape hatch merged into campaigns[0]. Named purpose fields win.",
+          "children": []
+        },
+        {
+          "shortCode": "adsquads",
+          "label": "adsquads",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "One adsquad object escape hatch merged into adsquads[0]. Named purpose fields win.",
+          "children": []
+        },
+        {
+          "shortCode": "ads",
+          "label": "ads",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "One ad object escape hatch merged into ads[0]. Named purpose fields win.",
+          "children": []
+        },
+        {
+          "shortCode": "creatives",
+          "label": "creatives",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "One creative object escape hatch merged into creatives[0]. Named purpose fields win.",
+          "children": []
+        },
+        {
+          "shortCode": "entity_type",
+          "label": "entity_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "stats.get path entity. EXACT: ads | adsquads | campaigns | adaccounts.",
+          "children": []
+        },
+        {
+          "shortCode": "entity_id",
+          "label": "entity_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "stats.get entity UUID.",
+          "children": []
+        },
+        {
+          "shortCode": "granularity",
+          "label": "granularity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "stats.get TOTAL | DAY | HOUR | LIFETIME as documented.",
+          "children": []
+        },
+        {
+          "shortCode": "start_time",
+          "label": "start_time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "campaign.create start_time ISO-8601. Wired to campaigns[0].start_time. Also stats.get query.",
+          "children": []
+        },
+        {
+          "shortCode": "end_time",
+          "label": "end_time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "stats.get ISO-8601 end.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "stats.get comma-separated metrics.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page size (cursor pagination).",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List cursor from the previous page.",
+          "children": []
+        },
+        {
+          "shortCode": "with_ad_accounts",
+          "label": "with_ad_accounts",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "organization.list query with_ad_accounts=true to include ad accounts.",
+          "children": []
+        },
+        {
+          "shortCode": "pixel_id",
+          "label": "pixel_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CAPI v3 asset/pixel id for conversion.upload path /v3/{pixel_id}/events. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "CAPI v3 events array for conversion.upload (required). Each event: event_name (PURCHASE|PAGE_VIEW|…), event_time (epoch sec/ms), action_source (WEB|OFFLINE|MOBILE_APP), event_source_url, event_id, user_data (hashed em/ph, client_ip_address, client_user_agent), custom_data (currency, value). Hash identifiers; do not log. Example: [{\"event_name\":\"PURCHASE\",\"event_time\":1705508777,\"action_source\":\"WEB\",\"user_data\":{\"em\":[\"<sha256>\"]}}].",
+          "children": []
+        },
+        {
+          "shortCode": "test_event_code",
+          "label": "test_event_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Top-level CAPI v3 test_event_code for conversion.upload. Any string, e.g. datahash. Omit for production.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Create-op name. campaign.create → campaigns[0].name; adsquad.create → adsquads[0].name; ad.create → ads[0].name; creative.create → creatives[0].name.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Create-op status. EXACT ACTIVE | PAUSED. Wired to campaigns[0]/adsquads[0]/ads[0].status.",
+          "children": []
+        },
+        {
+          "shortCode": "objective",
+          "label": "objective",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "campaign.create objective. Wired to campaigns[0].objective. EXACT AWARENESS | CONSIDERATION | CONVERSIONS | SALES.",
+          "children": []
+        },
+        {
+          "shortCode": "daily_budget_micro",
+          "label": "daily_budget_micro",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "campaign.create / adsquad.create daily_budget_micro (micro-currency).",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "adsquad.create campaign_id. Wired to adsquads[0].campaign_id.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "adsquad/ad/creative type. adsquads[0].type / ads[0].type / creatives[0].type (SNAP_AD | APP_INSTALL | …).",
+          "children": []
+        },
+        {
+          "shortCode": "bid_micro",
+          "label": "bid_micro",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "adsquad.create bid_micro. Wired to adsquads[0].bid_micro.",
+          "children": []
+        },
+        {
+          "shortCode": "ad_squad_id",
+          "label": "ad_squad_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ad.create ad_squad_id. Wired to ads[0].ad_squad_id.",
+          "children": []
+        },
+        {
+          "shortCode": "creative_id",
+          "label": "creative_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ad.create creative_id. Wired to ads[0].creative_id.",
+          "children": []
+        },
+        {
+          "shortCode": "brand_name",
+          "label": "brand_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "creative.create brand_name. Wired to creatives[0].brand_name.",
+          "children": []
+        },
+        {
+          "shortCode": "headline",
+          "label": "headline",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "creative.create headline. Wired to creatives[0].headline.",
+          "children": []
+        },
+        {
+          "shortCode": "call_to_action",
+          "label": "call_to_action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "creative.create call_to_action. Wired to creatives[0].call_to_action.",
+          "children": []
+        },
+        {
+          "shortCode": "top_snap_media_id",
+          "label": "top_snap_media_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "creative.create top_snap_media_id. Wired to creatives[0].top_snap_media_id.",
+          "children": []
+        },
+        {
+          "shortCode": "shareable",
+          "label": "shareable",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "creative.create shareable. Wired to creatives[0].shareable.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "2f2c5dc2-40c2-4ec1-a886-d92d67abbc5f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. PII may be present — do not log bodies.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a305386c-6827-4900-ab1b-7c38cb1f8784",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: organization.list | campaign.create | campaign.list | adsquad.create | adsquad.list | ad.create | ad.list | creative.create | stats.get | conversion.upload.",
+      "value": "campaign.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "organization.list",
+        "campaign.create",
+        "campaign.list",
+        "adsquad.create",
+        "adsquad.list",
+        "ad.create",
+        "ad.list",
+        "creative.create",
+        "stats.get",
+        "conversion.upload"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "61634d11-b5f1-4d8b-8438-a911c231a82d",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Snap OAuth access token (StudioQuack secret). Sent as Authorization: Bearer. Refresh outside this node (~60 minutes). Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4824a770-d0dd-48af-8cf2-31db14f18672",
+      "shortCode": "ad_account_id",
+      "label": "Ad account id",
+      "type": "string",
+      "description": "Default ad account UUID for campaign/adsquad/ad/creative paths when input.ad_account_id is blank.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ffc33b78-d427-4351-8ed1-51e42a252267",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 uses api_spec default. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

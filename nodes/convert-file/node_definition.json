@@ -1,0 +1,251 @@
+{
+  "_id": "a40a264c-c9ae-45d2-b591-665576cbd588",
+  "version": "1.0.0",
+  "name": "Convert File",
+  "label": "Spreadsheet / CSV / JSON / ICS conversion",
+  "description": "Converts a platform file ref to CSV, XLSX, ODS, JSON, HTML, RTF, text, or ICS. RFC 4180 CSV, RFC 5545 iCalendar, ECMA-376 XLSX and ODF ODS via JDK zip+XML. Legacy OLE2 XLS is omitted (cannot be produced without a library). Input and output are type file. No Office-site scrape. Size and row caps apply.",
+  "icon": "",
+  "tags": [
+    "csv",
+    "xlsx",
+    "json",
+    "ics"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "19d408a6-1cd3-4d60-b599-20932921a83c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Convert File operation. INPUT operation overrides config. file is required (platform file ref). sheet selects a workbook sheet by name or 0-based index. file_name, header_row, encoding override the same-named config. Example: operation=to_csv with a CSV or XLSX file.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Overrides config operation when non-blank. EXACT: to_csv | to_xlsx | to_ods | to_json | to_html | to_rtf | to_text | to_ics. Required on this port when config operation is blank. to_xls is not accepted.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": true,
+          "value": "",
+          "description": "Source file ref. Required for every operation. Type file (sandbox path, ContentBlock, or $fileRef). Never inline bytes on the wire.",
+          "children": []
+        },
+        {
+          "shortCode": "sheet",
+          "label": "sheet",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Worksheet name or 0-based index. Used when the source is XLSX/ODS. Falls back to config sheet, then the first sheet.",
+          "children": []
+        },
+        {
+          "shortCode": "file_name",
+          "label": "file_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Output file name (not a file ref). Falls back to config file_name, then a name derived from the sheet / 'converted' plus the target extension.",
+          "children": []
+        },
+        {
+          "shortCode": "header_row",
+          "label": "header_row",
+          "type": "boolean",
+          "required": false,
+          "value": "true",
+          "description": "First row is a header. Default true. Used by to_json (objects vs arrays), to_html (thead), to_ics (column names). Override for config header_row.",
+          "children": []
+        },
+        {
+          "shortCode": "encoding",
+          "label": "encoding",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Text charset for CSV/JSON/HTML/RTF/text/ICS read+write. Default UTF-8. Unknown names raise INVALID_INPUT.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5ae8438d-631d-4bcf-be33-f639ecbf016a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (status/data) plus file (type file ContentBlock) and outputFiles. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Result file ref when the operation produces a file. Type file (platform ref-id). Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "706ed619-8b4f-4146-b397-2ed08d6e8bc8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Target format. EXACT accepted values: to_csv | to_xlsx | to_ods | to_json | to_html | to_rtf | to_text | to_ics. Required. Legacy to_xls is omitted. Example: 'to_csv'.",
+      "value": "to_csv",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "to_csv",
+        "to_xlsx",
+        "to_ods",
+        "to_json",
+        "to_html",
+        "to_rtf",
+        "to_text",
+        "to_ics"
+      ]
+    },
+    {
+      "_id": "2fa91098-ee8d-4af1-bca4-f1f59494649c",
+      "shortCode": "file_name",
+      "label": "File Name",
+      "type": "string",
+      "description": "Output file name string (not a file ref). Overridable from INPUT file_name.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6028385e-53e3-4a6e-afcb-3329ad83e916",
+      "shortCode": "sheet",
+      "label": "Sheet",
+      "type": "string",
+      "description": "Worksheet name or 0-based index for XLSX/ODS sources. Overridable from INPUT sheet.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c869c83b-cf59-4212-bce8-781065f5850f",
+      "shortCode": "header_row",
+      "label": "Header Row",
+      "type": "select",
+      "description": "First row is header. Default true. Overridable from INPUT header_row.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "d131c501-6143-42d4-83fd-bab042d44124",
+      "shortCode": "encoding",
+      "label": "Encoding",
+      "type": "string",
+      "description": "Text encoding for text formats. Default UTF-8. Overridable from INPUT encoding.",
+      "value": "UTF-8",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f1b99abd-64c2-4822-aa49-3afe9a59b78c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Run budget in seconds. Positive integer. Blank/0/negative → 25. In-process conversion; keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

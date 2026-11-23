@@ -1,0 +1,101 @@
+{
+  "baseUrl": "https://graph.facebook.com/v26.0",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "send-message": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{phone_number_id}/messages",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "messaging_product",
+        "to",
+        "type",
+        "text",
+        "image",
+        "audio",
+        "document",
+        "video",
+        "location",
+        "interactive"
+      ],
+      "bodyDefaults": {
+        "messaging_product": "whatsapp"
+      }
+    },
+    "send-template": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{phone_number_id}/messages",
+      "contentType": "application/json",
+      "required": [
+        "to"
+      ],
+      "bodyFrom": [
+        "messaging_product",
+        "to",
+        "type",
+        "template",
+        "template_name",
+        "language"
+      ],
+      "bodyMap": {
+        "template_name": "template.name",
+        "language": "template.language.code"
+      },
+      "bodyDefaults": {
+        "messaging_product": "whatsapp",
+        "type": "template"
+      }
+    },
+    "upload-media": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{phone_number_id}/media",
+      "contentType": "multipart/form-data",
+      "bodyFrom": [
+        "messaging_product",
+        "type",
+        "file"
+      ],
+      "bodyFormat": "multipart",
+      "bodyDefaults": {
+        "messaging_product": "whatsapp"
+      }
+    },
+    "download-media": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{media_id}",
+      "contentType": "application/json",
+      "required": [
+        "media_id"
+      ]
+    },
+    "delete-media": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/{media_id}",
+      "contentType": "application/json",
+      "required": [
+        "media_id"
+      ],
+      "queryFrom": [
+        "phone_number_id"
+      ]
+    },
+    "send-and-wait": {
+      "kind": "ingress"
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

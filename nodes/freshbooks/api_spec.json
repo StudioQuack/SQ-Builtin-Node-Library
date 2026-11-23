@@ -1,0 +1,119 @@
+{
+  "baseUrl": "https://api.freshbooks.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "client_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/accounting/account/{account_id}/users/clients",
+      "required": [
+        "account_id"
+      ],
+      "bodyFrom": [
+        "client",
+        "email",
+        "fname",
+        "lname",
+        "organization"
+      ],
+      "bodyMap": {
+        "email": "client.email",
+        "fname": "client.fname",
+        "lname": "client.lname",
+        "organization": "client.organization"
+      }
+    },
+    "invoice_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/accounting/account/{account_id}/invoices/invoices",
+      "required": [
+        "account_id"
+      ],
+      "bodyFrom": [
+        "invoice",
+        "customerid",
+        "create_date",
+        "currency_code",
+        "lines"
+      ],
+      "bodyMap": {
+        "customerid": "invoice.customerid",
+        "create_date": "invoice.create_date",
+        "currency_code": "invoice.currency_code",
+        "lines": "invoice.lines"
+      }
+    },
+    "invoice_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/accounting/account/{account_id}/invoices/invoices/{id}",
+      "required": [
+        "account_id",
+        "id"
+      ]
+    },
+    "invoice_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/accounting/account/{account_id}/invoices/invoices",
+      "required": [
+        "account_id"
+      ],
+      "queryFrom": [
+        "page",
+        "per_page"
+      ]
+    },
+    "payment_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/accounting/account/{account_id}/payments/payments",
+      "required": [
+        "account_id"
+      ],
+      "bodyFrom": [
+        "payment",
+        "invoiceid",
+        "amount",
+        "date",
+        "type"
+      ],
+      "bodyMap": {
+        "invoiceid": "payment.invoiceid",
+        "amount": "payment.amount",
+        "date": "payment.date",
+        "type": "payment.type"
+      }
+    },
+    "expense_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/accounting/account/{account_id}/expenses/expenses",
+      "required": [
+        "account_id"
+      ],
+      "bodyFrom": [
+        "expense",
+        "amount",
+        "categoryid",
+        "staffid",
+        "date"
+      ],
+      "bodyMap": {
+        "amount": "expense.amount",
+        "categoryid": "expense.categoryid",
+        "staffid": "expense.staffid",
+        "date": "expense.date"
+      }
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

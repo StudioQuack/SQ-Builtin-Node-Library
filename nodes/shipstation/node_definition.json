@@ -1,0 +1,247 @@
+{
+  "_id": "5030818c-d0c2-5727-8358-ad31f3bf68c8",
+  "version": "1.0.0",
+  "name": "ShipStation",
+  "label": "ShipStation API V2 — shipments and labels",
+  "description": "ShipStation API v2 at https://api.shipstation.com. Docs: https://docs.shipstation.com/shipments/create. shipment_create sends official shipments[] (V2 has no sales-order endpoints). label_create sends shipment or rate_id/shipment_id. Auth header API-Key. Handler: OfficialApiNode. Never log api_key.",
+  "icon": "local_shipping",
+  "tags": [
+    "shipstation",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "82eb6087-c29d-5377-81eb-b4d3e90e7dd5",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "order_list",
+          "description": "Official API verb. EXACT: order_list | shipment_create | label_create | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "order_list page (1-based).",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "order_list page size.",
+          "children": []
+        },
+        {
+          "shortCode": "shipments",
+          "label": "shipments",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Official shipments array for shipment_create (POST /v2/shipments). Each item requires ship_to, packages, and ship_from or warehouse_id. Optional: carrier_id, service_code, items, customs.",
+          "children": []
+        },
+        {
+          "shortCode": "shipment",
+          "label": "shipment",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Label shipment object for label_create (POST /v2/labels) when not using rate_id/shipment_id. Requires carrier_id, service_code, ship_to, ship_from, packages[].weight.",
+          "children": []
+        },
+        {
+          "shortCode": "rate_id",
+          "label": "rate_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Existing rate id for label_create from a quoted rate.",
+          "children": []
+        },
+        {
+          "shortCode": "shipment_id",
+          "label": "shipment_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Existing shipment id for label_create from a created shipment.",
+          "children": []
+        },
+        {
+          "shortCode": "validate_address",
+          "label": "validate_address",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Address validation on label_create. EXACT: no_validation | validate_only | validate_and_clean.",
+          "children": []
+        },
+        {
+          "shortCode": "label_format",
+          "label": "label_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "label_create format. pdf | png | zpl. Example: pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "label_layout",
+          "label": "label_layout",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "label_create layout. 4x6 | letter. Example: 4x6.",
+          "children": []
+        },
+        {
+          "shortCode": "shipment_status",
+          "label": "shipment_status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "order_list filter. pending | processing | label_purchased | cancelled.",
+          "children": []
+        },
+        {
+          "shortCode": "batch_id",
+          "label": "batch_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "order_list filter by batch id.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "21481503-fdef-54bd-a658-b770b1e6a619",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e2e99e59-94fa-56e0-8773-0d6f10c0f54c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: order_list | shipment_create | label_create | trigger. trigger does not open a socket.",
+      "value": "order_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "order_list",
+        "shipment_create",
+        "label_create",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "0a1e896b-2481-58f3-8711-41ae186a069c",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type header API-Key (docs.shipstation.com/authentication). Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "24be5bd3-9edd-5997-9300-1089ae600d8a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,170 @@
+{
+  "_id": "31c179eb-0047-52a6-b5d6-1c07349e61c5",
+  "version": "1.0.0",
+  "name": "Wikidata SPARQL",
+  "label": "Wikidata SPARQL",
+  "description": "Wikidata SPARQL official API via OfficialApiNode (api_spec.json). Operations: sparql_query. Docs: https://query.wikidata.org/. WDQS official SPARQL. Wikidata CC0. WMF UA policy — identifying UA required (WDQS UA exception ended 2026-02-18). 60s deadline. Heavy queries are killed. Scholarly split is query-scholarly.wikidata.org. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "database",
+  "tags": [
+    "knowledge",
+    "wikidata",
+    "sparql"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "8406c274-216f-5007-8e56-56b7348a6310",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Wikidata SPARQL request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"sparql_query\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: sparql_query. Default: first listed or instance operation. Example: 'sparql_query'.",
+          "children": [],
+          "_id": "fe04d197-c0dd-58ab-8578-5978bf4bd066"
+        },
+        {
+          "shortCode": "format",
+          "label": "format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `format` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "af938e75-13e9-5c69-8671-91b0fbd14196"
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `query` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "6b1b4355-07ef-5e05-8e5d-6ae8c056c96e"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "bf0cd088-ab21-5aba-894a-9c2280263b54",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "f44abd9c-07e5-54af-8bbf-da09603ce645"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "94b4828c-8736-5149-b824-8466d2d6652f"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "c63887aa-5264-5b8e-b2f4-67c58fbf4364"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6c323847-53c0-524e-bea3-88c00ca57940",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: sparql_query.",
+      "value": "sparql_query",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "sparql_query"
+      ]
+    },
+    {
+      "_id": "88cdb4c1-47f5-5bf0-bbb5-063cda8e2eb4",
+      "shortCode": "user_agent",
+      "label": "User Agent",
+      "type": "string",
+      "description": "Identifying User-Agent with contact. OfficialApiNode currently sends StudioQuack-NodeLibrary/1.0.",
+      "value": "StudioQuack-WDQS/1.0 (https://studioquack.com; legal@studioquack.com)",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e4fe3833-4061-56a5-b31d-bcba9ad87a8d",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60. Keep under the daemon sandbox request budget.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

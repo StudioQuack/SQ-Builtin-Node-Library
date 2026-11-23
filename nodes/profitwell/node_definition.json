@@ -1,0 +1,187 @@
+{
+  "_id": "0a24a436-df74-4f95-88df-d4fd33911f6e",
+  "version": "1.0.0",
+  "name": "ProfitWell",
+  "label": "ProfitWell — ProfitWell Metrics API v2",
+  "description": "Official ProfitWell Metrics API v2 (Paddle-owned). Docs: https://profitwellapiv2.docs.apiary.io/ — setup: https://www.paddle.com/help/profitwell-metrics/setup/get-started/profit-well-api. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. Trailing slashes required. Paddle Billing GET /metrics stays on the paddle node — do not fork. Auth is the raw private token (no Bearer).",
+  "icon": "account_balance",
+  "tags": [
+    "profitwell",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "de457afb-42ca-410b-a10c-05cd208dbc47",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for ProfitWell. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "metric_get",
+          "description": "Overrides config operation. EXACT: metric_get | plan_list | transaction_list. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "Body",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request payload object for create/update-style calls when an operation accepts a JSON body. Example: {\"email\":\"a@b.com\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "day",
+          "label": "day",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `day` for operation: metric_get.",
+          "children": []
+        },
+        {
+          "shortCode": "start_date",
+          "label": "start_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `start_date` for operation: transaction_list.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "d93b07c0-55de-4421-a7dc-9c98bbc9e7e9",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "46846b5a-3426-49cc-953f-243a16956af3",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: metric_get | plan_list | transaction_list. Default metric_get. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "metric_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "metric_get",
+        "plan_list",
+        "transaction_list"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "77d86256-71ca-4ba2-85fb-3e3c4d048ba6",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "ProfitWell credential (header Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "28521806-090e-4670-9350-f6eed7ac1edb",
+      "shortCode": "body",
+      "label": "Body",
+      "type": "object",
+      "description": "Request payload object for create/update-style calls when an operation accepts a JSON body. Example: {\"email\":\"a@b.com\"}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "18c12141-bda3-4e8b-a30a-d8c9ccad8011",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

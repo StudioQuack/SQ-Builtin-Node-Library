@@ -1,0 +1,155 @@
+{
+  "_id": "b8c74e8d-456d-4b80-b24b-c939d1ba7b0a",
+  "version": "1.0.0",
+  "name": "Limit",
+  "label": "Take first or last N items",
+  "description": "In-process first/last slice of a JSON array. No network.",
+  "icon": "",
+  "tags": [
+    "limit",
+    "transform"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "66d25a8d-c7a9-4f9d-b38d-f1768a2c15f7",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Limit operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'first'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "items",
+          "label": "items",
+          "type": "list",
+          "required": true,
+          "value": "[]",
+          "description": "Array to slice. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "max_items",
+          "label": "max_items",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Slice length. Omitted uses config (default 1). 0 returns []. Negative invalid. Positive clamped 1–10000.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a5f99505-ad84-43a6-a348-7b03de1dd3a6",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c639bd66-0156-47c9-a115-8766fad31225",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: first | last. Required. Example: 'first'.",
+      "value": "first",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "first",
+        "last"
+      ]
+    },
+    {
+      "_id": "c790bd52-ae1f-4d10-91ec-cd2de91141bd",
+      "shortCode": "max_items",
+      "label": "Max Items",
+      "type": "number",
+      "description": "Slice length when INPUT max_items is omitted. Default 1. Positive values clamped 1–10000; INPUT 0 overrides to empty slice.",
+      "value": "1",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e71bbd31-a1bc-448a-b4f3-49502b9b6b07",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

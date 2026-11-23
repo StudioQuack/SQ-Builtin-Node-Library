@@ -1,0 +1,68 @@
+{
+  "baseUrl": "https://marketplace.walmartapis.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "WM_SEC.ACCESS_TOKEN",
+    "prefix": "",
+    "configKey": "access_token"
+  },
+  "extraHeaders": {
+    "WM_QOS.CORRELATION_ID": "{correlation_id}",
+    "WM_SVC.NAME": "{svc_name}",
+    "WM_CONSUMER.CHANNEL.TYPE": "{channel_type}"
+  },
+  "operations": {
+    "order_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v3/orders",
+      "queryFrom": [
+        "createdStartDate",
+        "createdEndDate",
+        "limit",
+        "status",
+        "nextCursor"
+      ]
+    },
+    "order_ack": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v3/orders/{purchaseOrderId}/acknowledge",
+      "required": [
+        "purchaseOrderId"
+      ]
+    },
+    "item_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v3/items/{sku}",
+      "required": [
+        "sku"
+      ]
+    },
+    "inventory_update": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/v3/inventory",
+      "queryFrom": [
+        "sku",
+        "shipNode"
+      ],
+      "bodyFrom": [
+        "sku",
+        "amount",
+        "unit",
+        "inventoryAvailableDate"
+      ],
+      "bodyMap": {
+        "amount": "quantity.amount",
+        "unit": "quantity.unit"
+      }
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

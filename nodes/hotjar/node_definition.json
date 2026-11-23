@@ -1,0 +1,242 @@
+{
+  "_id": "ffd349c9-0d84-44e0-8ca7-eb0429271dd8",
+  "version": "1.0.0",
+  "name": "Hotjar",
+  "label": "Hotjar — survey REST v1 + survey webhook ingress",
+  "description": "Official Hotjar HTTP API v1 at https://api.hotjar.io. Handler: OfficialApiNode. OAuth client-credentials is fetched by the operator; paste the access token as Bearer (this node does not call /v1/oauth/token). Survey list/get/responses and user lookup. trigger.listen is ingress for survey_response (and recording metadata) webhooks — not a socket. Identify/Events are browser JavaScript only and are not operations. No heatmap export and no recording scrape. Customer owns the Hotjar site. Survey answers are PII. Never log access_token.",
+  "icon": "analytics",
+  "tags": [
+    "analytics"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "31b43eea-455f-44c3-9038-007829a41c1e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "site_id (or config), survey_id, pagination, user_id. trigger.listen does not call HTTP — paste the StudioQuack ingress URL in Hotjar webhook UI. Do not put access_token here. Example: {\"operation\":\"survey.response.list\",\"survey_id\":\"survey_…\",\"limit\":\"100\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "survey.list",
+          "description": "Overrides config. EXACT: 'survey.list' | 'survey.get' | 'survey.response.list' | 'user.lookup' | 'trigger.listen'.",
+          "children": []
+        },
+        {
+          "shortCode": "site_id",
+          "label": "site_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Hotjar site id (Sites & Organizations). Path param; config is used when input is blank.",
+          "children": []
+        },
+        {
+          "shortCode": "survey_id",
+          "label": "survey_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Survey id for get and response.list. e.g. survey_…",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size. Max 100.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "next_cursor from the prior page.",
+          "children": []
+        },
+        {
+          "shortCode": "with_questions",
+          "label": "with_questions",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "survey.list: include question definitions.",
+          "children": []
+        },
+        {
+          "shortCode": "organization_id",
+          "label": "organization_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Hotjar organization id for user.lookup (path {organization_id}, required); shown next to the organization on the Sites & Organizations page. Example: 123456.",
+          "children": []
+        },
+        {
+          "shortCode": "data_subject_email",
+          "label": "data_subject_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email of the data subject for user.lookup (GDPR access/erasure). Send this and/or data_subject_site_id_to_user_id_map. Hotjar emails the report to this address unless delete_all_hits is true. Example: jane@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "data_subject_site_id_to_user_id_map",
+          "label": "data_subject_site_id_to_user_id_map",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Map of Hotjar site id to your own user id (as sent via the Identify API) for user.lookup; alternative or complement to data_subject_email. Example: {\"42\":\"unique_id_42\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "delete_all_hits",
+          "label": "delete_all_hits",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "user.lookup: true silently and irreversibly deletes all data found for the subject (no report email); false (default) only produces a data report. Example: false.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "64384ba7-2d51-4a3e-9704-073e187c34ea",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (surveys/responses). trigger.listen: BPMN message event. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "1d65c2f1-b2d7-4535-886b-a8a0f69e7876",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank.",
+      "value": "survey.response.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "survey.list",
+        "survey.get",
+        "survey.response.list",
+        "user.lookup",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "ac0ea6fc-bc27-4205-b1ff-6f864c34df39",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Pre-fetched OAuth access token from POST https://api.hotjar.io/v1/oauth/token (grant_type=client_credentials, client_id, client_secret). Sent as Authorization: Bearer. Tokens expire (~3600s). Keys expire after 1 year. Never log. Ask Scale / Observe Scale plan-gated.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7c43888f-041e-498a-9248-0aeebff4bed5",
+      "shortCode": "site_id",
+      "label": "Site ID",
+      "type": "string",
+      "description": "Default Hotjar site id used as path {site_id} when input.site_id is blank.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b84132b5-88fa-45d9-9f61-8b90c29829cb",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

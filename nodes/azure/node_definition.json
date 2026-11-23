@@ -1,0 +1,1033 @@
+{
+  "_id": "2f157f96-5d53-43ec-a688-e8fb376b049a",
+  "version": "1.0.0",
+  "name": "Azure",
+  "label": "Azure Resource Manager + data plane",
+  "description": "Azure Resource Manager REST via OfficialApiNode. Docs: https://learn.microsoft.com/en-us/rest/api/azure/. Operations: blob_get, blob_put, blob_delete, blob_list, functions_invoke, servicebus_send, servicebus_receive, vm_get, vm_power, aks_get, keyvault_get, monitor_query, resourcegroup_get, listen. Every request sends x-ms-version: 2026-04-06 (latest fully deployed Storage REST version) and x-ms-date: RFC 1123 via extraHeaders (https://learn.microsoft.com/en-us/rest/api/storageservices/previous-azure-storage-service-versions). ARM ops still use api-version query. Auth secret access_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "hub",
+  "tags": [
+    "azure",
+    "blob",
+    "functions"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4ee961e9-1be3-4461-a63f-0d6664f4d218",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "blob_get",
+          "description": "Which official API call to run. EXACT values: blob_get | blob_put | blob_delete | blob_list | functions_invoke | servicebus_send | servicebus_receive | vm_get | vm_power | aks_get | keyvault_get | monitor_query | resourcegroup_get | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'blob_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "resourceGroup",
+          "label": "resourceGroup",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ARM resource group for VM / AKS / monitor ops. Example: prod-rg.",
+          "children": []
+        },
+        {
+          "shortCode": "vm",
+          "label": "vm",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Virtual machine name for vm_get / vm_power.",
+          "children": []
+        },
+        {
+          "shortCode": "api-version",
+          "label": "api-version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ARM api-version. Example: 2024-07-01.",
+          "children": []
+        },
+        {
+          "shortCode": "account",
+          "label": "account",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Storage account name for blob_*.",
+          "children": []
+        },
+        {
+          "shortCode": "container",
+          "label": "container",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Blob container for blob_*.",
+          "children": []
+        },
+        {
+          "shortCode": "blob",
+          "label": "blob",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Blob name for blob_get/put/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Blob bytes for blob_put (Put Blob, sent as a BlockBlob). A platform file or a plain string. Required for blob_put. Example: the report.pdf file from an upstream node.",
+          "children": []
+        },
+        {
+          "shortCode": "restype",
+          "label": "restype",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `restype` for operation: blob_list.",
+          "children": []
+        },
+        {
+          "shortCode": "comp",
+          "label": "comp",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `comp` for operation: blob_list.",
+          "children": []
+        },
+        {
+          "shortCode": "functionApp",
+          "label": "functionApp",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Function App name for functions_invoke.",
+          "children": []
+        },
+        {
+          "shortCode": "functionName",
+          "label": "functionName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Function name for functions_invoke.",
+          "children": []
+        },
+        {
+          "shortCode": "payload",
+          "label": "payload",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JSON request body for functions_invoke, sent as the whole body to the HTTP-triggered function. Example: {\"orderId\":\"1001\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "namespace",
+          "label": "namespace",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `namespace` for operations: servicebus_send, servicebus_receive. Required by: servicebus_send, servicebus_receive.",
+          "children": []
+        },
+        {
+          "shortCode": "queue",
+          "label": "queue",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `queue` for operations: servicebus_send, servicebus_receive. Required by: servicebus_send, servicebus_receive.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "longtext",
+          "required": false,
+          "value": "",
+          "description": "Message body for servicebus_send, sent verbatim (a JSON object is serialized). Required for servicebus_send. Example: {\"event\":\"order.created\",\"id\":1001}.",
+          "children": []
+        },
+        {
+          "shortCode": "timeout",
+          "label": "timeout",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `timeout` for operation: servicebus_receive.",
+          "children": []
+        },
+        {
+          "shortCode": "powerAction",
+          "label": "powerAction",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `powerAction` for operation: vm_power. Required by: vm_power.",
+          "children": []
+        },
+        {
+          "shortCode": "cluster",
+          "label": "cluster",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `cluster` for operation: aks_get. Required by: aks_get.",
+          "children": []
+        },
+        {
+          "shortCode": "vault",
+          "label": "vault",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `vault` for operation: keyvault_get. Required by: keyvault_get.",
+          "children": []
+        },
+        {
+          "shortCode": "secret",
+          "label": "secret",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `secret` for operation: keyvault_get. Required by: keyvault_get.",
+          "children": []
+        },
+        {
+          "shortCode": "providerNamespace",
+          "label": "providerNamespace",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `providerNamespace` for operation: monitor_query. Required by: monitor_query.",
+          "children": []
+        },
+        {
+          "shortCode": "resourceType",
+          "label": "resourceType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `resourceType` for operation: monitor_query. Required by: monitor_query.",
+          "children": []
+        },
+        {
+          "shortCode": "resourceName",
+          "label": "resourceName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `resourceName` for operation: monitor_query. Required by: monitor_query.",
+          "children": []
+        },
+        {
+          "shortCode": "metricnames",
+          "label": "metricnames",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `metricnames` for operation: monitor_query.",
+          "children": []
+        },
+        {
+          "shortCode": "timespan",
+          "label": "timespan",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `timespan` for operation: monitor_query.",
+          "children": []
+        },
+        {
+          "shortCode": "interval",
+          "label": "interval",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `interval` for operation: monitor_query.",
+          "children": []
+        },
+        {
+          "shortCode": "aggregation",
+          "label": "aggregation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `aggregation` for operation: monitor_query.",
+          "children": []
+        },
+        {
+          "shortCode": "code",
+          "label": "code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Function-level key for functions_invoke as the code query parameter (alternative to x-functions-key / function_key). Leave empty for anonymous functions. Example: a key from Function App > App keys.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "fd1a729f-a638-4847-9348-0c8b0d28cafe",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "296048b9-5c7d-4db6-a0c7-b3b674139e7f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: blob_get, blob_put, blob_delete, blob_list, functions_invoke, servicebus_send, servicebus_receive, vm_get, vm_power, aks_get, keyvault_get, monitor_query, resourcegroup_get, listen. listen is BPMN ingress, not a socket.",
+      "value": "blob_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "blob_get",
+        "blob_put",
+        "blob_delete",
+        "blob_list",
+        "functions_invoke",
+        "servicebus_send",
+        "servicebus_receive",
+        "vm_get",
+        "vm_power",
+        "aks_get",
+        "keyvault_get",
+        "monitor_query",
+        "resourcegroup_get",
+        "listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "blob_get",
+          "targets": [
+            {
+              "param": "container",
+              "visible": true
+            },
+            {
+              "param": "blob",
+              "visible": true
+            },
+            {
+              "param": "account",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "blob_put",
+          "targets": [
+            {
+              "param": "container",
+              "visible": true
+            },
+            {
+              "param": "blob",
+              "visible": true
+            },
+            {
+              "param": "account",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "blob_delete",
+          "targets": [
+            {
+              "param": "container",
+              "visible": true
+            },
+            {
+              "param": "blob",
+              "visible": true
+            },
+            {
+              "param": "account",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "blob_list",
+          "targets": [
+            {
+              "param": "container",
+              "visible": true
+            },
+            {
+              "param": "account",
+              "visible": true
+            },
+            {
+              "param": "comp",
+              "visible": true
+            },
+            {
+              "param": "restype",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "functions_invoke",
+          "targets": [
+            {
+              "param": "functionApp",
+              "visible": true
+            },
+            {
+              "param": "functionName",
+              "visible": true
+            },
+            {
+              "param": "function_key",
+              "visible": true
+            },
+            {
+              "param": "code",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "servicebus_send",
+          "targets": [
+            {
+              "param": "namespace",
+              "visible": true
+            },
+            {
+              "param": "queue",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "servicebus_receive",
+          "targets": [
+            {
+              "param": "namespace",
+              "visible": true
+            },
+            {
+              "param": "queue",
+              "visible": true
+            },
+            {
+              "param": "timeout",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "vm_get",
+          "targets": [
+            {
+              "param": "subscriptionId",
+              "visible": true
+            },
+            {
+              "param": "resourceGroup",
+              "visible": true
+            },
+            {
+              "param": "vm",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "vm_power",
+          "targets": [
+            {
+              "param": "subscriptionId",
+              "visible": true
+            },
+            {
+              "param": "resourceGroup",
+              "visible": true
+            },
+            {
+              "param": "vm",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            },
+            {
+              "param": "powerAction",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "aks_get",
+          "targets": [
+            {
+              "param": "subscriptionId",
+              "visible": true
+            },
+            {
+              "param": "resourceGroup",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            },
+            {
+              "param": "cluster",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "keyvault_get",
+          "targets": [
+            {
+              "param": "api-version",
+              "visible": true
+            },
+            {
+              "param": "vault",
+              "visible": true
+            },
+            {
+              "param": "secret",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "monitor_query",
+          "targets": [
+            {
+              "param": "subscriptionId",
+              "visible": true
+            },
+            {
+              "param": "resourceGroup",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            },
+            {
+              "param": "resourceType",
+              "visible": true
+            },
+            {
+              "param": "aggregation",
+              "visible": true
+            },
+            {
+              "param": "interval",
+              "visible": true
+            },
+            {
+              "param": "timespan",
+              "visible": true
+            },
+            {
+              "param": "resourceName",
+              "visible": true
+            },
+            {
+              "param": "metricnames",
+              "visible": true
+            },
+            {
+              "param": "providerNamespace",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "resourcegroup_get",
+          "targets": [
+            {
+              "param": "subscriptionId",
+              "visible": true
+            },
+            {
+              "param": "resourceGroup",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "32b2120b-6ac6-467a-97d8-160d21a379e7",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "OAuth access token minted outside StudioQuack (client-credentials or other). OfficialApiNode sends Authorization Bearer. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "83d59f50-6dcb-4c79-8b7f-7dfec07cd423",
+      "shortCode": "subscriptionId",
+      "label": "Subscriptionid",
+      "type": "string",
+      "description": "Subscription id.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6fe75226-9ac4-4f90-ad25-1fa674fc0c5e",
+      "shortCode": "container",
+      "label": "Container",
+      "type": "string",
+      "description": "Blob container for blob_*.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d0eec3d6-5b5e-49e7-bafd-7aaf96eb02e4",
+      "shortCode": "blob",
+      "label": "Blob",
+      "type": "string",
+      "description": "Blob name for blob_get/put/delete.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cb67a95d-e23e-4fed-a6d1-508c6d406734",
+      "shortCode": "account",
+      "label": "Account",
+      "type": "string",
+      "description": "Storage account name for blob_*.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9690808f-2eb1-45b5-a373-5bc56224cc76",
+      "shortCode": "comp",
+      "label": "Comp",
+      "type": "string",
+      "description": "Query-string parameter `comp` for operation: blob_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8297c028-585b-4998-bd44-50204f5c4675",
+      "shortCode": "restype",
+      "label": "Restype",
+      "type": "string",
+      "description": "Query-string parameter `restype` for operation: blob_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6eddf64b-91a1-4558-ab70-3081f25e00b6",
+      "shortCode": "functionApp",
+      "label": "Functionapp",
+      "type": "string",
+      "description": "Function App name for functions_invoke.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c562eb36-224d-4dbd-ad1a-dcc60778f0fb",
+      "shortCode": "functionName",
+      "label": "Functionname",
+      "type": "string",
+      "description": "Function name for functions_invoke.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3922bbd7-c0e6-4d2f-a473-e75cd7c3ecfb",
+      "shortCode": "function_key",
+      "label": "Function Key",
+      "type": "password",
+      "description": "Function-level or host key for functions_invoke, sent as the x-functions-key header. Leave empty for anonymous functions. The ARM access_token is not accepted by a function-level endpoint. StudioQuack secret. Never logged. Example: a key copied from Function App > App keys.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "69c6d77a-7cce-4b80-9fba-56602fac4e84",
+      "shortCode": "namespace",
+      "label": "Namespace",
+      "type": "string",
+      "description": "URL path parameter `namespace` for operations: servicebus_send, servicebus_receive. Required by: servicebus_send, servicebus_receive.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "24820908-aa88-4324-9d6e-353f9b84e5e0",
+      "shortCode": "queue",
+      "label": "Queue",
+      "type": "string",
+      "description": "URL path parameter `queue` for operations: servicebus_send, servicebus_receive. Required by: servicebus_send, servicebus_receive.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "116e6609-56e9-4f87-8b08-6884ff242cb1",
+      "shortCode": "timeout",
+      "label": "Timeout",
+      "type": "string",
+      "description": "Query-string parameter `timeout` for operation: servicebus_receive.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c8ea7bb3-3f59-404d-9f47-f2f4b9087e45",
+      "shortCode": "resourceGroup",
+      "label": "Resourcegroup",
+      "type": "string",
+      "description": "ARM resource group for VM / AKS / monitor ops. Example: prod-rg.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "df47d091-f10d-48e4-ab02-bdde554974bd",
+      "shortCode": "vm",
+      "label": "Vm",
+      "type": "string",
+      "description": "Virtual machine name for vm_get / vm_power.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c29f0f47-e0c1-49bc-98c3-a146b3b15e22",
+      "shortCode": "api-version",
+      "label": "Api-version",
+      "type": "string",
+      "description": "ARM api-version. Example: 2024-07-01.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f9b03f0b-d761-43bf-a9d0-85ceecc1cbd0",
+      "shortCode": "powerAction",
+      "label": "Poweraction",
+      "type": "string",
+      "description": "URL path parameter `powerAction` for operation: vm_power. Required by: vm_power.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a68d423d-b5a3-4349-b47e-180c00c8ffa2",
+      "shortCode": "cluster",
+      "label": "Cluster",
+      "type": "string",
+      "description": "URL path parameter `cluster` for operation: aks_get. Required by: aks_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2b436c27-c29b-4d57-8482-8495c23d7ad9",
+      "shortCode": "vault",
+      "label": "Vault",
+      "type": "string",
+      "description": "URL path parameter `vault` for operation: keyvault_get. Required by: keyvault_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f89fa059-3305-4b40-a9b4-113a824f7d02",
+      "shortCode": "secret",
+      "label": "Secret",
+      "type": "string",
+      "description": "URL path parameter `secret` for operation: keyvault_get. Required by: keyvault_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "687166c4-7830-4d1b-8a1e-8f396ebcac66",
+      "shortCode": "resourceType",
+      "label": "Resourcetype",
+      "type": "string",
+      "description": "URL path parameter `resourceType` for operation: monitor_query. Required by: monitor_query.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "457b8807-d771-4dc6-9120-06b76e07e06d",
+      "shortCode": "aggregation",
+      "label": "Aggregation",
+      "type": "string",
+      "description": "Query-string parameter `aggregation` for operation: monitor_query.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "59cf53e5-0c07-4685-8866-5383826d6664",
+      "shortCode": "interval",
+      "label": "Interval",
+      "type": "string",
+      "description": "Query-string parameter `interval` for operation: monitor_query.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4941d886-75d6-4f60-aea0-bc1fc16ac73f",
+      "shortCode": "timespan",
+      "label": "Timespan",
+      "type": "string",
+      "description": "Query-string parameter `timespan` for operation: monitor_query.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5b339501-d412-42c4-b3c6-270e2cc63a3a",
+      "shortCode": "resourceName",
+      "label": "Resourcename",
+      "type": "string",
+      "description": "URL path parameter `resourceName` for operation: monitor_query. Required by: monitor_query.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7a3633ce-36c9-4e7f-b2a1-589600bb6a1b",
+      "shortCode": "metricnames",
+      "label": "Metricnames",
+      "type": "string",
+      "description": "Query-string parameter `metricnames` for operation: monitor_query.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ef84f840-e40b-4ff6-bea0-84e9d90dab7d",
+      "shortCode": "providerNamespace",
+      "label": "Providernamespace",
+      "type": "string",
+      "description": "URL path parameter `providerNamespace` for operation: monitor_query. Required by: monitor_query.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8d0575c9-1122-4899-999a-9421c92178c0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "14470912-634b-4d7b-9fe8-6c9a57d1c209",
+      "shortCode": "code",
+      "label": "Code",
+      "type": "password",
+      "description": "Function-level key for functions_invoke as the code query parameter (alternative to x-functions-key / function_key). Leave empty for anonymous functions. Example: a key from Function App > App keys.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

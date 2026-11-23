@@ -1,0 +1,248 @@
+{
+  "_id": "6509231e-2d5e-4a8c-9734-cac633074330",
+  "version": "1.0.0",
+  "name": "Semantic Scholar Search",
+  "label": "Semantic Scholar - Academic Graph API",
+  "description": "Look up scholarly papers, citing/cited works, and authors on the Semantic Scholar Academic Graph (GET/POST https://api.semanticscholar.org/graph/v1). Purpose: academic retrieval inside a workflow without a custom HTTP node. EXACT accepted input.action values (case-sensitive): 'search' | 'paper_details' | 'citations' | 'references' | 'author' | 'batch'. Omit or blank action → 'search'. Optional instance api_key is sent only as HTTP header x-api-key when non-blank (never logged). Official limits (https://www.semanticscholar.org/product/api): unauthenticated traffic shares a public pool documented at 1000 req/s (further throttled under load); an API key starts at 1 request/second across all endpoints (higher after review). Request a key at https://www.semanticscholar.org/product/api. Example: {\"action\":\"search\",\"query\":\"attention is all you need\",\"limit\":10}.",
+  "icon": "school",
+  "tags": [
+    "semantic-scholar",
+    "papers",
+    "citations",
+    "research"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "31b732e5-5899-4a2d-9530-9de19e497523",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-invoke Academic Graph request, delivered as inputVariables.input (or currentNode.inputList with targetPortValue=input). Purpose: select one action and supply the identifiers/filters that action requires. EXACT action values (case-sensitive): 'search' | 'paper_details' | 'citations' | 'references' | 'author' | 'batch' (omit/blank → 'search'). query may be sent as alias 'q'. paper_ids may be a JSON string array or a comma-separated string. openAccessPdf is honored for search even though it is not a schema field (truthy → query param openAccessPdf=). Unknown action fails listing the six names. Example: {\"action\":\"search\",\"query\":\"graph neural networks\",\"limit\":10,\"year\":\"2020-2024\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "action",
+          "label": "Action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which Academic Graph operation to run. Purpose: dispatch to one HTTP endpoint. EXACT accepted values (case-sensitive): 'search' (default; GET /paper/search; requires query or q), 'paper_details' (GET /paper/{id}; requires paper_id), 'citations' (GET /paper/{id}/citations; requires paper_id), 'references' (GET /paper/{id}/references; requires paper_id), 'author' (GET /author/{id}; requires author_id), 'batch' (POST /paper/batch; requires paper_ids, max 500). Any other string fails with error \"Unknown action: … Use 'search', 'paper_details', 'citations', 'references', 'author', or 'batch'.\". Omit, blank, or missing → 'search'. Example: 'citations'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "Query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Keyword query for paper search. Purpose: sent as GET /paper/search?query= when action='search'. EXACT accepted values: any non-empty Unicode string (Boolean operators and quoted phrases as supported by Semantic Scholar). Alias: input 'q' is used when 'query' is blank/missing. REQUIRED for search — blank/missing both query and q fails with error 'query is required for search action.'. Ignored for other actions. Example: 'transformer attention is all you need'.",
+          "children": []
+        },
+        {
+          "shortCode": "paper_id",
+          "label": "Paper ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Identifier of one paper. Purpose: path segment for paper_details, citations, and references (URL-encoded). EXACT accepted formats (prefix is part of the value): Semantic Scholar paperId (hex), 'DOI:<doi>' (e.g. DOI:10.18653/v1/N18-3011), 'ARXIV:<id>' / 'ArXiv:<id>', 'PMID:<n>', 'CorpusId:<n>', 'ACL:<id>', 'MAG:<n>'. REQUIRED when action is paper_details (error: 'paper_id is required. Use DOI:xxx, ArXiv:xxx, PMID:xxx, or S2 paper ID.'), citations, or references (error: 'paper_id is required for <action> action.'). Ignored for search/author/batch. Example: 'DOI:10.1038/nature14539'.",
+          "children": []
+        },
+        {
+          "shortCode": "paper_ids",
+          "label": "Paper IDs",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Bulk paper identifiers for action='batch'. Purpose: JSON body {\"ids\":[...]} on POST /paper/batch (truncated to 500). EXACT accepted values: a JSON array of id strings, or a comma-separated string of the same id formats as paper_id. Empty/missing fails with 'paper_ids array is required for batch action. Max 500.'. More than 500 ids are truncated, not rejected. Ignored for other actions. Example array: [\"DOI:10.1038/nature14539\",\"649def34f8be52c8b66281af98ae884c09aef7b9\"]. Example string: 'DOI:10.1038/nature14539,ARXIV:1706.03762'.",
+          "children": []
+        },
+        {
+          "shortCode": "author_id",
+          "label": "Author ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Semantic Scholar author identifier. Purpose: path segment for GET /author/{id} when action='author' (URL-encoded). EXACT accepted values: the numeric/string authorId from Semantic Scholar (digits, no spaces). REQUIRED for author — blank/missing fails with 'author_id is required for author action.'. Ignored for other actions. Example: '1741101'.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "Fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated paper field projection for search, paper_details, and batch. Purpose: query param fields= on those calls. EXACT accepted tokens (subset, comma-separated, no spaces required): title, authors, year, abstract, citationCount, influentialCitationCount, externalIds, venue, openAccessPdf, tldr, publicationDate, journal, fieldsOfStudy, s2FieldsOfStudy, isOpenAccess, referenceCount, url, embedding. Omit/blank → the node default paper field set (title through referenceCount, including tldr and openAccessPdf). citations/references ignore this and always request title,authors,year,citationCount,externalIds,venue. author ignores this and always requests name,affiliations,paperCount,citationCount,hIndex,externalIds. Example: 'title,year,citationCount,externalIds'.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "Limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for search, citations, and references. Purpose: query param limit= (capped per action). EXACT accepted values: integers. Omit/blank/non-numeric → 100. search is capped with min(limit, 100). citations and references are capped with min(limit, 1000). Ignored for paper_details, author, and batch. Example: 10. Example for a citation crawl page: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "Offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Zero-based pagination offset for search, citations, and references. Purpose: query param offset=. EXACT accepted values: integers ≥ 0. Omit/blank/non-numeric → 0. Ignored for paper_details, author, and batch. Combined with limit to walk result windows (search also returns total_results). Example: 0. Example next page after limit=100: 100.",
+          "children": []
+        },
+        {
+          "shortCode": "year",
+          "label": "Year",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Publication-year filter for action='search' only. Purpose: query param year= when non-blank. EXACT accepted values: a single year 'YYYY', a closed range 'YYYY-YYYY', or an open range 'YYYY-' (that year onward) or '-YYYY' (through that year). Blank/omitted → no year filter. Ignored for other actions. Example: '2020-2024'. Example single year: '2024'.",
+          "children": []
+        },
+        {
+          "shortCode": "venue",
+          "label": "Venue",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Venue filter for action='search' only. Purpose: query param venue= when non-blank. EXACT accepted values: a venue name or abbreviation as indexed by Semantic Scholar, or several names separated by commas (e.g. 'Nature,Science'). Blank/omitted → no venue filter. Ignored for other actions. Example: 'NeurIPS'. Example multi: 'ICML,ICLR'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "caf1922a-c01e-474c-90f6-3f400966dccc",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success always has status='ok' and action equal to the dispatch value. Extra keys by action: search → query, total_results, papers_returned, offset, papers[]; paper_details → paper; citations → paper_id, citations_returned, citations[]; references → paper_id, references_returned, references[]; author → author; batch → papers_returned, papers[] (JSON array root, including null slots). Example success: {\"status\":\"ok\",\"action\":\"search\",\"query\":\"gnn\",\"total_results\":1200,\"papers_returned\":10,\"offset\":0,\"papers\":[{\"paperId\":\"abc\",\"title\":\"…\"}]}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Outcome flag on a successful call. Purpose: let downstream nodes branch without parsing error. EXACT accepted value on success: 'ok'. Absent on failure (use error instead). Never 'error' — failures omit this key. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "papers_returned",
+          "label": "Papers Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Count of paper objects in this response page. Purpose: length of output.papers without scanning the array. Present for action='search' (len of data[]) and action='batch' (len of the JSON array root, including nulls for unknown ids). Integer ≥ 0. Absent for paper_details, citations, references, author. Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "total_results",
+          "label": "Total Results",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Estimated total matches for the search query (not the page size). Purpose: pagination against papers_returned + offset. Present only for action='search' (API field total, default 0). Integer ≥ 0. Example: 18420.",
+          "children": []
+        },
+        {
+          "shortCode": "papers",
+          "label": "Papers",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Paper objects from search (API data[]) or batch (JSON array root). Purpose: titles, authors, ids, and requested fields for downstream nodes. Each element is a raw Semantic Scholar paper object (keys depend on fields; typically paperId, title, authors[], year, abstract, citationCount, venue, externalIds, openAccessPdf, tldr). Batch may include JSON null for an unknown id. Present for search and batch. Example: [{\"paperId\":\"649def34f8be52c8b66281af98ae884c09aef7b9\",\"title\":\"Attention Is All You Need\",\"year\":2017}].",
+          "children": []
+        },
+        {
+          "shortCode": "citations",
+          "label": "Citations",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Papers that cite the requested paper_id. Purpose: citation graph one hop outbound. Present only for action='citations'. Each element is the raw citingPaper object (not the wrapper {citingPaper:...}); missing citingPaper becomes {}. Fields requested: title,authors,year,citationCount,externalIds,venue. Pair with citations_returned (array length) and paper_id. Example: [{\"paperId\":\"…\",\"title\":\"Follow-on work\",\"year\":2019,\"citationCount\":42}].",
+          "children": []
+        },
+        {
+          "shortCode": "references",
+          "label": "References",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Papers cited by the requested paper_id. Purpose: citation graph one hop inbound (bibliography). Present only for action='references'. Each element is the raw citedPaper object; missing citedPaper becomes {}. Same field set as citations. Pair with references_returned and paper_id. Example: [{\"paperId\":\"…\",\"title\":\"Prior work\",\"year\":2015}].",
+          "children": []
+        },
+        {
+          "shortCode": "author",
+          "label": "Author",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Author profile from GET /author/{id}. Purpose: name, affiliations, and bibliometrics for action='author'. Present only for that action. Raw API object; default fields: name, affiliations, paperCount, citationCount, hIndex, externalIds (plus authorId). Example: {\"authorId\":\"1741101\",\"name\":\"Ashish Vaswani\",\"paperCount\":42,\"citationCount\":120000,\"hIndex\":40}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e9ca3e26-22ff-4290-977a-2cb4038dbab5",
+      "shortCode": "api_key",
+      "label": "API Key (Optional)",
+      "type": "password",
+      "description": "Optional Semantic Scholar API key. Purpose: HTTP header x-api-key on every Graph call from this instance; omitted entirely when blank so unauthenticated public limits apply. EXACT accepted values: the key string issued at https://www.semanticscholar.org/product/api, or empty. Bind a StudioQuack secret — do not paste a production key into the committed definition. Blank/missing → no x-api-key header (shared unauthenticated pool). Non-blank → header sent (introductory 1 request/second per official docs). Never logged, never copied onto output.error. Example: (leave empty) or a secret reference resolving to a key such as 'abc123…'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c243971c-cbb1-4fd0-bcf3-deff307491e1",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout (connect+read) for Semantic Scholar calls. Purpose: bound sandbox wait time so a hung Graph API cannot block the listener thread. EXACT accepted values: positive integers (seconds). Omit, blank, 0, or negative → 25. Example: 25. Example for a slow batch of 500 ids: 60. Keep at or below the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-03-19T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-03-19T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,97 @@
+{
+  "baseUrl": "https://{site}.chargebee.com/api/v2",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "Authorization",
+    "prefix": "Basic ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "customer_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/customers",
+      "bodyFrom": [
+        "id",
+        "email",
+        "first_name",
+        "last_name",
+        "phone",
+        "company",
+        "auto_collection",
+        "locale",
+        "preferred_currency_code"
+      ],
+      "bodyFormat": "form"
+    },
+    "invoice_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/invoices",
+      "queryFrom": [
+        "limit",
+        "offset",
+        "status[is]",
+        "customer_id[is]"
+      ],
+      "queryMap": {
+        "status[is]": "status[is]",
+        "customer_id[is]": "customer_id[is]"
+      }
+    },
+    "invoice_pdf": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/invoices/{id}/pdf",
+      "required": [
+        "id"
+      ]
+    },
+    "subscription_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/subscriptions",
+      "bodyFrom": [
+        "plan_id",
+        "customer_id",
+        "id",
+        "billing_cycles",
+        "auto_collection",
+        "coupon_ids",
+        "trial_end",
+        "start_date"
+      ],
+      "bodyFormat": "form",
+      "bodyMap": {
+        "billing_cycles": "subscription[billing_cycles]",
+        "trial_end": "subscription[trial_end]",
+        "start_date": "subscription[start_date]"
+      }
+    },
+    "subscription_cancel": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/subscriptions/{id}/cancel",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "end_of_term"
+      ],
+      "bodyFormat": "form"
+    },
+    "subscription_delete": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/subscriptions/{id}/delete",
+      "required": [
+        "id"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

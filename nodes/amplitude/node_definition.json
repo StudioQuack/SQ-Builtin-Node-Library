@@ -1,0 +1,233 @@
+{
+  "_id": "e3a008d1-edd7-4027-bb37-5964f1bacc4d",
+  "version": "1.0.0",
+  "name": "Amplitude",
+  "label": "Amplitude — HTTP V2 ingest + export/taxonomy",
+  "description": "Official Amplitude HTTP V2 (POST https://api2.amplitude.com/2/httpapi) plus Identify, Group Identify, Batch, Export API v2, and Taxonomy. Handler: OfficialApiNode. US ingest host api2.amplitude.com; Export/Taxonomy per-op baseUrl https://amplitude.com (GET /api/2/export, GET /api/2/taxonomy/event) with extraHeaders Authorization: Basic {basic_token} (precomputed Base64 of api_key:secret_key). Ingest sends api_key in the JSON or form body and as the query api_key. Identify posts identification as a JSON array. Customer owns the Amplitude project. Keys are never logged. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "insights",
+  "tags": [
+    "analytics"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "11e6ea1c-0a0a-4d0a-aa1b-599616690639",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Set operation to override config.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "event.track",
+          "description": "Overrides config operation when non-blank. EXACT catalog verb.",
+          "children": []
+        },
+        {
+          "shortCode": "events",
+          "label": "events",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Array of Amplitude event objects (event_type + user_id and/or device_id). HTTP V2: keep under 1 MB and prefer ≤10 events.",
+          "children": []
+        },
+        {
+          "shortCode": "options",
+          "label": "options",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "HTTP V2 options object (e.g. min_id_length).",
+          "children": []
+        },
+        {
+          "shortCode": "identification",
+          "label": "identification",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Identify/groupidentify payload (user_id/device_id or group_type/group_value + user_properties/group_properties).",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Export first hour YYYYMMDDTHH (UTC upload time).",
+          "children": []
+        },
+        {
+          "shortCode": "end",
+          "label": "end",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Export last hour YYYYMMDDTHH; max span 365 days.",
+          "children": []
+        },
+        {
+          "shortCode": "showDeleted",
+          "label": "showDeleted",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Query-string parameter `showDeleted` for operation: taxonomy.list.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "72f8d3c6-a502-4495-a84c-db01a72f3cd1",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Minimize retained PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c7bf6000-aafe-4376-8ea7-e08510639581",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: event.track | identify | group.identify | event.batch | export.download | taxonomy.list.",
+      "value": "event.track",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "event.track",
+        "identify",
+        "group.identify",
+        "event.batch",
+        "export.download",
+        "taxonomy.list"
+      ]
+    },
+    {
+      "_id": "5e258846-d209-4675-9453-20a5b4627fc7",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Project API key (query api_key). Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7b82dde0-0f57-44de-a015-8d49af4ce689",
+      "shortCode": "server_zone",
+      "label": "Server Zone",
+      "type": "select",
+      "description": "Project residency. Packaged baseUrl is US api2.amplitude.com. EU ingest is api.eu.amplitude.com; EU analytics is analytics.eu.amplitude.com.",
+      "value": "us",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "us",
+        "eu"
+      ]
+    },
+    {
+      "_id": "f468159a-74aa-4fb1-8c83-c19a4eb28215",
+      "shortCode": "basic_token",
+      "label": "Export Basic token",
+      "type": "password",
+      "description": "Base64(api_key:secret_key) for Export/Taxonomy HTTP Basic. Precompute locally; extraHeaders send Authorization: Basic {basic_token} on those ops only (ingest still uses query api_key). Never log. https://amplitude.com/docs/apis/analytics/export",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "429e1778-e9d1-470d-a28b-35555401bcd8",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

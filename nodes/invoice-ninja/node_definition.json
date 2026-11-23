@@ -1,0 +1,495 @@
+{
+  "_id": "7d527d54-a519-4db5-9ac9-c6b051d1f4ad",
+  "version": "1.0.0",
+  "name": "Invoice Ninja",
+  "label": "Invoice Ninja — Invoice Ninja API v5",
+  "description": "Official Invoice Ninja API v5. Docs: https://api-docs.invoicing.co/. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. Self-host: OfficialApiNode baseUrl is invoicing.co; self-host URL must be the engine egress target. Keep URL on customer overlay. Official also requires X-Requested-With: XMLHttpRequest (engine may not send it).",
+  "icon": "account_balance",
+  "tags": [
+    "invoice",
+    "ninja",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f96e3f1d-3106-476e-b533-bee083137e70",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Invoice Ninja. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "client_create",
+          "description": "Overrides config operation. EXACT: client_create | client_delete | client_get | client_list | expense_create | expense_delete | expense_get | expense_list | invoice_create | invoice_delete | invoice_email | invoice_get | invoice_list | payment_create | payment_delete | payment_get | payment_list | quote_create | quote_delete | quote_email | quote_get | quote_list | task_create | task_delete | task_get | task_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "x_requested_with",
+          "label": "X Requested With",
+          "type": "string",
+          "required": false,
+          "value": "XMLHttpRequest",
+          "description": "X-Requested-With header (Invoice Ninja marks XMLHttpRequest required). Default XMLHttpRequest.",
+          "children": []
+        },
+        {
+          "shortCode": "base_url",
+          "label": "Base Url",
+          "type": "string",
+          "required": false,
+          "value": "https://invoicing.co",
+          "description": "Self-hosted Invoice Ninja instance URL (scheme + host, no trailing slash). Empty uses https://invoicing.co. Example: https://ninja.example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Hashed resource id for get/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client display name for client_create. Example: Contoso.",
+          "children": []
+        },
+        {
+          "shortCode": "contacts",
+          "label": "contacts",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Client contacts [{first_name, last_name, email}] for client_create.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for list operations. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page number for client_list. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Amount for expense_create / payment_create. Example: 99.5.",
+          "children": []
+        },
+        {
+          "shortCode": "client_id",
+          "label": "client_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client hashed id for invoice/quote/expense/payment/task create.",
+          "children": []
+        },
+        {
+          "shortCode": "line_items",
+          "label": "line_items",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Line items [{product_key, notes, cost, qty}] for invoice_create / quote_create.",
+          "children": []
+        },
+        {
+          "shortCode": "entity",
+          "label": "entity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email entity type for invoice_email / quote_email. EXACT: invoice | quote.",
+          "children": []
+        },
+        {
+          "shortCode": "entity_id",
+          "label": "entity_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Hashed id for invoice_email / quote_email.",
+          "children": []
+        },
+        {
+          "shortCode": "invoices",
+          "label": "invoices",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Payment invoices [{invoice_id, amount}] for payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task description for task_create.",
+          "children": []
+        },
+        {
+          "shortCode": "website",
+          "label": "website",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client website for client_create.",
+          "children": []
+        },
+        {
+          "shortCode": "vat_number",
+          "label": "vat_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client VAT number for client_create.",
+          "children": []
+        },
+        {
+          "shortCode": "address1",
+          "label": "address1",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client street for client_create.",
+          "children": []
+        },
+        {
+          "shortCode": "city",
+          "label": "city",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client city for client_create.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client state for client_create.",
+          "children": []
+        },
+        {
+          "shortCode": "postal_code",
+          "label": "postal_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client postal code for client_create.",
+          "children": []
+        },
+        {
+          "shortCode": "country_id",
+          "label": "country_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Invoice Ninja country id for client_create. Example: 840.",
+          "children": []
+        },
+        {
+          "shortCode": "number",
+          "label": "number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document number for invoice_create / quote_create. Example: INV-0012.",
+          "children": []
+        },
+        {
+          "shortCode": "due_date",
+          "label": "due_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Due date YYYY-MM-DD for invoice_create / quote_create.",
+          "children": []
+        },
+        {
+          "shortCode": "discount",
+          "label": "discount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Discount for invoice_create / quote_create.",
+          "children": []
+        },
+        {
+          "shortCode": "po_number",
+          "label": "po_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PO number for invoice_create.",
+          "children": []
+        },
+        {
+          "shortCode": "public_notes",
+          "label": "public_notes",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Public notes for invoice/quote/expense create.",
+          "children": []
+        },
+        {
+          "shortCode": "status_id",
+          "label": "status_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Invoice status id for invoice_create. Typical: 1 draft, 2 sent, 3 viewed.",
+          "children": []
+        },
+        {
+          "shortCode": "date",
+          "label": "date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Date YYYY-MM-DD for expense_create / payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "category_id",
+          "label": "category_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Expense category id for expense_create.",
+          "children": []
+        },
+        {
+          "shortCode": "type_id",
+          "label": "type_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Payment type id for payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "time_log",
+          "label": "time_log",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task time log JSON for task_create.",
+          "children": []
+        },
+        {
+          "shortCode": "rate",
+          "label": "rate",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Task hourly rate for task_create.",
+          "children": []
+        },
+        {
+          "shortCode": "template",
+          "label": "template",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email template for invoice_email / quote_email. Example: invoice.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c1c24e36-f705-411a-bcc8-a88c222b5f97",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4c8c1073-8a05-4b0e-b9a1-f159cabfdf93",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: client_create | client_delete | client_get | client_list | expense_create | expense_delete | expense_get | expense_list | invoice_create | invoice_delete | invoice_email | invoice_get | invoice_list | payment_create | payment_delete | payment_get | payment_list | quote_create | quote_delete | quote_email | quote_get | quote_list | task_create | task_delete | task_get | task_list | trigger. Default client_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "client_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "client_create",
+        "client_delete",
+        "client_get",
+        "client_list",
+        "expense_create",
+        "expense_delete",
+        "expense_get",
+        "expense_list",
+        "invoice_create",
+        "invoice_delete",
+        "invoice_email",
+        "invoice_get",
+        "invoice_list",
+        "payment_create",
+        "payment_delete",
+        "payment_get",
+        "payment_list",
+        "quote_create",
+        "quote_delete",
+        "quote_email",
+        "quote_get",
+        "quote_list",
+        "task_create",
+        "task_delete",
+        "task_get",
+        "task_list",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "0c07ad50-5683-4e12-b482-058072c15571",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "Invoice Ninja credential (header X-API-TOKEN). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "84770da3-a94a-4b24-859c-cd78fff61785",
+      "shortCode": "base_url",
+      "label": "Base Url",
+      "type": "string",
+      "description": "Self-hosted Invoice Ninja instance URL (scheme + host, no trailing slash). Empty uses https://invoicing.co. Example: https://ninja.example.com.",
+      "value": "https://invoicing.co",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8cc15e30-2442-4542-a4f4-bee475f4e119",
+      "shortCode": "x_requested_with",
+      "label": "X Requested With",
+      "type": "string",
+      "description": "X-Requested-With header (Invoice Ninja marks XMLHttpRequest required). Default XMLHttpRequest.",
+      "value": "XMLHttpRequest",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b5c4b5b1-d0f6-451b-b21c-c111a073819b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

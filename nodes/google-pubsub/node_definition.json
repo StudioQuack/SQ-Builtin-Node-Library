@@ -1,0 +1,232 @@
+{
+  "_id": "f2727769-18a7-4c18-a029-7c8279a72327",
+  "version": "1.0.0",
+  "name": "Google Pub/Sub",
+  "label": "Google Cloud Pub/Sub REST v1",
+  "description": "Official Cloud Pub/Sub REST v1 at https://pubsub.googleapis.com. topic.publish POST /v1/projects/{projectId}/topics/{topic}:publish; subscription.pull POST /v1/projects/{projectId}/subscriptions/{subscription}:pull; trigger.listen is kind ingress (BPMN message event — not StreamingPull, not a public push URL). Auth Bearer oauth_access_token. Customer owns the GCP project. Never log the token or message data. Docs: https://cloud.google.com/pubsub/docs/reference/rest",
+  "icon": "campaign",
+  "tags": [
+    "queue",
+    "google",
+    "pubsub"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "70cb6143-6317-5707-bb2b-7940d2dba090",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put oauth_access_token here. Example: {\"operation\":\"topic.publish\",\"topic\":\"orders\",\"messages\":[{\"data\":\"<base64>\"}]}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "topic.publish",
+          "description": "Overrides config operation when non-blank. EXACT: topic.publish | subscription.pull | trigger.listen. trigger.listen is ingress (BPMN message event), not HTTP. Do not put oauth_access_token here. Example: 'topic.publish'.",
+          "children": []
+        },
+        {
+          "shortCode": "topic",
+          "label": "topic",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Topic id (not the full resource name). Path {topic}.",
+          "children": []
+        },
+        {
+          "shortCode": "subscription",
+          "label": "subscription",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subscription id. Path {subscription}.",
+          "children": []
+        },
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Official PubsubMessage array. Each data must be Base64. Optional attributes, orderingKey.",
+          "children": []
+        },
+        {
+          "shortCode": "maxMessages",
+          "label": "maxMessages",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Unary pull batch size. Official required positive integer. Default 1 if omitted server-side may 400 — send a number.",
+          "children": []
+        },
+        {
+          "shortCode": "returnImmediately",
+          "label": "Return immediately",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "PullRequest.returnImmediately. subscription.pull. true returns even when the backlog is empty (discouraged).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ebe89b65-0d75-5670-9650-6785923495ad",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Never includes secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0ceb1bab-c448-5fcf-9c0f-fa148b7234dc",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: topic.publish | subscription.pull | trigger.listen.",
+      "value": "topic.publish",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "topic.publish",
+        "subscription.pull",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "883f265f-eaa1-54fd-b2e9-93305438dd82",
+      "shortCode": "oauth_access_token",
+      "label": "OAuth access token",
+      "type": "password",
+      "description": "Google OAuth 2.0 access token. Sent as Authorization: Bearer. StudioQuack secret. Never on INPUT. Operator-supplied; this node does not run an OAuth UI or JWT grant.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3767e854-7f42-5594-828a-6325406230bc",
+      "shortCode": "projectId",
+      "label": "Project ID",
+      "type": "string",
+      "description": "GCP project id in the resource path projects/{projectId}/…",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cce38d5f-442f-43ae-9a5f-d32613e26d6d",
+      "shortCode": "topic",
+      "label": "Default topic",
+      "type": "string",
+      "description": "Default topic id (not the full name) when INPUT topic is empty. topic.publish.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9817284a-d333-472a-bce0-8d4a409bff51",
+      "shortCode": "subscription",
+      "label": "Default subscription",
+      "type": "string",
+      "description": "Default subscription id when INPUT subscription is empty. subscription.pull.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8ff96f9f-874b-5c75-afd6-00ee417202bc",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

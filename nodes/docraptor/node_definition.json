@@ -1,0 +1,251 @@
+{
+  "_id": "b6669a25-5900-5df7-aea9-249a91cdad64",
+  "version": "1.0.0",
+  "name": "DocRaptor",
+  "label": "DocRaptor API (Prince XML)",
+  "description": "DocRaptor API (Prince XML). Official API https://docraptor.com/documentation/api. One node; pick operation. Handler: OfficialApiNode + api_spec.json. Prince XML engine; commercial. Test vs paid docs. Create docs with POST https://api.docraptor.com/docs (Basic username = API key). HTML is INPUT document_content; test is INPUT body flag. document_get OUTPUT is type file.",
+  "icon": "picture_as_pdf",
+  "tags": [
+    "docraptor",
+    "pdf",
+    "html"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ff0ffe5c-260a-5c34-b8e9-378dd5c1e3e2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "html_to_pdf",
+          "description": "Overrides config operation. Accepted: html_to_pdf, html_to_xls, document_get.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "File, folder, bucket, or display name.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DocRaptor type. html_to_pdf uses pdf; html_to_xls uses xls or xlsx.",
+          "children": []
+        },
+        {
+          "shortCode": "document_content",
+          "label": "document_content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTML (or XLS XML) to convert. Official document_content. Used by html_to_pdf / html_to_xls.",
+          "children": []
+        },
+        {
+          "shortCode": "test",
+          "label": "test",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "When true, watermarked test document (free).",
+          "children": []
+        },
+        {
+          "shortCode": "status_id",
+          "label": "Status Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Status id/token for document_get (/docs/{status_id}). Example: from async create response.",
+          "children": []
+        },
+        {
+          "shortCode": "document_url",
+          "label": "document_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL of HTML to convert instead of document_content. Official document_url.",
+          "children": []
+        },
+        {
+          "shortCode": "pipeline",
+          "label": "pipeline",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DocRaptor pipeline version. Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "prince_options",
+          "label": "prince_options",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "html_to_pdf prince_options {media, profile, ...}.",
+          "children": []
+        },
+        {
+          "shortCode": "javascript",
+          "label": "javascript",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "When true, run JavaScript before PDF.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "4666ccb4-a29d-57d0-b442-30767f7acb66",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "797fa1ee-b132-5e34-8292-161d941946c7",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "html_to_pdf",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "html_to_pdf",
+        "html_to_xls",
+        "document_get"
+      ]
+    },
+    {
+      "_id": "45991cab-935e-523d-a044-7ff341379d37",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "DocRaptor API key (Basic username). StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a2ab970a-9c67-4d2b-9c68-10a0ce9c2e39",
+      "shortCode": "status_id",
+      "label": "Status Id",
+      "type": "string",
+      "description": "Status id/token for document_get. Example: from async create response.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "14d50d09-f42d-5572-b5cb-f55c985f8a92",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 120.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

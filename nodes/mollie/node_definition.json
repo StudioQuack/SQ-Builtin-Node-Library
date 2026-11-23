@@ -1,0 +1,271 @@
+{
+  "_id": "bda2b18e-9a48-4f30-8046-c204d72fe0df",
+  "version": "1.0.0",
+  "name": "Mollie",
+  "label": "Mollie — Mollie API v2",
+  "description": "Official Mollie API v2. Docs: https://docs.mollie.com/reference/overview. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. EEA PSP. Redirect / Mollie Components — never PAN.",
+  "icon": "account_balance",
+  "tags": [
+    "mollie",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c39592a9-2df3-4070-9992-8151142fa219",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Mollie. Secrets never on this port. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "payment_create",
+          "description": "Overrides config operation. EXACT: payment_create | payment_get | refund_create | customer_create | mandate_create | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mollie payment id for payment_get / refund_create. Example: tr_WDqYK6vllg.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Mollie Amount object {currency, value} for payment_create and refund_create. Example: {\"currency\":\"EUR\",\"value\":\"10.00\"}. Never send card PAN.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create description shown to the customer. Example: Order #1042.",
+          "children": []
+        },
+        {
+          "shortCode": "redirectUrl",
+          "label": "redirectUrl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create URL the customer is sent to after payment. HTTPS. Example: https://shop.example/orders/1042.",
+          "children": []
+        },
+        {
+          "shortCode": "webhookUrl",
+          "label": "webhookUrl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create webhook URL Mollie calls with the payment id. HTTPS.",
+          "children": []
+        },
+        {
+          "shortCode": "method",
+          "label": "method",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create payment method (ideal, creditcard, …) or mandate_create method (directdebit). Example: ideal.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create full name. Example: Ada Lovelace.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create email. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "customerId",
+          "label": "customerId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mollie customer id for mandate_create. Example: cst_8wmqcHMN4U.",
+          "children": []
+        },
+        {
+          "shortCode": "consumerName",
+          "label": "consumerName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "mandate_create account holder name. Example: Ada Lovelace.",
+          "children": []
+        },
+        {
+          "shortCode": "consumerAccount",
+          "label": "consumerAccount",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "mandate_create IBAN (directdebit). Never log. Example: NL55INGB0000000000.",
+          "children": []
+        },
+        {
+          "shortCode": "consumerBic",
+          "label": "consumerBic",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "mandate_create BIC when required. Example: INGBNL2A.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "89926e30-e050-4de1-a8c8-ce8a21241441",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2105fe3b-a71c-45ee-8411-6597f62e246d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: payment_create | payment_get | refund_create | customer_create | mandate_create | trigger. Default payment_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "payment_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "payment_create",
+        "payment_get",
+        "refund_create",
+        "customer_create",
+        "mandate_create",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "b85dcc0e-82a0-4642-8e4d-825cfc57a945",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Mollie credential (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "eb499304-165f-402c-8593-6f66c0f37cf8",
+      "shortCode": "profile_id",
+      "label": "Profile Id",
+      "type": "string",
+      "description": "Optional profile id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bcb395b8-cf6b-4700-aa6f-ef8d0658fd14",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

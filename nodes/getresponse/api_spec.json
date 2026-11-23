@@ -1,0 +1,122 @@
+{
+  "baseUrl": "https://api.getresponse.com/v3",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "X-Auth-Token",
+    "prefix": "api-key ",
+    "configKey": "apiKey"
+  },
+  "operations": {
+    "contact.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/contacts",
+      "required": [
+        "email",
+        "campaign"
+      ],
+      "bodyFrom": [
+        "email",
+        "campaign",
+        "name",
+        "dayOfCycle",
+        "tags",
+        "customFieldValues",
+        "ipAddress"
+      ]
+    },
+    "contact.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/contacts/{contactId}",
+      "required": [
+        "contactId"
+      ]
+    },
+    "contact.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/contacts",
+      "required": [],
+      "queryFrom": [
+        "page",
+        "perPage",
+        "fields"
+      ]
+    },
+    "contact.update": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/contacts/{contactId}",
+      "required": [
+        "contactId"
+      ],
+      "bodyFrom": [
+        "name",
+        "campaign",
+        "tags",
+        "customFieldValues"
+      ]
+    },
+    "contact.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/contacts/{contactId}",
+      "required": [
+        "contactId"
+      ]
+    },
+    "campaign.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/campaigns",
+      "required": [],
+      "queryFrom": [
+        "page",
+        "perPage"
+      ]
+    },
+    "newsletter.send": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/newsletters",
+      "required": [
+        "name",
+        "subject",
+        "campaign",
+        "content",
+        "fromField",
+        "sendSettings"
+      ],
+      "bodyFrom": [
+        "name",
+        "subject",
+        "campaign",
+        "content",
+        "fromField",
+        "sendSettings",
+        "sendOn"
+      ],
+      "bodyMap": {
+        "sendOn": "sendSettings.sendOn"
+      }
+    },
+    "tag.add": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/contacts/{contactId}",
+      "required": [
+        "contactId",
+        "tags"
+      ],
+      "bodyFrom": [
+        "tags"
+      ]
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

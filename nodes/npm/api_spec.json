@@ -1,0 +1,63 @@
+{
+  "baseUrl": "https://registry.npmjs.org",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "token"
+  },
+  "operations": {
+    "package_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{pkg}",
+      "required": [
+        "pkg"
+      ]
+    },
+    "package_versions": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{pkg}",
+      "required": [
+        "pkg"
+      ]
+    },
+    "package_search": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/-/v1/search",
+      "queryFrom": [
+        "text",
+        "size",
+        "from"
+      ]
+    },
+    "dist_tag_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/-/package/{pkg}/dist-tags",
+      "required": [
+        "pkg"
+      ]
+    },
+    "dist_tag_set": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/-/package/{pkg}/dist-tags/{tag}",
+      "required": [
+        "pkg",
+        "tag",
+        "version"
+      ],
+      "bodyFormat": "raw",
+      "bodyParam": "version",
+      "contentType": "application/json",
+      "extraHeaders": {
+        "npm-otp": "{otp}"
+      }
+    }
+  }
+}

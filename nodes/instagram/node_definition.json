@@ -1,0 +1,252 @@
+{
+  "_id": "a733c45d-a5b1-42e6-ac5c-2dc7a7770b65",
+  "version": "1.0.0",
+  "name": "Instagram Connector",
+  "label": "Instagram Connector (Meta Graph API)",
+  "description": "Generic, stateless Meta Graph API client for an Instagram Professional account linked to a Facebook Page. Speaks https://graph.facebook.com/{version}/ with a Page Access Token (PAT) passed as the access_token query parameter — never as an Authorization header. Purpose: look up the IG business profile, poll Instagram conversations and DMs, send a freeform text DM to an IGSID, list comments on a media item, and reply to a comment. EXACT mode values: 'sandbox' (default, canned stubs, no HTTP) | 'live' (real Graph calls). EXACT action values: 'get_account_info' | 'list_conversations' | 'list_messages' | 'send_message' | 'list_comments' | 'reply_comment' | 'stats' (default). The PAT is read only from configurationParameters.page_access_token. Never put the PAT on an edge. Reusable across workflows — attach via a FUNCTION port. Example: {\"action\":\"stats\"} with mode='sandbox' returns status=ok and result.base_url='sandbox://instagram'. Use is subject to Meta Platform Terms: https://developers.facebook.com/terms and https://www.facebook.com/legal/commercial_terms.",
+  "icon": "",
+  "tags": [
+    "instagram",
+    "meta",
+    "graph",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Instagram Connector request. Purpose: select the Graph action and supply the ids/text that action needs. Required shape is a JSON object (the daemon may wrap it as a one-element list). Fields: action, mode, ig_business_id, page_id, conversation_id, recipient_igsid, media_id, comment_id, body, limit. EXACT action enum: 'get_account_info' | 'list_conversations' | 'list_messages' | 'send_message' | 'list_comments' | 'reply_comment' | 'stats'. EXACT mode override enum: 'sandbox' | 'live'. Example: {\"action\":\"get_account_info\"} in sandbox (no token) returns a stub profile.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "action",
+          "label": "Action",
+          "type": "string",
+          "required": true,
+          "value": "stats",
+          "description": "Which Graph operation to run. Purpose: dispatch to one Meta endpoint (or a sandbox stub of the same shape). EXACT accepted values (case-insensitive, stored lower-case): 'get_account_info' (GET /{version}/{ig_business_id}?fields=id,username,name,followers_count,media_count,profile_picture_url,biography — needs ig_business_id or default_ig_business_id in live), 'list_conversations' (GET /{version}/{page_id}/conversations?platform=instagram&fields=id,participants,updated_time — needs page_id or default_page_id in live), 'list_messages' (GET /{version}/{conversation_id}?fields=messages{id,message,from,to,created_time} — conversation_id required even in sandbox), 'send_message' (POST /{version}/{page_id}/messages JSON {recipient:{id:IGSID}, message:{text:body}} — recipient_igsid AND body required; page_id or default_page_id required in live), 'list_comments' (GET /{version}/{media_id}/comments?fields=id,text,username,timestamp,like_count — media_id required in live only; sandbox uses stub-media when omitted), 'reply_comment' (POST /{version}/{comment_id}/replies JSON {message:text} — comment_id AND body required), 'stats' (no HTTP; returns mode, base_url, default ids; never the PAT). Unknown values raise INVALID_INPUT \"Unknown action '{a}'. Valid: ['get_account_info', 'list_comments', 'list_conversations', 'list_messages', 'reply_comment', 'send_message', 'stats']\" without the Error:Type wrapper. Type: string. Default: 'stats'. Example: 'list_conversations'.",
+          "children": []
+        },
+        {
+          "shortCode": "mode",
+          "label": "Mode Override",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional per-call override of configurationParameters.mode. Purpose: run one invoke against Graph (live) or the canned stubs (sandbox) without changing the instance config. EXACT accepted values (case-insensitive): 'sandbox' | 'live'. Blank/omitted keeps the instance config (default 'sandbox'). Any other non-blank string is applied as-is; only the exact value 'live' triggers HTTP (same as Python). Live + action!='stats' + blank PAT → INVALID_INPUT page_access_token required for live mode (derive from /me/accounts with a User Token holding instagram_manage_messages scope). Type: string. Example: 'live'.",
+          "children": []
+        },
+        {
+          "shortCode": "ig_business_id",
+          "label": "IG Business ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Instagram Professional / business account id (numeric string). Purpose: identify which IG account get_account_info should load. Required for action='get_account_info' in live mode unless configurationParameters.default_ig_business_id is set; missing in live raises Error: ValueError: ig_business_id required (or default_ig_business_id config). In sandbox, omitted → stub id 'stub-ig-id'. Type: string. Example: '17841400008460000'.",
+          "children": []
+        },
+        {
+          "shortCode": "page_id",
+          "label": "Page ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Facebook Page id linked to the IG Professional account. Purpose: Instagram Messaging conversations and DM send are Page-scoped on Graph. Required for action='list_conversations' and action='send_message' in live mode unless configurationParameters.default_page_id is set; missing in live raises Error: ValueError: page_id required (or default_page_id config). Sandbox uses 'stub-page' when omitted. Type: string. Example: '123456789012345'.",
+          "children": []
+        },
+        {
+          "shortCode": "conversation_id",
+          "label": "Conversation ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Conversation id returned by list_conversations (Graph id, often t_…). Purpose: list_messages fetches DMs inside one thread. REQUIRED for action='list_messages' in both sandbox and live (Python raises even in sandbox). Missing → Error: ValueError: conversation_id required. Type: string. Example: 't_1234567890'.",
+          "children": []
+        },
+        {
+          "shortCode": "recipient_igsid",
+          "label": "Recipient IGSID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Instagram-scoped user id (IGSID) of the DM recipient. Purpose: send_message addresses Graph recipient.id. REQUIRED for action='send_message' (with body) in sandbox and live. IGSIDs appear in list_conversations participants.data[].id. Missing igsid or body → Error: ValueError: recipient_igsid and body required for send_message. Type: string. Example: '12345678901234567'.",
+          "children": []
+        },
+        {
+          "shortCode": "media_id",
+          "label": "Media ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IG media id (feed post, reel, or story media). Purpose: list_comments reads /{media_id}/comments. Required for action='list_comments' in live mode; missing in live → Error: ValueError: media_id required for list_comments. Sandbox does NOT require it (uses 'stub-media' when omitted). Type: string. Example: '17912345678901234'.",
+          "children": []
+        },
+        {
+          "shortCode": "comment_id",
+          "label": "Comment ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Existing comment id from list_comments (or a prior Graph payload). Purpose: reply_comment POSTs /{comment_id}/replies. REQUIRED for action='reply_comment' together with body, in sandbox and live. Missing comment_id or body → Error: ValueError: comment_id and body required for reply_comment. Type: string. Example: '17891234567890123'.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "Body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message or reply text. Purpose: send_message posts message.text; reply_comment posts {message:body}. REQUIRED for action='send_message' and action='reply_comment'. UTF-8; Meta DM text is typically bounded (~1000 bytes) — oversize is rejected by Graph in live, not by this node. Empty string fails validation (Error: ValueError: …). Type: string. Example: 'Thanks for reaching out — we will follow up shortly.'",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "Limit",
+          "type": "number",
+          "required": false,
+          "value": 25,
+          "description": "Maximum rows for list actions. Purpose: list_conversations and list_comments pass this as Graph limit=; sandbox list_conversations returns min(limit, 3) stub rows. Type: integer. Default: 25. Not clamped by this node (Graph may reject out-of-range values in live). Example: 10.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": [],
+      "_id": "d3f87a72-6362-4b05-935b-bb2c2cd55787"
+    },
+    {
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Instagram Connector response object (the port value is this object, not a wrapper). Purpose: success is {status:'ok', action:<echo>, result:<stub or Graph JSON>}; failures raise a BPMN error. Never contains page_access_token. Example success: {\"status\":\"ok\",\"action\":\"stats\",\"result\":{\"mode\":\"sandbox\",\"base_url\":\"sandbox://instagram\",\"default_page_id\":null,\"default_ig_business_id\":null}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Set to 'ok' when the action ran (sandbox stub or live Graph 2xx). EXACT success value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "action",
+          "label": "Action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Echo of the dispatched action (lower-case). EXACT values: 'get_account_info' | 'list_conversations' | 'list_messages' | 'send_message' | 'list_comments' | 'reply_comment' | 'stats'. Example: 'stats'.",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "Result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Action payload. Sandbox: object with mode='sandbox' plus action-specific stub fields (never HTTP). Live: raw Graph JSON for that endpoint (fields vary by action). stats result: {mode, base_url, default_page_id, default_ig_business_id} — base_url is https://graph.facebook.com/{version} in live else sandbox://instagram; default ids are JSON null when unset; never includes the PAT. Example sandbox get_account_info: {\"mode\":\"sandbox\",\"id\":\"stub-ig-id\",\"username\":\"studioquack_ig\",\"name\":\"StudioQuack\",\"followers_count\":1234,\"media_count\":42}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": [],
+      "_id": "ef5ebf21-8cab-4c73-83cf-402356edf2ef"
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b11268fc-c14c-4767-8dae-ab1605ad4bb6",
+      "shortCode": "mode",
+      "label": "Mode",
+      "type": "string",
+      "description": "Default connector mode for every invoke. Purpose: keep design-time graphs on stubs until a PAT is configured. EXACT accepted values (case-insensitive): 'sandbox' (default — canned stub shapes, zero HTTP to Meta) | 'live' (https://graph.facebook.com/{version}/ with access_token=PAT). Per-call input.mode overrides this when non-blank. Live + action!='stats' requires a non-blank page_access_token on THIS config. Example: 'sandbox'.",
+      "value": "sandbox",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "cb945684-505d-4724-a98f-b24a16307ae1",
+      "shortCode": "page_access_token",
+      "label": "Page Access Token (PAT)",
+      "type": "password",
+      "description": "Page Access Token used as access_token=<PAT> on every live Graph call (query parameter only; never an Authorization header). Purpose: authenticate as the Facebook Page that owns the linked Instagram Professional account. Required scopes (Facebook Login flow): instagram_basic, instagram_manage_messages, pages_manage_metadata. Alternative (Instagram Login / Business Login): instagram_business_basic + instagram_business_manage_messages. How to obtain: (1) developers.facebook.com → My Apps → Create App → Business type. (2) Add Messenger and/or Instagram and connect the Facebook Page linked to the IG Professional account. (3) Have a Page admin grant the scopes — this yields a User Access Token. (4) GET https://graph.facebook.com/v26.0/me/accounts?access_token=USER_TOKEN — each Page entry includes a PAT. (5) For a long-lived PAT, first exchange the User Token at GET /v26.0/oauth/access_token?grant_type=fb_exchange_token&client_id=APP_ID&client_secret=APP_SECRET&fb_exchange_token=USER_TOKEN, then re-call /me/accounts. App Review is required for production assets you do not own. Keep the PAT on this password field; never on edges; this node never logs or returns it. Blank in live (except stats) → INVALID_INPUT page_access_token required for live mode (derive from /me/accounts with a User Token holding instagram_manage_messages scope). Example: omit in sandbox; paste the /me/accounts access_token value only in live.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "d7c09654-3d0e-402d-b07b-55e1b3536b79",
+      "shortCode": "version",
+      "label": "Graph API Version",
+      "type": "string",
+      "description": "Meta Graph API version path segment inserted as https://graph.facebook.com/{version}/…. Purpose: pin the Graph surface this instance talks to. Latest Graph is v26.0 (released 2026-07-29; https://developers.facebook.com/docs/graph-api/changelog/versions). Accepted shape (enforced): 'v' followed only by digits and dots, e.g. 'v26.0', 'v25.0', 'v23.0'. Any other string (including path fragments like '../' or 'v26.0/me') is replaced with 'v26.0' as a path-injection guard (handler fallback). v23.0 remains supported until 2027-10-08. Type: string. Default: 'v26.0'. Example: 'v26.0'.",
+      "value": "v26.0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "83c47aeb-d760-40e7-a172-13af452c89d8",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout for live Graph GET/POST (connect+read via SocialHttp). Purpose: bound hung Meta calls so the sandbox thread is not blocked indefinitely. Missing, zero, or negative → 25. Type: integer seconds. Default: 25. Example: 25. Live Graph still applies Meta's own rate limits independently of this value.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "d12f0dfc-f060-4077-9bd0-45615eb9c8b7",
+      "shortCode": "default_page_id",
+      "label": "Default Page ID",
+      "type": "string",
+      "description": "Fallback Facebook Page id when input.page_id is blank. Purpose: avoid repeating the Page id on every list_conversations / send_message invoke. Used in live when those actions run; echoed on stats as default_page_id (JSON null when blank). Does not replace conversation_id, media_id, or comment_id. Type: string. Example: '123456789012345'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "d756e894-09d2-4274-b912-11040d177ee6",
+      "shortCode": "default_ig_business_id",
+      "label": "Default IG Business ID",
+      "type": "string",
+      "description": "Fallback Instagram Professional account id when input.ig_business_id is blank. Purpose: pin get_account_info to one IG account per instance. Used in live get_account_info; echoed on stats as default_ig_business_id (JSON null when blank). Type: string. Example: '17841400008460000'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    }
+  ],
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

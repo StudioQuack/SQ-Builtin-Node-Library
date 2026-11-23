@@ -1,0 +1,32 @@
+{
+  "baseUrl": "https://dbc-xxxxxxxx-xxxx.cloud.databricks.com",
+  "defaultTimeout": 60,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "execute.sql": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/2.0/sql/statements",
+      "required": ["warehouse_id", "statement"],
+      "bodyFrom": ["warehouse_id", "statement", "wait_timeout", "catalog", "schema", "parameters"]
+    },
+    "statement.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/2.0/sql/statements/{statement_id}",
+      "required": ["statement_id"]
+    },
+    "statement.cancel": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/2.0/sql/statements/{statement_id}/cancel",
+      "required": ["statement_id"]
+    }
+  }
+}

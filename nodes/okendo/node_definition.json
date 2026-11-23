@@ -1,0 +1,209 @@
+{
+  "_id": "d52fdf8e-6eaa-50c4-9f85-9c2782870bc9",
+  "version": "1.0.0",
+  "name": "Okendo",
+  "label": "Okendo Merchant Enterprise REST",
+  "description": "Merchant API api.okendo.io/enterprise. Basic username + api_key. extraHeaders send required okendo-api-version (default 2025-02-01). review_create is unverified on this surface. Docs: https://docs.okendo.io/merchant-rest-api",
+  "icon": "rate_review",
+  "tags": [
+    "okendo",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "6f46e093-4229-554d-a699-097c80f1c45b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "review_list",
+          "description": "Official API verb. EXACT: review_list | review_create | survey_get. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "review_list filter. Review status string as documented by Okendo (e.g. approved).",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "review_list page size. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "lastEvaluated",
+          "label": "lastEvaluated",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "review_list pagination cursor from a previous lastEvaluated key.",
+          "children": []
+        },
+        {
+          "shortCode": "surveyId",
+          "label": "surveyId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Survey id for survey_get GET /surveys/{surveyId}/responses.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c753dd1e-7f33-5ac4-9c95-13d70cb51cba",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "dcb20405-1a98-56ba-af6a-a4bc188e8bc0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: review_list | review_create | survey_get. trigger does not open a socket.",
+      "value": "review_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "review_list",
+        "review_create",
+        "survey_get"
+      ]
+    },
+    {
+      "_id": "f30e45f4-e8cf-5bdb-bf75-79d8bee36c21",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type basic. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "74396e75-443d-53b9-b14c-07b2f28a9c37",
+      "shortCode": "username",
+      "label": "Username",
+      "type": "string",
+      "description": "Auth username / companion key (username).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f40fae59-1e15-4d47-a3f7-765e1467cfa8",
+      "shortCode": "api_version",
+      "label": "Api Version",
+      "type": "string",
+      "description": "okendo-api-version dated header (required). Default 2025-02-01 as currently documented.",
+      "value": "2025-02-01",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e54d22fa-a99c-5f5e-81f8-062b3fce14a7",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

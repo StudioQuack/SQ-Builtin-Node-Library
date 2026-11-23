@@ -1,0 +1,249 @@
+{
+  "_id": "d6d434ee-0bf8-5c69-9fd3-5ed453d08bb8",
+  "version": "1.0.0",
+  "name": "NASA",
+  "label": "NASA",
+  "description": "NASA official API via OfficialApiNode (api_spec.json). Operations: apod, neo_feed, neo_lookup, neo_browse, donki_cme, donki_flares, donki_notifications, epic (aliases neo, donki, earth_imagery). Docs: https://api.nasa.gov/. NASA Open APIs. Query api_key. DEMO_KEY is rate-limited. The Landsat Earth API and Mars Rover API are archived (Earth → Earthdata GIBS); earth_imagery here is a deprecated alias of epic (EPIC / DSCOVR), not the retired Earth API. NASA media guidelines. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "planet",
+  "tags": [
+    "science",
+    "nasa"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "eaab0cac-533c-5cbd-8964-f1344352b5ef",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One NASA request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"apod\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: apod | neo_feed | neo_lookup | neo_browse | donki_cme | donki_flares | donki_notifications | epic. Aliases kept for compatibility: neo (= neo_feed), donki (= donki_notifications), earth_imagery (= epic; not the archived Landsat Earth API). Default: first listed or instance operation. Example: 'apod'.",
+          "children": [],
+          "_id": "a1d53819-e243-51d9-8c97-d43c291e8a6b"
+        },
+        {
+          "shortCode": "asteroid_id",
+          "label": "asteroid_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `asteroid_id` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "b677d056-fbd7-5134-937c-d1c0465df4a6"
+        },
+        {
+          "shortCode": "date",
+          "label": "date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `date` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "e526db7b-928d-5764-9b21-839b0d7bfa31"
+        },
+        {
+          "shortCode": "endDate",
+          "label": "endDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `endDate` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "d7606f56-67f2-5026-bfd4-60ae4c327f3c"
+        },
+        {
+          "shortCode": "end_date",
+          "label": "end_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `end_date` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "4d7b714c-d9b8-5878-9676-535160c08177"
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `page` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "43e55f87-20a7-5274-8b94-54c991ddb85e"
+        },
+        {
+          "shortCode": "size",
+          "label": "size",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `size` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "256a644e-814b-53af-9c8a-5ba4a310dc53"
+        },
+        {
+          "shortCode": "startDate",
+          "label": "startDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `startDate` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "b51f8b26-3b8a-56ab-b8d2-65b30b334d55"
+        },
+        {
+          "shortCode": "start_date",
+          "label": "start_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `start_date` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "e71b5feb-4974-5d61-982c-a7322eee1a1e"
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `type` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "044efad0-0d33-568e-b7dc-1551d475c3f2"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "dda7f953-bbc3-5806-b97a-790960be320e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "09bd432c-d050-5a6c-9f58-c206c924cef7"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "420e1eda-29d1-59cc-9456-abe68d2ea5d1"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "90f80dbf-7271-51f3-b647-47e23ba45638"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "01191e77-21dd-590c-b01a-fe8a8def75e3",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: apod | neo | donki | earth_imagery | neo_feed | neo_lookup | neo_browse | donki_cme | donki_flares | donki_notifications | epic. earth_imagery is a deprecated alias of epic (EPIC), not the archived Landsat Earth API. Example: 'apod'.",
+      "value": "apod",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "apod",
+        "neo",
+        "donki",
+        "earth_imagery",
+        "neo_feed",
+        "neo_lookup",
+        "neo_browse",
+        "donki_cme",
+        "donki_flares",
+        "donki_notifications",
+        "epic"
+      ]
+    },
+    {
+      "_id": "f22a8cbd-51d5-573b-9ff4-5def6a904611",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3b1e4ac6-b931-5150-a6cb-92357a688928",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 30. Keep under the daemon sandbox request budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

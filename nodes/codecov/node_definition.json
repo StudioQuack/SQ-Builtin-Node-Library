@@ -1,0 +1,212 @@
+{
+  "_id": "07dd2791-bcde-4d8d-b102-3ede15905af9",
+  "version": "1.0.0",
+  "name": "Codecov",
+  "label": "Codecov API",
+  "description": "Codecov API via OfficialApiNode. Docs: https://docs.codecov.com/reference. Operations: repo_get, commit_get, coverage_get, flag_list, compare. Auth secret token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "codecov",
+    "coverage"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "dca1b4e8-9ed5-4922-b37b-07df82175914",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "repo_get",
+          "description": "Which official API call to run. EXACT values: repo_get | commit_get | coverage_get | flag_list | compare. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'repo_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "service",
+          "label": "service",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "gh, gl, or bb.",
+          "children": []
+        },
+        {
+          "shortCode": "owner",
+          "label": "owner",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Org or user.",
+          "children": []
+        },
+        {
+          "shortCode": "repo",
+          "label": "repo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Repository name.",
+          "children": []
+        },
+        {
+          "shortCode": "sha",
+          "label": "sha",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Commit SHA. Must be exactly 40 hexadecimal characters (full Git object id) for commit_get and coverage_get.",
+          "children": []
+        },
+        {
+          "shortCode": "base",
+          "label": "base",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `base` for operation: compare.",
+          "children": []
+        },
+        {
+          "shortCode": "head",
+          "label": "head",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `head` for operation: compare.",
+          "children": []
+        },
+        {
+          "shortCode": "pullid",
+          "label": "pullid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pull request number for compare, as an alternative to base + head. Example: 42.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8ba99fef-299d-4146-9995-85acfc70cd8b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b764d959-f5ca-44d5-b30a-e1b8545fa2a9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: repo_get, commit_get, coverage_get, flag_list, compare. listen is BPMN ingress, not a socket.",
+      "value": "repo_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "repo_get",
+        "commit_get",
+        "coverage_get",
+        "flag_list",
+        "compare"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "af0e2f74-5d7e-451f-ae82-8da4debeb03e",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "Codecov API token. Authorization: Bearer.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7919c323-d7a6-4335-b98d-b26c8f9ea993",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,86 @@
+{
+  "baseUrl": "{base_url}",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "collection.insert": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/objects",
+      "required": [
+        "class",
+        "properties"
+      ],
+      "bodyFrom": [
+        "class",
+        "properties",
+        "id",
+        "vector",
+        "tenant"
+      ]
+    },
+    "collection.getMany": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/objects",
+      "queryFrom": [
+        "class",
+        "limit",
+        "tenant"
+      ]
+    },
+    "collection.query": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/graphql",
+      "required": [
+        "query"
+      ],
+      "bodyFrom": [
+        "query",
+        "variables"
+      ]
+    },
+    "collection.hybrid": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/graphql",
+      "required": [
+        "query"
+      ],
+      "bodyFrom": [
+        "query",
+        "variables"
+      ]
+    },
+    "collection.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/v1/objects/{id}",
+      "required": [
+        "id"
+      ],
+      "queryFrom": [
+        "tenant"
+      ]
+    },
+    "collection.deleteByClass": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/v1/objects/{class}/{id}",
+      "required": [
+        "class",
+        "id"
+      ],
+      "queryFrom": [
+        "tenant"
+      ]
+    }
+  }
+}

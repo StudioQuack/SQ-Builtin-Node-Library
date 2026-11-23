@@ -1,0 +1,280 @@
+{
+  "_id": "76d1a058-c21d-44df-a7bd-43655c5db335",
+  "version": "1.0.0",
+  "name": "Mastodon",
+  "label": "Mastodon REST — statuses, home timeline, search",
+  "description": "Official Mastodon REST on a fixed instance origin (api_spec baseUrl https://mastodon.social). OfficialApiNode: POST /api/v1/statuses, GET /api/v1/statuses/{status_id}, GET /api/v1/timelines/home, GET /api/v2/search, GET /api/v1/accounts/verify_credentials. Auth is StudioQuack secret access_token (Bearer). trigger is BPMN message-event ingress, not a socket. Customer owns the instance account. Never log access_token.",
+  "icon": "share",
+  "tags": [
+    "mastodon",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "65af4f48-de41-4e02-a879-940273f3cf71",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. No secrets. media is type file (platform ref-id). Example: {\"status\":\"Hello\",\"visibility\":\"public\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "status_create",
+          "description": "Overrides config operation when non-blank. EXACT: status_create | status_get | timeline_get | search | account_get | trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "instance_host",
+          "label": "instance_host",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mastodon instance hostname only (no scheme). Interpolated as https://{instance_host}. Example: mastodon.social.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Status text for status_create. Official status. Max 500 chars on default servers.",
+          "children": []
+        },
+        {
+          "shortCode": "visibility",
+          "label": "visibility",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "status_create visibility. EXACT: public | unlisted | private | direct.",
+          "children": []
+        },
+        {
+          "shortCode": "in_reply_to_id",
+          "label": "in_reply_to_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reply-to status id for status_create.",
+          "children": []
+        },
+        {
+          "shortCode": "status_id",
+          "label": "status_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Status id path for status_get.",
+          "children": []
+        },
+        {
+          "shortCode": "max_id",
+          "label": "max_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "timeline_get pagination max_id.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "timeline_get / search page size.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search query for search. Official q.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search type. EXACT: accounts | hashtags | statuses.",
+          "children": []
+        },
+        {
+          "shortCode": "spoiler_text",
+          "label": "spoiler_text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Content warning for status_create. Official spoiler_text.",
+          "children": []
+        },
+        {
+          "shortCode": "sensitive",
+          "label": "sensitive",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Mark media sensitive on status_create.",
+          "children": []
+        },
+        {
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 639 language for status_create. Example: en.",
+          "children": []
+        },
+        {
+          "shortCode": "media_ids",
+          "label": "media_ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Attachment ids for status_create. Official media_ids.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7e4eeba9-6a95-48c9-8a18-fa603aff9543",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). trigger returns an ingress instruction, not HTTP. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (status, timeline array, search buckets, or account).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6904bb51-ac77-4067-b89f-138342c49460",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: status_create | status_get | timeline_get | search | account_get | trigger.",
+      "value": "status_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "status_create",
+        "status_get",
+        "timeline_get",
+        "search",
+        "account_get",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "095754bb-ac21-4fdb-926e-5fd848e67cf6",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Mastodon user access token (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT. Empty → no HTTP.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "074a362d-ea29-4b22-adcb-15ece98a4979",
+      "shortCode": "instance_host",
+      "label": "Instance Host",
+      "type": "string",
+      "description": "Mastodon instance hostname only (no scheme). Default mastodon.social. Example: mastodon.social.",
+      "value": "mastodon.social",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3a4bf94c-4e6d-4df5-a497-c8acda116a96",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

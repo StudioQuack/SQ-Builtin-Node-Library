@@ -1,0 +1,311 @@
+{
+  "_id": "0cb6246a-41d8-503a-bb3e-c42c6ba6699d",
+  "version": "1.0.0",
+  "name": "CloudConvert",
+  "label": "CloudConvert API v2",
+  "description": "CloudConvert API v2. Official API https://cloudconvert.com/docs/getting-started/introduction. One node; pick operation. Upload/download/convert/sign payloads use type file (Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.) Handler: OfficialApiNode + api_spec.json. API v1 is retired (2022). Official create path is POST /v2/jobs (tasks: import/convert/export). Files processed on CloudConvert infra — DPA. import/upload uses type file.",
+  "icon": "sync",
+  "tags": [
+    "cloudconvert",
+    "convert",
+    "pdf"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5cc91b8e-c893-5dc8-88b1-fe44e3ea0ba7",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port. File bytes are type file.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "convert",
+          "description": "Overrides config operation. Accepted: convert, capture_website, archive_create, job_create, job_get, job_delete, task_cancel, task_delete, file_download, listen.",
+          "children": []
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `input` for operations: convert, archive_create.",
+          "children": []
+        },
+        {
+          "shortCode": "input_format",
+          "label": "input_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `input_format` for operation: convert.",
+          "children": []
+        },
+        {
+          "shortCode": "output_format",
+          "label": "output_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `output_format` for operations: convert, capture_website, archive_create.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `url` for operation: capture_website.",
+          "children": []
+        },
+        {
+          "shortCode": "tasks",
+          "label": "tasks",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tasks` for operation: job_create.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `id` for operations: job_get, job_delete, task_cancel, task_delete, file_download. Required by: job_get, job_delete, task_cancel, task_delete, file_download.",
+          "children": []
+        },
+        {
+          "shortCode": "filename",
+          "label": "filename",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "convert optional output filename. Example: out.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "engine",
+          "label": "engine",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "convert engine override. Example: office.",
+          "children": []
+        },
+        {
+          "shortCode": "pages",
+          "label": "pages",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "capture_website page range. Example: 1-3.",
+          "children": []
+        },
+        {
+          "shortCode": "zoom",
+          "label": "zoom",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "capture_website zoom factor. Example: 1.0.",
+          "children": []
+        },
+        {
+          "shortCode": "job_id",
+          "label": "job_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CloudConvert job id for job_get/job_delete.",
+          "children": []
+        },
+        {
+          "shortCode": "task_id",
+          "label": "task_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CloudConvert task id for task_cancel/task_delete.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c01081c8-eafc-51b1-b86c-b92e362dbace",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "66d9554c-2007-57f1-9026-dedf5119491c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "convert",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "convert",
+        "capture_website",
+        "archive_create",
+        "job_create",
+        "job_get",
+        "job_delete",
+        "task_cancel",
+        "task_delete",
+        "file_download",
+        "listen"
+      ]
+    },
+    {
+      "_id": "33fd54ad-b07e-5183-9e56-2c7adcfdb788",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "CloudConvert API token. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "90bfbe2a-3da2-57f3-aa26-d64ddd69a6d1",
+      "shortCode": "sandbox",
+      "label": "Sandbox",
+      "type": "string",
+      "description": "Host prefix before .cloudconvert.com. Live: api. Sandbox: sandbox.api. Region: eu-central.api or us-east.api.",
+      "value": "api",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "88522954-8c62-4a05-8ade-18b46c685965",
+      "shortCode": "job_id",
+      "label": "Job ID",
+      "type": "string",
+      "description": "CloudConvert job id for job_get/job_delete.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7916a0a3-abda-45ac-9586-1dbbb77e79e9",
+      "shortCode": "task_id",
+      "label": "Task ID",
+      "type": "string",
+      "description": "CloudConvert task id for task_cancel/task_delete.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9542d621-4f04-5585-a450-82adafcf22e1",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 120.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

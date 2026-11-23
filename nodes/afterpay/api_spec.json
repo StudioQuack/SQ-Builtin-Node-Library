@@ -1,0 +1,75 @@
+{
+  "baseUrl": "https://{environment}.afterpay.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "userKey": "merchant_id",
+    "configKey": "secret_key"
+  },
+  "operations": {
+    "order_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/checkouts",
+      "bodyFrom": [
+        "amount",
+        "consumer",
+        "merchant",
+        "amount_value",
+        "currency"
+      ],
+      "bodyMap": {
+        "amount_value": "amount.amount",
+        "currency": "amount.currency"
+      }
+    },
+    "order_auth": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/payments/auth",
+      "bodyFrom": [
+        "token"
+      ]
+    },
+    "order_capture": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/payments/{id}/capture",
+      "required": [
+        "id"
+      ]
+    },
+    "order_void": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/payments/{id}/void",
+      "required": [
+        "id"
+      ]
+    },
+    "refund": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/payments/{id}/refund",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "amount",
+        "amount_value",
+        "currency"
+      ],
+      "bodyMap": {
+        "amount_value": "amount.amount",
+        "currency": "amount.currency"
+      }
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  },
+  "placeholderDefaults": {
+    "environment": "global-api"
+  }
+}

@@ -1,0 +1,326 @@
+{
+  "_id": "5b5ebf8b-e6d8-5b4a-9924-d02a740ef1a7",
+  "version": "1.0.0",
+  "name": "Mailgun",
+  "label": "Mailgun — Mailgun API v3",
+  "description": "Mailgun via the official Mailgun API v3. Base https://{region} (api.mailgun.net US, api.eu.mailgun.net EU, api.au.mailgun.net AU). Docs: https://documentation.mailgun.com/docs/mailgun/api-reference/send/mailgun/messages/post-v3--domain-name--messages. Basic auth username is the literal api. send-email posts multipart/form-data (bodyFormat multipart) as Mailgun documents; pass attachment as the platform file list [{kind, mime_type, source, data|url, name}] (one part per item; a single ContentBlock and legacy {dataBase64|url, fileName, contentType} still accepted). listen = webhooks as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "mail",
+  "tags": [
+    "email"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f3027e5e-64e1-5954-bbd7-e2e5b0349d4f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Mailgun operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"send-email\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-email",
+          "description": "Which official call to run. EXACT values: send-email | get-event | list-events | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sender. Official from. send-email. Example: Ada <ada@example.com>. Also config domain default sender when set.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipients, comma-separated. Official to. send-email required. Example: bob@example.com, Cary <cary@example.com>.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subject. Official subject. send-email.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Plain-text body. Official text. send-email.",
+          "children": []
+        },
+        {
+          "shortCode": "html",
+          "label": "html",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTML body. Official html. send-email.",
+          "children": []
+        },
+        {
+          "shortCode": "attachment",
+          "label": "attachment",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Files for send-email. Multipart part name attachment.",
+          "children": []
+        },
+        {
+          "shortCode": "event",
+          "label": "event",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event filter for get-event / list-events. Example: delivered.",
+          "children": []
+        },
+        {
+          "shortCode": "cc",
+          "label": "cc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cc, comma-separated. Official cc. send-email.",
+          "children": []
+        },
+        {
+          "shortCode": "bcc",
+          "label": "bcc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Bcc, comma-separated. Official bcc. send-email.",
+          "children": []
+        },
+        {
+          "shortCode": "recipient",
+          "label": "recipient",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipient filter for get-event.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for get-event / list-events. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "begin",
+          "label": "begin",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Start RFC-2822 or Unix timestamp for list-events.",
+          "children": []
+        },
+        {
+          "shortCode": "end",
+          "label": "end",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "End timestamp for list-events.",
+          "children": []
+        },
+        {
+          "shortCode": "reply_to",
+          "label": "reply_to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reply-To. Wired to multipart field h:Reply-To on send-email.",
+          "children": []
+        },
+        {
+          "shortCode": "o:tag",
+          "label": "o:tag",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mailgun o:tag for send-email. Example: welcome.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "be4ae803-fe5f-521b-955c-39916e5e515c",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "1999bc00-feb5-54e8-91de-f9591f81692e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-email, get-event, list-events, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-email",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-email",
+        "get-event",
+        "list-events",
+        "listen"
+      ]
+    },
+    {
+      "_id": "12711bb0-9276-5608-9e11-5896f3827e37",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Mailgun private API key. HTTP Basic api:KEY. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f732c97a-ff5b-539c-8187-b643c02bd058",
+      "shortCode": "api_user",
+      "label": "Auth username",
+      "type": "string",
+      "description": "Username / account id for HTTP Basic (api_user). Paired with the password secret. Mailgun EXACT value: api.",
+      "value": "api",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ef202ebe-3045-5ab7-b316-0a0a1383818d",
+      "shortCode": "domain",
+      "label": "domain",
+      "type": "string",
+      "description": "Sending domain (e.g. mg.example.com). Path {domain}.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9925c2b4-ee1d-428e-a4e8-581bd9edf647",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "select",
+      "description": "Mailgun API host for the account's region, without scheme; substituted into baseUrl https://{region}. EXACT: api.mailgun.net (US, default) | api.eu.mailgun.net (EU) | api.au.mailgun.net (AU). A domain only works on the region it was created in. Example: api.eu.mailgun.net.",
+      "value": "api.mailgun.net",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "api.mailgun.net",
+        "api.eu.mailgun.net",
+        "api.au.mailgun.net"
+      ]
+    },
+    {
+      "_id": "c82539a5-6a83-5c9a-8cd5-127251540308",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

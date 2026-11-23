@@ -1,0 +1,468 @@
+{
+  "_id": "dda6d0c4-fe9a-44a6-9965-07332baa6891",
+  "version": "1.0.0",
+  "name": "Google Forms",
+  "label": "Google Forms API v1 — forms, responses, Pub/Sub watches",
+  "description": "Official Google Forms API v1 at https://forms.googleapis.com. Handler: OfficialApiNode. Auth: OAuth access token as Bearer (customer supplies a current token). Watches publish to the customer's Cloud Pub/Sub topic (forms.watches.create) — not Drive files.watch. Watches last seven days. trigger.listen is ingress (BPMN message event); a Pub/Sub subscription must forward into message-event ingress. Customer owns the Google account / Workspace. Responses are respondent PII. Never log tokens.",
+  "icon": "assignment",
+  "tags": [
+    "forms"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4ccb934a-751f-4906-8d18-deb584ee600e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. form.create body is { info: { title } }. watch.responses body is Watch { eventType, target.topic.topicName }. Do not put access_token here. Example: {\"operation\":\"form.get\",\"formId\":\"…\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "form.get",
+          "description": "Overrides config operation when non-blank. EXACT: 'form.get' | 'form.create' | 'form.update' | 'question.list' | 'response.list' | 'response.get' | 'watch.responses' | 'trigger.listen'. trigger.listen never opens a socket.",
+          "children": []
+        },
+        {
+          "shortCode": "formId",
+          "label": "formId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Form id. Falls back to config formId.",
+          "children": []
+        },
+        {
+          "shortCode": "info",
+          "label": "info",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "form.create: { title } (and documentTitle if used). Create is title-only; add questions with form.update.",
+          "children": []
+        },
+        {
+          "shortCode": "requests",
+          "label": "requests",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "form.update batchUpdate requests (createItem, updateItem, …). Cap length. Each request needs a known oneof key.",
+          "children": []
+        },
+        {
+          "shortCode": "includeFormInResponse",
+          "label": "includeFormInResponse",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Return updated form on form.update.",
+          "children": []
+        },
+        {
+          "shortCode": "responseId",
+          "label": "responseId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Response id for response.get. Answers are PII.",
+          "children": []
+        },
+        {
+          "shortCode": "pageSize",
+          "label": "pageSize",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "response.list page size. Cap 5000; default 100.",
+          "children": []
+        },
+        {
+          "shortCode": "pageToken",
+          "label": "pageToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "response.list next page.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "response.list filter, e.g. timestamp > … per Forms list filter syntax.",
+          "children": []
+        },
+        {
+          "shortCode": "eventType",
+          "label": "eventType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Watch.eventType for watch.responses. EXACT: RESPONSES | SCHEMA. Wired as watch.eventType. Example: RESPONSES.",
+          "children": []
+        },
+        {
+          "shortCode": "target",
+          "label": "target",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Watch.target {topic:{topicName: projects/P/topics/T}} for watch.responses. Wired as watch.target. Grant forms-notifications@system.gserviceaccount.com Pub/Sub Publisher.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c56eb4ae-1cfe-438a-9f73-1cf7c0686197",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. question.list is the same GET as form.get (project items[]). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Responses are PII — do not log.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "14b094c0-c45f-45ae-8230-7faaa4858ed9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank.",
+      "value": "form.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "form.get",
+        "form.create",
+        "form.update",
+        "question.list",
+        "response.list",
+        "response.get",
+        "watch.responses",
+        "trigger.listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "form.get",
+          "targets": [
+            {
+              "param": "formId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "form.create",
+          "targets": [
+            {
+              "param": "info",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "form.update",
+          "targets": [
+            {
+              "param": "formId",
+              "visible": true
+            },
+            {
+              "param": "requests",
+              "visible": true
+            },
+            {
+              "param": "includeFormInResponse",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "question.list",
+          "targets": [
+            {
+              "param": "formId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "response.list",
+          "targets": [
+            {
+              "param": "formId",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            },
+            {
+              "param": "pageSize",
+              "visible": true
+            },
+            {
+              "param": "pageToken",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "response.get",
+          "targets": [
+            {
+              "param": "formId",
+              "visible": true
+            },
+            {
+              "param": "responseId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "watch.responses",
+          "targets": [
+            {
+              "param": "formId",
+              "visible": true
+            },
+            {
+              "param": "target",
+              "visible": true
+            },
+            {
+              "param": "eventType",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "d15733e4-5a75-41a8-8711-a948bd3fb8df",
+      "shortCode": "access_token",
+      "label": "OAuth access token",
+      "type": "password",
+      "description": "Google OAuth access token (StudioQuack secret). Minimum scopes: forms.body or forms.body.readonly; forms.responses.readonly for responses/watches. Customer supplies a current token. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "26d5a4c1-f3d2-4083-b55c-46c68960edd7",
+      "shortCode": "formId",
+      "label": "Form id",
+      "type": "string",
+      "description": "Default form id when INPUT omits formId.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "41805037-d431-4114-91f5-fab64fc3d4c8",
+      "shortCode": "info",
+      "label": "Info",
+      "type": "object",
+      "description": "form.create: { title } (and documentTitle if used). Create is title-only; add questions with form.update.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6c8bb85f-ea72-4ef9-b913-07eb6e1ca51b",
+      "shortCode": "requests",
+      "label": "Requests",
+      "type": "list",
+      "description": "form.update batchUpdate requests (createItem, updateItem, …). Cap length. Each request needs a known oneof key.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f73559d6-71a9-4bf7-9b16-3d049e315829",
+      "shortCode": "includeFormInResponse",
+      "label": "Includeforminresponse",
+      "type": "boolean",
+      "description": "Return updated form on form.update.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "54435d22-22a1-48a9-9188-db841010683f",
+      "shortCode": "filter",
+      "label": "Filter",
+      "type": "string",
+      "description": "response.list filter, e.g. timestamp > … per Forms list filter syntax.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "180febab-545c-455f-9ea5-ba07febedb4d",
+      "shortCode": "pageSize",
+      "label": "Pagesize",
+      "type": "number",
+      "description": "response.list page size. Cap 5000; default 100.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "36fdb660-3809-4287-bd0b-64c5d9a7ef75",
+      "shortCode": "pageToken",
+      "label": "Pagetoken",
+      "type": "string",
+      "description": "response.list next page.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8324e490-a843-41ff-9ace-5ef0bb291696",
+      "shortCode": "responseId",
+      "label": "Responseid",
+      "type": "string",
+      "description": "Response id for response.get. Answers are PII.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "280c9111-9c8c-4421-8deb-51ae841f29c5",
+      "shortCode": "target",
+      "label": "Target",
+      "type": "object",
+      "description": "Watch.target {topic:{topicName: projects/P/topics/T}} for watch.responses. Wired as watch.target. Grant forms-notifications@system.gserviceaccount.com Pub/Sub Publisher.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3bd37089-69d8-48cf-b92d-bac0ecae30f0",
+      "shortCode": "eventType",
+      "label": "Eventtype",
+      "type": "string",
+      "description": "Watch.eventType for watch.responses. EXACT: RESPONSES | SCHEMA. Wired as watch.eventType. Example: RESPONSES.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "62845c94-5347-493f-8e9c-4a67dbe565d5",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

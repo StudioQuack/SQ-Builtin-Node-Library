@@ -1,0 +1,353 @@
+{
+  "_id": "f809e1c3-1ca4-4888-89a0-53155478ab70",
+  "version": "1.0.0",
+  "name": "arXiv Search",
+  "label": "arXiv - Preprint Repository Search",
+  "description": "Search and fetch arXiv preprints through the official Atom API at http://export.arxiv.org/api/query (HTTP, not HTTPS). Completely free: no API key, no OAuth, no configuration secret. EXACT input.action values (case-sensitive): 'search' | 'get_paper'. 'search' (default) requires query (alias q) and optionally wraps it as cat:{category} AND ({query}) when category is non-empty; output.query is always the original unwrapped string. 'get_paper' requires arxiv_id (single; wins) or arxiv_ids (JSON array or comma-separated string). max_results default 50, hard-capped at 100 (Python handler; ignore older copy that said default 10). sort_by EXACT: 'relevance' | 'lastUpdatedDate' | 'submittedDate' (default relevance). sort_order EXACT: 'descending' | 'ascending' (default descending). start is a 0-based pagination offset. Each papers[] item exposes abstract (NOT summary), plus arxiv_id, title, authors, published, updated, doi, journal_ref, primary_category, categories, comment, url, pdf_url. Responses are Atom XML parsed in-process (JDK DocumentBuilder, XXE-hardened). arXiv rate-limits at roughly one request every 3 seconds; this node does not sleep — space calls in the workflow. Example: {\"action\":\"search\",\"query\":\"ti:\\\"attention is all you need\\\"\",\"category\":\"cs.CL\",\"max_results\":5}.",
+  "icon": "article",
+  "tags": [
+    "arxiv",
+    "preprints",
+    "atom",
+    "research"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "752cd4f6-a336-4065-9e74-1ca7a27d51bc",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One object of search or lookup parameters. Delivered as inputVariables.input (or currentNode.inputList targetPortValue=input). The handler unwraps a one-element list. Fields: action, query (alias q), arxiv_id, arxiv_ids, category, max_results, sort_by, sort_order, start. Unknown keys are ignored. Example: {\"action\":\"search\",\"query\":\"au:hinton\",\"max_results\":10,\"sort_by\":\"submittedDate\",\"sort_order\":\"descending\",\"start\":0}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "action",
+          "label": "Action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which arXiv API operation to run. EXACT accepted values (case-sensitive, no aliases): 'search' | 'get_paper'. 'search' (default when omitted, blank, or the string 'null') runs GET search_query/start/max_results/sortBy/sortOrder and returns papers plus total_results. 'get_paper' runs GET id_list={comma-joined ids}&max_results={len(ids)} and returns those papers. Any other string fails before the HTTP call with error 'Unknown action: {action}. Use 'search' or 'get_paper'.'. Example: 'search'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "Query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search expression for action='search'. REQUIRED for search; missing/blank/null fails with 'query is required for search action.'. Alias: the handler also reads input.q when query is blank (Python `query or q`). Supports arXiv field prefixes: ti: (title), au: (author), abs: (abstract), cat: (category), all:, co: (comment), jr: (journal ref). Quotes and Boolean AND/OR/ANDNOT are passed through to arXiv. Ignored for get_paper. When category is also set, the HTTP search_query becomes cat:{category} AND ({query}) but output.query stays this original string. Example: 'ti:\"graph neural network\" AND au:kipf'.",
+          "children": []
+        },
+        {
+          "shortCode": "arxiv_id",
+          "label": "arXiv ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Single paper id for action='get_paper'. When this field is non-blank, it OVERWRITES arxiv_ids to a one-element list (Python: `if arxiv_id: arxiv_ids = [arxiv_id]`), including when arxiv_ids was already set. Accepts new-style ids ('2301.07041', '2301.07041v2') or old-style ('hep-ex/0307015'). Do not include the https://arxiv.org/abs/ prefix; the handler will still parse it out of Atom <id> on the way back. Ignored for search. Example: '1706.03762'.",
+          "children": []
+        },
+        {
+          "shortCode": "arxiv_ids",
+          "label": "arXiv IDs",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Batch ids for action='get_paper' when arxiv_id is absent. Designer type is string, but the handler accepts either a comma-separated string OR a JSON array of strings (DataNodeSupport.stringList). Tokens are trimmed; empty tokens dropped. If both this and arxiv_id are empty, get_paper fails with 'arxiv_id or arxiv_ids is required for get_paper action.'. HTTP id_list is the ids joined with commas (no spaces) and max_results=len(ids). Example string: '2301.07041,1706.03762'. Example array: [\"2301.07041\",\"hep-ex/0307015\"].",
+          "children": []
+        },
+        {
+          "shortCode": "category",
+          "label": "Category",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional arXiv archive.category for action='search' only. When non-empty, the outbound search_query is wrapped as cat:{category} AND ({query}); output.category echoes this value and output.query stays unwrapped. When omitted, output.category is null. Empty string is not wrapped. Use taxonomy codes from https://arxiv.org/category_taxonomy (e.g. 'cs.AI', 'cs.CL', 'cs.LG', 'stat.ML', 'math.CO', 'physics.gen-ph', 'hep-th', 'q-bio.NC'). Not an enum in the handler — invalid codes yield zero hits from arXiv, not a node error. Ignored for get_paper. Example: 'cs.CL'.",
+          "children": []
+        },
+        {
+          "shortCode": "max_results",
+          "label": "Max Results",
+          "type": "number",
+          "required": false,
+          "value": "50",
+          "description": "Page size for action='search'. Default: 50 (Python; not 10). Hard cap: min(max_results, 100) before the GET. Sent as the arXiv max_results query param. For get_paper this input is ignored; the handler sends max_results=len(ids) instead. Combine with start for paging (page k uses start=k*max_results). Example: 25. Do not set above 100 — extra is discarded.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_by",
+          "label": "Sort By",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "arXiv sortBy for action='search'. EXACT accepted values (case-sensitive, forwarded as sortBy): 'relevance' | 'lastUpdatedDate' | 'submittedDate'. Default when omitted/blank: 'relevance'. The handler does not rewrite unknown values; arXiv will reject or ignore them. Ignored for get_paper. Example: 'submittedDate'.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_order",
+          "label": "Sort Order",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "arXiv sortOrder for action='search'. EXACT accepted values (case-sensitive, forwarded as sortOrder): 'descending' | 'ascending'. Default when omitted/blank: 'descending'. The handler does not rewrite unknown values. Ignored for get_paper. Example: 'descending'.",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "Start Index",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Zero-based offset into the arXiv result set for action='search'. Default: 0. Sent as the start query param (not a 1-based page number). total_results in the output is the corpus size; papers_returned is this page. Example: start=50 with max_results=50 returns the second page. Ignored for get_paper.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6ed96e37-5b0c-46db-b9f2-49ef75baf844",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Single JSON object. Success search: {status:'ok', action:'search', query, category, total_results, papers_returned, start, papers}. Success get_paper: {status:'ok', action:'get_paper', papers_returned, papers}. papers[].abstract is the Atom summary with whitespace collapsed — there is no summary field. Example success: {\"status\":\"ok\",\"action\":\"search\",\"query\":\"graph\",\"category\":null,\"total_results\":1200,\"papers_returned\":5,\"start\":0,\"papers\":[{\"arxiv_id\":\"1706.03762\",\"title\":\"Attention Is All You Need\",\"abstract\":\"...\"}]}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Present on success only. EXACT value: 'ok'. Absent when the object is a failure ({error} only). Do not treat missing status as ok. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "action",
+          "label": "Action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Echo of the action that succeeded. EXACT values: 'search' | 'get_paper'. Present on success only. Example: 'search'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "Query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on action='search' success. The original input query (or q), NOT the cat:{category} AND (...) wrapper that was sent to arXiv. Example: 'ti:\"transformer\"'.",
+          "children": []
+        },
+        {
+          "shortCode": "category",
+          "label": "Category",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on action='search' success. Echo of input.category: the string that was sent, or null when the field was omitted. Empty string is echoed as empty string. Example: 'cs.AI'.",
+          "children": []
+        },
+        {
+          "shortCode": "papers_returned",
+          "label": "Papers Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Count of papers[] after dropping Atom entries with an empty title. Integer. May be less than max_results (or less than id_list length) when arXiv returns fewer hits or some entries have no title. Example: 5.",
+          "children": []
+        },
+        {
+          "shortCode": "total_results",
+          "label": "Total Results",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Present on action='search' success. OpenSearch totalResults from the Atom feed (http://a9.com/-/spec/opensearch/1.1/) — the full corpus size matching search_query, not this page. Integer; 0 when the element is missing or empty. Absent on get_paper. Use with start and max_results to page. Example: 18420.",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "Start Index",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Present on action='search' success. Echo of the start offset that was requested (default 0). Absent on get_paper. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "papers",
+          "label": "Papers",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Array of paper objects parsed from Atom <entry>. Empty array when the query matched nothing or every entry lacked a title. Field names match Python: use abstract, never summary. Each element: arxiv_id, title, authors[], abstract, published, updated, doi, journal_ref, primary_category, categories[], comment, url, pdf_url.",
+          "children": [
+            {
+              "shortCode": "arxiv_id",
+              "label": "arXiv ID",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Id parsed from Atom <id>. If the text contains '/abs/', the suffix after '/abs/' is kept (e.g. http://arxiv.org/abs/1706.03762v1 → 1706.03762v1; http://arxiv.org/abs/hep-ex/0307015 → hep-ex/0307015). Otherwise the raw id text. Example: '1706.03762v1'.",
+              "children": []
+            },
+            {
+              "shortCode": "title",
+              "label": "Title",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Atom <title> with internal whitespace collapsed to single spaces (DataNodeSupport.collapseWs). Entries whose collapsed title is empty are skipped and do not appear in papers[]. Example: 'Attention Is All You Need'.",
+              "children": []
+            },
+            {
+              "shortCode": "authors",
+              "label": "Authors",
+              "type": "array",
+              "required": false,
+              "value": "",
+              "description": "Ordered list of Atom author/name strings, trimmed. Empty array when the entry has no authors. Example: [\"Ashish Vaswani\",\"Noam Shazeer\"].",
+              "children": []
+            },
+            {
+              "shortCode": "abstract",
+              "label": "Abstract",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Atom <summary> with whitespace collapsed. This is the abstract. There is NO summary field in the output object — Python named it abstract. Example: 'The dominant sequence transduction models are based on complex recurrent or convolutional neural networks...'.",
+              "children": []
+            },
+            {
+              "shortCode": "published",
+              "label": "Published",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Atom <published> timestamp as returned by arXiv (typically ISO-8601 UTC). Empty string when missing. Example: '2017-06-12T17:57:34Z'.",
+              "children": []
+            },
+            {
+              "shortCode": "updated",
+              "label": "Updated",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Atom <updated> timestamp as returned by arXiv. Empty string when missing. Example: '2023-08-02T00:00:00Z'.",
+              "children": []
+            },
+            {
+              "shortCode": "doi",
+              "label": "DOI",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "arxiv:doi text in namespace http://arxiv.org/schemas/atom. Empty string when the paper has no DOI. Example: '10.5555/3295222.3295349'.",
+              "children": []
+            },
+            {
+              "shortCode": "journal_ref",
+              "label": "Journal Ref",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "arxiv:journal_ref text. Empty string when absent. Example: 'Advances in Neural Information Processing Systems 30 (2017)'.",
+              "children": []
+            },
+            {
+              "shortCode": "primary_category",
+              "label": "Primary Category",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "arxiv:primary_category @term. Empty string when absent. Example: 'cs.CL'.",
+              "children": []
+            },
+            {
+              "shortCode": "categories",
+              "label": "Categories",
+              "type": "array",
+              "required": false,
+              "value": "",
+              "description": "Every Atom <category @term> on the entry, including the primary. Empty array when none. Example: [\"cs.CL\",\"cs.LG\"].",
+              "children": []
+            },
+            {
+              "shortCode": "comment",
+              "label": "Comment",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "arxiv:comment text (page counts, conference notes). Empty string when absent. Example: '15 pages, 5 figures, NIPS 2017'.",
+              "children": []
+            },
+            {
+              "shortCode": "url",
+              "label": "URL",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Abstract landing page, always https://arxiv.org/abs/{arxiv_id} (HTTPS abs URL, not the Atom id). Example: 'https://arxiv.org/abs/1706.03762v1'.",
+              "children": []
+            },
+            {
+              "shortCode": "pdf_url",
+              "label": "PDF URL",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Atom <link title=\"pdf\" href> when present; otherwise https://arxiv.org/pdf/{arxiv_id}. title matching is exact 'pdf' (case-sensitive, Python). Example: 'http://arxiv.org/pdf/1706.03762v1'.",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6b8aa206-0816-437c-aeca-6bffabef04e2",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout in seconds for the single GET to http://export.arxiv.org/api/query. Default: 30. Missing, zero, or non-positive values fall back to 30 (the shared HTTP helper requires a positive timeout). On expiry the output is {error:'arXiv API Error: timed out after {n}s'}. Keep this at or below the daemon stateful request budget (default 300s) or the sandbox is killed first. Instance-editable. Example: 30. This is not an inter-request delay — do not use it to pace arXiv's ~3s rate limit; space node invocations in the workflow instead.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-03-19T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-03-19T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

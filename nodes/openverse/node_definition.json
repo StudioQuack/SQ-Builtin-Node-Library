@@ -1,0 +1,188 @@
+{
+  "_id": "d38a94cb-9797-4e04-bd44-d97e17c72d73",
+  "version": "1.0.0",
+  "name": "Openverse",
+  "label": "Openverse Openly Licensed Media",
+  "description": "Official Openverse API v1 (anonymous). search_images, search_audio. thumbnail is per-work on the result (no separate host switch). Respect EACH work's CC licence. OAuth optional for higher limits is not wired (OfficialApiNode auth is none so anonymous works).",
+  "icon": "image_search",
+  "tags": [
+    "openverse",
+    "news"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "e8537eaa-d418-409a-8eca-072c7450b5c5",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-invoke fields for Openverse. Do not put secrets here. Example: {\"operation\":\"search_images\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "search_images",
+          "description": "Overrides config operation. EXACT: search_images | search_audio | thumbnail. Example: 'search_images'.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search query. Example: sunflower.",
+          "children": []
+        },
+        {
+          "shortCode": "license",
+          "label": "license",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CC licence filter. Example: by,by-sa.",
+          "children": []
+        },
+        {
+          "shortCode": "license_type",
+          "label": "license_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "all | all-cc | commercial. Example: commercial.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "1-based. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "identifier",
+          "label": "identifier",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "thumbnail REQUIRED Openverse id. Example: (uuid from search).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ef63449b-7f2f-4765-a8dd-61a23e40c699",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data} on 2xx. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT: 'ok'. Absent on failure. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status from the provider. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). OfficialApiNode places the provider payload here. Example: provider object.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "794a834d-899d-4b04-b769-d011a6fb513d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: search_images | search_audio | thumbnail. Example: 'search_images'.",
+      "value": "search_images",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "search_images",
+        "search_audio",
+        "thumbnail"
+      ]
+    },
+    {
+      "_id": "fb8d7553-4595-4f48-b90c-c47bb997d138",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. <=0 falls back to 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

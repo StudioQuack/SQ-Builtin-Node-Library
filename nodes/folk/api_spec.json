@@ -1,0 +1,88 @@
+{
+  "baseUrl": "https://api.folk.app",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "apiKey"
+  },
+  "operations": {
+    "person.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/people",
+      "required": [],
+      "bodyFrom": ["firstName", "lastName", "fullName", "emails", "phones", "jobTitle", "groups", "companies", "customFieldValues", "description"]
+    },
+    "person.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/people/{personId}",
+      "required": ["personId"]
+    },
+    "person.update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/v1/people/{personId}",
+      "required": ["personId"],
+      "bodyFrom": ["firstName", "lastName", "fullName", "emails", "phones", "jobTitle", "groups", "companies", "customFieldValues", "description"]
+    },
+    "person.search": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/people",
+      "required": [],
+      "queryFrom": ["cursor", "limit", "combinator"]
+    },
+    "company.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/companies",
+      "required": ["name"],
+      "bodyFrom": ["name", "emails", "phones", "urls", "addresses", "groups", "industry", "description", "customFieldValues"]
+    },
+    "company.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/companies/{companyId}",
+      "required": ["companyId"]
+    },
+    "company.update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/v1/companies/{companyId}",
+      "required": ["companyId"],
+      "bodyFrom": ["name", "emails", "phones", "urls", "addresses", "groups", "industry", "description", "customFieldValues"]
+    },
+    "group.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/groups",
+      "required": [],
+      "queryFrom": ["cursor", "visibility"]
+    },
+    "note.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/notes",
+      "required": ["content", "entityId", "visibility"],
+      "bodyFrom": ["content", "entityId", "visibility"],
+      "bodyMap": {"entityId": "entity.id"}
+    },
+    "customField.set": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/v1/{entityCollection}/{entityId}",
+      "required": ["entityCollection", "entityId", "customFieldValues"],
+      "bodyFrom": ["customFieldValues"]
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  },
+  "extraHeaders": {
+    "X-API-Version": "{apiVersion}"
+  }
+}

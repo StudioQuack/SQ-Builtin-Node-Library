@@ -1,0 +1,44 @@
+{
+  "baseUrl": "{base_url}",
+  "defaultTimeout": 300,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "chat": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/compatible-mode/v1/chat/completions",
+      "required": ["messages"],
+      "bodyFrom": ["model", "messages", "tools", "tool_choice", "temperature", "top_p", "max_tokens", "stream", "stop", "presence_penalty", "frequency_penalty", "response_format"],
+      "stream": {
+        "format": "openai-sse"
+      }
+    },
+    "analyze_image": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/compatible-mode/v1/chat/completions",
+      "required": ["messages"],
+      "bodyFrom": ["model", "messages", "temperature", "top_p", "max_tokens", "stream"]
+    },
+    "generate_image": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v1/services/aigc/text2image/image-synthesis",
+      "required": ["model"],
+      "bodyFrom": ["model", "input", "parameters"]
+    },
+    "generate_video": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v1/services/aigc/video-generation/video-synthesis",
+      "required": ["model"],
+      "bodyFrom": ["model", "input", "parameters"]
+    }
+  }
+}

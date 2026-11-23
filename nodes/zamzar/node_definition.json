@@ -1,0 +1,215 @@
+{
+  "_id": "6b5fbf10-e86e-590a-8bb5-a39e24ffcb37",
+  "version": "1.0.0",
+  "name": "Zamzar",
+  "label": "Zamzar File Conversion API",
+  "description": "Zamzar File Conversion API. Official API https://developers.zamzar.com/. One node; pick operation. job_create input source_file and file_download OUTPUT file are type file (Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.) Handler: OfficialApiNode + api_spec.json. Credit-based conversion. File retention window is in the vendor terms.",
+  "icon": "sync",
+  "tags": [
+    "zamzar",
+    "convert"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1f502b87-e47a-5ad0-adfe-65e6d928ed55",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port. File bytes are type file.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "job_create",
+          "description": "Overrides config operation. Accepted: job_create, job_get, file_download, format_list.",
+          "children": []
+        },
+        {
+          "shortCode": "source_file",
+          "label": "source_file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Local file to convert. job_create. Platform file block. Multipart field source_file.",
+          "children": []
+        },
+        {
+          "shortCode": "target_format",
+          "label": "target_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Target format extension. job_create. Example: pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "File id for file_download (/files/{id}/content).",
+          "children": []
+        },
+        {
+          "shortCode": "job_id",
+          "label": "Job Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job id for job_get (/jobs/{job_id}). Example: 123456.",
+          "children": []
+        },
+        {
+          "shortCode": "source_url",
+          "label": "source_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Remote file URL alternative to source_file on job_create. Example: https://example.com/a.docx. https://developers.zamzar.com/docs",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9b6e8475-0b51-5d1d-9173-289a17a27e71",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "8c343e64-d9a5-5600-b6fa-3f0978482976",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "job_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "job_create",
+        "job_get",
+        "file_download",
+        "format_list"
+      ]
+    },
+    {
+      "_id": "92cb2ead-9829-5376-b8b7-d17f46ac7e7c",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Zamzar API key (Basic username). StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f804015a-b160-4901-9057-72af9e7d5a4e",
+      "shortCode": "job_id",
+      "label": "Job Id",
+      "type": "string",
+      "description": "Job id for job_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "8766eda6-3d41-59a4-96cf-06d7655f50ff",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 120.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,172 @@
+{
+  "baseUrl": "https://api.streak.com/api/v1",
+  "defaultTimeout": 30,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "userKey": "api_key",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "pipeline.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/pipelines",
+      "required": []
+    },
+    "pipeline.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/pipelines/{pipeline_key}",
+      "required": [
+        "pipeline_key"
+      ]
+    },
+    "box.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/pipelines/{pipeline_key}/boxes",
+      "required": [
+        "pipeline_key",
+        "name"
+      ],
+      "bodyFrom": [
+        "name",
+        "stage_key",
+        "assigned_to"
+      ]
+    },
+    "box.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/boxes/{box_key}",
+      "required": [
+        "box_key"
+      ]
+    },
+    "box.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/pipelines/{pipeline_key}/boxes",
+      "queryFrom": [
+        "page",
+        "limit",
+        "stage_key",
+        "sort_by"
+      ],
+      "required": [
+        "pipeline_key"
+      ]
+    },
+    "box.update": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/boxes/{box_key}",
+      "required": [
+        "box_key"
+      ],
+      "bodyFrom": [
+        "name",
+        "stage_key",
+        "notes",
+        "fields"
+      ]
+    },
+    "box.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/boxes/{box_key}",
+      "required": [
+        "box_key"
+      ]
+    },
+    "contact.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/teams/{team_key}/contacts",
+      "required": [
+        "team_key",
+        "email"
+      ],
+      "bodyFrom": [
+        "email",
+        "given_name",
+        "family_name",
+        "fields"
+      ],
+      "baseUrl": "https://api.streak.com/api/v2"
+    },
+    "contact.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/contacts/{key}",
+      "required": [
+        "key"
+      ]
+    },
+    "contact.update": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/contacts/{key}",
+      "required": [
+        "key"
+      ],
+      "bodyFrom": [
+        "email",
+        "given_name",
+        "family_name",
+        "fields"
+      ]
+    },
+    "field.update": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/boxes/{box_key}",
+      "required": [
+        "box_key",
+        "field_key"
+      ],
+      "bodyFrom": [
+        "field_key",
+        "value",
+        "fields"
+      ]
+    },
+    "task.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/boxes/{box_key}/tasks",
+      "required": [
+        "box_key",
+        "text"
+      ],
+      "bodyFrom": [
+        "text",
+        "due_date"
+      ]
+    },
+    "comment.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/boxes/{box_key}/comments",
+      "required": [
+        "box_key",
+        "message"
+      ],
+      "bodyFrom": [
+        "message"
+      ]
+    },
+    "file.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/boxes/{box_key}/files",
+      "required": [
+        "box_key"
+      ]
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

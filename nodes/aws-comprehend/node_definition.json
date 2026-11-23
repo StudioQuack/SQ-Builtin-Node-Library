@@ -1,0 +1,208 @@
+{
+  "_id": "bf5f6f1b-1814-46ba-aa18-fa794c9ba0d6",
+  "version": "1.0.0",
+  "name": "AWS Comprehend",
+  "label": "Amazon Comprehend — real-time NLP",
+  "description": "Official Amazon Comprehend JSON 1.1 API (2017-11-27). POST https://comprehend.{region}.amazonaws.com/ signed with AWS SigV4 (service comprehend). Content-Type application/x-amz-json-1.1 and X-Amz-Target Comprehend_20171127.{Action} are set per operation. operation selects DetectSentiment, DetectEntities, DetectKeyPhrases, DetectDominantLanguage (catalog detect_language), DetectSyntax, DetectPiiEntities. IAM keys are StudioQuack secrets (access_key_id, secret_access_key, optional session_token). Never log credentials. Docs: https://docs.aws.amazon.com/comprehend/latest/APIReference/Welcome.html. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "psychology",
+  "tags": [
+    "aws",
+    "comprehend",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "2a7b2c83-43cf-4ad9-a8a8-ebbe42d26180",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Official Comprehend JSON fields for the selected operation. Use AWS names Text and LanguageCode. Do not put access_key_id or secret_access_key here. Example: {\"Text\":\"The product works well.\",\"LanguageCode\":\"en\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "detect_sentiment",
+          "description": "Overrides config operation when non-blank. EXACT: detect_sentiment | detect_entities | detect_key_phrases | detect_language | detect_syntax | detect_pii.",
+          "children": []
+        },
+        {
+          "shortCode": "Text",
+          "label": "Text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "UTF-8 text. Required for every operation. Sentiment/key phrases/syntax max 5 KB; entities/PII max 100 KB.",
+          "children": []
+        },
+        {
+          "shortCode": "LanguageCode",
+          "label": "LanguageCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "AWS LanguageCode. Sentiment/entities/key phrases: en|es|fr|de|it|pt|ar|hi|ja|ko|zh|zh-TW.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "75e2836c-9a13-4794-9ff2-b588f074f691",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (Comprehend JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (Sentiment, Entities, KeyPhrases, Languages, SyntaxTokens, Entities for PII).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a8e8cb57-a5b5-4e3c-b469-08663fe66b38",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default Comprehend action when input.operation is blank. EXACT: detect_sentiment | detect_entities | detect_key_phrases | detect_language | detect_syntax | detect_pii. Maps to X-Amz-Target Comprehend_20171127.{Action} (DetectDominantLanguage for detect_language).",
+      "value": "detect_sentiment",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "detect_sentiment",
+        "detect_entities",
+        "detect_key_phrases",
+        "detect_language",
+        "detect_syntax",
+        "detect_pii"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "f80e80f3-368a-4b87-b306-aa6af5803179",
+      "shortCode": "access_key_id",
+      "label": "AWS access key ID",
+      "type": "password",
+      "description": "IAM access key ID used as the SigV4 credential. StudioQuack secret. Never on INPUT. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bb21de04-0e08-47a3-8f4e-9c82c5592690",
+      "shortCode": "secret_access_key",
+      "label": "AWS secret access key",
+      "type": "password",
+      "description": "IAM secret access key used to sign SigV4. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ade6e075-8d43-4405-84f1-012f76ecaa6b",
+      "shortCode": "session_token",
+      "label": "AWS session token",
+      "type": "password",
+      "description": "Optional STS session token. When set, OfficialApiNode adds x-amz-security-token. Empty for long-lived keys. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "51c40817-d0ea-4df4-ba14-26eedd0819ac",
+      "shortCode": "region",
+      "label": "AWS region",
+      "type": "string",
+      "description": "Region in the official host comprehend.{region}.amazonaws.com. Example: us-east-1. Required.",
+      "value": "us-east-1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e1ccd3f2-fa78-4084-89d6-e4a5dfbc92b2",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 25. Floor 1.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

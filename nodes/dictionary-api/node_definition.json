@@ -1,0 +1,164 @@
+{
+  "_id": "9a7dd024-eed7-4fdc-84ee-f7b28e220a42",
+  "version": "1.0.0",
+  "name": "Dictionary API",
+  "label": "Merriam-Webster Collegiate Dictionary",
+  "description": "Official Merriam-Webster Collegiate Dictionary JSON API v3. define only (no random endpoint exists). Query key. Free MW is non-commercial ≤1000/day; commercial needs a licence and logo. dictionaryapi.dev is not wired (community, unofficial relative to a publisher; OfficialApiNode is single-host).",
+  "icon": "menu_book",
+  "tags": [
+    "dictionary",
+    "news"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "bb218972-519e-4e03-9e5b-a7858d6895d6",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-invoke fields for Dictionary API. Do not put secrets here. Example: {\"operation\":\"define\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "word",
+          "label": "word",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Headword to look up. Path {word}. Example: ubiquitous.",
+          "children": []
+        },
+        {
+          "shortCode": "ref",
+          "label": "ref",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Merriam-Webster reference set. EXACT: collegiate | intermediate | learners | spanish | medical | collegiate-thesaurus | schdil. Default collegiate.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3a851033-fc5b-4db9-bfa3-b297cf9cb68f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data} on 2xx. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT: 'ok'. Absent on failure. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status from the provider. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). OfficialApiNode places the provider payload here. Example: provider object.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "bd8e4740-e3da-4008-9f5b-2374f0db9135",
+      "shortCode": "key",
+      "label": "Key",
+      "type": "password",
+      "description": "Merriam-Webster API key (query key=). https://www.dictionaryapi.com/",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1708a3f0-47cc-46bc-a9a8-f4ee0d173eb1",
+      "shortCode": "ref",
+      "label": "ref",
+      "type": "string",
+      "description": "Default dictionary when INPUT ref is empty.",
+      "value": "collegiate",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b6ad1559-ee06-478b-8e42-890bb4707f55",
+      "shortCode": "word",
+      "label": "Word",
+      "type": "string",
+      "description": "Headword to look up. Path {word}. Example: ubiquitous.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "18854310-eefa-49a1-a8ef-7bbd1c376d1b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. <=0 falls back to 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,207 @@
+{
+  "_id": "46b7eedb-2e6c-5459-ba19-13477c5fccae",
+  "version": "1.0.0",
+  "name": "Wolfram Alpha",
+  "label": "Wolfram Alpha",
+  "description": "Wolfram Alpha official API via OfficialApiNode (api_spec.json). Operations: query (Full Results v2), spoken (Spoken Results v1), short_answer (Short Answers v1 /result). Docs: https://products.wolframalpha.com/api/documentation , https://products.wolframalpha.com/spoken-results-api/documentation . AppID query appid=. Results licensed — no unlimited republish. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "calculator",
+  "tags": [
+    "knowledge",
+    "wolfram"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "56a342e4-dff2-568f-917f-33e1f7eab2c1",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Wolfram Alpha request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"query\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: query | spoken | short_answer. Default: first listed or instance operation. Example: 'query'.",
+          "children": [],
+          "_id": "f7a765e6-3aa5-5fb5-89a8-bab3bd8843b7"
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Full Results query string. Required on query. Example: pi.",
+          "children": [],
+          "_id": "5edd318d-e075-51da-84f6-c4729bfdf456"
+        },
+        {
+          "shortCode": "units",
+          "label": "units",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "EXACT: metric | nonmetric. All ops.",
+          "children": [],
+          "_id": "9b779194-9a95-5116-a01c-51ca62ca6c05"
+        },
+        {
+          "shortCode": "i",
+          "label": "i",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Spoken / short-answer input. Required on spoken and short_answer. Example: weather in paris.",
+          "children": []
+        },
+        {
+          "shortCode": "format",
+          "label": "format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Full results formats, comma-separated. query. Example: plaintext,image. https://products.wolframalpha.com/api/documentation",
+          "children": []
+        },
+        {
+          "shortCode": "podstate",
+          "label": "podstate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pod state for query (e.g. Result__Step-by-step solution).",
+          "children": []
+        },
+        {
+          "shortCode": "assumption",
+          "label": "assumption",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Assumption token from a previous query.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0bc15d90-5e53-546e-84e3-69080a066715",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "682dbd14-111d-51cc-b339-aeda5f43b994"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "c71441a9-d7ef-5007-9150-4fb8d72bb7b3"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "fcfc1c4a-4a97-5bcd-8821-0707f467a8f6"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "cf8d4484-9b3b-5244-875f-9325df414d3f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: query | spoken | short_answer. Example: 'query'.",
+      "value": "query",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "query",
+        "spoken",
+        "short_answer"
+      ]
+    },
+    {
+      "_id": "5e71fb25-ed2c-5b61-8862-a9d20d5524d7",
+      "shortCode": "appid",
+      "label": "Appid",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "784605da-d41d-521d-9edc-0acd19aac13b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 30. Keep under the daemon sandbox request budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

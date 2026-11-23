@@ -1,0 +1,287 @@
+{
+  "_id": "058af46e-003f-4a87-9707-1103a8341ae6",
+  "version": "1.0.0",
+  "name": "SSH",
+  "label": "SSH-2 exec / file transfer",
+  "description": "SSH-2 session to a customer host: exec, download, upload. Handler SshNode (JSch). Keys are password-typed config only. Download/upload use type file (ref-id). known_hosts (content or fingerprint) is required — unknown or mismatched host keys are refused. ssh-rsa (SHA-1 signatures) is not offered; RFC 8332 rsa-sha2-256/512 or Ed25519.",
+  "icon": "",
+  "tags": [
+    "ssh",
+    "remote"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c09429bf-3a88-441d-9646-7a2e190b906e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One SSH operation. Purpose fields (host, command, remote_path, file) override config when set. Secrets stay in configurationParameters. Example operation: 'exec'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "exec | download | upload. Overrides config operation when set.",
+          "children": []
+        },
+        {
+          "shortCode": "host",
+          "label": "host",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Remote hostname or IP for this invoke. Overrides config host when set.",
+          "children": []
+        },
+        {
+          "shortCode": "command",
+          "label": "command",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Single remote command string for exec. Runs on the remote host only. Newlines rejected.",
+          "children": []
+        },
+        {
+          "shortCode": "remote_path",
+          "label": "remote_path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Remote file path for download/upload. Path segment '..' is rejected.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref for upload (input). Type file. Never inline bytes on the wire.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "139d46dc-dbb4-44ba-8d4f-106365616909",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Result file ref when the operation produces a file. Type file (platform ref-id). Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "9fd4dc13-125a-4218-bdd4-165825dfcfc0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: exec | download | upload. Required. Example: 'exec'.",
+      "value": "exec",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "exec",
+        "download",
+        "upload"
+      ]
+    },
+    {
+      "_id": "e8c356a1-b232-455c-949d-3f8e067bab9f",
+      "shortCode": "host",
+      "label": "Host",
+      "type": "string",
+      "description": "Remote hostname or IP. Required.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "64ca0192-dedb-4f03-bafe-476332cdcc96",
+      "shortCode": "port",
+      "label": "Port",
+      "type": "number",
+      "description": "SSH port. Default 22.",
+      "value": "22",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7704b4da-0619-4605-a83b-9468513eb017",
+      "shortCode": "user",
+      "label": "User",
+      "type": "string",
+      "description": "SSH username. Required.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c9d94fe2-11ba-4474-8531-6804d045bdcc",
+      "shortCode": "auth_type",
+      "label": "Auth Type",
+      "type": "select",
+      "description": "password | key. Default key.",
+      "value": "key",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "password",
+        "key"
+      ]
+    },
+    {
+      "_id": "b7be3719-7c90-4016-894e-268308a584e2",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "SSH password when auth_type=password. Password-typed config only. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dc3bff7a-4586-4eb5-b5e4-a9d6614c27f9",
+      "shortCode": "private_key",
+      "label": "Private Key",
+      "type": "password",
+      "description": "OpenSSH private key PEM when auth_type=key. Password-typed config only. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4ae1350d-3e9c-4148-b611-c53cc55f3581",
+      "shortCode": "passphrase",
+      "label": "Passphrase",
+      "type": "password",
+      "description": "Passphrase for an encrypted private_key. Password-typed config only. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f7aca36a-0afc-4673-89e4-5661bb371c1d",
+      "shortCode": "known_hosts",
+      "label": "Known Hosts",
+      "type": "string",
+      "description": "OpenSSH known_hosts content or a host-key fingerprint (SHA256:… / MD5:…). Required. Unknown or mismatched host keys are refused. No trust-on-first-use. ssh-rsa (SHA-1) is not offered.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c0ab7a8f-7581-41c2-b56c-49a1524b38a5",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25, cap 60. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-10-31T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,114 @@
+{
+  "baseUrl": "https://api.digitalocean.com/v2",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "token"
+  },
+  "operations": {
+    "droplet_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/droplets",
+      "bodyFrom": [
+        "name",
+        "region",
+        "size",
+        "image",
+        "ssh_keys",
+        "backups",
+        "ipv6",
+        "monitoring",
+        "tags",
+        "user_data",
+        "volumes",
+        "vpc_uuid"
+      ],
+      "required": [
+        "name",
+        "region",
+        "size",
+        "image"
+      ]
+    },
+    "droplet_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/droplets/{droplet_id}",
+      "required": [
+        "droplet_id"
+      ]
+    },
+    "droplet_power": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/droplets/{droplet_id}/actions",
+      "required": [
+        "droplet_id",
+        "type"
+      ],
+      "bodyFrom": [
+        "type"
+      ]
+    },
+    "snapshot_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/droplets/{droplet_id}/actions",
+      "required": [
+        "droplet_id"
+      ],
+      "bodyFrom": [
+        "type",
+        "name"
+      ]
+    },
+    "domain_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/domains",
+      "bodyFrom": [
+        "name",
+        "ip_address"
+      ],
+      "required": [
+        "name"
+      ]
+    },
+    "ssh_key_add": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/account/keys",
+      "bodyFrom": [
+        "name",
+        "public_key"
+      ],
+      "required": [
+        "name",
+        "public_key"
+      ]
+    },
+    "k8s_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/kubernetes/clusters/{cluster_id}",
+      "required": [
+        "cluster_id"
+      ]
+    },
+    "volume_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/volumes",
+      "queryFrom": [
+        "region"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

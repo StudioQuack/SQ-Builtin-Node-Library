@@ -1,0 +1,217 @@
+{
+  "_id": "a75649ef-5a86-59b4-8c70-bb1f8b5d161e",
+  "version": "1.0.0",
+  "name": "SIGNL4",
+  "label": "SIGNL4 — SIGNL4 inbound / resolve webhook API",
+  "description": "SIGNL4 via the official SIGNL4 inbound / resolve webhook API. Base https://connect.signl4.com/webhook. Docs: https://www.signl4.com/webhook-api/. On-call alerting, not general chat. Team secret is part of the URL — treat as a secret. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "notification_important",
+  "tags": [
+    "alert"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "90cc9661-46d9-513f-a169-7794d9895939",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One SIGNL4 operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"send-alert\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-alert",
+          "description": "Which official call to run. EXACT values: send-alert | resolve-alert. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alert title. send-alert / resolve-alert.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alert body. send-alert / resolve-alert.",
+          "children": []
+        },
+        {
+          "shortCode": "X-S4-Status",
+          "label": "X-S4-Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SIGNL4 status. new (default) | resolved. resolve-alert should send resolved.",
+          "children": []
+        },
+        {
+          "shortCode": "X-S4-Service",
+          "label": "X-S4-Service",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Service name for send-alert.",
+          "children": []
+        },
+        {
+          "shortCode": "X-S4-Location",
+          "label": "X-S4-Location",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Latitude,longitude for send-alert. Example: 47.8,13.0.",
+          "children": []
+        },
+        {
+          "shortCode": "X-S4-AlertingScenario",
+          "label": "X-S4-AlertingScenario",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-alert scenario. single_ack | multi_ack | emergency.",
+          "children": []
+        },
+        {
+          "shortCode": "X-S4-ExternalID",
+          "label": "X-S4-ExternalID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Your correlation id. Required on resolve-alert so SIGNL4 can match the open alert.",
+          "children": []
+        },
+        {
+          "shortCode": "X-S4-Filtering",
+          "label": "X-S4-Filtering",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "send-alert X-S4-Filtering. true applies team event filters.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7571fe0e-b3e0-5eb3-a9c8-ea7ec973b7bd",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6989549d-2637-5929-b197-9054769b841c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-alert, resolve-alert. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-alert",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-alert",
+        "resolve-alert"
+      ]
+    },
+    {
+      "_id": "9362f152-7510-553a-8c00-cf46168a060c",
+      "shortCode": "team_secret",
+      "label": "team_secret",
+      "type": "password",
+      "description": "Team secret (webhook path segment). StudioQuack secret.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "37621d23-6eeb-5c49-8b1e-16845cbe84fe",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

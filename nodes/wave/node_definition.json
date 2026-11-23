@@ -1,0 +1,311 @@
+{
+  "_id": "ec61b855-43c3-4f8f-92d6-9a72c61e35c7",
+  "version": "1.0.0",
+  "name": "Wave",
+  "label": "Wave — Wave public GraphQL",
+  "description": "Official Wave public GraphQL. Docs: https://developer.waveapps.com/hc/en-us/articles/360019968212-API-Reference. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. Single GraphQL endpoint. US/CA-centric. Supply official mutations in query; never PAN.",
+  "icon": "account_balance",
+  "tags": [
+    "wave",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "36110e8a-d099-48b8-ae2d-5dd548f3132c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Wave. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "customer_create",
+          "description": "Overrides config operation. EXACT: customer_create | invoice_create | invoice_list | transaction_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "Query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GraphQL document. Required unless you rely on a stored default. customer_create uses customerCreate; invoice_create uses invoiceCreate. See https://developer.waveapps.com/hc/en-us/articles/360032569232-Mutation-Create-customer",
+          "children": []
+        },
+        {
+          "shortCode": "businessId",
+          "label": "businessId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Wave business id (GraphQL ID). Nested as variables.input.businessId on customer_create / invoice_create, or variables.businessId on list ops. Required by Wave mutations. https://developer.waveapps.com/hc/en-us/articles/360019968212-API-Reference",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer name (business or person). Required on customer_create. Nested as variables.input.name. Example: Santa.",
+          "children": []
+        },
+        {
+          "shortCode": "firstName",
+          "label": "firstName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer first name. customer_create. Nested as variables.input.firstName. Example: Saint.",
+          "children": []
+        },
+        {
+          "shortCode": "lastName",
+          "label": "lastName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer last name. customer_create. Nested as variables.input.lastName. Example: Nicholas.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer email. customer_create. PII — do not log. Nested as variables.input.email.",
+          "children": []
+        },
+        {
+          "shortCode": "currency",
+          "label": "currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO currency code. customer_create (customer default) or invoice_create. Example: CAD.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer phone. customer_create. Nested as variables.input.phone.",
+          "children": []
+        },
+        {
+          "shortCode": "mobile",
+          "label": "mobile",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer mobile. customer_create. Nested as variables.input.mobile.",
+          "children": []
+        },
+        {
+          "shortCode": "website",
+          "label": "website",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer website. customer_create. Nested as variables.input.website.",
+          "children": []
+        },
+        {
+          "shortCode": "customerId",
+          "label": "customerId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Wave customer id. Required on invoice_create. Nested as variables.input.customerId.",
+          "children": []
+        },
+        {
+          "shortCode": "items",
+          "label": "items",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Invoice line items [{productId, quantity, price, description}]. invoice_create. Nested as variables.input.items. Example: [{\"productId\":\"<PRODUCT_ID>\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "invoiceNumber",
+          "label": "invoiceNumber",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Invoice number. invoice_create. Auto-assigned when omitted. Nested as variables.input.invoiceNumber.",
+          "children": []
+        },
+        {
+          "shortCode": "invoiceDate",
+          "label": "invoiceDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Invoice date YYYY-MM-DD. invoice_create. Nested as variables.input.invoiceDate.",
+          "children": []
+        },
+        {
+          "shortCode": "dueDate",
+          "label": "dueDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Invoice due date YYYY-MM-DD. invoice_create. Nested as variables.input.dueDate.",
+          "children": []
+        },
+        {
+          "shortCode": "memo",
+          "label": "memo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Invoice memo. invoice_create. Nested as variables.input.memo.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page (1-based) for invoice_list / transaction_list. Nested as variables.page.",
+          "children": []
+        },
+        {
+          "shortCode": "pageSize",
+          "label": "pageSize",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page size for invoice_list / transaction_list. Nested as variables.pageSize. Example: 20.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0efa222f-2e85-40d6-94d6-da5af51a7e3f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "943800b2-4d83-42ae-ac83-09ab55b9f7c0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: customer_create | invoice_create | invoice_list | transaction_list | trigger. Default customer_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "customer_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "customer_create",
+        "invoice_create",
+        "invoice_list",
+        "transaction_list",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "831e9a21-e9d2-4adb-ab77-eb054fd7e51a",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Wave credential (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cfca2979-aa1a-45ca-bb8d-2cd2bd097295",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

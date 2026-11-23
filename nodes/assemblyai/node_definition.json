@@ -1,0 +1,328 @@
+{
+  "_id": "135d4521-8e1c-4a64-9749-11a6396d7777",
+  "version": "1.0.0",
+  "name": "AssemblyAI",
+  "label": "AssemblyAI",
+  "description": "Official AssemblyAI v2 transcripts (POST/GET) plus upload on INPUT input → OUTPUT output. realtime is ingress (Streaming WebSocket is not opened). Auth is StudioQuack secret api_key sent as authorization (no Bearer). Audio uses type file on upload. Docs: https://www.assemblyai.com/docs/api-reference/transcripts/submit. Terms: https://www.assemblyai.com/legal/terms-of-service. Never log api_key. LeMUR dropped (LLM Gateway is a different host). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "mic",
+  "tags": [
+    "assemblyai",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ed9180c0-9196-45e8-bd1f-8cbcc627e23d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. transcribe requires audio_url. Prefer speech_models (array). When redact_pii is true, also set redact_pii_policies. get_transcript requires transcript_id. upload uses file (type file). realtime is ingress — use a BPMN message event. Do not put api_key here. Example: {\"audio_url\":\"https://assembly.ai/wildfires.mp3\",\"speech_models\":[\"universal-3-5-pro\"]}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which official call to run. EXACT values: transcribe | get_transcript | upload | realtime. Overrides instance Operation when set. transcribe = POST /v2/transcript; get_transcript = GET by transcript_id; upload = POST /v2/upload; realtime is ingress only (BPMN message event). Example: get_transcript.",
+          "children": []
+        },
+        {
+          "shortCode": "audio_url",
+          "label": "audio_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTTPS URL of media for transcribe, or upload_url from operation=upload.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for upload (POST /v2/upload raw bytes). Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "transcript_id",
+          "label": "transcript_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path id for get_transcript.",
+          "children": []
+        },
+        {
+          "shortCode": "speech_models",
+          "label": "speech_models",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Official async model selector (POST /v2/transcript). Priority-ordered list. Current docs: universal-3-5-pro (recommended, 18 languages) and universal-2 (99 languages). Default if omitted: [\"universal-3-5-pro\", \"universal-2\"]. https://www.assemblyai.com/docs/pre-recorded-audio/select-the-speech-model",
+          "children": []
+        },
+        {
+          "shortCode": "language_code",
+          "label": "language_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional language_code. Omit with language_detection for auto.",
+          "children": []
+        },
+        {
+          "shortCode": "speaker_labels",
+          "label": "speaker_labels",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Optional diarization flag on transcribe.",
+          "children": []
+        },
+        {
+          "shortCode": "webhook_url",
+          "label": "webhook_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional completion webhook. Prefer this over tight polling.",
+          "children": []
+        },
+        {
+          "shortCode": "language_detection",
+          "label": "language_detection",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `language_detection` for operation: transcribe.",
+          "children": []
+        },
+        {
+          "shortCode": "speakers_expected",
+          "label": "speakers_expected",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `speakers_expected` for operation: transcribe.",
+          "children": []
+        },
+        {
+          "shortCode": "punctuate",
+          "label": "punctuate",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `punctuate` for operation: transcribe.",
+          "children": []
+        },
+        {
+          "shortCode": "format_text",
+          "label": "format_text",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `format_text` for operation: transcribe.",
+          "children": []
+        },
+        {
+          "shortCode": "webhook_auth_header_name",
+          "label": "webhook_auth_header_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `webhook_auth_header_name` for operation: transcribe.",
+          "children": []
+        },
+        {
+          "shortCode": "webhook_auth_header_value",
+          "label": "webhook_auth_header_value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `webhook_auth_header_value` for operation: transcribe.",
+          "children": []
+        },
+        {
+          "shortCode": "filter_profanity",
+          "label": "filter_profanity",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `filter_profanity` for operation: transcribe.",
+          "children": []
+        },
+        {
+          "shortCode": "redact_pii",
+          "label": "redact_pii",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter redact_pii for operation transcribe. When true, AssemblyAI requires redact_pii_policies on the same request.",
+          "children": []
+        },
+        {
+          "shortCode": "redact_pii_policies",
+          "label": "redact_pii_policies",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Policy names for POST /v2/transcript. Required when redact_pii is true; omit when it is false. Example: [\"person_name\", \"phone_number\", \"email_address\"]. https://www.assemblyai.com/docs/pre-recorded-audio/pii-redaction",
+          "children": []
+        },
+        {
+          "shortCode": "auto_highlights",
+          "label": "auto_highlights",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `auto_highlights` for operation: transcribe.",
+          "children": []
+        },
+        {
+          "shortCode": "summarization",
+          "label": "summarization",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `summarization` for operation: transcribe.",
+          "children": []
+        },
+        {
+          "shortCode": "sentiment_analysis",
+          "label": "sentiment_analysis",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `sentiment_analysis` for operation: transcribe.",
+          "children": []
+        },
+        {
+          "shortCode": "entity_detection",
+          "label": "entity_detection",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `entity_detection` for operation: transcribe.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "511ac777-aa5b-418b-98f9-40c56e4dd78a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (Transcript JSON or upload_url). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed AssemblyAI JSON (id, status, text, words, upload_url).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "292bf53a-fa07-46bd-b7ba-7875b5a4a812",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official AssemblyAI verb. EXACT: transcribe | get_transcript | upload | realtime. Default transcribe = POST /v2/transcript. realtime = ingress (no socket).",
+      "value": "transcribe",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "transcribe",
+        "get_transcript",
+        "upload",
+        "realtime"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "0c551fb5-f52a-43e9-beca-f62782de6fb0",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "AssemblyAI API key. Sent as header authorization (raw key, no Bearer). StudioQuack secret only. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "78e9402e-881b-4461-8e77-d792f25127c6",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 60. Floor 1.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

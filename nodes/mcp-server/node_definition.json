@@ -1,0 +1,295 @@
+{
+  "_id": "82fea967-578c-4d83-96a4-fed18627f764",
+  "version": "1.0.0",
+  "name": "MCP Server",
+  "label": "MCP Server",
+  "description": "Calls one remote MCP server over Streamable HTTP (protocol 2025-06-18, also 2025-03-26 and 2024-11-05). Each run sends initialize, notifications/initialized, then one method, and DELETEs the session when the server issued Mcp-Session-Id. The POST response may be a JSON object or one text/event-stream body. stdio is not a mode: this node does not spawn a local process. There is no inbound listener. Auth token is password config and is never logged. Tool arguments are sent only to server_url. Daemon egress policy still applies. A tool result with isError true is success data, not a BPMN error.",
+  "icon": "smart_toy",
+  "tags": [
+    "mcp",
+    "tools",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d302f4c5-91d3-43f1-8cd0-212827694fd5",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One MCP call. operation and server_url override config when set. Secrets stay in configurationParameters. Example operation: call_tool.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list_tools | call_tool | list_resources | read_resource | list_resource_templates | list_prompts | get_prompt | ping. Overrides config. Blank uses config, then list_tools.",
+          "children": []
+        },
+        {
+          "shortCode": "server_url",
+          "label": "server_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Absolute http or https MCP endpoint for this call. Overrides config. No userinfo. Must not contain auth_token.",
+          "children": []
+        },
+        {
+          "shortCode": "tool_name",
+          "label": "tool_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tool name for call_tool. Required for that operation. Max 256 characters. No control characters.",
+          "children": []
+        },
+        {
+          "shortCode": "arguments",
+          "label": "arguments",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JSON object passed as tools/call arguments. Omit or {} when the tool takes none. A JSON object string is accepted. Max 256 KiB.",
+          "children": []
+        },
+        {
+          "shortCode": "uri",
+          "label": "uri",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource URI for read_resource. Required for that operation. Sent to the MCP server as a string; this node does not fetch the URI itself.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt_name",
+          "label": "prompt_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prompt name for get_prompt. Required for that operation. Max 256 characters.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt_arguments",
+          "label": "prompt_arguments",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JSON object passed as prompts/get arguments. Omit or {} when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Opaque pagination cursor for list_tools, list_resources, list_resource_templates, or list_prompts. Max 1024 characters.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "467f92ec-2f0f-4701-9e55-036398780700",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "JSON-RPC result as {status, data, http_status}. data is the result object (tools, contents, messages, or a ping object). Errors raise a BPMN error (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED). The auth token is redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JSON-RPC result object. call_tool returns the tool result, including isError when the tool itself failed. Non-object results are wrapped as {value}.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status of the method POST (not the initialize POST).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "716fccc3-57e7-4789-9151-b7b0fff3b5e0",
+      "shortCode": "server_url",
+      "label": "Server URL",
+      "type": "string",
+      "description": "Absolute http or https URL of the MCP Streamable HTTP endpoint. Required unless input server_url is set. No userinfo. Example: https://mcp.example.com/mcp",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6d83be5f-917c-42e2-a694-b2cf6b247cda",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default method when input operation is blank. EXACT values: list_tools, call_tool, list_resources, read_resource, list_resource_templates, list_prompts, get_prompt, ping.",
+      "value": "list_tools",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "list_tools",
+        "call_tool",
+        "list_resources",
+        "read_resource",
+        "list_resource_templates",
+        "list_prompts",
+        "get_prompt",
+        "ping"
+      ]
+    },
+    {
+      "_id": "1f333846-d6d4-4614-81fa-f02f6d203cc8",
+      "shortCode": "auth_type",
+      "label": "Auth Type",
+      "type": "select",
+      "description": "none | bearer | header. bearer sends Authorization: Bearer <auth_token>. header sends auth_header: <auth_token>. Default none.",
+      "value": "none",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "none",
+        "bearer",
+        "header"
+      ]
+    },
+    {
+      "_id": "3913b4f1-0a2b-4b10-b3f3-7624e102f166",
+      "shortCode": "auth_token",
+      "label": "Auth Token",
+      "type": "password",
+      "description": "Secret for auth_type bearer or header. Password-typed config only. Never logged. Required when auth_type is bearer or header. Not read from the input port.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f9f52a1b-213d-49ac-a07d-86a988c756da",
+      "shortCode": "auth_header",
+      "label": "Auth Header",
+      "type": "string",
+      "description": "Header name when auth_type=header. Default X-Api-Key. Letters, digits, and hyphen only, max 64. Host, Authorization, Content-Type, and MCP session headers are rejected.",
+      "value": "X-Api-Key",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cdc46697-cc4c-4b72-b998-e669bb6e6983",
+      "shortCode": "protocol_version",
+      "label": "Protocol Version",
+      "type": "select",
+      "description": "MCP-Protocol-Version offered in initialize. EXACT values: 2024-11-05, 2025-03-26, 2025-06-18. Default 2025-06-18. Later calls use the version the server agreed to when that version is in this list.",
+      "value": "2025-06-18",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "2024-11-05",
+        "2025-03-26",
+        "2025-06-18"
+      ]
+    },
+    {
+      "_id": "db45fed8-631d-4a44-90d9-084911e39c9e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Budget for the whole invoke (initialize, initialized notification, method, and session DELETE). Blank, 0, or negative becomes 30. Cap 60.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "878d2be2-f708-40e3-acfd-9392f0cdc5cb",
+      "shortCode": "verify_tls",
+      "label": "Verify TLS",
+      "type": "select",
+      "description": "Verify the server certificate. Default true. EXACT disable value: false. Any other value verifies. false is lab-only.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "true",
+        "false"
+      ]
+    }
+  ],
+  "cdate": {
+    "$date": "2026-11-07T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-07T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

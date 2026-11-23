@@ -1,0 +1,607 @@
+{
+  "_id": "ef1807ab-090e-4783-93c2-15d03d556da9",
+  "version": "1.0.0",
+  "name": "TikTok Ads",
+  "label": "TikTok Ads — Marketing API v1.3",
+  "description": "TikTok Marketing API v1.3 at https://business-api.tiktok.com. Docs: https://business-api.tiktok.com/portal/docs. Campaign/adgroup/ad use official named fields. pixel.track uses event_source + data[]. Header Access-Token. Handler: OfficialApiNode. Never log access_token or event user PII.",
+  "icon": "campaign",
+  "tags": [
+    "ads"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b665cb45-6d1e-4388-bcfd-171fce08d942",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. advertiser_id may come from config. Do not put access_token here. Example: {\"operation\":\"campaign.list\",\"advertiser_id\":\"123\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "advertiser.list",
+          "description": "Overrides config operation when non-blank. EXACT: advertiser.list | campaign.create | campaign.get | campaign.list | adgroup.create | adgroup.list | ad.create | ad.list | report.get | pixel.track | lead.list | trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "advertiser_id",
+          "label": "advertiser_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Advertiser id (string in v1.3). GET query can use config advertiser_id. POST body fields (create / pixel.track / lead.list) must be on INPUT.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Parent campaign id for adgroup.create.",
+          "children": []
+        },
+        {
+          "shortCode": "adgroup_id",
+          "label": "adgroup_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Parent ad group id for ad.create.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_name",
+          "label": "campaign_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Name for campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "adgroup_name",
+          "label": "adgroup_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Name for adgroup.create.",
+          "children": []
+        },
+        {
+          "shortCode": "ad_name",
+          "label": "ad_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Name for ad.create.",
+          "children": []
+        },
+        {
+          "shortCode": "objective_type",
+          "label": "objective_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign objective. Example: TRAFFIC | LEAD_GENERATION | WEB_CONVERSIONS.",
+          "children": []
+        },
+        {
+          "shortCode": "budget_mode",
+          "label": "budget_mode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Budget mode as documented for the objective.",
+          "children": []
+        },
+        {
+          "shortCode": "budget",
+          "label": "budget",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Campaign or ad-group budget when required.",
+          "children": []
+        },
+        {
+          "shortCode": "creatives",
+          "label": "creatives",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Creative payload for ad.create as /ad/create/ documents.",
+          "children": []
+        },
+        {
+          "shortCode": "filtering",
+          "label": "filtering",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider filter object (ids, status) for list/get.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "pixel.track page object {url, referrer}. Wired to data[0].page.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size; clamp to documented max.",
+          "children": []
+        },
+        {
+          "shortCode": "report_type",
+          "label": "report_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "report.get. Example: BASIC.",
+          "children": []
+        },
+        {
+          "shortCode": "data_level",
+          "label": "data_level",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "report.get. Example: AUCTION_CAMPAIGN | AUCTION_ADGROUP | AUCTION_AD.",
+          "children": []
+        },
+        {
+          "shortCode": "dimensions",
+          "label": "dimensions",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "report.get dimension list.",
+          "children": []
+        },
+        {
+          "shortCode": "metrics",
+          "label": "metrics",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "report.get metric list.",
+          "children": []
+        },
+        {
+          "shortCode": "start_date",
+          "label": "start_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "report.get YYYY-MM-DD.",
+          "children": []
+        },
+        {
+          "shortCode": "end_date",
+          "label": "end_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "report.get YYYY-MM-DD.",
+          "children": []
+        },
+        {
+          "shortCode": "event_source",
+          "label": "event_source",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pixel.track event_source. web | app | offline | crm. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "event_source_id",
+          "label": "event_source_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pixel.track pixel/app id. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "pixel.track one event object escape hatch merged into data[0]. Named event/event_time/event_id/user/properties/page win. Example: {\"event\":\"CompletePayment\",\"event_time\":1710000000}.",
+          "children": []
+        },
+        {
+          "shortCode": "ad_id",
+          "label": "ad_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "lead.list Instant Form ad id.",
+          "children": []
+        },
+        {
+          "shortCode": "page_id",
+          "label": "page_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "lead.list Instant Form page id.",
+          "children": []
+        },
+        {
+          "shortCode": "app_id",
+          "label": "app_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional developer app id for advertiser.list query.",
+          "children": []
+        },
+        {
+          "shortCode": "operation_status",
+          "label": "operation_status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `operation_status` for operation: campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `fields` for operations: campaign.get, campaign.list, adgroup.list, ad.list.",
+          "children": []
+        },
+        {
+          "shortCode": "placement_type",
+          "label": "placement_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `placement_type` for operation: adgroup.create.",
+          "children": []
+        },
+        {
+          "shortCode": "bid_type",
+          "label": "bid_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `bid_type` for operation: adgroup.create.",
+          "children": []
+        },
+        {
+          "shortCode": "optimization_goal",
+          "label": "optimization_goal",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `optimization_goal` for operation: adgroup.create.",
+          "children": []
+        },
+        {
+          "shortCode": "location_ids",
+          "label": "location_ids",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `location_ids` for operation: adgroup.create.",
+          "children": []
+        },
+        {
+          "shortCode": "tracking_pixel_id",
+          "label": "tracking_pixel_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tracking_pixel_id` for operation: ad.create.",
+          "children": []
+        },
+        {
+          "shortCode": "test_event_code",
+          "label": "test_event_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pixel.track test_event_code from Events Manager test tab. Omit for production.",
+          "children": []
+        },
+        {
+          "shortCode": "library_id",
+          "label": "library_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `library_id` for operation: lead.list.",
+          "children": []
+        },
+        {
+          "shortCode": "partner_name",
+          "label": "partner_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pixel.track partner_name when sending via a partner integration.",
+          "children": []
+        },
+        {
+          "shortCode": "event",
+          "label": "event",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pixel.track Events API event name. Wired to data[0].event. Example: CompletePayment | PlaceAnOrder | ViewContent.",
+          "children": []
+        },
+        {
+          "shortCode": "event_time",
+          "label": "event_time",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "pixel.track unix seconds. Wired to data[0].event_time.",
+          "children": []
+        },
+        {
+          "shortCode": "event_id",
+          "label": "event_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pixel.track dedup id. Wired to data[0].event_id.",
+          "children": []
+        },
+        {
+          "shortCode": "user",
+          "label": "user",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "pixel.track user object (hashed email/phone, ip, user_agent, …). Wired to data[0].user. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "properties",
+          "label": "properties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "pixel.track event properties {currency, value, …}. Wired to data[0].properties.",
+          "children": []
+        },
+        {
+          "shortCode": "billing_event",
+          "label": "billing_event",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Billing event for adgroup.create (e.g. CPC, CPM, OCPM).",
+          "children": []
+        },
+        {
+          "shortCode": "schedule_type",
+          "label": "schedule_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Schedule type for adgroup.create (e.g. SCHEDULE_FROM_NOW, SCHEDULE_START_END).",
+          "children": []
+        },
+        {
+          "shortCode": "schedule_start_time",
+          "label": "schedule_start_time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Schedule start time for adgroup.create (UTC). Example: 2026-01-01 00:00:00.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "94819148-ff4d-4b41-8b6d-5e2c745ed26e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. May contain PII — never log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "3b67f0dd-a09e-4aa4-ac10-09c579d6c7c8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: advertiser.list | campaign.create | campaign.get | campaign.list | adgroup.create | adgroup.list | ad.create | ad.list | report.get | pixel.track | lead.list | trigger.listen. trigger.listen is ingress.",
+      "value": "advertiser.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "advertiser.list",
+        "campaign.create",
+        "campaign.get",
+        "campaign.list",
+        "adgroup.create",
+        "adgroup.list",
+        "ad.create",
+        "ad.list",
+        "report.get",
+        "pixel.track",
+        "lead.list",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "7d183f4f-5093-4c09-a48c-a905466ca988",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "TikTok Marketing API access token (StudioQuack secret). Sent as header Access-Token. Never log or place on INPUT. Developer portal: https://business-api.tiktok.com/portal/docs",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "00ea7850-b18f-458c-ae74-83448bb470b1",
+      "shortCode": "advertiser_id",
+      "label": "Advertiser id",
+      "type": "string",
+      "description": "Default advertiser_id (v1.3 string). Overridable on INPUT.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "84ba1727-3463-4c50-9197-64a504f980c6",
+      "shortCode": "billing_event",
+      "label": "Billing Event",
+      "type": "string",
+      "description": "Billing event for adgroup.create (e.g. CPC, CPM, OCPM).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "3120232d-86ee-4294-933e-30f43a25ac95",
+      "shortCode": "schedule_type",
+      "label": "Schedule Type",
+      "type": "string",
+      "description": "Schedule type for adgroup.create (e.g. SCHEDULE_FROM_NOW, SCHEDULE_START_END).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "af4a362c-f0ee-40bd-b678-94978bb90413",
+      "shortCode": "schedule_start_time",
+      "label": "Schedule Start Time",
+      "type": "string",
+      "description": "Schedule start time for adgroup.create (UTC). Example: 2026-01-01 00:00:00.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "238ba107-9d0a-41fd-97de-9c00867b4d19",
+      "shortCode": "secret",
+      "label": "Secret",
+      "type": "password",
+      "description": "TikTok app secret for advertiser.list (/oauth2/advertiser/get requires app_id+secret). StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6ccf8bf1-8696-4b0c-b0d2-3f47e66ce183",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

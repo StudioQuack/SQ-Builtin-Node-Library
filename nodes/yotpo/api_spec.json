@@ -1,0 +1,78 @@
+{
+  "baseUrl": "https://api.yotpo.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "query",
+    "configKey": "utoken"
+  },
+  "operations": {
+    "review_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/apps/{app_key}/reviews",
+      "queryFrom": [
+        "page",
+        "count",
+        "since_id"
+      ]
+    },
+    "review_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/widget/reviews",
+      "required": [
+        "sku",
+        "email",
+        "review_content",
+        "review_score"
+      ],
+      "bodyFrom": [
+        "app_key",
+        "sku",
+        "product_title",
+        "product_url",
+        "product_description",
+        "product_image_url",
+        "display_name",
+        "email",
+        "review_title",
+        "review_content",
+        "review_score",
+        "domain",
+        "is_incentivized",
+        "incentive_type"
+      ],
+      "bodyMap": {
+        "app_key": "appkey"
+      }
+    },
+    "order_send": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/core/v3/stores/{app_key}/orders",
+      "bodyFrom": [
+        "orders"
+      ]
+    },
+    "loyalty_adjust": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://loyalty.yotpo.com",
+      "path": "/api/v2/points/adjust",
+      "extraHeaders": {
+        "X-GUID": "{loyalty_guid}",
+        "X-API-KEY": "{loyalty_api_key}"
+      },
+      "bodyFrom": [
+        "customer_email",
+        "customer_id",
+        "point_adjustment_amount",
+        "history_title"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

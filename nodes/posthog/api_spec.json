@@ -1,0 +1,97 @@
+{
+  "baseUrl": "{host}",
+  "defaultTimeout": 30,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "query",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "event.capture": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/i/v0/e/",
+      "required": ["event", "distinct_id"],
+      "bodyFrom": ["event", "distinct_id", "properties", "timestamp", "process_person_profile", "events"]
+    },
+    "identify.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/i/v0/e/",
+      "required": ["distinct_id", "set"],
+      "bodyFrom": ["distinct_id", "set", "timestamp", "event", "properties"],
+      "bodyDefaults": {
+        "event": "$identify"
+      },
+      "bodyMap": {
+        "set": "properties.$set"
+      }
+    },
+    "alias.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/i/v0/e/",
+      "required": ["distinct_id", "alias"],
+      "bodyFrom": ["distinct_id", "alias", "event", "properties"],
+      "bodyDefaults": {
+        "event": "$create_alias"
+      },
+      "bodyMap": {
+        "alias": "properties.alias"
+      }
+    },
+    "track.page": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/i/v0/e/",
+      "required": ["distinct_id"],
+      "bodyFrom": ["distinct_id", "current_url", "session_id", "properties", "event"],
+      "bodyDefaults": {
+        "event": "$pageview"
+      },
+      "bodyMap": {
+        "current_url": "properties.$current_url",
+        "session_id": "properties.$session_id"
+      }
+    },
+    "track.screen": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/i/v0/e/",
+      "required": ["distinct_id", "screen_name"],
+      "bodyFrom": ["distinct_id", "screen_name", "properties", "event"],
+      "bodyDefaults": {
+        "event": "$screen"
+      },
+      "bodyMap": {
+        "screen_name": "properties.$screen_name"
+      }
+    },
+    "person.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/projects/{project_id}/persons/",
+      "queryFrom": ["distinct_id", "email", "limit"],
+      "required": ["project_id"],
+      "extraHeaders": {
+        "Authorization": "Bearer {personal_api_key}"
+      }
+    },
+    "insight.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/projects/{project_id}/insights/{insight_id}/",
+      "required": ["project_id", "insight_id"],
+      "extraHeaders": {
+        "Authorization": "Bearer {personal_api_key}"
+      }
+    },
+    "featureFlag.isEnabled": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/flags?v=2",
+      "required": ["distinct_id"],
+      "bodyFrom": ["distinct_id", "flag_key", "groups", "person_properties"]
+    }
+  }
+}

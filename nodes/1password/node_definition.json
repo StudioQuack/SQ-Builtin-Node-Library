@@ -1,0 +1,339 @@
+{
+  "_id": "064a9a51-4a7a-4f75-9956-b47bf227529d",
+  "version": "1.0.0",
+  "name": "1Password",
+  "label": "1Password Connect Server API",
+  "description": "1Password Connect Server API 1.8.1 via OfficialApiNode. Docs: https://developer.1password.com/docs/connect/api-reference. Operations: list-vaults, get-vault, list-items, get-item, create-item, replace-item, patch-item, delete-item, list-files, get-file, get-file-content, list-activity, listen. Auth secret connect_token is instance config only (never on INPUT, never logged). GET/access operations still call the official GET (or access) HTTP method. Retrieved secret material must not be logged and should stay in StudioQuack secret bindings (bind OUTPUT `data` into a secret; do not print it, persist it in engine variables, or leave it on a logged edge). listen is kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "lock",
+  "tags": [
+    "secrets"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c32d2673-9643-4b6d-8e16-34457be845ce",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put connect_token here. Path params match api_spec.json placeholders. Example: {\"operation\":\"list-vaults\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "list-vaults",
+          "description": "Which official API call to run. EXACT values: list-vaults | get-vault | list-items | get-item | create-item | replace-item | patch-item | delete-item | list-files | get-file | get-file-content | list-activity | listen. Prefer the instance config operation select. listen is ingress: no HTTP — use a BPMN message event. Example: 'list-vaults'.",
+          "children": []
+        },
+        {
+          "shortCode": "vaultUuid",
+          "label": "vaultUuid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Connect vault UUID path for vault/item/file ops.",
+          "children": []
+        },
+        {
+          "shortCode": "itemUuid",
+          "label": "itemUuid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Item UUID path for get/replace/delete-item and file ops.",
+          "children": []
+        },
+        {
+          "shortCode": "fileUuid",
+          "label": "fileUuid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "File UUID path for get-file / get-file-content.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "FullItem fields array for create-item / replace-item. values must come from StudioQuack secret bindings. Example: [{\"id\":\"password\",\"type\":\"CONCEALED\",\"value\":\"…\",\"purpose\":\"PASSWORD\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Connect filter query for list-vaults / list-items, e.g. title eq \"GitHub\".",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Item title for create-item / replace-item. Example: GitHub.",
+          "children": []
+        },
+        {
+          "shortCode": "category",
+          "label": "category",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Item category for create-item / replace-item. EXACT common: LOGIN | PASSWORD | SECURE_NOTE | CREDIT_CARD | IDENTITY. Example: LOGIN.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Item tags for create-item / replace-item. JSON array of strings. Example: [\"work\"].",
+          "children": []
+        },
+        {
+          "shortCode": "urls",
+          "label": "urls",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Item URLs for create-item / replace-item. JSON array of {href, label?}. Example: [{\"href\":\"https://github.com\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "sections",
+          "label": "sections",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Item sections for create-item / replace-item. JSON array of {id, label}.",
+          "children": []
+        },
+        {
+          "shortCode": "files",
+          "label": "files",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "File parts for create-item / replace-item. Platform file ref-id. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "vault",
+          "label": "vault",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Vault object {id} for create-item / replace-item when not using path vaultUuid. Example: {\"id\":\"…\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: list-activity.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `offset` for operation: list-activity.",
+          "children": []
+        },
+        {
+          "shortCode": "patch",
+          "label": "Patch",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "JSON Patch array for patch-item (op/path/value), sent as the whole body. Example: [{\"op\":\"replace\",\"path\":\"/title\",\"value\":\"New\"}].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0019e69d-e05f-4a69-8832-87ce6cfa091e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Secret bytes in data must not be logged; bind them into StudioQuack secrets. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON from the official API. May contain secret material — never log; bind into StudioQuack secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "get-file-content: platform file ref-id for downloaded bytes. Never inline bytes on a logged edge.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2826ada5-9ed0-40cc-a9ac-5cedf08e5d24",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: list-vaults, get-vault, list-items, get-item, create-item, replace-item, patch-item, delete-item, list-files, get-file, get-file-content, list-activity, listen. listen is BPMN ingress, not a socket.",
+      "value": "list-vaults",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "list-vaults",
+        "get-vault",
+        "list-items",
+        "get-item",
+        "create-item",
+        "replace-item",
+        "patch-item",
+        "delete-item",
+        "list-files",
+        "get-file",
+        "get-file-content",
+        "list-activity",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "b9080db4-be7c-4e5a-9055-99199a4b9e46",
+      "shortCode": "connect_token",
+      "label": "Connect token",
+      "type": "password",
+      "description": "Connect access token. Sent as Authorization: Bearer. StudioQuack secret. Never logged. Vault-scoped; customer-deployed Connect only.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "61d5a4f7-de56-489d-ae15-966ad123e932",
+      "shortCode": "connectHost",
+      "label": "Connect host",
+      "type": "string",
+      "description": "Connect host without scheme, e.g. connect.internal:8443. TLS only.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "16bd17f5-88b0-45b7-82b8-1f593746c951",
+      "shortCode": "inline_content",
+      "label": "inline_content",
+      "type": "string",
+      "description": "Connect file JSON inline_content. Keep false so file bytes are not returned in JSON. get-file-content uses the /content endpoint instead.",
+      "value": "false",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "18714d12-1d60-492a-95e8-602dcf72cac9",
+      "shortCode": "patch",
+      "label": "Patch",
+      "type": "list",
+      "description": "JSON Patch array for patch-item (op/path/value), sent as the whole body. Example: [{\"op\":\"replace\",\"path\":\"/title\",\"value\":\"New\"}].",
+      "value": "[]",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "4c0ab818-81d8-4eed-81bb-eba2473297b6",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon invoke budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

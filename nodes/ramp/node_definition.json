@@ -1,0 +1,274 @@
+{
+  "_id": "e8d1c52a-adbb-4423-b512-5c12b4c14282",
+  "version": "1.0.0",
+  "name": "Ramp",
+  "label": "Ramp — Ramp Developer API v1",
+  "description": "Official Ramp Developer API v1. Docs: https://docs.ramp.com/developer-api/v1/. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. card_list is metadata/last4 only — never PAN.",
+  "icon": "account_balance",
+  "tags": [
+    "ramp",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1f44455c-f4a0-4962-8b4e-c3f9babefd8c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Ramp. Secrets never on this port. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "transaction_list",
+          "description": "Overrides config operation. EXACT: transaction_list | reimbursement_list | vendor_create | card_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "Environment",
+          "type": "string",
+          "required": false,
+          "value": "api.ramp.com/developer/v1",
+          "description": "demo-api.ramp.com vs api.ramp.com (separate apps per env). Host+path prefix substituted into baseUrl as https://{environment}.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page_size` for operations: transaction_list, reimbursement_list, card_list.",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `start` for operation: transaction_list.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `name` for operation: vendor_create.",
+          "children": []
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "vendor_create ISO 3166-1 alpha-2. Example: US.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "vendor_create contact email. Example: ap@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "vendor_create phone.",
+          "children": []
+        },
+        {
+          "shortCode": "tax_id",
+          "label": "tax_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "vendor_create tax id. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "from_date",
+          "label": "from_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transaction_list / reimbursement_list start (ISO 8601). Example: 2026-01-01T00:00:00Z.",
+          "children": []
+        },
+        {
+          "shortCode": "to_date",
+          "label": "to_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transaction_list / reimbursement_list end. Example: 2026-01-31T23:59:59Z.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transaction_list / card_list status filter. Example: CLEARED.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "card_list filter by Ramp user id.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5a66fd44-2e04-406f-8066-c0f1bce4fdd3",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "1badef08-3fee-442b-84fa-a51b820af2a8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: transaction_list | reimbursement_list | vendor_create | card_list | trigger. Default transaction_list. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "transaction_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "transaction_list",
+        "reimbursement_list",
+        "vendor_create",
+        "card_list",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "09976d77-2c95-4909-b892-5aa1cac11058",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Ramp OAuth access token minted outside StudioQuack (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "506bbc0c-9403-4bd8-aab6-cd9a5e1277f6",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "demo-api.ramp.com vs api.ramp.com (separate apps per env). Host+path prefix substituted into baseUrl as https://{environment}.",
+      "value": "api.ramp.com/developer/v1",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "api.ramp.com/developer/v1",
+        "demo-api.ramp.com/developer/v1"
+      ]
+    },
+    {
+      "_id": "deaa52fa-9c71-4333-9d93-5b1bd0fb9c99",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

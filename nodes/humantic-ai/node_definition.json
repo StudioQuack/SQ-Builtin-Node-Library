@@ -1,0 +1,236 @@
+{
+  "_id": "c23b5a89-584d-4ae5-9d6d-86e01453def4",
+  "version": "1.0.0",
+  "name": "Humantic AI",
+  "label": "Humantic AI — personality profiles",
+  "description": "Official Humantic AI Data API v1.0. GET https://api.humantic.ai/v1/user-profile/create and GET https://api.humantic.ai/v1/user-profile/. Auth is query param apikey. create_profile id is a LinkedIn profile URL or email (official GET). get_profile uses the same id after 30–45s. Personality profiling: customer must have a lawful basis and notice; no covert HR screening. Docs: https://api.humantic.ai/.",
+  "icon": "person_search",
+  "tags": [
+    "humantic",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "64149059-0534-4bd5-8ec7-3ca84a05b5b1",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Official query fields. id is required (LinkedIn URL, email, or the unique id used at create). Do not put apikey here. Example: {\"id\":\"https://www.linkedin.com/in/example/\",\"persona\":\"sales\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "create_profile",
+          "description": "Overrides config operation. EXACT: create_profile | get_profile.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official id query param. Create GET: LinkedIn profile URL or email. Fetch: the same id. Do not use values starting with 'test' (reserved). Document/text POST (multipart document/text) is official but not sent by OfficialApiNode JSON — use GET create for URL/email.",
+          "children": []
+        },
+        {
+          "shortCode": "firstname",
+          "label": "firstname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional. Helps email-id resolution on create.",
+          "children": []
+        },
+        {
+          "shortCode": "lastname",
+          "label": "lastname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional. Helps email-id resolution on create.",
+          "children": []
+        },
+        {
+          "shortCode": "persona",
+          "label": "persona",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Fetch persona. EXACT: sales | hiring. Comma-separated if both.",
+          "children": []
+        },
+        {
+          "shortCode": "stateless",
+          "label": "stateless",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Create: true to ask Humantic not to save text/document input. Query string true/false.",
+          "children": []
+        },
+        {
+          "shortCode": "analysistype",
+          "label": "analysistype",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Create: talent for English resume/hiring text. Omit otherwise.",
+          "children": []
+        },
+        {
+          "shortCode": "web_insights",
+          "label": "web_insights",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "true to request public-web insights when the key is authorized. Do not send the deprecated external_signals alias (sunset 2026-06-30).",
+          "children": []
+        },
+        {
+          "shortCode": "override",
+          "label": "override",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Fetch: true to return results below 50% confidence (inaccurate). Use only with care.",
+          "children": []
+        },
+        {
+          "shortCode": "source",
+          "label": "source",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `source` for operations: create_profile, get_profile.",
+          "children": []
+        },
+        {
+          "shortCode": "enrichprofile",
+          "label": "enrichprofile",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `enrichprofile` for operation: create_profile.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "43a90920-b29f-4039-838f-219e00782481",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (personality_analysis, persona, metadata). Fetch may be IN_PROGRESS — retry after 15s. Do not log DISC/Big Five scores as they are personal data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (results, metadata.analysis_status).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "53119c36-851b-4eb6-99ae-89468950ccb9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "EXACT: create_profile | get_profile.",
+      "value": "create_profile",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "create_profile",
+        "get_profile"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "77824103-fd01-40bf-b711-3f08084411e2",
+      "shortCode": "apikey",
+      "label": "API key",
+      "type": "password",
+      "description": "Humantic apikey query parameter (official name). StudioQuack secret. Never on INPUT. Never logged. Dashboard: https://api.humantic.ai/",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1b990b4a-67e1-4373-8b62-0b632cafbaae",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 45. Floor 1. Fetch after LinkedIn/email create is often 30–45s until COMPLETE.",
+      "value": "45",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

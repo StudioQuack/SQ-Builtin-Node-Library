@@ -1,0 +1,49 @@
+{
+  "baseUrl": "https://api.narvar.com/api/v1",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "configKey": "api_key",
+    "userKey": "account_id"
+  },
+  "operations": {
+    "order_push": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/orders",
+      "bodyFrom": [
+        "order_info",
+        "order_number",
+        "order_date",
+        "order_items",
+        "shipments",
+        "billing",
+        "customer"
+      ]
+    },
+    "shipment_push": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/orders/{order_number}/shipments",
+      "required": [
+        "order_number"
+      ],
+      "bodyFrom": [
+        "shipments",
+        "carrier",
+        "tracking_number",
+        "ship_date",
+        "items_info"
+      ]
+    },
+    "return_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{returns_path}",
+      "required": [
+        "returns_path"
+      ]
+    }
+  }
+}

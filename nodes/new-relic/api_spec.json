@@ -1,0 +1,75 @@
+{
+  "baseUrl": "https://api.newrelic.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "API-Key",
+    "prefix": "",
+    "configKey": "user_api_key"
+  },
+  "operations": {
+    "nrql_query": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/graphql",
+      "required": [
+        "query"
+      ],
+      "bodyFrom": [
+        "query",
+        "variables"
+      ]
+    },
+    "event_ingest": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/accounts/{accountId}/events",
+      "baseUrl": "https://insights-collector.newrelic.com",
+      "required": [
+        "accountId",
+        "events"
+      ],
+      "bodyFrom": [
+        "events",
+        "eventType"
+      ],
+      "bodyMap": {
+        "events": "$"
+      },
+      "extraHeaders": {
+        "API-Key": "{license_key}"
+      }
+    },
+    "deploy_marker": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/applications/{app_id}/deployments.json",
+      "required": [
+        "app_id"
+      ],
+      "bodyFrom": [
+        "deployment"
+      ]
+    },
+    "alert_policy_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/alerts_policies.json",
+      "queryFrom": [
+        "filter[name]"
+      ]
+    },
+    "incident_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/alerts_incidents/{incident_id}.json",
+      "required": [
+        "incident_id"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

@@ -1,0 +1,372 @@
+{
+  "_id": "7781a9f7-96b6-431d-a4dc-260bf13d5ee9",
+  "version": "1.0.0",
+  "name": "AWS Cognito",
+  "label": "Amazon Cognito user pools Identity Provider API",
+  "description": "Amazon Cognito Identity Provider API 2016-04-18 via OfficialApiNode, signed with AWS SigV4 (service cognito-idp). Docs: https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/Welcome.html. Operations: create-user (AdminCreateUser), get-user (AdminGetUser), list-users, update-user (AdminUpdateUserAttributes), delete-user (AdminDeleteUser), add-user-to-group, remove-user-from-group, create-group, get-group, list-groups, update-group, delete-group, get-user-pool (DescribeUserPool), listen. Auth secrets access_key_id, secret_access_key, optional session_token are instance config only (never on INPUT, never logged). listen is kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "badge",
+  "tags": [
+    "iam",
+    "aws"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "64b1d229-d9ff-49a1-b123-f6b0da1524ed",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_key_id, secret_access_key, or session_token here. Path params match api_spec.json placeholders. Example: {\"operation\":\"create-user\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "create-user",
+          "description": "Which official API call to run. EXACT values: create-user | get-user | list-users | update-user | delete-user | add-user-to-group | remove-user-from-group | create-group | get-group | list-groups | update-group | delete-group | get-user-pool | listen. Prefer the instance config operation select. listen is ingress: no HTTP — use a BPMN message event. Example: 'create-user'.",
+          "children": []
+        },
+        {
+          "shortCode": "UserPoolId",
+          "label": "UserPoolId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pool id. Put on INPUT (body is not filled from config).",
+          "children": []
+        },
+        {
+          "shortCode": "Username",
+          "label": "Username",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Username or alias for user ops.",
+          "children": []
+        },
+        {
+          "shortCode": "GroupName",
+          "label": "GroupName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Group name for group ops.",
+          "children": []
+        },
+        {
+          "shortCode": "UserAttributes",
+          "label": "UserAttributes",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Array of {Name, Value} for create-user / update-user.",
+          "children": []
+        },
+        {
+          "shortCode": "TemporaryPassword",
+          "label": "TemporaryPassword",
+          "type": "password",
+          "required": false,
+          "value": "",
+          "description": "AdminCreateUser temporary password from a StudioQuack secret binding. Never logged.",
+          "children": []
+        },
+        {
+          "shortCode": "ForceAliasCreation",
+          "label": "ForceAliasCreation",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ForceAliasCreation` for operation: create-user.",
+          "children": []
+        },
+        {
+          "shortCode": "MessageAction",
+          "label": "MessageAction",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `MessageAction` for operation: create-user.",
+          "children": []
+        },
+        {
+          "shortCode": "DesiredDeliveryMediums",
+          "label": "DesiredDeliveryMediums",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `DesiredDeliveryMediums` for operation: create-user.",
+          "children": []
+        },
+        {
+          "shortCode": "ClientMetadata",
+          "label": "ClientMetadata",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `ClientMetadata` for operations: create-user, update-user.",
+          "children": []
+        },
+        {
+          "shortCode": "ValidationData",
+          "label": "ValidationData",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `ValidationData` for operation: create-user.",
+          "children": []
+        },
+        {
+          "shortCode": "Filter",
+          "label": "Filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Filter` for operation: list-users.",
+          "children": []
+        },
+        {
+          "shortCode": "Limit",
+          "label": "Limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Limit` for operations: list-users, list-groups.",
+          "children": []
+        },
+        {
+          "shortCode": "PaginationToken",
+          "label": "PaginationToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `PaginationToken` for operation: list-users.",
+          "children": []
+        },
+        {
+          "shortCode": "AttributesToGet",
+          "label": "AttributesToGet",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `AttributesToGet` for operation: list-users.",
+          "children": []
+        },
+        {
+          "shortCode": "Description",
+          "label": "Description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Description` for operations: create-group, update-group.",
+          "children": []
+        },
+        {
+          "shortCode": "Precedence",
+          "label": "Precedence",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `Precedence` for operations: create-group, update-group.",
+          "children": []
+        },
+        {
+          "shortCode": "RoleArn",
+          "label": "RoleArn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `RoleArn` for operations: create-group, update-group.",
+          "children": []
+        },
+        {
+          "shortCode": "NextToken",
+          "label": "NextToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `NextToken` for operation: list-groups.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "aadc7db4-7752-4a18-84ef-706e27e9b32a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Secret bytes in data must not be logged; bind them into StudioQuack secrets. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON from the official API. May contain secret material — never log; bind into StudioQuack secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6b33ca9f-fd42-423e-9a0c-02aab96721bd",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: create-user, get-user, list-users, update-user, delete-user, add-user-to-group, remove-user-from-group, create-group, get-group, list-groups, update-group, delete-group, get-user-pool, listen. listen is BPMN ingress, not a socket.",
+      "value": "create-user",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "create-user",
+        "get-user",
+        "list-users",
+        "update-user",
+        "delete-user",
+        "add-user-to-group",
+        "remove-user-from-group",
+        "create-group",
+        "get-group",
+        "list-groups",
+        "update-group",
+        "delete-group",
+        "get-user-pool",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "720a1a4e-05ad-4622-9f9f-208b8060a795",
+      "shortCode": "access_key_id",
+      "label": "AWS access key ID",
+      "type": "password",
+      "description": "IAM access key ID used as the SigV4 credential. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "397d557c-c690-4d40-86dc-227ab6404681",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "User-pool Region for cognito-idp.{region}.amazonaws.com.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "843bf648-8135-4845-b0e2-8c37396c73ac",
+      "shortCode": "UserPoolId",
+      "label": "User pool ID",
+      "type": "string",
+      "description": "Default UserPoolId for Admin* JSON body (official Cognito IdP API is POST / with UserPoolId in the body, not a path). Blank INPUT UserPoolId falls back to this config.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2305fdd2-caf5-4ae5-a21e-1f457dc0ae55",
+      "shortCode": "secret_access_key",
+      "label": "AWS secret access key",
+      "type": "password",
+      "description": "IAM secret access key used to sign SigV4. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8fc2be0b-0fda-4191-984d-55cf23ac752f",
+      "shortCode": "session_token",
+      "label": "AWS session token",
+      "type": "password",
+      "description": "Optional STS session token. When set, OfficialApiNode adds x-amz-security-token. Empty for long-lived keys. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "00db02f2-c4f1-44f7-8e0f-6fef031da713",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon invoke budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

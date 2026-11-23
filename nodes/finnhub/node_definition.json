@@ -1,0 +1,212 @@
+{
+  "_id": "a7b18e0c-6495-5574-ab40-d9eb46fbf05b",
+  "version": "1.0.0",
+  "name": "Finnhub",
+  "label": "Finnhub",
+  "description": "Finnhub official API via OfficialApiNode (api_spec.json). Operations: quote, candle, company_profile, news, forex_rate. Docs: https://finnhub.io/docs/api. Finnhub terms. Exchange licences on some datasets. Token query. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "chart",
+  "tags": [
+    "finance",
+    "finnhub"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "979213ef-5078-5c78-ab5f-adb6641a4aa3",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Finnhub request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"quote\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: quote | candle | company_profile | news | forex_rate. Default: first listed or instance operation. Example: 'quote'.",
+          "children": [],
+          "_id": "632a6c8d-7a42-5af3-857a-7bfbe4855a65"
+        },
+        {
+          "shortCode": "base",
+          "label": "base",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `base` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "bdaf371b-281f-5e83-b26a-2054d7ff38c9"
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `from` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "708a6747-b9ca-510c-b7ea-831fe79a8b12"
+        },
+        {
+          "shortCode": "resolution",
+          "label": "resolution",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `resolution` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "7cd5e83e-9221-5a95-bdd4-ad813675d500"
+        },
+        {
+          "shortCode": "symbol",
+          "label": "symbol",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `symbol` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "4b8c7f29-934e-542a-80a0-a02c3508b3fb"
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `to` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "9a93aca6-48c9-5f11-81c3-62534aeec66a"
+        },
+        {
+          "shortCode": "date",
+          "label": "date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "forex_rate historical date YYYY-MM-DD. Official date.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "98bfd4ad-0a2c-5940-83eb-ed32c59fefc6",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "9afe5ab7-5c7d-5055-afb0-c6b79bc7e938"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "262efc7d-d35d-5625-94db-793d58419432"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "c28de00d-91b2-5db2-bf9c-99e5d95d5d98"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2660f05a-dd1b-5fb0-9d5c-faa5083ad9aa",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: quote, candle, company_profile, news, forex_rate.",
+      "value": "quote",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "quote",
+        "candle",
+        "company_profile",
+        "news",
+        "forex_rate"
+      ]
+    },
+    {
+      "_id": "9f41e4f4-5d8f-5c4f-969e-23f4f0af06c8",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ee3cdb33-d854-508a-973e-2c291ee0086b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

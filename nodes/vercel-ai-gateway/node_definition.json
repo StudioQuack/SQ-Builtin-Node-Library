@@ -1,0 +1,389 @@
+{
+  "_id": "a947aa44-8648-4bda-a9b8-fe9f605e661e",
+  "version": "1.0.0",
+  "name": "Vercel AI Gateway",
+  "label": "Vercel AI Gateway",
+  "description": "Official Vercel AI Gateway OpenAI Chat Completions API (INPUT llm_input → OUTPUT llm_output). operation=chat posts to https://ai-gateway.vercel.sh/v1/chat/completions. Routes to third-party models — customer accepts Vercel AI Product Terms plus each upstream provider ToS. Auth is StudioQuack secret api_key (AI Gateway key) sent as Authorization Bearer. File/image/PDF use type file (platform ref-id). Docs: https://vercel.com/docs/ai-gateway/sdks-and-apis/openai-chat-completions. Terms: https://vercel.com/legal/ai-product-terms. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "vercel",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4d939a44-ecd9-49fa-ae1f-51ea5649129e",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, stream?, model?, file?}. Image/PDF use type file (platform ref-id). Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Conversation for operation=chat. List of {role, content}. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional OpenAI-style tools for chat. Omit or [] sends no tools.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for Chat Completions image/PDF attachments. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "tool_choice",
+          "label": "tool_choice",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tool_choice` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "temperature",
+          "label": "temperature",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `temperature` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_p` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_tokens` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `stop` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `seed` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "providerOptions",
+          "label": "providerOptions",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `providerOptions` for operation: chat.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "10b31ab0-6703-4a7e-938d-a33708e969e3",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed gateway JSON (OpenAI chat completion shape; model id may differ from request after routing).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "13843212-659f-4256-b66d-abc212a5eca7",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Vercel AI Gateway API key (dashboard AI Gateway → API Keys). Sent as Authorization: Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'. OIDC is for apps deployed on Vercel — not this node.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "27f3d18c-b81c-4a40-b98c-c351523ee5f5",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Gateway model id with provider prefix. Curated options only — the catalog is 300+ models (GET https://ai-gateway.vercel.sh/v1/models or https://vercel.com/ai-gateway/models). Examples: anthropic/claude-sonnet-5, openai/gpt-5.6-sol. Also send on llm_input so OfficialApiNode includes it in the JSON body. Docs: https://vercel.com/docs/ai-gateway/models-and-providers .",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "anthropic/claude-sonnet-5",
+        "anthropic/claude-opus-5",
+        "openai/gpt-5.6-sol",
+        "openai/gpt-5.6-terra",
+        "google/gemini-3.7-flash",
+        "xai/grok-4.6"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "792437b9-b967-4360-bef9-fa9ad312a164",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "20e296fe-5d1d-4bdc-af48-e690e5546361",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether Vercel AI Gateway requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

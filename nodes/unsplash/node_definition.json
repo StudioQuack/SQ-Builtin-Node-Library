@@ -1,0 +1,230 @@
+{
+  "_id": "c75381e5-ad8e-493a-a292-acabf6b5cc1a",
+  "version": "1.0.0",
+  "name": "Unsplash",
+  "label": "Unsplash Photos API",
+  "description": "Official Unsplash API v1. Client-ID header. search_photos, photo_get, random, download_trigger (/photos/{id}/download), user_get. Hotlink urls; attribution required. No scrape.",
+  "icon": "photo_camera",
+  "tags": [
+    "unsplash",
+    "news"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a2850baf-5044-464d-9251-1be159baac6b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-invoke fields for Unsplash. Do not put secrets here. Example: {\"operation\":\"search_photos\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "search_photos",
+          "description": "Overrides config operation. EXACT: search_photos | photo_get | random | download_trigger | user_get. Example: 'search_photos'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search text. Required on search_photos; optional on random. Example: office.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "1-based. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "1–30. Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "orientation",
+          "label": "orientation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "EXACT: landscape | portrait | squarish. search_photos / random.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "photo_get / download_trigger REQUIRED. Example: LBI7cgqUqM8.",
+          "children": []
+        },
+        {
+          "shortCode": "count",
+          "label": "count",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "random count. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "username",
+          "label": "username",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "user_get REQUIRED. Example: anniespratt.",
+          "children": []
+        },
+        {
+          "shortCode": "color",
+          "label": "color",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search_photos color filter. EXACT: black_and_white | black | white | yellow | orange | red | purple | magenta | green | teal | blue. https://unsplash.com/documentation#search-photos",
+          "children": []
+        },
+        {
+          "shortCode": "order_by",
+          "label": "order_by",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search_photos sort. EXACT: relevant | latest. Default relevant.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5d648b06-b134-4067-a282-0000c263a95d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data} on 2xx. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT: 'ok'. Absent on failure. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status from the provider. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). OfficialApiNode places the provider payload here. Example: provider object.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "afb8182b-ac02-4842-854d-8fc33fc396d6",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: search_photos | photo_get | random | download_trigger | user_get. Example: 'search_photos'.",
+      "value": "search_photos",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "search_photos",
+        "photo_get",
+        "random",
+        "download_trigger",
+        "user_get"
+      ]
+    },
+    {
+      "_id": "136f8625-4b77-4fd2-af9c-ce517c8ffd91",
+      "shortCode": "access_key",
+      "label": "Access Key",
+      "type": "password",
+      "description": "Unsplash Access Key. Header Authorization: Client-ID. Demo 50 req/h; production 1000 req/h after approval. https://unsplash.com/documentation/",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9bf22244-be21-4d2a-83fc-7a4328c595e8",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. <=0 falls back to 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

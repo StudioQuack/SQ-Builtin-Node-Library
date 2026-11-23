@@ -1,0 +1,258 @@
+{
+  "_id": "480a165c-ae6f-4c0a-b8ed-fbba054d5ecd",
+  "version": "1.0.0",
+  "name": "Azure Translator",
+  "label": "Azure Translator",
+  "description": "Official Azure Translator REST api-version=2026-06-06 (GA, not backward compatible with v3.0) on INPUT input → OUTPUT output. Remaining operations: translate (POST /translate) and transliterate (POST /transliterate). Detect, dictionary lookup/examples, and breaksentence were removed in 2026-06-06 — detect → Azure AI Language; dictionary → adaptive custom translation. Auth is StudioQuack secret subscription_key as Ocp-Apim-Subscription-Key. Optional region → Ocp-Apim-Subscription-Region. Docs: https://learn.microsoft.com/en-us/azure/ai-services/translator/text-translation/how-to/migrate-to-2026-06-06. Legal: https://azure.microsoft.com/support/legal/. Never log subscription_key. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "translate",
+  "tags": [
+    "azure",
+    "translator",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "73878b79-972c-4465-8bce-319ff25d500a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. translate requires body `inputs` (official array of {text, language?, targets:[{language}]}). transliterate requires query language + fromScript + toScript and body `inputs`. Do not put subscription_key here. v3.0 query `to` / array [{Text}] are gone.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transliterate query language (ISO). Example: ja.",
+          "children": []
+        },
+        {
+          "shortCode": "fromScript",
+          "label": "fromScript",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transliterate source script. Example: Jpan.",
+          "children": []
+        },
+        {
+          "shortCode": "toScript",
+          "label": "toScript",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transliterate target script. Example: Latn.",
+          "children": []
+        },
+        {
+          "shortCode": "inputs",
+          "label": "inputs",
+          "type": "object",
+          "required": false,
+          "value": "[]",
+          "description": "Official Translator JSON array. translate: [{\"text\":\"Hello\",\"targets\":[\"es\"]}]. transliterate: [{\"text\":\"こんにちは\",\"language\":\"ja\",\"fromScript\":\"Jpan\",\"toScript\":\"Latn\"}].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a850c668-ac12-4e9c-8e18-68b970353122",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (Translator JSON array). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Translator JSON.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b87f7544-bc45-4141-8442-7ed863b0ef00",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Translator 2026-06-06 verb. EXACT: translate | transliterate. Default translate = POST /translate?api-version=2026-06-06. detect and dictionary_lookup were removed in this version.",
+      "value": "translate",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "translate",
+        "transliterate"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "transliterate",
+          "targets": [
+            {
+              "param": "toScript",
+              "visible": true
+            },
+            {
+              "param": "language",
+              "visible": true
+            },
+            {
+              "param": "fromScript",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "bcad6620-37a5-4ae6-93e6-8d4fc79be1be",
+      "shortCode": "subscription_key",
+      "label": "Subscription Key",
+      "type": "password",
+      "description": "Azure Translator / Foundry key. Sent as Ocp-Apim-Subscription-Key. StudioQuack secret only. Never logged. Empty → error 'subscription_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "436026bd-5750-425a-9397-973d1376cedc",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "Resource region for multi-service / regional keys (e.g. westeurope). Sent as Ocp-Apim-Subscription-Region when set; omitted when blank. Global Translator resources can leave this empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bebf4b26-040c-4418-9feb-7ab0e6f2998b",
+      "shortCode": "inputs",
+      "label": "Inputs",
+      "type": "object",
+      "description": "Official Translator JSON array. translate: [{\"text\":\"Hello\",\"targets\":[\"es\"]}]. transliterate: [{\"text\":\"こんにちは\",\"language\":\"ja\",\"fromScript\":\"Jpan\",\"toScript\":\"Latn\"}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1153249e-c612-490c-9400-56765d793a41",
+      "shortCode": "toScript",
+      "label": "Toscript",
+      "type": "string",
+      "description": "transliterate target script. Example: Latn.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0ce24d17-a920-40c1-af88-4914345b66be",
+      "shortCode": "language",
+      "label": "Language",
+      "type": "string",
+      "description": "transliterate query language (ISO). Example: ja.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9c6fb685-5681-4a04-b829-64be62c49283",
+      "shortCode": "fromScript",
+      "label": "Fromscript",
+      "type": "string",
+      "description": "transliterate source script. Example: Jpan.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6ce786e0-afe1-43c6-bf0d-89a6df34140f",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 25. Floor 1.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

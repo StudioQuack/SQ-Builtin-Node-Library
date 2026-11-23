@@ -1,0 +1,353 @@
+{
+  "_id": "222225a0-04f2-486b-a0f7-5a35eecf743a",
+  "version": "1.0.0",
+  "name": "FreshBooks",
+  "label": "FreshBooks — FreshBooks REST (accounting/account/{accountid})",
+  "description": "Official FreshBooks REST (accounting/account/{accountid}). Docs: https://www.freshbooks.com/api/start. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. OAuth 2 at auth.freshbooks.com. Payments record amounts — no PAN.",
+  "icon": "account_balance",
+  "tags": [
+    "freshbooks",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c8ac4e46-a216-4fe6-8be9-14074d594c88",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for FreshBooks. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "client_create",
+          "description": "Overrides config operation. EXACT: client_create | invoice_create | invoice_get | invoice_list | payment_create | expense_create | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id when the path uses {id}.",
+          "children": []
+        },
+        {
+          "shortCode": "client",
+          "label": "client",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Client envelope escape hatch for client_create. Purpose fields email/fname/lname/organization merge into client via bodyMap. Example: {\"p_city\":\"Toronto\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "invoice",
+          "label": "invoice",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Invoice envelope escape hatch for invoice_create. Purpose fields customerid/create_date/currency_code/lines merge in via bodyMap. Example: {\"notes\":\"Net 30\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page` for operation: invoice_list.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `per_page` for operation: invoice_list.",
+          "children": []
+        },
+        {
+          "shortCode": "payment",
+          "label": "payment",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Payment envelope escape hatch for payment_create. Purpose fields invoiceid/amount/date/type merge in via bodyMap. Example: {\"note\":\"Check 1042\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "expense",
+          "label": "expense",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Expense envelope escape hatch for expense_create. Purpose fields amount/categoryid/staffid/date merge in via bodyMap. Example: {\"vendor\":\"Staples\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client email on client_create. Nested as client.email. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "fname",
+          "label": "fname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client first name on client_create. Nested as client.fname. Example: Ada.",
+          "children": []
+        },
+        {
+          "shortCode": "lname",
+          "label": "lname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client last name on client_create. Nested as client.lname. Example: Lovelace.",
+          "children": []
+        },
+        {
+          "shortCode": "organization",
+          "label": "organization",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client organization on client_create. Nested as client.organization. Example: Analytical Engines.",
+          "children": []
+        },
+        {
+          "shortCode": "customerid",
+          "label": "customerid",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Invoice customer id on invoice_create (required). Nested as invoice.customerid. Example: 123.",
+          "children": []
+        },
+        {
+          "shortCode": "create_date",
+          "label": "create_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Invoice date YYYY-MM-DD on invoice_create (required). Nested as invoice.create_date. Example: 2026-11-01.",
+          "children": []
+        },
+        {
+          "shortCode": "currency_code",
+          "label": "currency_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Invoice ISO-4217 currency on invoice_create. Nested as invoice.currency_code. Example: USD.",
+          "children": []
+        },
+        {
+          "shortCode": "lines",
+          "label": "lines",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Invoice line items on invoice_create. Nested as invoice.lines. Example: [{\"name\":\"Hours\",\"qty\":1,\"unit_cost\":{\"amount\":\"100.00\",\"code\":\"USD\"}}].",
+          "children": []
+        },
+        {
+          "shortCode": "invoiceid",
+          "label": "invoiceid",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Invoice id on payment_create. Nested as payment.invoiceid. Example: 456.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Money object {amount, code} on payment_create (payment.amount) and expense_create (expense.amount). Example: {\"amount\":\"39.99\",\"code\":\"USD\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "date",
+          "label": "date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "YYYY-MM-DD on payment_create (payment.date) and expense_create (expense.date). Example: 2026-11-01.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Payment type on payment_create. Nested as payment.type. EXACT common: Check | Credit | Cash | Bank Transfer | PayPal | Credit Card. Example: Check.",
+          "children": []
+        },
+        {
+          "shortCode": "categoryid",
+          "label": "categoryid",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Expense category id on expense_create (required). Nested as expense.categoryid. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "staffid",
+          "label": "staffid",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Expense staff id on expense_create (required). Nested as expense.staffid. Example: 1.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "15c324c4-93db-4ef7-8e32-447915d67cc2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "988a001b-98b2-4d7c-abf4-ce88ff0b106b",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: client_create | invoice_create | invoice_get | invoice_list | payment_create | expense_create | trigger. Default client_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "client_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "client_create",
+        "invoice_create",
+        "invoice_get",
+        "invoice_list",
+        "payment_create",
+        "expense_create",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "b4e0485b-4703-4ba7-8a34-18f8b8745e8e",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "FreshBooks credential (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "11efbb70-264a-46f5-971f-0ee8a757c865",
+      "shortCode": "account_id",
+      "label": "Account Id",
+      "type": "string",
+      "description": "FreshBooks accountid in the path.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "62e10e41-7bf9-4609-839b-0895f24700d1",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

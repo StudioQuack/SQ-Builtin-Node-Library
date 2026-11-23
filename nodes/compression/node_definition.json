@@ -1,0 +1,193 @@
+{
+  "_id": "1fc1eadb-897a-47de-a1f3-a3986e4de255",
+  "version": "1.0.0",
+  "name": "Compression",
+  "label": "zip / gzip / tar / tgz",
+  "description": "Compress or decompress a platform file ref (zip, gzip, tar, tgz). Zip-slip rejected. Ports and file params use type file.",
+  "icon": "",
+  "tags": [
+    "zip",
+    "gzip",
+    "archive"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "41eeee37-c3f7-4107-a8b7-acd125b9f7ce",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Compression operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'compress'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": true,
+          "value": "",
+          "description": "Source archive or payload. Required type file: absolute sandbox path under /sandbox/files, ContentBlock (data/base64), or $fileRef — not a bare ref-id string. Example: /sandbox/files/input.txt.",
+          "children": []
+        },
+        {
+          "shortCode": "format",
+          "label": "format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "zip | gzip | tar | tgz.",
+          "children": []
+        },
+        {
+          "shortCode": "file_name",
+          "label": "file_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Output filename (single segment, no / or ..). Omitted → default from source name + format.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "93868baa-eec2-45b7-a6f2-c4339d409994",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Result file ref when the operation produces a file. Type file (platform ref-id). Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "76f98773-83e3-41d6-a8ac-c75ff2bcf7e6",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: compress | decompress. Required. Example: 'compress'.",
+      "value": "compress",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "compress",
+        "decompress"
+      ]
+    },
+    {
+      "_id": "f2de174d-6d8c-4a3e-98ff-aa1939f4cbf3",
+      "shortCode": "format",
+      "label": "Format",
+      "type": "select",
+      "description": "zip | gzip | tar | tgz. Default zip.",
+      "value": "zip",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "zip",
+        "gzip",
+        "tar",
+        "tgz"
+      ]
+    },
+    {
+      "_id": "a53b55a1-1324-4a82-a536-1f3eaff5170a",
+      "shortCode": "file_name",
+      "label": "File Name",
+      "type": "string",
+      "description": "Output archive/file name (not a file ref). Example: 'bundle.zip'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "414c0e12-884d-49d7-a9ef-a4c03af61e19",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

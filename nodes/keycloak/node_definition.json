@@ -1,0 +1,583 @@
+{
+  "_id": "af4a9510-1283-4c53-b6cd-452a7af22e2e",
+  "version": "1.0.0",
+  "name": "Keycloak",
+  "label": "Keycloak Admin REST — customer realm users, groups, clients, tokens",
+  "description": "Official Keycloak Admin REST (docs-api latest) plus realm OIDC token/introspect. Talks only to the operator’s customer-hosted realm — never the StudioQuack control-plane IdP. Auth: Bearer access_token for Admin REST. baseHost is host[:port] without scheme. Path vars use userId/clientUuid (hyphenated official names are mapped). Handler: OfficialApiNode. Never log access_token or credential values. listen is BPMN message-event ingress.",
+  "icon": "vpn_key",
+  "tags": [
+    "iam",
+    "idp"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "aa1a695e-f0f0-4ae7-bf8c-a74dc3262add",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Secrets stay in configurationParameters. Do not put access_token here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "create-user",
+          "description": "Overrides config when non-blank. EXACT: create-user | get-user | list-users | update-user | delete-user | reset-password | create-group | list-groups | create-client | get-client | list-clients | create-role | assign-role | token-client-credentials | token-refresh | token-introspect | listen.",
+          "children": []
+        },
+        {
+          "shortCode": "userId",
+          "label": "userId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User UUID path for get/update/delete/reset-password/assign-role.",
+          "children": []
+        },
+        {
+          "shortCode": "clientUuid",
+          "label": "clientUuid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client internal UUID path for get-client (not clientId).",
+          "children": []
+        },
+        {
+          "shortCode": "username",
+          "label": "username",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Username. create-user / update-user body; list-users query. Example: ada.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email. create-user / update-user body; list-users query. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Group or role name; also client name. create-group / create-role / create-client.",
+          "children": []
+        },
+        {
+          "shortCode": "clientId",
+          "label": "clientId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Public clientId for create-client body and list-clients query.",
+          "children": []
+        },
+        {
+          "shortCode": "roles",
+          "label": "roles",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "RoleRepresentation list for assign-role. Example: [{\"id\":\"…\",\"name\":\"user\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search query for list-users / list-groups / list-clients.",
+          "children": []
+        },
+        {
+          "shortCode": "first",
+          "label": "first",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Pagination offset for list-*. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "max",
+          "label": "max",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for list-*. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "grant_type",
+          "label": "grant_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OAuth grant for token-*. EXACT: client_credentials | refresh_token. Sent as form.",
+          "children": []
+        },
+        {
+          "shortCode": "scope",
+          "label": "scope",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OAuth scope form field for token-client-credentials / token-refresh.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Credential type for reset-password. Typical: password.",
+          "children": []
+        },
+        {
+          "shortCode": "temporary",
+          "label": "temporary",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "reset-password temporary flag. Official temporary.",
+          "children": []
+        },
+        {
+          "shortCode": "enabled",
+          "label": "enabled",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Account enabled. Official enabled. create-user / update-user / list-users filter.",
+          "children": []
+        },
+        {
+          "shortCode": "firstName",
+          "label": "firstName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "First name. Official UserRepresentation firstName. create-user / update-user / list-users.",
+          "children": []
+        },
+        {
+          "shortCode": "lastName",
+          "label": "lastName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Last name. Official UserRepresentation lastName.",
+          "children": []
+        },
+        {
+          "shortCode": "emailVerified",
+          "label": "emailVerified",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Official emailVerified. create-user / update-user / list-users.",
+          "children": []
+        },
+        {
+          "shortCode": "attributes",
+          "label": "attributes",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "User or group attributes map. create-user / update-user / create-group / create-role.",
+          "children": []
+        },
+        {
+          "shortCode": "credentials",
+          "label": "credentials",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "CredentialRepresentation list for create-user. Example: [{\"type\":\"password\",\"value\":\"…\",\"temporary\":false}]. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "groups",
+          "label": "groups",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Group path strings for create-user. Example: [\"/staff\"].",
+          "children": []
+        },
+        {
+          "shortCode": "requiredActions",
+          "label": "requiredActions",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Required actions. Official requiredActions. Example: [\"UPDATE_PASSWORD\"].",
+          "children": []
+        },
+        {
+          "shortCode": "exact",
+          "label": "exact",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Exact match flag for list-users / list-groups.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Attribute query q for list-users / list-groups / list-clients. Example: key:value.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "New password value for reset-password. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "path",
+          "label": "path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Group path for create-group. Example: /staff.",
+          "children": []
+        },
+        {
+          "shortCode": "briefRepresentation",
+          "label": "briefRepresentation",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "list-groups briefRepresentation query.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client or role description. create-client / create-role.",
+          "children": []
+        },
+        {
+          "shortCode": "protocol",
+          "label": "protocol",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client protocol. Typical: openid-connect. create-client.",
+          "children": []
+        },
+        {
+          "shortCode": "publicClient",
+          "label": "publicClient",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "create-client publicClient.",
+          "children": []
+        },
+        {
+          "shortCode": "secret",
+          "label": "secret",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client secret for create-client when not public. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "redirectUris",
+          "label": "redirectUris",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "create-client redirectUris. Example: [\"https://app.example.com/*\"].",
+          "children": []
+        },
+        {
+          "shortCode": "webOrigins",
+          "label": "webOrigins",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "create-client webOrigins.",
+          "children": []
+        },
+        {
+          "shortCode": "standardFlowEnabled",
+          "label": "standardFlowEnabled",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "create-client standardFlowEnabled.",
+          "children": []
+        },
+        {
+          "shortCode": "directAccessGrantsEnabled",
+          "label": "directAccessGrantsEnabled",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "create-client directAccessGrantsEnabled.",
+          "children": []
+        },
+        {
+          "shortCode": "serviceAccountsEnabled",
+          "label": "serviceAccountsEnabled",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "create-client serviceAccountsEnabled.",
+          "children": []
+        },
+        {
+          "shortCode": "viewableOnly",
+          "label": "viewableOnly",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "list-clients viewableOnly query.",
+          "children": []
+        },
+        {
+          "shortCode": "composite",
+          "label": "composite",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "create-role composite.",
+          "children": []
+        },
+        {
+          "shortCode": "clientRole",
+          "label": "clientRole",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "create-role clientRole.",
+          "children": []
+        },
+        {
+          "shortCode": "client_id",
+          "label": "client_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OAuth client_id form field for token-*. Example: studioquack.",
+          "children": []
+        },
+        {
+          "shortCode": "client_secret",
+          "label": "client_secret",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OAuth client_secret form field for token-*. Prefer config when unused per call. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "refresh_token",
+          "label": "refresh_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Refresh token for token-refresh. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "token",
+          "label": "token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Token to introspect for token-introspect. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "token_type_hint",
+          "label": "token_type_hint",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "token-introspect hint. EXACT: access_token | refresh_token.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a4f06cb4-d24b-4982-b019-828a662ba092",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "2xx: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON. Do not log credentials, tokens, or client secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5b8ba88d-e0c1-445e-a781-4abd8d019d10",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb when input.operation is blank. listen is ingress. token-* hit the realm OIDC endpoints.",
+      "value": "get-user",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "create-user",
+        "get-user",
+        "list-users",
+        "update-user",
+        "delete-user",
+        "reset-password",
+        "create-group",
+        "list-groups",
+        "create-client",
+        "get-client",
+        "list-clients",
+        "create-role",
+        "assign-role",
+        "token-client-credentials",
+        "token-refresh",
+        "token-introspect",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "89231ce1-024f-44d7-bd5e-74375376a9ef",
+      "shortCode": "access_token",
+      "label": "Admin access token",
+      "type": "password",
+      "description": "Bearer token with realm-management roles on the customer realm. StudioQuack secret. Never on INPUT or in logs. Required by OfficialApiNode for every verb including token-*.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3be7866a-f5a6-4093-be19-ceff2aea8cab",
+      "shortCode": "baseHost",
+      "label": "Keycloak host",
+      "type": "string",
+      "description": "Host without scheme (and without /auth unless the deployment still uses the legacy context path). Example: idp.example.com or idp.example.com:8443. Customer realm host only.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "390c7bb9-2bc2-470d-a7c3-3dc7602268e8",
+      "shortCode": "realm",
+      "label": "Realm",
+      "type": "string",
+      "description": "Customer realm name (not id). Do not point this node at StudioQuack control-plane realms.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5b3beec3-7620-41e4-8596-e10da9c98489",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

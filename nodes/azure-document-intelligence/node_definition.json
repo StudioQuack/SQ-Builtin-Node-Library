@@ -1,0 +1,326 @@
+{
+  "_id": "c99b92b2-e935-5881-95a7-e467ec4c1129",
+  "version": "1.0.0",
+  "name": "Azure Document Intelligence",
+  "label": "Azure AI Document Intelligence v4.0 (2024-11-30)",
+  "description": "Azure AI Document Intelligence v4.0 (2024-11-30). Official API https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/. One node; pick operation. Upload/download/convert/sign payloads use type file (Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.) Handler: OfficialApiNode + api_spec.json. GA api-version 2024-11-30. Regional endpoint required. DPA/BAA via Azure. Wire may use base64Source; StudioQuack field type remains file. Poll Operation-Location for get_result. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "visibility",
+  "tags": [
+    "azure",
+    "document-intelligence",
+    "ocr",
+    "idp"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "e4e5bbd0-caf9-5668-9fc7-3d04e3cb24fb",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "prebuilt_invoice",
+          "description": "Overrides config operation. Accepted: prebuilt_invoice, prebuilt_receipt, prebuilt_id, prebuilt_layout, custom_analyze, get_result.",
+          "children": []
+        },
+        {
+          "shortCode": "api-version",
+          "label": "api-version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document Intelligence api-version. Example: 2024-11-30.",
+          "children": []
+        },
+        {
+          "shortCode": "modelId",
+          "label": "modelId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Custom model id for custom_analyze / get_result. Example: my-invoice-model.",
+          "children": []
+        },
+        {
+          "shortCode": "resultId",
+          "label": "resultId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Analyze result id for get_result (from Operation-Location).",
+          "children": []
+        },
+        {
+          "shortCode": "urlSource",
+          "label": "urlSource",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTTPS URL of the document for prebuilt_* and custom_analyze. Example: https://example.com/invoice.pdf.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7653adbd-0e78-53be-91e1-4f501205b386",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "27f1527e-161b-506d-ba9a-050ba75e6e51",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "prebuilt_invoice",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "prebuilt_invoice",
+        "prebuilt_receipt",
+        "prebuilt_id",
+        "prebuilt_layout",
+        "custom_analyze",
+        "get_result"
+      ],
+      "filterRules": [
+        {
+          "when": "prebuilt_invoice",
+          "targets": [
+            {
+              "param": "urlSource",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "prebuilt_receipt",
+          "targets": [
+            {
+              "param": "urlSource",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "prebuilt_id",
+          "targets": [
+            {
+              "param": "urlSource",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "prebuilt_layout",
+          "targets": [
+            {
+              "param": "urlSource",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "custom_analyze",
+          "targets": [
+            {
+              "param": "urlSource",
+              "visible": true
+            },
+            {
+              "param": "modelId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get_result",
+          "targets": [
+            {
+              "param": "modelId",
+              "visible": true
+            },
+            {
+              "param": "resultId",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "a9241b33-780f-5617-bd10-89495410ed20",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Document Intelligence subscription key sent as Ocp-Apim-Subscription-Key. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "81b30cf8-a495-5c9b-a35c-4a66c618336d",
+      "shortCode": "endpoint",
+      "label": "Endpoint",
+      "type": "string",
+      "description": "Regional endpoint, e.g. https://<resource>.cognitiveservices.azure.com",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "abc08176-abcf-4da6-a5d1-ad020f4262a3",
+      "shortCode": "urlSource",
+      "label": "Urlsource",
+      "type": "string",
+      "description": "HTTPS URL of the document for prebuilt_* and custom_analyze. Example: https://example.com/invoice.pdf.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "58a0dadb-8537-4d05-b511-d759b12766a2",
+      "shortCode": "api-version",
+      "label": "Api-version",
+      "type": "string",
+      "description": "Document Intelligence api-version. Example: 2024-11-30.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "accde6c1-594a-49bf-807c-e97f4ad1cf14",
+      "shortCode": "modelId",
+      "label": "Modelid",
+      "type": "string",
+      "description": "Custom model id for custom_analyze / get_result. Example: my-invoice-model.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "53304433-b0f8-4cb7-9f34-7dbffbece14b",
+      "shortCode": "resultId",
+      "label": "Resultid",
+      "type": "string",
+      "description": "Analyze result id for get_result (from Operation-Location).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "062e7e82-7b0e-5e3b-90ce-749931815efc",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 120.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

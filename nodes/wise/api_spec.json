@@ -1,0 +1,167 @@
+{
+  "baseUrl": "https://api.wise.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "configKey": "api_token"
+  },
+  "operations": {
+    "balance_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/borderless-accounts",
+      "queryFrom": [
+        "profileId"
+      ]
+    },
+    "balances_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v4/profiles/{profileId}/balances",
+      "required": [
+        "profileId"
+      ],
+      "queryFrom": [
+        "types"
+      ]
+    },
+    "currency_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/currencies"
+    },
+    "statement_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/profiles/{profileId}/borderless-accounts/{accountId}/statement.json",
+      "required": [
+        "profileId",
+        "accountId"
+      ],
+      "queryFrom": [
+        "currency",
+        "intervalStart",
+        "intervalEnd"
+      ]
+    },
+    "balance_statement_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/profiles/{profileId}/balance-statements/{balanceId}/statement.json",
+      "required": [
+        "profileId",
+        "balanceId"
+      ],
+      "queryFrom": [
+        "currency",
+        "intervalStart",
+        "intervalEnd"
+      ]
+    },
+    "rate_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/rates",
+      "queryFrom": [
+        "source",
+        "target"
+      ]
+    },
+    "profile_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/profiles/{profileId}",
+      "required": [
+        "profileId"
+      ]
+    },
+    "profile_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/profiles"
+    },
+    "recipient_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/accounts",
+      "queryFrom": [
+        "profileId"
+      ]
+    },
+    "quote_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v3/profiles/{profileId}/quotes",
+      "required": [
+        "profileId"
+      ],
+      "bodyFrom": [
+        "sourceCurrency",
+        "targetCurrency",
+        "sourceAmount",
+        "targetAmount"
+      ]
+    },
+    "quote_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v3/profiles/{profileId}/quotes/{quoteId}",
+      "required": [
+        "profileId",
+        "quoteId"
+      ]
+    },
+    "transfer_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/transfers",
+      "bodyFrom": [
+        "targetAccount",
+        "quoteUuid",
+        "customerTransactionId",
+        "details"
+      ]
+    },
+    "transfer_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/transfers/{transferId}",
+      "required": [
+        "transferId"
+      ]
+    },
+    "transfer_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/transfers",
+      "queryFrom": [
+        "profileId",
+        "limit"
+      ]
+    },
+    "transfer_delete": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/v1/transfers/{transferId}/cancel",
+      "required": [
+        "transferId"
+      ]
+    },
+    "transfer_execute": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v3/profiles/{profileId}/transfers/{transferId}/payments",
+      "required": [
+        "profileId",
+        "transferId"
+      ],
+      "bodyFrom": [
+        "type"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

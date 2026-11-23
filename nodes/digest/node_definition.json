@@ -1,0 +1,182 @@
+{
+  "_id": "4331e5bb-fb55-48af-b3a9-4b99997f7485",
+  "version": "1.0.0",
+  "name": "Digest",
+  "label": "Time-window buffer",
+  "description": "Per-environment bounded buffer. buffer appends; flush emits and clears. Not a Wait or Schedule node — a BPMN timer can invoke flush. Shared store for N replicas (not JVM memory).",
+  "icon": "",
+  "tags": [
+    "digest",
+    "batch",
+    "buffer"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "67338764-4968-45e0-aa7d-0c16d7734944",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Digest operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'buffer'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "item",
+          "label": "item",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Record to buffer.",
+          "children": []
+        },
+        {
+          "shortCode": "window",
+          "label": "window",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Override window.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "329dd426-8a0a-4599-be71-3c3ef825fdfd",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "47d6eebc-7cb7-44ca-9392-4aa335760ef9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: buffer | flush. Required. Example: 'buffer'.",
+      "value": "buffer",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "buffer",
+        "flush"
+      ]
+    },
+    {
+      "_id": "99cf33e8-0f73-4b63-b3d1-f8c452999771",
+      "shortCode": "window",
+      "label": "Window",
+      "type": "string",
+      "description": "ISO-8601 duration or minutes integer. Example: 'PT15M'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bce282f2-eca4-47ed-b52b-667bff480f6a",
+      "shortCode": "timezone",
+      "label": "Timezone",
+      "type": "string",
+      "description": "IANA TZ for window boundaries. Default UTC.",
+      "value": "UTC",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5e59d702-a0f0-40ae-8e70-e91d7824bdc5",
+      "shortCode": "max_items",
+      "label": "Max Items",
+      "type": "number",
+      "description": "Hard cap. Default 1000.",
+      "value": "1000",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9c104efd-7dfc-4e55-a116-188adf66388d",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

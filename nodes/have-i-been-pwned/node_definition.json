@@ -1,0 +1,203 @@
+{
+  "_id": "42578268-d1db-4843-a9b3-6a2153f9c1cf",
+  "version": "1.0.0",
+  "name": "Have I Been Pwned",
+  "label": "HIBP API v3 + Pwned Passwords k-anonymity range",
+  "description": "Official Have I Been Pwned API v3 and Pwned Passwords range API via OfficialApiNode. Docs: https://haveibeenpwned.com/API/v3. Paid APIs require a 32-character hexadecimal hibp-api-key (Core / Pro / High RPM). Emails sent to breached-account/paste-account are personal data. pwned-password: send only the first 5 hex chars of SHA-1 (prefix). NEVER send the password or the full hash. Header hibp-api-key. Mixed-case official paths (breachedAccount). HIBP requires a descriptive User-Agent (missing UA → HTTP 403).",
+  "icon": "password",
+  "tags": [
+    "threat-intel"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "7b2f5a28-5433-46f0-bab4-f122a1dc5a2e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path/query/body keys match api_spec.json.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "breached-account",
+          "description": "Overrides config operation when non-blank. EXACT: breached-account | breached-domain | paste-account | pwned-password | subscription-status | breached-account-range.",
+          "children": []
+        },
+        {
+          "shortCode": "account",
+          "label": "account",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email (or username) for breached-account / paste-account. Personal data.",
+          "children": []
+        },
+        {
+          "shortCode": "domain",
+          "label": "domain",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Verified domain for breached-domain, or filter for breached-account.",
+          "children": []
+        },
+        {
+          "shortCode": "truncateResponse",
+          "label": "truncateResponse",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "breached-account query truncateResponse.",
+          "children": []
+        },
+        {
+          "shortCode": "includeUnverified",
+          "label": "includeUnverified",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "breached-account query includeUnverified.",
+          "children": []
+        },
+        {
+          "shortCode": "prefix",
+          "label": "prefix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pwned-password: first 5 hex chars of SHA-1 (or NTLM if mode=ntlm). breached-account-range: first 6 hex chars of SHA-1 of the email (k-anonymity). NEVER the password, email, or full hash.",
+          "children": []
+        },
+        {
+          "shortCode": "mode",
+          "label": "mode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pwned-password: omit for SHA-1 suffixes; ntlm for NTLM prefix.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b880de36-2743-4a15-a0b9-90befffb7d79",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5ed75f61-4096-454a-93b3-151efac04716",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb when input.operation is blank.",
+      "value": "breached-account",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "breached-account",
+        "breached-domain",
+        "paste-account",
+        "pwned-password",
+        "subscription-status",
+        "breached-account-range"
+      ]
+    },
+    {
+      "_id": "71675964-ff04-44fe-86bf-d9857e66aef3",
+      "shortCode": "hibp_api_key",
+      "label": "HIBP API key",
+      "type": "password",
+      "description": "Header hibp-api-key. Must be a 32-character hexadecimal subscription key (Core/Pro/High RPM) for account/domain/paste/subscription-status. Test keys (any 32-char hex) only work against hibp-integration-tests.com. Never on INPUT. pwned-password does not need a key; OfficialApiNode still sends this header on every op.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "32ca01b1-359a-4f78-896e-521d97d0491a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

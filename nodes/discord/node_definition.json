@@ -1,0 +1,385 @@
+{
+  "_id": "aa0847f8-86b8-5c23-b795-f4ac7955540f",
+  "version": "1.0.0",
+  "name": "Discord",
+  "label": "Discord — Discord API v10",
+  "description": "Discord via the official Discord API v10. Base https://discord.com/api/v10. Docs: https://discord.com/developers/docs/reference. Canonical messaging node; social-media.md is discovery only — same folder nodes/discord. Incoming webhooks are send-only (send-webhook). listen = interactions HTTP or gateway events as BPMN message events. Privileged intents required for list-members. No user-token selfbots. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data}. Failures raise a BPMN error. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "forum",
+  "tags": [
+    "chat",
+    "webhook"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f4469171-9d6b-55eb-a543-824e48956fb5",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Discord operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"send-message\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-message",
+          "description": "Which official call to run. EXACT values: send-message | send-webhook | get-message | list-messages | delete-message | add-reaction | create-channel | get-channel | list-channels | update-channel | delete-channel | list-members | add-role | remove-role | send-and-wait | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "channel_id",
+          "label": "channel_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Snowflake channel id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "message_id",
+          "label": "message_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Snowflake message id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "guild_id",
+          "label": "guild_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Snowflake guild id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Snowflake user id for role ops. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "role_id",
+          "label": "role_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Snowflake role id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "webhook_id",
+          "label": "webhook_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Incoming webhook id (send-webhook only). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "webhook_token",
+          "label": "webhook_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Incoming webhook token. Treat as secret if supplied per invoke; prefer config. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message text for send-message / send-webhook. Official Discord `content` (not a generic blob). Max 2000. Example: Hello.",
+          "children": []
+        },
+        {
+          "shortCode": "emoji",
+          "label": "emoji",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL-encoded emoji for add-reaction (name:id or unicode). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "embeds",
+          "label": "embeds",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Discord embed objects for send-message / send-webhook.",
+          "children": []
+        },
+        {
+          "shortCode": "sticker_ids",
+          "label": "sticker_ids",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `sticker_ids` for operation: send-message.",
+          "children": []
+        },
+        {
+          "shortCode": "message_reference",
+          "label": "message_reference",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "send-message reply reference {message_id, channel_id, guild_id, fail_if_not_exists}.",
+          "children": []
+        },
+        {
+          "shortCode": "username",
+          "label": "username",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `username` for operation: send-webhook.",
+          "children": []
+        },
+        {
+          "shortCode": "avatar_url",
+          "label": "avatar_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `avatar_url` for operation: send-webhook.",
+          "children": []
+        },
+        {
+          "shortCode": "around",
+          "label": "around",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `around` for operation: list-messages.",
+          "children": []
+        },
+        {
+          "shortCode": "before",
+          "label": "before",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `before` for operation: list-messages.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `after` for operations: list-messages, list-members.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operations: list-messages, list-members.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `name` for operations: create-channel, update-channel. Required by: create-channel.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `type` for operation: create-channel.",
+          "children": []
+        },
+        {
+          "shortCode": "parent_id",
+          "label": "parent_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `parent_id` for operations: create-channel, update-channel.",
+          "children": []
+        },
+        {
+          "shortCode": "topic",
+          "label": "topic",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `topic` for operations: create-channel, update-channel.",
+          "children": []
+        },
+        {
+          "shortCode": "tts",
+          "label": "tts",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "send-message / send-webhook tts.",
+          "children": []
+        },
+        {
+          "shortCode": "flags",
+          "label": "flags",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "send-message flags bitfield (e.g. 4096 suppress notifications).",
+          "children": []
+        },
+        {
+          "shortCode": "nonce",
+          "label": "nonce",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-message nonce for idempotency.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5717c353-1d30-5e7c-ae29-87b47a785402",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "86a12f53-ec46-5fd7-997f-4c825ef57b99",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-message, send-webhook, get-message, list-messages, delete-message, add-reaction, create-channel, get-channel, list-channels, update-channel, delete-channel, list-members, add-role, remove-role, send-and-wait, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-message",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-message",
+        "send-webhook",
+        "get-message",
+        "list-messages",
+        "delete-message",
+        "add-reaction",
+        "create-channel",
+        "get-channel",
+        "list-channels",
+        "update-channel",
+        "delete-channel",
+        "list-members",
+        "add-role",
+        "remove-role",
+        "send-and-wait",
+        "listen"
+      ]
+    },
+    {
+      "_id": "1c248340-1d07-5dcf-aa96-792e84fa9bb6",
+      "shortCode": "bot_token",
+      "label": "Bot token",
+      "type": "password",
+      "description": "Discord bot token. Sent as Authorization: Bot <token>. StudioQuack secret. Never a user/selfbot token. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "07c9dd61-07a6-57bc-aca6-34cfb96c158c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

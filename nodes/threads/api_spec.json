@@ -1,0 +1,48 @@
+{
+  "baseUrl": "https://graph.threads.net/v1.0",
+  "defaultTimeout": 30,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "threads_user_token"
+  },
+  "operations": {
+    "thread_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{threads_user_id}/threads",
+      "required": ["threads_user_id"],
+      "bodyFrom": ["media_type", "text", "image_url", "video_url"]
+    },
+    "thread_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{media_id}",
+      "required": ["media_id"]
+    },
+    "reply_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{threads_user_id}/threads",
+      "required": ["threads_user_id", "reply_to_id"],
+      "bodyFrom": ["media_type", "text", "reply_to_id"]
+    },
+    "insights_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{media_id}/insights",
+      "required": ["media_id", "metric"],
+      "queryFrom": ["metric"]
+    },
+    "thread_publish": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{threads_user_id}/threads_publish",
+      "required": ["threads_user_id", "creation_id"],
+      "bodyFrom": ["creation_id"]
+    },
+    "trigger": { "kind": "ingress" }
+  }
+}

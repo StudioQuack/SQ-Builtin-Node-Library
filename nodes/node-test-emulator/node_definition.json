@@ -1,0 +1,399 @@
+{
+  "_id": "17dcc655-08e2-4b45-b3a0-08d5aa608aed",
+  "version": "1.0.0",
+  "name": "Node Test Emulator",
+  "label": "Node Test Emulator",
+  "description": "Stateful BYO test harness for StudioQuack nodes. Runs PYTHON, JAVASCRIPT and TYPESCRIPT scripts against a mock studioquack helper, and has the SQS daemon build+run JAVA Build-tab apps (the daemon stages the context, builds on its own build network, runs the image as a hardened job sandbox with daemon-side mocks, and collects outputs — the emulator never touches an engine socket). Point a stateful instance at the `sq-local/sq-builtin-node-library` image. jobType is custom-script-executor because the platform has no dedicated jobType for custom-image stateful listeners — execution is the image entrypoint, not a Script tab. Do not use this node to call real sub-workflows; FUNCTION ports of the code under test are mocked via mock_function_responses.",
+  "icon": "bug_report",
+  "tags": [
+    "test",
+    "emulator",
+    "java",
+    "python",
+    "javascript"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a0198a21-d6a3-4ec7-81df-1245a6e1ddf8",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Single object describing one test. Required fields: language, mode. Script-mode also requires script. Build-mode also requires files[]. Optional: input_data, configuration, mock_function_responses, expected_output, timeout_seconds. The daemon delivers this object as inputVariables.input (or currentNode.inputList targetPortValue=input).",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "_id": "c388a5e7-b058-426a-9bf0-5153ab7ff3c6",
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": true,
+          "value": "python",
+          "description": "Runtime of the code under test. EXACT accepted values (case-insensitive, stored lower-case): 'python' (CPython 3 via python3), 'javascript' (Node.js via node), 'typescript' (TypeScript via tsx, which requires() the CommonJS mock helper), 'java' (Build-tab / BYO Java app: the daemon builds files[] into an image, then runs+invokes it as a hardened sandbox). Any other string fails the emulator before the test starts (OUTPUT error port is set). Must also appear in the instance config allowed_languages (default python,javascript,typescript,java). Pairing: python|javascript|typescript MUST use mode='script'; java MUST use mode='build'. Example: 'python'.",
+          "children": []
+        },
+        {
+          "_id": "5664a7ba-2528-4b51-a6d3-442ed8b374e5",
+          "shortCode": "mode",
+          "label": "mode",
+          "type": "string",
+          "required": true,
+          "value": "script",
+          "description": "How to execute. EXACT accepted values: 'script' | 'build'. 'script' writes the source to a temp dir, generates studioquack_helper.py (python) or studioquack_helper.js (javascript/typescript), runs python3 script.py / node script.js / tsx script.ts with timeout, reads output.json (port→value from returnResult) and compares to expected_output. 'build' POSTs files[] to the daemon's helper endpoint test/build-run: the daemon stages the context, builds the Containerfile/Dockerfile with its own caps on its build network, runs the image as a hardened job sandbox with SQ_STATEFUL_RUNNER=true and daemon-side mocked studioquack.execute, POSTs a stateful invoke JSON to http://127.0.0.1:${SQ_APP_PORT}/invoke, collects outputs, then removes the container and image. The emulator deep-compares the returned output. If omitted, inferred: java→build, otherwise script. Mismatch with language is an emulator error. Example: 'script'.",
+          "children": []
+        },
+        {
+          "_id": "f88b6002-f336-4e74-9d04-185aad8a1921",
+          "shortCode": "script",
+          "label": "script",
+          "type": "string",
+          "required": false,
+          "value": "studioquack.returnResult([studioquack.ResultItem('result', 'emulator-ok')])",
+          "description": "Source of the node script under test. REQUIRED when mode='script'. Ignored when mode='build'. The emulator wraps it so `studioquack` is already in scope (Python: `from studioquack_helper import studioquack`; JS/TS: `const { studioquack } = require('./studioquack_helper.js')`). The script MUST call studioquack.returnResult([new studioquack.ResultItem(port, value), ...]) to publish outputs. Read inputs with studioquack.getInputValuesByPortValue('portName') (returns a list). Read config with studioquack.getParameterValueByShortCode('shortCode'). Call FUNCTION ports with studioquack.execute('portValue', payload) — returns mock_function_responses[portValue] or {} with a stderr warning when missing. Do NOT include CLI argparse / __main__ blocks; this is not a CLI runner. Variable and provider ports do not exist here and must not be referenced. Example Python: \"vals = studioquack.getInputValuesByPortValue('in')\\nresult = vals[0]['a'] + vals[0]['b']\\nstudioquack.returnResult([studioquack.ResultItem('sum', result)])\".",
+          "children": []
+        },
+        {
+          "_id": "e99a1307-7bb4-4fa2-a82d-49576f00cbf4",
+          "shortCode": "files",
+          "label": "files",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Build-mode workspace. REQUIRED when mode='build' (language='java'). Array of {path, content}. path is a relative POSIX path without '..' or a leading slash (absolute and parent-escaping paths are rejected). One entry MUST be 'Containerfile' or 'Dockerfile' at the workspace root — the daemon builds the staged context with it. Include every file the image needs (Java sources, helper, pom.xml if used). The built image SHOULD follow the BYO contract: ENTRYPOINT is the app, ship curl, listen on SQ_APP_PORT/SQ_APP_PATH when stateful, or emit portValue:<port>:::result:<value> and exit 0 when stateless. FULL example: [{\"path\":\"Containerfile\",\"content\":\"FROM docker.io/library/eclipse-temurin:21-jre-jammy\\nRUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*\\nWORKDIR /app\\nCOPY Index.class /app/\\nENTRYPOINT [\\\"java\\\",\\\"-cp\\\",\\\"/app\\\",\\\"Index\\\"]\"},{\"path\":\"src/main/java/Index.java\",\"content\":\"public class Index { public static void main(String[] a) throws Exception { /* listen or one-shot */ } }\"}].",
+          "children": [
+            {
+              "_id": "c08c4f1d-6aa0-477f-9a65-32500b0e591a",
+              "shortCode": "path",
+              "label": "path",
+              "type": "string",
+              "required": true,
+              "value": "",
+              "description": "Relative POSIX path inside the build workspace. Examples: 'Containerfile', 'Dockerfile', 'src/main/java/Index.java', 'src/main/java/StudioQuackHelper.java'. Rejected: '/etc/passwd', '../secret', 'foo\\\\bar'. Must not be empty.",
+              "children": []
+            },
+            {
+              "_id": "4c7de006-a398-4acc-9746-bff584d35f91",
+              "shortCode": "content",
+              "label": "content",
+              "type": "string",
+              "required": true,
+              "value": "",
+              "description": "Full UTF-8 text of the file at path. This is the file body, not a host filesystem path. For Containerfile include FROM/COPY/ENTRYPOINT so the daemon's image build produces a runnable image. Empty string writes an empty file.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "_id": "54a897d2-26d0-4a74-af77-38f1ef4c2d73",
+          "shortCode": "input_data",
+          "label": "input_data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Test values for the INPUT ports of the node under test, keyed by that node's INPUT port `value` (the port name the script would pass to getInputValuesByPortValue). Same semantics as the legacy Python emulator. Each value is wrapped as a one-element list by the mock helper (unless it is already a list). In build-mode these keys become inputVariables on the stateful POST and currentNode.inputList[].targetPortValue. Do not put emulator fields (language/mode/script) here — those are siblings. Example for a node with INPUT port 'in' whose schema has a and b: {\"in\": {\"a\": 3, \"b\": 5}}. Example with two scalar ports: {\"name\": \"Ada\", \"count\": 2}. Default: {}.",
+          "children": []
+        },
+        {
+          "_id": "9fb1dc85-10ed-40b7-8e6a-f2986a92bc1d",
+          "shortCode": "configuration",
+          "label": "configuration",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Per-test overrides of the node-under-test configuration parameters AND of this emulator's own config params, keyed by shortCode. Mock helper getParameterValueByShortCode(shortCode) returns configuration[shortCode] first, then input_data.configuration[shortCode] (legacy), then the fake template defaults. To override THIS emulator's instance defaults for one test, set the emulator shortCodes here: default_timeout_seconds, max_log_chars, verbose, allowed_languages. Example: {\"operation\": \"Read\", \"timeoutMs\": 2000, \"default_timeout_seconds\": 120}. Default: {}.",
+          "children": []
+        },
+        {
+          "_id": "08d47c30-922c-4fda-8565-bc8f82b34714",
+          "shortCode": "mock_function_responses",
+          "label": "mock_function_responses",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "FUNCTION-port mocks. Key = the FUNCTION port `value` the code under test passes to studioquack.execute(portValue, payload) (or POST /v1/helper/execute {portValue}). Value = the object/array/scalar execute() must return. When a port is executed with no mock, the helper prints 'Emulator Warning: No mock response for function port \\'<name>\\'' on stderr, appends {port_value, payload, mocked:false} to invocation_log, and returns {}. Variable/provider ports are not mocked and not recognised. FULL example: {\"log\": {\"ok\": true, \"written\": 1}, \"lookup\": {\"found\": true, \"value\": \"42\"}, \"search\": [{\"title\": \"n1\", \"url\": \"https://example.com\"}]}. Default: {}.",
+          "children": []
+        },
+        {
+          "_id": "75fcf767-394d-484b-b360-4ca85a468582",
+          "shortCode": "expected_output",
+          "label": "expected_output",
+          "type": "object",
+          "required": false,
+          "value": "{\"result\":\"emulator-ok\"}",
+          "description": "Deep-compared against the actual output (port → value). null or omitted = no assertion (output_matches=true if the process succeeded). Script-mode actual output is the object studioquack.returnResult wrote (every ResultItem keyed by portValue, e.g. {\"sum\": 8, \"error\": \"\"}). Build-mode actual output is the HTTP 200 JSON object keyed by the app's OUTPUT port names, or stdout markers portValue:<port>:::result:<value> when the image is a one-shot. Compare rules (legacy compare_outputs): type mismatch, missing key, unexpected key, array length, scalar equality. JSON 1 and 1.0 compare equal. Differences are strings like 'Value mismatch at root.sum: expected 8, got 7'. Example: {\"sum\": 8} or {\"out\": {\"key\": \"orders:42\", \"found\": true}}. Use null when you only care that the script exited and called returnResult.",
+          "children": []
+        },
+        {
+          "_id": "a8316862-7f6e-4df0-9eab-8e6f47880235",
+          "shortCode": "timeout_seconds",
+          "label": "timeout_seconds",
+          "type": "number",
+          "required": false,
+          "value": 0,
+          "description": "Wall-clock budget in seconds for this one test (script subprocess, or the daemon-side image build + run + invoke POST in build-mode). Optional. When omitted or <= 0, the instance config default_timeout_seconds is used (default 60). On expiry the subprocess is killed (destroyForcibly) / the wait loop stops; test_passed=false and output.error names the timeout. Example: 120. Do not set this above the daemon's stateful request budget (default 300s) or the daemon will fail the node first.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "aafca64a-4557-445c-90b3-45fec754f0aa",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Test report object (legacy Python emulator fields plus language, mode, build_log, image_built). Always present, including when the test failed. Downstream nodes should branch on test_passed (boolean) and read differences[] when output_matches is false.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "_id": "ba83cf86-0fb4-413c-ac59-ce660d908de5",
+          "shortCode": "test_passed",
+          "label": "test_passed",
+          "type": "boolean",
+          "required": true,
+          "value": false,
+          "description": "true only when the process under test succeeded (script_success=true) AND expected_output matched (or was null) AND the emulator did not set output.error. false for timeouts, non-zero exits, build failures, missing returnResult, or compare mismatches. Use this as the pass/fail gate.",
+          "children": []
+        },
+        {
+          "_id": "4f46dad1-3cf4-44cd-a3ab-1fa4023e28de",
+          "shortCode": "script_success",
+          "label": "script_success",
+          "type": "boolean",
+          "required": true,
+          "value": false,
+          "description": "true when the code under test ran to a successful completion: script-mode process exit 0 (or returnResult wrote output.json) / build-mode image built and produced an invoke body or stdout markers. Independent of expected_output. A script can succeed and still have test_passed=false when the compare fails.",
+          "children": []
+        },
+        {
+          "_id": "356d990d-31bc-4717-bdbc-652dcd3f5b8c",
+          "shortCode": "output",
+          "label": "output",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Actual outputs of the code under test, keyed by OUTPUT port name. Script-mode: whatever returnResult captured, e.g. {\"sum\": 8, \"error\": \"\"}. Build-mode: the JSON object the app returned on POST /invoke (stateful) or parsed stdout markers (stateless). null when the process never produced output (crash before returnResult, build failed). This is the left-hand side of the expected_output compare.",
+          "children": []
+        },
+        {
+          "_id": "4b3da776-dd17-436d-b987-dfbd0e9f5a8f",
+          "shortCode": "output_matches",
+          "label": "output_matches",
+          "type": "boolean",
+          "required": true,
+          "value": true,
+          "description": "true when expected_output was null/omitted, or when deep-compare found zero differences. false when at least one differences[] entry exists. Does not by itself mean the script ran — combine with script_success.",
+          "children": []
+        },
+        {
+          "_id": "d22644ad-baeb-4d2b-b8a2-56ee45ee9e9c",
+          "shortCode": "differences",
+          "label": "differences",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Human-readable compare failures. Empty array when output_matches is true. Each string is one path: 'Missing key at root.sum', 'Unexpected key at root.debug', 'Array length mismatch at root.items: expected 2, got 1', 'Type mismatch at root.found: expected boolean, got string', 'Value mismatch at root.sum: expected 8, got 7'. Walked like the legacy compare_outputs (dict keys both ways, then recurse; lists by index; scalars by equality).",
+          "children": []
+        },
+        {
+          "_id": "4963f21a-4f6a-476d-8bf3-ded5b11287da",
+          "shortCode": "invocation_log",
+          "label": "invocation_log",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Every mock-helper call during the test. Script-mode execute() entries: {port_value, payload, node_id, mocked}. Build-mode also includes {kind:'result', items:[...]}, {kind:'log', ...}, {kind:'fail', body}. Use this to assert a FUNCTION port was called, or to see which ports were called without a mock (mocked=false). Example: [{\"port_value\":\"log\",\"payload\":{\"sum\":8},\"mocked\":true}].",
+          "children": []
+        },
+        {
+          "_id": "f98d10c9-b453-4dd3-9cf5-654ac60a03e0",
+          "shortCode": "stdout",
+          "label": "stdout",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Captured standard output of the script process, or the daemon-collected invoke response + container logs in build-mode. Truncated to max_log_chars (default 20000) with a '...[truncated, max_log_chars=N]' suffix. May include stdout markers (portValue:...). Empty string when nothing was printed.",
+          "children": []
+        },
+        {
+          "_id": "190229c7-7605-45d5-a65d-f4d13edd0350",
+          "shortCode": "stderr",
+          "label": "stderr",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Captured standard error. Includes 'Emulator Warning: No mock response for function port \\'<name>\\'' when execute() hits an unmocked FUNCTION port. Also compiler/runtime traces and container logs. Truncated to max_log_chars. Empty string when clean.",
+          "children": []
+        },
+        {
+          "_id": "f14d5b9f-e522-4062-ba22-345f99337b4b",
+          "shortCode": "error",
+          "label": "error",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Failure message for this test inside the report (not the OUTPUT error port). Empty when the run completed without an emulator/process error (compare mismatches do not set this). Examples: 'script exited 1: NameError: name \\'foo\\' is not defined', 'timed out after 60s: python3 script.py', 'image build failed\\n<log tail>', 'files[] must include a Containerfile or Dockerfile at the workspace root', 'Script did not produce output.json (returnResult was not called)'.",
+          "children": []
+        },
+        {
+          "_id": "925a440b-13d3-405b-be72-abb2d1699989",
+          "shortCode": "execution_time_ms",
+          "label": "execution_time_ms",
+          "type": "number",
+          "required": true,
+          "value": 0,
+          "description": "Wall time in milliseconds from the start of the test (after input parse) to cleanup. Includes the daemon-side image build+run in build-mode. Integer. Example: 842.",
+          "children": []
+        },
+        {
+          "_id": "8dbd3eab-6ffb-4af3-b295-dca7c836f281",
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Echo of the language that actually ran: 'python' | 'javascript' | 'typescript' | 'java'. Empty only on emulator-level parse failure before dispatch.",
+          "children": []
+        },
+        {
+          "_id": "e8d5c54a-acb2-4998-9775-dbbdf1780d90",
+          "shortCode": "mode",
+          "label": "mode",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Echo of the mode that actually ran: 'script' | 'build'. Empty only on emulator-level parse failure before dispatch.",
+          "children": []
+        },
+        {
+          "_id": "58a0d1b5-ba2a-4f7d-a34d-df9ce6f05a82",
+          "shortCode": "build_log",
+          "label": "build_log",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present only when mode='build'. Full image-build stdout+stderr as collected by the daemon, truncated to max_log_chars. On a failed build this is the primary diagnostic (the report error also appends the log tail). Empty string if build was not attempted. Absent from the JSON object in script-mode so agents do not treat it as a script field.",
+          "children": []
+        },
+        {
+          "_id": "486d7412-386f-4425-a0b7-64baa87ca93e",
+          "shortCode": "image_built",
+          "label": "image_built",
+          "type": "boolean",
+          "required": false,
+          "value": false,
+          "description": "Present only when mode='build'. true if the daemon's image build exited 0 and tagged the image (the container may still fail to start or invoke). false if the Dockerfile was missing or the build failed. Absent from the JSON object in script-mode.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b45eddfb-0cf2-4e18-b9da-d2ece7c0f0c7",
+      "name": "error",
+      "type": "OUTPUT",
+      "value": "error",
+      "description": "Emulator-level error string. The port VALUE is the string itself (not wrapped in an object). Empty string '' when the emulator finished a test — including when the test failed; those failures live in output.test_passed / output.error. Non-empty only when the emulator could not start the test: request body not JSON, missing language/mode/script/files, language not in allowed_languages, mode/language pairing illegal, or an unexpected internal exception. Example non-empty: \"input.language is required: python | javascript | typescript | java\". Downstream error-boundary nodes should treat a non-empty string as 'do not trust output'.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "_id": "77d8c890-6484-41e3-868e-8b31fbbf273c",
+          "shortCode": "error",
+          "label": "error",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Same string as the port value. Empty '' after a completed test (pass or fail). Non-empty concise message only for emulator-level failures listed on the port description. Never contains helper tokens or host paths beyond the temp workspace name.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b1bf6948-5ac0-4c16-93c7-14744146a1f1",
+      "shortCode": "default_timeout_seconds",
+      "label": "Default timeout (seconds)",
+      "type": "number",
+      "description": "Wall-clock budget used when input.timeout_seconds is omitted or <= 0. Applies to python3/node/tsx and, in build-mode, the daemon-side image build + run + invoke POST. Accepted values: positive integers. 0 or negative fall back to 60. Default: 60. Example: 90. Keep this at or below the daemon stateful request timeout (sqs.sandbox.oci.requestTimeoutMs, default 300000 ms) or the daemon kills the emulator request first. Instance-editable so a slow Java build can raise it without changing every test payload.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true
+    },
+    {
+      "_id": "d56fc810-3963-4e39-8742-4b27ff150936",
+      "shortCode": "max_log_chars",
+      "label": "Max log characters",
+      "type": "number",
+      "description": "Maximum characters retained in output.stdout, output.stderr and output.build_log. Longer blobs are truncated and suffixed with '\\n…[truncated, max_log_chars=N]'. Accepted values: positive integers. <= 0 is treated as 20000. Default: 20000. Example: 50000. This is a payload/DoS bound — do not raise it unbounded. Does not affect the in-process kill of the script; it only caps what is returned on the output port.",
+      "value": "20000",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true
+    },
+    {
+      "_id": "22e43dc0-b724-4019-9a3f-bc68224ec133",
+      "shortCode": "verbose",
+      "label": "Verbose",
+      "type": "select",
+      "description": "When true, the emulator prints a one-line dispatch trace to its own stderr (language, timeout, temp dir / image tag). That trace is captured in the stateful instance logs, not inside output.stderr of the test. Accepted values: 'true' | 'false' (boolean-like strings). Default: false. Example: false. Leave false in shared environments — temp dir paths are not secret but add noise.",
+      "value": "false",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "6569f373-0671-49e1-b9bb-36c0257e2e7b",
+      "shortCode": "allowed_languages",
+      "label": "Allowed languages",
+      "type": "string",
+      "description": "Comma-separated allow-list. input.language is rejected unless it appears here (case-insensitive). Accepted tokens (each optional): python, javascript, typescript, java. Spaces around commas are trimmed. Default: python,javascript,typescript,java. Example to disable Java builds: python,javascript,typescript. Example Java-only: java. Empty string falls back to the default four. Unknown tokens in this list are ignored at dispatch (they simply never match).",
+      "value": "python,javascript,typescript,java",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-12T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-12T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

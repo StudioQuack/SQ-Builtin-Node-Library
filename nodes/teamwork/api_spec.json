@@ -1,0 +1,149 @@
+{
+    "baseUrl": "https://{site_host}/projects/api/v3",
+    "defaultTimeout": 25,
+    "timeoutConfigKey": "timeout_seconds",
+    "auth": {
+        "type": "bearer",
+        "header": "Authorization",
+        "prefix": "Bearer ",
+        "configKey": "api_token"
+    },
+    "operations": {
+        "project_create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/projects.json",
+            "bodyFrom": [
+                "project",
+                "name",
+                "description"
+            ],
+            "required": [],
+            "contentType": "application/json",
+            "bodyMap": {
+                "name": "project.name",
+                "description": "project.description"
+            }
+        },
+        "person_add": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/people.json",
+            "bodyFrom": [
+                "person",
+                "firstName",
+                "lastName",
+                "email"
+            ],
+            "required": [],
+            "contentType": "application/json",
+            "bodyMap": {
+                "firstName": "person.firstName",
+                "lastName": "person.lastName",
+                "email": "person.email"
+            }
+        },
+        "task_create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/tasklists/{tasklist_id}/tasks.json",
+            "required": [
+                "tasklist_id"
+            ],
+            "bodyFrom": [
+                "task",
+                "name",
+                "description",
+                "dueAt",
+                "startAt"
+            ],
+            "contentType": "application/json",
+            "bodyMap": {
+                "name": "task.name",
+                "description": "task.description",
+                "dueAt": "task.dueAt",
+                "startAt": "task.startAt"
+            }
+        },
+        "task_complete": {
+            "kind": "http",
+            "method": "PATCH",
+            "path": "/tasks/{task_id}.json",
+            "required": [
+                "task_id"
+            ],
+            "bodyFrom": [
+                "task",
+                "name",
+                "description",
+                "dueAt",
+                "startAt"
+            ],
+            "contentType": "application/json",
+            "bodyMap": {
+                "name": "task.name",
+                "description": "task.description",
+                "dueAt": "task.dueAt",
+                "startAt": "task.startAt"
+            }
+        },
+        "subtask_create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/tasks/{task_id}/subtasks.json",
+            "required": [
+                "task_id"
+            ],
+            "bodyFrom": [
+                "todo-item",
+                "content",
+                "description"
+            ],
+            "bodyMap": {
+                "content": "todo-item.content",
+                "description": "todo-item.description"
+            }
+        },
+        "milestone_create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/projects/{project_id}/milestones.json",
+            "required": [
+                "project_id"
+            ],
+            "bodyFrom": [
+                "milestone"
+            ]
+        },
+        "company_create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/companies.json",
+            "bodyFrom": [
+                "company"
+            ]
+        },
+        "calendar_event_create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/calendarevents.json",
+            "bodyFrom": [
+                "event"
+            ]
+        },
+        "link_create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/projects/{project_id}/links.json",
+            "required": [
+                "project_id"
+            ],
+            "bodyFrom": [
+                "link"
+            ]
+        },
+        "listen": {
+            "kind": "ingress"
+        }
+    }
+}

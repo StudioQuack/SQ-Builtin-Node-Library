@@ -1,0 +1,344 @@
+{
+  "_id": "eb0b3b40-7894-5568-b6cc-c3be942b6674",
+  "version": "1.0.0",
+  "name": "PDF.co",
+  "label": "PDF.co Web API v1",
+  "description": "PDF.co Web API v1. Official API https://docs.pdf.co/api-reference. One node; pick operation. Operations send url/html JSON bodies. OUTPUT file is a platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type. Handler: OfficialApiNode + api_spec.json. Files are uploaded to PDF.co — DPA if PHI. Do not store PDF.co outputDataFormat=base64 as the StudioQuack type.",
+  "icon": "picture_as_pdf",
+  "tags": [
+    "pdfco",
+    "pdf"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c1ce2cd6-1008-5b42-a636-04767edad501",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "pdf_merge",
+          "description": "Overrides config operation. Accepted: pdf_merge, pdf_split, pdf_convert, pdf_add_text, pdf_extract_text, pdf_barcode, html_to_pdf, url_to_pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "File, folder, bucket, or display name.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `url` for operations: pdf_merge, pdf_split, pdf_convert, pdf_add_text, pdf_extract_text, url_to_pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "target_format",
+          "label": "Target Format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Convert target format for pdf_convert path /pdf/convert/to/{target_format}. EXACT: csv|json|text|jpg|png|…. Example: csv.",
+          "children": []
+        },
+        {
+          "shortCode": "urls",
+          "label": "Urls",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated source file URLs for pdf_merge. Example: https://a.pdf,https://b.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "pages",
+          "label": "pages",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `pages` for operations: pdf_split, pdf_convert.",
+          "children": []
+        },
+        {
+          "shortCode": "annotations",
+          "label": "annotations",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `annotations` for operation: pdf_add_text.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `value` for operation: pdf_barcode.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `type` for operation: pdf_barcode.",
+          "children": []
+        },
+        {
+          "shortCode": "barcode_type",
+          "label": "Barcode Type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Barcode type for pdf_barcode (read/generate). Example: Code128.",
+          "children": []
+        },
+        {
+          "shortCode": "html",
+          "label": "html",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `html` for operation: html_to_pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "async",
+          "label": "async",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "All convert ops. true returns a job id. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "callback",
+          "label": "callback",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Webhook URL for async completion. Example: https://example.com/hook.",
+          "children": []
+        },
+        {
+          "shortCode": "password",
+          "label": "password",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Source PDF password when the file is encrypted. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "httpusername",
+          "label": "httpusername",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTTP Basic user when url requires auth.",
+          "children": []
+        },
+        {
+          "shortCode": "httppassword",
+          "label": "httppassword",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTTP Basic password when url requires auth. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "expiration",
+          "label": "expiration",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Result file TTL in minutes (PDF.co). Example: 60.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "68d13304-53ff-537f-b138-bdc212c55218",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "02da0948-1d71-5aed-a80e-9aaaea621348",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "pdf_merge",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "pdf_merge",
+        "pdf_split",
+        "pdf_convert",
+        "pdf_add_text",
+        "pdf_extract_text",
+        "pdf_barcode",
+        "html_to_pdf",
+        "url_to_pdf"
+      ]
+    },
+    {
+      "_id": "e21898c8-4982-5c72-8118-673f254f6044",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "PDF.co dashboard API key (x-api-key). StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3797ddf2-e681-401d-a3fd-0750ed31254d",
+      "shortCode": "urls",
+      "label": "Urls",
+      "type": "string",
+      "description": "Comma-separated source file URLs for pdf_merge.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "bc3aa478-8efc-4295-ad3f-33b10dc9c91f",
+      "shortCode": "target_format",
+      "label": "Target Format",
+      "type": "string",
+      "description": "Convert target format for pdf_convert. Example: csv.",
+      "value": "jpg",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "0d4472d9-aac6-4a96-83d5-e20a755aa53e",
+      "shortCode": "barcode_type",
+      "label": "Barcode Type",
+      "type": "string",
+      "description": "Barcode type for pdf_barcode. Example: Code128.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "595d0e33-e0b0-59fd-8328-49bfab4904f5",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 120.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

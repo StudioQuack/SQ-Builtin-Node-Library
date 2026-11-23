@@ -1,0 +1,50 @@
+{
+  "baseUrl": "https://api.surveymonkey.com/v3",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "survey.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/surveys",
+      "queryFrom": ["page", "per_page", "include"],
+      "required": []
+    },
+    "survey.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/surveys/{survey_id}",
+      "queryFrom": ["include"],
+      "required": ["survey_id"]
+    },
+    "response.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/surveys/{survey_id}/responses/{response_id}",
+      "required": ["survey_id", "response_id"]
+    },
+    "response.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/surveys/{survey_id}/responses/bulk",
+      "queryFrom": ["page", "per_page", "start_created_at", "end_created_at", "status"],
+      "required": ["survey_id"]
+    },
+    "collector.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/surveys/{survey_id}/collectors",
+      "queryFrom": ["page", "per_page"],
+      "required": ["survey_id"]
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

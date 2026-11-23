@@ -1,0 +1,321 @@
+{
+  "_id": "e523b30c-5da7-4b39-b55f-e25f52123701",
+  "version": "1.0.0",
+  "name": "FTP",
+  "label": "FTP / SFTP file transfer",
+  "description": "List/download/upload/delete/rename on SFTP (preferred), explicit FTPS (AUTH TLS + PROT P), or plain FTP (only when allow_plain_ftp=true). Handler FtpNode. Download/upload use type file. SFTP requires known_hosts. Not an HTML scraper.",
+  "icon": "",
+  "tags": [
+    "ftp",
+    "sftp",
+    "files"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "87adecd0-7ad0-45a9-9338-dfb66312b7b3",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One FTP operation. Purpose fields (host, remote_path, new_path, file) override config when set. Secrets stay in configurationParameters. Example operation: 'list'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list | download | upload | delete | rename. Overrides config operation when set.",
+          "children": []
+        },
+        {
+          "shortCode": "host",
+          "label": "host",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Server hostname or IP for this invoke. Overrides config host when set.",
+          "children": []
+        },
+        {
+          "shortCode": "remote_path",
+          "label": "remote_path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Remote path. Path segment '..' is rejected.",
+          "children": []
+        },
+        {
+          "shortCode": "new_path",
+          "label": "new_path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Destination for rename.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref for upload (input). Type file.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b98e1efa-3db3-4119-894b-52d1191bcaef",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Result file ref when the operation produces a file. Type file (platform ref-id). Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b6a4ead4-4cc0-4d27-820f-788c0550f9de",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: list | download | upload | delete | rename. Required. Example: 'list'.",
+      "value": "list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "list",
+        "download",
+        "upload",
+        "delete",
+        "rename"
+      ]
+    },
+    {
+      "_id": "4d90b8b0-8dfe-4059-b84b-c75265a15184",
+      "shortCode": "protocol",
+      "label": "Protocol",
+      "type": "select",
+      "description": "sftp (preferred, default) | ftps (explicit AUTH TLS + PROT P) | ftp (cleartext RFC 959, requires allow_plain_ftp=true). Default sftp.",
+      "value": "sftp",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "sftp",
+        "ftp",
+        "ftps"
+      ]
+    },
+    {
+      "_id": "bca5cd2a-6182-43dc-9201-da243009b971",
+      "shortCode": "host",
+      "label": "Host",
+      "type": "string",
+      "description": "Server hostname. Required.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "87fa3da7-0a95-44cd-bd9c-213b57a3f4c3",
+      "shortCode": "port",
+      "label": "Port",
+      "type": "number",
+      "description": "Default 22 SFTP / 21 FTP and FTPS.",
+      "value": "22",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bc706514-227a-4efb-b4f7-0f3ff9f52cc6",
+      "shortCode": "user",
+      "label": "User",
+      "type": "string",
+      "description": "Username. Required.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0cdebf99-8650-455c-8b97-73623da5a23d",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "Password. Password-typed config only. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "436a5f81-81ce-45fe-8f0c-b3575956c2d1",
+      "shortCode": "private_key",
+      "label": "Private Key",
+      "type": "password",
+      "description": "SFTP private key PEM. Password-typed config only. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bdc09189-f6ce-443d-ab98-bcba912ff028",
+      "shortCode": "passphrase",
+      "label": "Passphrase",
+      "type": "password",
+      "description": "Passphrase for an encrypted SFTP private_key. Password-typed config only. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "232f15d6-7b6e-401e-a518-b78fa1e4296b",
+      "shortCode": "known_hosts",
+      "label": "Known Hosts",
+      "type": "string",
+      "description": "SFTP only. OpenSSH known_hosts content or host-key fingerprint. Required for sftp. Unknown or mismatched keys are refused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f23113ae-fce0-439e-a2f9-4692e7b2507e",
+      "shortCode": "allow_plain_ftp",
+      "label": "Allow Plain FTP",
+      "type": "boolean",
+      "description": "Permit cleartext FTP (protocol=ftp). Default false. Required true before a non-TLS FTP connection is opened.",
+      "value": "false",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4df86e0a-ac17-4c47-a356-63a54ef6e875",
+      "shortCode": "passive",
+      "label": "Passive",
+      "type": "select",
+      "description": "FTP passive mode. Default true. Active FTP (PORT) is not supported.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "76f416ac-d048-4b3a-a912-116293ee476c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25, cap 60. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-10-31T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

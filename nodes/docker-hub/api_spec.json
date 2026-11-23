@@ -1,0 +1,76 @@
+{
+  "baseUrl": "https://hub.docker.com/v2",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "repo_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/namespaces/{namespace}/repositories/{name}",
+      "required": [
+        "namespace",
+        "name"
+      ]
+    },
+    "repo_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/namespaces/{namespace}/repositories",
+      "required": [
+        "namespace"
+      ],
+      "queryFrom": [
+        "page",
+        "page_size"
+      ]
+    },
+    "tag_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/namespaces/{namespace}/repositories/{name}/tags",
+      "required": [
+        "namespace",
+        "name"
+      ],
+      "queryFrom": [
+        "page",
+        "page_size",
+        "name"
+      ]
+    },
+    "tag_delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/repositories/{namespace}/{name}/tags/{tag}",
+      "required": [
+        "namespace",
+        "name",
+        "tag"
+      ]
+    },
+    "webhook_set": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/webhooks/{namespace}/{name}/",
+      "required": [
+        "namespace",
+        "name",
+        "webhook_url"
+      ],
+      "bodyFrom": [
+        "name",
+        "webhook_url",
+        "expect_final_callback"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

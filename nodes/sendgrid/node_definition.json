@@ -1,0 +1,945 @@
+{
+  "_id": "c7ad0508-ce1b-5536-8a88-c17b2e916bff",
+  "version": "1.0.0",
+  "name": "SendGrid",
+  "label": "SendGrid — Twilio SendGrid Web API v3",
+  "description": "SendGrid v3 at https://api.sendgrid.com. Docs: https://www.twilio.com/docs/sendgrid/api-reference/mail-send/mail-send. send-email takes flat to/cc/bcc/from/subject/text/html and nests them into personalizations[0] / from.email / content[0]|[1] via bodyMap. Bearer api_key. Handler: OfficialApiNode. Never log api_key or message bodies.",
+  "icon": "mail",
+  "tags": [
+    "email"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a3abeabf-1336-544e-a44a-07e11ad7f13e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One SendGrid operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"send-email\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-email",
+          "description": "Which official call to run. EXACT values: send-email | upsert-contact | get-contact | list-contacts | delete-contact | create-list | get-list | list-lists | update-list | delete-list | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-email verified sender email. Wired to from.email. Required. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "from_name",
+          "label": "from_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-email from display name. Wired to from.name. Example: Ada.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-email recipient email. Wired to personalizations[0].to[0].email. Required unless using the personalizations object escape hatch. Example: bob@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "cc",
+          "label": "cc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-email CC email. Wired to personalizations[0].cc[0].email. Example: cc@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "bcc",
+          "label": "bcc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-email BCC email. Wired to personalizations[0].bcc[0].email. Example: bcc@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-email subject (root). Example: Your receipt.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-email plain body. Wired to content[0].value. content[0].type comes from config text_type (default text/plain). HTML-only: set text too or use the content escape hatch — mapping html to content[1] leaves an empty content[0] slot if text is omitted.",
+          "children": []
+        },
+        {
+          "shortCode": "html",
+          "label": "html",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-email HTML body. Wired to content[1].value. content[1].type comes from config html_type (default text/html).",
+          "children": []
+        },
+        {
+          "shortCode": "text_type",
+          "label": "text_type",
+          "type": "string",
+          "required": false,
+          "value": "text/plain",
+          "description": "send-email content[0].type. Config default text/plain. Override only if you need a different MIME type.",
+          "children": []
+        },
+        {
+          "shortCode": "html_type",
+          "label": "html_type",
+          "type": "string",
+          "required": false,
+          "value": "text/html",
+          "description": "send-email content[1].type. Config default text/html.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "send-email one content-part object escape hatch {type,value} merged into content[0]. Prefer text/html purpose fields (types from config defaults). Example: {\"type\":\"text/plain\",\"value\":\"Hi\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "personalizations",
+          "label": "personalizations",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "send-email personalizations object escape hatch (first item). Extra keys merge into personalizations[0]; named to/cc/bcc win. For many recipients send this as one personalization object {to:[{email}]}. Example: {\"to\":[{\"email\":\"bob@example.com\"}]}.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact or list UUID. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "ids",
+          "label": "ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated contact UUIDs for delete-contact. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Marketing list name. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "attachments",
+          "label": "attachments",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "send-email attachments [{content (base64), filename, type, disposition}]. Do not log content.",
+          "children": []
+        },
+        {
+          "shortCode": "contacts",
+          "label": "contacts",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "upsert-contact contacts array (required). Each: email (required), first_name, last_name, custom_fields.",
+          "children": []
+        },
+        {
+          "shortCode": "list_ids",
+          "label": "list_ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "upsert-contact list_ids to add the contacts to. UUID strings.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page_size` for operation: list-lists.",
+          "children": []
+        },
+        {
+          "shortCode": "page_token",
+          "label": "page_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page_token` for operation: list-lists.",
+          "children": []
+        },
+        {
+          "shortCode": "delete_contacts",
+          "label": "delete_contacts",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `delete_contacts` for operation: delete-list.",
+          "children": []
+        },
+        {
+          "shortCode": "reply_to",
+          "label": "reply_to",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "send-email reply_to {email, name}.",
+          "children": []
+        },
+        {
+          "shortCode": "template_id",
+          "label": "template_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Dynamic template id for send-email. When set, content may be omitted; use personalizations.dynamic_template_data.",
+          "children": []
+        },
+        {
+          "shortCode": "categories",
+          "label": "categories",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "send-email categories (strings, max 10).",
+          "children": []
+        },
+        {
+          "shortCode": "send_at",
+          "label": "send_at",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "send-email unix send_at (not more than 72h).",
+          "children": []
+        },
+        {
+          "shortCode": "asm",
+          "label": "asm",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "send-email ASM group {group_id, groups_to_display}.",
+          "children": []
+        },
+        {
+          "shortCode": "mail_settings",
+          "label": "mail_settings",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "send-email mail_settings object.",
+          "children": []
+        },
+        {
+          "shortCode": "tracking_settings",
+          "label": "tracking_settings",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "send-email tracking_settings object.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a511ab7a-d418-5569-835b-ac4d8a08f965",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "fd65fdaf-651e-5454-8216-2bc0013d6e52",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-email, upsert-contact, get-contact, list-contacts, delete-contact, create-list, get-list, list-lists, update-list, delete-list, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-email",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-email",
+        "upsert-contact",
+        "get-contact",
+        "list-contacts",
+        "delete-contact",
+        "create-list",
+        "get-list",
+        "list-lists",
+        "update-list",
+        "delete-list",
+        "listen"
+      ],
+      "filterRules": [
+        {
+          "when": "send-email",
+          "targets": [
+            {
+              "param": "from",
+              "visible": true
+            },
+            {
+              "param": "text_type",
+              "visible": true
+            },
+            {
+              "param": "html_type",
+              "visible": true
+            },
+            {
+              "param": "content",
+              "visible": true
+            },
+            {
+              "param": "attachments",
+              "visible": true
+            },
+            {
+              "param": "from_name",
+              "visible": true
+            },
+            {
+              "param": "to",
+              "visible": true
+            },
+            {
+              "param": "text",
+              "visible": true
+            },
+            {
+              "param": "mail_settings",
+              "visible": true
+            },
+            {
+              "param": "cc",
+              "visible": true
+            },
+            {
+              "param": "personalizations",
+              "visible": true
+            },
+            {
+              "param": "categories",
+              "visible": true
+            },
+            {
+              "param": "tracking_settings",
+              "visible": true
+            },
+            {
+              "param": "html",
+              "visible": true
+            },
+            {
+              "param": "subject",
+              "visible": true
+            },
+            {
+              "param": "reply_to",
+              "visible": true
+            },
+            {
+              "param": "bcc",
+              "visible": true
+            },
+            {
+              "param": "template_id",
+              "visible": true
+            },
+            {
+              "param": "send_at",
+              "visible": true
+            },
+            {
+              "param": "asm",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "upsert-contact",
+          "targets": [
+            {
+              "param": "list_ids",
+              "visible": true
+            },
+            {
+              "param": "contacts",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-contact",
+          "targets": [
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "delete-contact",
+          "targets": [
+            {
+              "param": "ids",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "create-list",
+          "targets": [
+            {
+              "param": "name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-list",
+          "targets": [
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-lists",
+          "targets": [
+            {
+              "param": "page_token",
+              "visible": true
+            },
+            {
+              "param": "page_size",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "update-list",
+          "targets": [
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "delete-list",
+          "targets": [
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "delete_contacts",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "0eedc909-611e-5bb0-945d-74f9478dff3c",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "SendGrid API key. Header Authorization: Bearer. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1ea20eff-e8e4-4de4-b8c3-92b13ab9f1c2",
+      "shortCode": "from",
+      "label": "from",
+      "type": "string",
+      "description": "Default verified sender email for send-email (from.email) when INPUT omits from.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1ed1bfe3-beba-4030-8e84-78f44b59105f",
+      "shortCode": "text_type",
+      "label": "Text type",
+      "type": "string",
+      "description": "Default MIME type for send-email content[0]. Official text/plain.",
+      "value": "text/plain",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0aba7ab5-840a-482e-8d63-70d31fc2bac4",
+      "shortCode": "html_type",
+      "label": "Html type",
+      "type": "string",
+      "description": "Default MIME type for send-email content[1]. Official text/html.",
+      "value": "text/html",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "70c60378-9fb4-40ff-94f0-c6d034775a0d",
+      "shortCode": "content",
+      "label": "Content",
+      "type": "object",
+      "description": "send-email one content-part object escape hatch {type,value} merged into content[0]. Prefer text/html purpose fields (types from config defaults). Example: {\"type\":\"text/plain\",\"value\":\"Hi\"}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f252eace-ee68-4d95-a362-ff72cb31459a",
+      "shortCode": "attachments",
+      "label": "Attachments",
+      "type": "list",
+      "description": "send-email attachments [{content (base64), filename, type, disposition}]. Do not log content.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b2899976-c3f8-4ece-81f8-be1e7697a935",
+      "shortCode": "from_name",
+      "label": "From Name",
+      "type": "string",
+      "description": "send-email from display name. Wired to from.name. Example: Ada.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "59d7546c-baf5-4d68-8bcd-0aac17a60fee",
+      "shortCode": "to",
+      "label": "to",
+      "type": "string",
+      "description": "send-email recipient email. Wired to personalizations[0].to[0].email. Required unless using the personalizations object escape hatch. Example: bob@example.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bd89ad94-f136-424d-a019-c116312acfae",
+      "shortCode": "text",
+      "label": "Text",
+      "type": "string",
+      "description": "send-email plain body. Wired to content[0].value. content[0].type comes from config text_type (default text/plain). HTML-only: set text too or use the content escape hatch — mapping html to content[1] leaves an empty content[0] slot if text is omitted.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "65b82447-42e1-4223-8b98-32f5e935b9ed",
+      "shortCode": "mail_settings",
+      "label": "Mail Settings",
+      "type": "object",
+      "description": "send-email mail_settings object.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6eb61a19-20b5-49a4-b8ac-6fc6673620fd",
+      "shortCode": "cc",
+      "label": "Cc",
+      "type": "string",
+      "description": "send-email CC email. Wired to personalizations[0].cc[0].email. Example: cc@example.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8701720d-a9d8-4b24-9653-e88d42527a9a",
+      "shortCode": "personalizations",
+      "label": "Personalizations",
+      "type": "object",
+      "description": "send-email personalizations object escape hatch (first item). Extra keys merge into personalizations[0]; named to/cc/bcc win. For many recipients send this as one personalization object {to:[{email}]}. Example: {\"to\":[{\"email\":\"bob@example.com\"}]}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "460ac61d-0293-4bc4-b7f6-5308fd3104e1",
+      "shortCode": "categories",
+      "label": "Categories",
+      "type": "list",
+      "description": "send-email categories (strings, max 10).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6ade41b5-9c2c-4353-b0df-877e2f40a6f9",
+      "shortCode": "tracking_settings",
+      "label": "Tracking Settings",
+      "type": "object",
+      "description": "send-email tracking_settings object.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1c8efba2-fbd2-4aae-80ec-5fc69edd6cfb",
+      "shortCode": "html",
+      "label": "Html",
+      "type": "string",
+      "description": "send-email HTML body. Wired to content[1].value. content[1].type comes from config html_type (default text/html).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dbf0a261-1b92-45b5-acea-9b4a6ea3e896",
+      "shortCode": "subject",
+      "label": "Subject",
+      "type": "string",
+      "description": "send-email subject (root). Example: Your receipt.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "feacd7e7-c14f-4984-a96e-7e6d3e9c4771",
+      "shortCode": "reply_to",
+      "label": "Reply to",
+      "type": "object",
+      "description": "send-email reply_to {email, name}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7ba79504-7ed2-4921-9285-003101ab38df",
+      "shortCode": "bcc",
+      "label": "Bcc",
+      "type": "string",
+      "description": "send-email BCC email. Wired to personalizations[0].bcc[0].email. Example: bcc@example.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c4c723c0-37ea-444c-bc5d-cd815eeddb30",
+      "shortCode": "template_id",
+      "label": "Template ID",
+      "type": "string",
+      "description": "Dynamic template id for send-email. When set, content may be omitted; use personalizations.dynamic_template_data.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4db01090-58b4-4a5a-a2b7-304d917d080e",
+      "shortCode": "send_at",
+      "label": "Send At",
+      "type": "number",
+      "description": "send-email unix send_at (not more than 72h).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "526a9a51-7935-410b-ba86-4671077f9679",
+      "shortCode": "asm",
+      "label": "Asm",
+      "type": "object",
+      "description": "send-email ASM group {group_id, groups_to_display}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6a51db21-7092-44ea-913c-815d33ec771e",
+      "shortCode": "list_ids",
+      "label": "List Ids",
+      "type": "list",
+      "description": "upsert-contact list_ids to add the contacts to. UUID strings.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b56f97aa-55b9-40bd-8fa5-c427e2b3e988",
+      "shortCode": "contacts",
+      "label": "Contacts",
+      "type": "list",
+      "description": "upsert-contact contacts array (required). Each: email (required), first_name, last_name, custom_fields.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ef52fa10-154d-4747-8503-0582619ef35d",
+      "shortCode": "id",
+      "label": "ID",
+      "type": "string",
+      "description": "Contact or list UUID. Purpose: operation input. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d4d1ec64-b393-479d-8b40-2839b5ad93d3",
+      "shortCode": "ids",
+      "label": "Ids",
+      "type": "string",
+      "description": "Comma-separated contact UUIDs for delete-contact. Purpose: operation input. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c90fa6af-3f26-4b0e-a96c-91e7d76bc543",
+      "shortCode": "name",
+      "label": "Name",
+      "type": "string",
+      "description": "Marketing list name. Purpose: operation input. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "882ec995-9bfe-42f6-aa0c-14132bb8e7e0",
+      "shortCode": "page_token",
+      "label": "Page Token",
+      "type": "string",
+      "description": "Query-string parameter `page_token` for operation: list-lists.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f02171de-d245-4a7f-87f4-e6b2f31d31ce",
+      "shortCode": "page_size",
+      "label": "Page Size",
+      "type": "number",
+      "description": "Query-string parameter `page_size` for operation: list-lists.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3fa9c52e-6ed2-474d-88ae-3821c57b6368",
+      "shortCode": "delete_contacts",
+      "label": "Delete Contacts",
+      "type": "string",
+      "description": "Query-string parameter `delete_contacts` for operation: delete-list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f68cbe64-c892-5b06-85c7-829329f74aca",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

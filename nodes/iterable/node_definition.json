@@ -1,0 +1,295 @@
+{
+  "_id": "e1c09d05-2ea1-4dc9-9764-4c69471d2e4c",
+  "version": "1.0.0",
+  "name": "Iterable",
+  "label": "Iterable — users, events, lists, campaigns",
+  "description": "Official Iterable REST. Handler: OfficialApiNode. Server-side project key as header Api-Key (not browser JWT keys). baseUrl is https://{region} (api.iterable.com USDC / api.eu.iterable.com EDC — https://support.iterable.com/hc/en-us/articles/41044692130196-Getting-Started-with-Iterable-s-API). Email/SMS consent lives on the user profile — set lawful consent fields before campaign.trigger. trigger.listen is ingress (BPMN message event), not POST /api/webhooks. Customer owns the project. Never log api_key, emails, or dataFields. Wrong DC → 401, do not retry the other DC.",
+  "icon": "campaign",
+  "tags": [
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "26c70229-f048-4bb6-be38-65d84b9959bc",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Iterable JSON keys (email, userId, dataFields, eventName, listId, subscribers, catalogName, itemId, campaignId, recipients). user.get/delete path uses {email}. trigger.listen does not call HTTP. Do not put api_key here. Example: {\"operation\":\"user.upsert\",\"email\":\"ada@example.com\",\"dataFields\":{\"signupSource\":\"web\"}}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "user.upsert",
+          "description": "Overrides config. EXACT catalog verb including trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User email for user.upsert / user.get / user.delete / event.track. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "userId",
+          "label": "userId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Your user id. Official userId. user.upsert / event.track.",
+          "children": []
+        },
+        {
+          "shortCode": "dataFields",
+          "label": "dataFields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Custom fields for user.upsert and event.track. Official dataFields.",
+          "children": []
+        },
+        {
+          "shortCode": "preferUserId",
+          "label": "preferUserId",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "user.upsert preferUserId — create/lookup by userId instead of email.",
+          "children": []
+        },
+        {
+          "shortCode": "eventName",
+          "label": "eventName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event name for event.track. Official eventName. Example: Viewed Product.",
+          "children": []
+        },
+        {
+          "shortCode": "createdAt",
+          "label": "createdAt",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Unix timestamp for event.track. Official createdAt.",
+          "children": []
+        },
+        {
+          "shortCode": "campaignId",
+          "label": "campaignId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Campaign id for event.track / campaign.trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "listId",
+          "label": "listId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List id for list.add / list.remove.",
+          "children": []
+        },
+        {
+          "shortCode": "subscribers",
+          "label": "subscribers",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "[{email, userId, dataFields}] for list.add / list.remove.",
+          "children": []
+        },
+        {
+          "shortCode": "catalogName",
+          "label": "catalogName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Catalog name path for catalog.upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "itemId",
+          "label": "itemId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Catalog item id path for catalog.upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "update",
+          "label": "update",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Catalog item field map for catalog.upsert. Official update.",
+          "children": []
+        },
+        {
+          "shortCode": "recipients",
+          "label": "recipients",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "campaign.trigger recipients {listIds, userIds, emails} or similar official shape.",
+          "children": []
+        },
+        {
+          "shortCode": "allowRepeatMarketingSends",
+          "label": "allowRepeatMarketingSends",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "campaign.trigger allowRepeatMarketingSends.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "dfb52e55-7bd0-42de-a002-6b5f36ea581d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (Iterable code/msg). trigger.listen: BPMN message event. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "48105f9c-fc94-4946-b4be-61036a8f3d25",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank.",
+      "value": "user.upsert",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "user.upsert",
+        "user.get",
+        "user.delete",
+        "event.track",
+        "list.add",
+        "list.remove",
+        "catalog.upsert",
+        "campaign.trigger",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "988c9a82-96cc-492f-9a5b-9c626cca3e45",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Server-side project API key. Sent as header Api-Key. Do not use client-side keys. Never log. Iterable project settings.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "285e4a97-d3ad-435b-90d4-8dfaea426683",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "select",
+      "description": "Data-center API host without scheme. USDC: api.iterable.com. EDC: api.eu.iterable.com. Substituted into baseUrl https://{region}. Wrong DC for the key → 401.",
+      "value": "api.iterable.com",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "api.iterable.com",
+        "api.eu.iterable.com"
+      ]
+    },
+    {
+      "_id": "776e75cb-6727-4fe7-968a-2be9ccf4fd16",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Allow ≥60s between user update and campaign send (provider guidance).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

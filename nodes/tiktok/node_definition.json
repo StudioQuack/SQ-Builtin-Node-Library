@@ -1,0 +1,424 @@
+{
+  "_id": "a31e0293-fa4c-4b15-8ced-8c1e96c40dea",
+  "version": "1.0.0",
+  "name": "TikTok",
+  "label": "TikTok — Content Posting / Display / Research API v2",
+  "description": "TikTok Content Posting API at https://open.tiktokapis.com. Docs: https://developers.tiktok.com/doc/content-posting-api-get-started. direct_post_* send official post_info + source_info (not a flat media blob). creator_info is POST with an empty body. Bearer access_token. Handler: OfficialApiNode. Never log access_token.",
+  "icon": "videocam",
+  "tags": [
+    "tiktok",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a615c6c4-3842-4670-a5d2-65c31389b235",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_token here. Example: {\"operation\":\"creator_info\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "creator_info",
+          "description": "Overrides config operation when non-blank. EXACT: creator_info | direct_post_video | direct_post_photo | upload_inbox | publish_status | video_list | insights_get | research_query | trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "media",
+          "label": "media",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Upload bytes nested as source_info.media (video) or source_info.photo_images (photo).",
+          "children": []
+        },
+        {
+          "shortCode": "video_url",
+          "label": "video_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTTPS URL nested as source_info.video_url (PULL_FROM_URL) on direct_post_video / upload_inbox.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Caption/title nested as post_info.title on direct_post_video / direct_post_photo / upload_inbox. Max 2200 chars.",
+          "children": []
+        },
+        {
+          "shortCode": "privacy_level",
+          "label": "privacy_level",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_info.privacy_level on direct_post_*. EXACT: PUBLIC_TO_EVERYONE | MUTUAL_FOLLOW_FRIENDS | FOLLOWER_OF_CREATOR | SELF_ONLY.",
+          "children": []
+        },
+        {
+          "shortCode": "total_chunk_count",
+          "label": "total_chunk_count",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "FILE_UPLOAD source_info.total_chunk_count. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "chunk_size",
+          "label": "chunk_size",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "FILE_UPLOAD source_info.chunk_size. Example: 10485760.",
+          "children": []
+        },
+        {
+          "shortCode": "video_size",
+          "label": "video_size",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "FILE_UPLOAD source_info.video_size bytes. Example: 10485760.",
+          "children": []
+        },
+        {
+          "shortCode": "photo_cover_index",
+          "label": "photo_cover_index",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "direct_post_photo cover image index. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "media_type",
+          "label": "media_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "direct_post_photo media_type required. Example: PHOTO.",
+          "children": []
+        },
+        {
+          "shortCode": "post_mode",
+          "label": "post_mode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "direct_post_photo post_mode required. Example: DIRECT_POST.",
+          "children": []
+        },
+        {
+          "shortCode": "source",
+          "label": "source",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "source_info.source for init (PULL_FROM_URL or FILE_UPLOAD). Example: PULL_FROM_URL.",
+          "children": []
+        },
+        {
+          "shortCode": "publish_id",
+          "label": "publish_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "publish_status body. Returned by init.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "video_list query fields. Example: id,title,cover_image_url,create_time.",
+          "children": []
+        },
+        {
+          "shortCode": "max_count",
+          "label": "max_count",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "video_list / research_query page size. Display max 20; Research max 100.",
+          "children": []
+        },
+        {
+          "shortCode": "video_ids",
+          "label": "video_ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Video ids nested as filters.video_ids on insights_get.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "research_query condition tree as a JSON string. Academic Research API only.",
+          "children": []
+        },
+        {
+          "shortCode": "start_date",
+          "label": "start_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "research_query start_date YYYYMMDD.",
+          "children": []
+        },
+        {
+          "shortCode": "end_date",
+          "label": "end_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "research_query end_date YYYYMMDD.",
+          "children": []
+        },
+        {
+          "shortCode": "_",
+          "label": "_",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Dummy body key for creator_info so the engine sends {} instead of the whole input. Leave blank.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "video_list pagination cursor (official body cursor). 0 for the first page.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ba7649d5-e799-494a-bbf8-6daadf6d23e9",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. trigger is ingress. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (creator, publish_id, videos, research). Do not log upload_url query tokens.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "bfc4e0ae-dcf0-476f-8f9b-24d153aeadd6",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. trigger does not open a socket.",
+      "value": "creator_info",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "creator_info",
+        "direct_post_video",
+        "direct_post_photo",
+        "upload_inbox",
+        "publish_status",
+        "video_list",
+        "insights_get",
+        "research_query",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "4fa8f3f9-2f9d-43bd-ba4e-4b991de884e4",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "User token (act.) for posting/display, or Research client token (clt.) for research_query. StudioQuack secret. Authorization: Bearer. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5a3308b8-3329-4e20-8006-e7265959abd1",
+      "shortCode": "source",
+      "label": "Source",
+      "type": "string",
+      "description": "source_info.source for init (PULL_FROM_URL or FILE_UPLOAD). Example: PULL_FROM_URL.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "acd775e6-0b89-47f4-85c5-480e90b0ece9",
+      "shortCode": "post_mode",
+      "label": "Post Mode",
+      "type": "string",
+      "description": "direct_post_photo post_mode required. Example: DIRECT_POST.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "9362a00b-c9db-4a22-81bf-1db1bec0a7be",
+      "shortCode": "media_type",
+      "label": "Media Type",
+      "type": "string",
+      "description": "direct_post_photo media_type required. Example: PHOTO.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "674f0a5e-d074-420b-8300-52914f3ca191",
+      "shortCode": "photo_cover_index",
+      "label": "Photo Cover Index",
+      "type": "number",
+      "description": "direct_post_photo cover image index. Example: 0.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "eb035910-35fa-482d-921b-420d7425bcc2",
+      "shortCode": "video_size",
+      "label": "Video Size",
+      "type": "number",
+      "description": "FILE_UPLOAD source_info.video_size bytes. Example: 10485760.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "b81df138-2a57-422f-921d-51ed394d9cd0",
+      "shortCode": "chunk_size",
+      "label": "Chunk Size",
+      "type": "number",
+      "description": "FILE_UPLOAD source_info.chunk_size. Example: 10485760.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "a51c3e3a-a748-483d-a0bd-663dafa08489",
+      "shortCode": "total_chunk_count",
+      "label": "Total Chunk Count",
+      "type": "number",
+      "description": "FILE_UPLOAD source_info.total_chunk_count. Example: 1.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "3a4466c3-eb25-49cc-9b34-ef60f5d1f1be",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Example: 30.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

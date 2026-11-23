@@ -1,0 +1,330 @@
+{
+  "_id": "5b928cdd-6378-4427-9c4d-7b97a706f462",
+  "version": "1.0.0",
+  "name": "Mixpanel",
+  "label": "Mixpanel Ingestion + Query + Export APIs",
+  "description": "Official Mixpanel Ingestion API (api.mixpanel.com), Query API (mixpanel.com/api), and Raw Data Export (data.mixpanel.com). No single version number; Ingestion OpenAPI 1.0.0. Handler: OfficialApiNode. Ingest vs query use different auth: this spec uses HTTP Basic service account (userKey service_account_user + secret service_account_secret) which is required for import/query/export. track/engage officially use project token in event JSON (`$token` / `properties.token` on INPUT); prefer import for server-side events. Default hosts are US; region=eu|in is not interpolated. Customer owns the Mixpanel project. Never log tokens, secrets, or event property values.",
+  "icon": "insights",
+  "tags": [
+    "analytics",
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "8f3be89b-25c9-43ab-9a38-08f56e4161f2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example keys match api_spec.json required/queryFrom/bodyFrom.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "track",
+          "description": "Overrides config operation when non-blank. EXACT: track | import | engage.set | engage.unset | export | insights.query | funnel.query.",
+          "children": []
+        },
+        {
+          "shortCode": "events",
+          "label": "events",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "JSON array of event objects for track / import. A list of JSON object strings is parsed. Official body is that array, not a wrapper. Example: [{\"event\":\"Signup\",\"properties\":{\"distinct_id\":\"u1\",\"token\":\"…\"}}].",
+          "children": []
+        },
+        {
+          "shortCode": "event",
+          "label": "event",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Single event name for track when events is omitted. Sent with properties and distinct_id as one event. Example: Signup.",
+          "children": []
+        },
+        {
+          "shortCode": "properties",
+          "label": "properties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Track properties, or the engage.set map. distinct_id is copied in when missing. engage.unset uses the property names. Import also needs time and $insert_id.",
+          "children": []
+        },
+        {
+          "shortCode": "distinct_id",
+          "label": "distinct_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "End-user id for engage.set / engage.unset and optional track. Example: user-42.",
+          "children": []
+        },
+        {
+          "shortCode": "project_id",
+          "label": "project_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mixpanel project id for import / export / insights / funnel. Example: 1234567.",
+          "children": []
+        },
+        {
+          "shortCode": "from_date",
+          "label": "from_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "export / funnel.query start date YYYY-MM-DD.",
+          "children": []
+        },
+        {
+          "shortCode": "to_date",
+          "label": "to_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "export / funnel.query end date YYYY-MM-DD.",
+          "children": []
+        },
+        {
+          "shortCode": "where",
+          "label": "where",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "export segmentation expression. Example: properties[\"$os\"] == \"Windows\".",
+          "children": []
+        },
+        {
+          "shortCode": "bookmark_id",
+          "label": "bookmark_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "insights.query saved bookmark id.",
+          "children": []
+        },
+        {
+          "shortCode": "workspace_id",
+          "label": "workspace_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "insights.query workspace id.",
+          "children": []
+        },
+        {
+          "shortCode": "funnel_id",
+          "label": "funnel_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "funnel.query funnel id.",
+          "children": []
+        },
+        {
+          "shortCode": "$distinct_id",
+          "label": "$distinct_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "engage raw $distinct_id when not using distinct_id.",
+          "children": []
+        },
+        {
+          "shortCode": "$set",
+          "label": "$set",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "engage.set property map. Example: {\"plan\":\"pro\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "$token",
+          "label": "$token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project token for engage when not using the service-account project. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "$unset",
+          "label": "$unset",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "engage.unset list of property names. Example: [\"plan\"].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "2fec319c-9920-475a-9441-7e9d1e33511d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Size-capped. Never log secrets or raw PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "9362737c-c35d-4801-9ef6-fd1f8bec77b5",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: track | import | engage.set | engage.unset | export | insights.query | funnel.query.",
+      "value": "track",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "track",
+        "import",
+        "engage.set",
+        "engage.unset",
+        "export",
+        "insights.query",
+        "funnel.query"
+      ]
+    },
+    {
+      "_id": "56f90856-e21d-4844-ab15-72ddb1968a34",
+      "shortCode": "service_account_user",
+      "label": "Service account user",
+      "type": "string",
+      "description": "Mixpanel service account username. HTTP Basic user. Required for import / query / export.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6a3b6cbd-7071-4f90-bcdc-8ed354b1d249",
+      "shortCode": "service_account_secret",
+      "label": "Service account secret",
+      "type": "password",
+      "description": "Mixpanel service account secret (StudioQuack secret). HTTP Basic password. Shown once at creation. Never on INPUT. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4dff9458-e346-40e0-939e-b040464be746",
+      "shortCode": "project_id",
+      "label": "Project id",
+      "type": "string",
+      "description": "Numeric project id. Query param for import/query/export when INPUT omits it.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "336eee0a-7ecd-4461-b5d1-089fa21fab7e",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "select",
+      "description": "us | eu | in — must match Project Settings → Data Residency. OfficialApiNode paths are US hosts; EU/IN require a host swap the handler cannot do yet.",
+      "value": "us",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "us",
+        "eu",
+        "in"
+      ]
+    },
+    {
+      "_id": "ffc53b8a-a417-4970-977e-511381d0eac4",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

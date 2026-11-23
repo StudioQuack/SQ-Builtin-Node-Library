@@ -1,0 +1,149 @@
+{
+  "baseUrl": "https://ads-api.x.com/12",
+  "defaultTimeout": 30,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "account.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/accounts/{account_id}",
+      "required": [
+        "account_id"
+      ]
+    },
+    "campaign.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/accounts/{account_id}/campaigns",
+      "required": [
+        "account_id",
+        "name"
+      ],
+      "bodyFrom": [
+        "name",
+        "funding_instrument_id",
+        "daily_budget_amount_local_micro",
+        "total_budget_amount_local_micro",
+        "entity_status",
+        "start_time",
+        "end_time"
+      ]
+    },
+    "campaign.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/accounts/{account_id}/campaigns",
+      "required": [
+        "account_id"
+      ],
+      "queryFrom": [
+        "campaign_ids",
+        "count",
+        "cursor",
+        "with_deleted",
+        "sort_by"
+      ]
+    },
+    "lineItem.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/accounts/{account_id}/line_items",
+      "required": [
+        "account_id",
+        "campaign_id"
+      ],
+      "bodyFrom": [
+        "campaign_id",
+        "name",
+        "product_type",
+        "placements",
+        "objective",
+        "bid_amount_local_micro",
+        "entity_status"
+      ]
+    },
+    "lineItem.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/accounts/{account_id}/line_items",
+      "required": [
+        "account_id"
+      ],
+      "queryFrom": [
+        "line_item_ids",
+        "campaign_ids",
+        "count",
+        "cursor",
+        "with_deleted"
+      ]
+    },
+    "promotedTweet.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/accounts/{account_id}/promoted_tweets",
+      "required": [
+        "account_id",
+        "line_item_id",
+        "tweet_id"
+      ],
+      "bodyFrom": [
+        "line_item_id",
+        "tweet_id"
+      ]
+    },
+    "stats.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/stats/accounts/{account_id}",
+      "required": [
+        "account_id",
+        "entity",
+        "start_time"
+      ],
+      "queryFrom": [
+        "entity",
+        "entity_ids",
+        "start_time",
+        "end_time",
+        "granularity",
+        "metric_groups",
+        "placement"
+      ]
+    },
+    "targeting.criteria": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/accounts/{account_id}/targeting_criteria",
+      "required": [
+        "account_id",
+        "line_item_id",
+        "targeting_type",
+        "targeting_value"
+      ],
+      "bodyFrom": [
+        "line_item_id",
+        "targeting_type",
+        "targeting_value",
+        "operator_type"
+      ]
+    },
+    "conversion.upload": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/measurement/conversions/{pixel_id}",
+      "required": [
+        "pixel_id",
+        "conversions"
+      ],
+      "bodyFrom": [
+        "conversions"
+      ]
+    }
+  }
+}

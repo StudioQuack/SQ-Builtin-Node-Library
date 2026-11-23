@@ -1,0 +1,232 @@
+{
+  "_id": "06198c86-5eef-466c-b4a6-e1a80fe5e697",
+  "version": "1.0.0",
+  "name": "Customer.io",
+  "label": "Customer.io App API v1 — campaigns, profiles (Bearer)",
+  "description": "Official Customer.io App API v1 at https://api.customer.io/v1. Handler: OfficialApiNode. App API key as Bearer (CRM read: campaigns, profile attributes/segments). Track API (identify/events/segment membership) is a different host and Basic auth — not this node. trigger.listen is BPMN ingress (reporting webhooks). Customer owns the workspace. app_api_key is never logged or returned.",
+  "icon": "loyalty",
+  "tags": [
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4baa5e63-3174-409e-9236-c606fabcb58e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example: {\"operation\":\"campaign.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "customer.get",
+          "description": "Overrides config operation when non-blank. EXACT: customer.get | customer.list | customer.search | customer.segments | campaign.list | campaign.get | campaign.metrics | segment.list | trigger.listen. customer.list is GET by email only; use customer.search to page profiles. trigger.listen is ingress (BPMN message event, no socket).",
+          "children": []
+        },
+        {
+          "shortCode": "identifier",
+          "label": "identifier",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Person id, email, or cio_… for customer.get / customer.segments. Percent-encode + in emails.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required for customer.list (GET /customers). Lookup profiles matching this email. Encode + as %2B in the query string.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign id for get/metrics.",
+          "children": []
+        },
+        {
+          "shortCode": "period",
+          "label": "period",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional metrics period per current App spec.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Required for customer.search. Official audience filter object (and/or/not, segment, attribute). POST /customers body.",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer.search pagination token from prior response next.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "customer.search query page size only (official max 1000). Ignored on customer.list (GET by email has no limit param).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a1c1951d-28ff-48e0-a696-ec2dcc2da0f6",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Log ids only — bodies may contain PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "12bed74f-3be7-4a9c-a446-c10aea296447",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: customer.get, customer.list, customer.search, customer.segments, campaign.list, campaign.get, campaign.metrics, segment.list, trigger.listen.",
+      "value": "campaign.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "customer.get",
+        "customer.list",
+        "customer.search",
+        "customer.segments",
+        "campaign.list",
+        "campaign.get",
+        "campaign.metrics",
+        "segment.list",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "6d96f84d-efca-4ff1-a970-e0d3c7247c4a",
+      "shortCode": "app_api_key",
+      "label": "App API key",
+      "type": "password",
+      "description": "Customer.io App API key. Bearer on api.customer.io. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ff5be41c-2c06-44a2-8b9c-aa32fcf3014a",
+      "shortCode": "api_host",
+      "label": "Api Host",
+      "type": "select",
+      "description": "Customer.io App API host for your workspace region, interpolated into https://{api_host}/v1. EXACT: api.customer.io (US, default) | api-eu.customer.io (EU). Example: api-eu.customer.io.",
+      "value": "api.customer.io",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "api.customer.io",
+        "api-eu.customer.io"
+      ]
+    },
+    {
+      "_id": "7119f437-c07d-486a-8ba8-97e0d855fbf2",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

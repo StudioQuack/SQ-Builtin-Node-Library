@@ -1,0 +1,680 @@
+{
+  "_id": "962b1363-5726-4595-b56e-5561446db150",
+  "version": "1.0.0",
+  "name": "AWS",
+  "label": "AWS JSON/REST (SigV4)",
+  "description": "AWS service APIs via OfficialApiNode with AWS SigV4. Docs: https://docs.aws.amazon.com/. Set config service to the SigV4 service code for this instance (s3, lambda, sqs, sns, dynamodb, ses, iam, secretsmanager, monitoring, ecs, sts, events). Operations: bucket_create, bucket_delete, bucket_list, object_get, object_put, object_delete, object_copy, object_list, lambda_invoke, sqs_send, sqs_receive, sqs_delete, sns_publish, dynamodb_get, dynamodb_put, dynamodb_query, ses_send, iam_get, iam_get_role, secretsmanager_get, cloudwatch_put, ecs_run, sts_assume, eventbridge_put, listen. Auth secrets access_key_id, secret_access_key, optional session_token are instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "hub",
+  "tags": [
+    "aws",
+    "s3",
+    "lambda",
+    "sqs"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "64e5e5a1-f711-4ed8-96ca-03511e4075bd",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "bucket_create",
+          "description": "Which official API call to run. EXACT values: bucket_create | bucket_delete | bucket_list | object_get | object_put | object_delete | object_copy | object_list | lambda_invoke | sqs_send | sqs_receive | sqs_delete | sns_publish | dynamodb_get | dynamodb_put | dynamodb_query | ses_send | iam_get | iam_get_role | secretsmanager_get | cloudwatch_put | ecs_run | sts_assume | eventbridge_put | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'bucket_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "Bucket",
+          "label": "Bucket",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "S3 bucket name for bucket_* and object_*. Example: invoices-prod.",
+          "children": []
+        },
+        {
+          "shortCode": "Key",
+          "label": "Key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "S3 object key for object_get / object_put / object_delete / object_copy. Example: reports/2026/q1.pdf. For DynamoDB use ItemKey.",
+          "children": []
+        },
+        {
+          "shortCode": "FunctionName",
+          "label": "FunctionName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lambda function name or ARN for lambda_invoke. Example: invoice-handler.",
+          "children": []
+        },
+        {
+          "shortCode": "Payload",
+          "label": "Payload",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Lambda event for lambda_invoke, sent as the whole JSON request body. Any JSON object the function expects. Example: {\"orderId\":\"1001\",\"action\":\"refund\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "Body",
+          "label": "Body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Object bytes for object_put (PUT /{Bucket}/{Key}, bodyFormat raw). String or platform file ref-id. Empty sends a 0-byte object. Also set acl / storage_class / server_side_encryption / tagging headers.",
+          "children": []
+        },
+        {
+          "shortCode": "CopySource",
+          "label": "CopySource",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "x-amz-copy-source for object_copy: /sourceBucket/sourceKey. Required. Example: /invoices-prod/old.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "list-type",
+          "label": "list-type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "S3 ListObjectsV2 list-type for object_list. Send 2.",
+          "children": []
+        },
+        {
+          "shortCode": "prefix",
+          "label": "prefix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "S3 key prefix for object_list. Example: reports/.",
+          "children": []
+        },
+        {
+          "shortCode": "QueueUrl",
+          "label": "QueueUrl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SQS queue URL for sqs_send / sqs_receive / sqs_delete. Example: https://sqs.us-east-1.amazonaws.com/123/orders.",
+          "children": []
+        },
+        {
+          "shortCode": "MessageBody",
+          "label": "MessageBody",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SQS message body for sqs_send. Example: {\"order\":1}.",
+          "children": []
+        },
+        {
+          "shortCode": "ReceiptHandle",
+          "label": "ReceiptHandle",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SQS receipt handle for sqs_delete (from ReceiveMessage).",
+          "children": []
+        },
+        {
+          "shortCode": "TopicArn",
+          "label": "TopicArn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SNS topic ARN for sns_publish. Set exactly one of TopicArn, TargetArn or PhoneNumber. Example: arn:aws:sns:us-east-1:123456789012:alerts.",
+          "children": []
+        },
+        {
+          "shortCode": "Message",
+          "label": "Message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SNS message for sns_publish. Example: deploy finished.",
+          "children": []
+        },
+        {
+          "shortCode": "TargetArn",
+          "label": "TargetArn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SNS mobile endpoint ARN for sns_publish (direct push to one device). Use instead of TopicArn / PhoneNumber. Example: arn:aws:sns:us-east-1:123456789012:endpoint/APNS/app/abc123.",
+          "children": []
+        },
+        {
+          "shortCode": "PhoneNumber",
+          "label": "PhoneNumber",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "E.164 phone number for an SMS sns_publish. Use instead of TopicArn / TargetArn. Example: +14155550100.",
+          "children": []
+        },
+        {
+          "shortCode": "TableName",
+          "label": "TableName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DynamoDB table name for dynamodb_get / dynamodb_put / dynamodb_query. Example: customers.",
+          "children": []
+        },
+        {
+          "shortCode": "ItemKey",
+          "label": "ItemKey",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "DynamoDB primary key attribute map for dynamodb_get, sent as body Key. Include the partition key (and sort key if the table has one) in DynamoDB attribute-value format. Example: {\"id\":{\"S\":\"1\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "Item",
+          "label": "Item",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "DynamoDB PutItem Item attribute map for dynamodb_put. Example: {\"id\":{\"S\":\"1\"},\"name\":{\"S\":\"Ada\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "KeyConditionExpression",
+          "label": "KeyConditionExpression",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DynamoDB Query KeyConditionExpression for dynamodb_query. Example: id = :id.",
+          "children": []
+        },
+        {
+          "shortCode": "ExpressionAttributeValues",
+          "label": "ExpressionAttributeValues",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Values for the :placeholders in KeyConditionExpression for dynamodb_query, in DynamoDB attribute-value format. Example: {\":id\":{\"S\":\"1\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "Source",
+          "label": "Source",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SES Source (From) email for ses_send. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "ToAddress",
+          "label": "ToAddress",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipient email for ses_send (Destination.ToAddresses.member.1). One address. Example: bob@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "Subject",
+          "label": "Subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email subject for ses_send (Message.Subject.Data). Required. Example: Your invoice is ready.",
+          "children": []
+        },
+        {
+          "shortCode": "TextBody",
+          "label": "TextBody",
+          "type": "longtext",
+          "required": false,
+          "value": "",
+          "description": "Plain-text body for ses_send (Message.Body.Text.Data). Set TextBody, HtmlBody or both. Example: Hi Bob, your invoice is attached.",
+          "children": []
+        },
+        {
+          "shortCode": "HtmlBody",
+          "label": "HtmlBody",
+          "type": "longtext",
+          "required": false,
+          "value": "",
+          "description": "HTML body for ses_send (Message.Body.Html.Data). Set TextBody, HtmlBody or both. Example: <p>Hi Bob, your invoice is ready.</p>",
+          "children": []
+        },
+        {
+          "shortCode": "UserName",
+          "label": "UserName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IAM user name for iam_get. Empty returns the user that owns the access key. Example: deploy-bot.",
+          "children": []
+        },
+        {
+          "shortCode": "RoleName",
+          "label": "RoleName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IAM role name (not ARN) for iam_get_role. Required for that operation. Example: DeployRole.",
+          "children": []
+        },
+        {
+          "shortCode": "SecretId",
+          "label": "SecretId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Secrets Manager name or ARN for secretsmanager_get. Example: prod/db.",
+          "children": []
+        },
+        {
+          "shortCode": "Namespace",
+          "label": "Namespace",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CloudWatch metric namespace for cloudwatch_put. Example: StudioQuack/App.",
+          "children": []
+        },
+        {
+          "shortCode": "MetricName",
+          "label": "MetricName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CloudWatch metric name for cloudwatch_put (MetricData.member.1.MetricName). One datapoint per call. Example: Latency.",
+          "children": []
+        },
+        {
+          "shortCode": "MetricValue",
+          "label": "MetricValue",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Datapoint value for cloudwatch_put (MetricData.member.1.Value). Example: 12.",
+          "children": []
+        },
+        {
+          "shortCode": "MetricUnit",
+          "label": "MetricUnit",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Unit for cloudwatch_put (MetricData.member.1.Unit). EXACT common: Seconds | Milliseconds | Bytes | Count | Percent | None. Example: Milliseconds.",
+          "children": []
+        },
+        {
+          "shortCode": "cluster",
+          "label": "cluster",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ECS cluster name or ARN for ecs_run. Example: prod.",
+          "children": []
+        },
+        {
+          "shortCode": "taskDefinition",
+          "label": "taskDefinition",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ECS task definition family:revision or ARN for ecs_run. Example: web:3.",
+          "children": []
+        },
+        {
+          "shortCode": "RoleArn",
+          "label": "RoleArn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IAM role ARN for sts_assume. Example: arn:aws:iam::123:role/Deploy.",
+          "children": []
+        },
+        {
+          "shortCode": "RoleSessionName",
+          "label": "RoleSessionName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "STS session name for sts_assume. Example: studioquack.",
+          "children": []
+        },
+        {
+          "shortCode": "Entries",
+          "label": "Entries",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "EventBridge PutEvents Entries array for eventbridge_put. Example: [{\"Source\":\"app\",\"DetailType\":\"order\",\"Detail\":\"{}\",\"EventBusName\":\"default\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "acl",
+          "label": "acl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "x-amz-acl on object_put. EXACT: private | public-read | public-read-write | authenticated-read | aws-exec-read | bucket-owner-read | bucket-owner-full-control. Example: private.",
+          "children": []
+        },
+        {
+          "shortCode": "storage_class",
+          "label": "storage_class",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "x-amz-storage-class on object_put. EXACT: STANDARD | STANDARD_IA | ONEZONE_IA | INTELLIGENT_TIERING | GLACIER | DEEP_ARCHIVE | GLACIER_IR. Example: STANDARD.",
+          "children": []
+        },
+        {
+          "shortCode": "server_side_encryption",
+          "label": "server_side_encryption",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "x-amz-server-side-encryption on object_put. EXACT: AES256 | aws:kms | aws:kms:dsse. Example: AES256.",
+          "children": []
+        },
+        {
+          "shortCode": "tagging",
+          "label": "tagging",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "x-amz-tagging on object_put (URL-encoded key=value). Example: project=alpha.",
+          "children": []
+        },
+        {
+          "shortCode": "Content",
+          "label": "Content",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "SESv2 SendEmail Content for ses_send (Simple/Html/Template). Example: {\"Simple\":{\"Subject\":{\"Data\":\"Hi\"},\"Body\":{\"Text\":{\"Data\":\"Hello\"}}}}.",
+          "children": []
+        },
+        {
+          "shortCode": "Destination",
+          "label": "Destination",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "SESv2 Destination for ses_send (ToAddresses/CcAddresses/BccAddresses). Example: {\"ToAddresses\":[\"bob@example.com\"]}.",
+          "children": []
+        },
+        {
+          "shortCode": "FromEmailAddress",
+          "label": "FromEmailAddress",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SESv2 FromEmailAddress for ses_send (sender). Example: alice@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "MetricData",
+          "label": "MetricData",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "CloudWatch PutMetricData MetricData array for cloudwatch_put. Example: [{\"MetricName\":\"Latency\",\"Value\":12,\"Unit\":\"Milliseconds\"}].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "4a35cbd8-0a78-4c05-a439-733fb3feb750",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "db4107da-33fe-467c-903b-32071da20754",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: bucket_create, bucket_delete, bucket_list, object_get, object_put, object_delete, object_copy, object_list, lambda_invoke, sqs_send, sqs_receive, sqs_delete, sns_publish, dynamodb_get, dynamodb_put, dynamodb_query, ses_send, iam_get, iam_get_role, secretsmanager_get, cloudwatch_put, ecs_run, sts_assume, eventbridge_put, listen. listen is BPMN ingress, not a socket.",
+      "value": "bucket_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "bucket_create",
+        "bucket_delete",
+        "bucket_list",
+        "object_get",
+        "object_put",
+        "object_delete",
+        "object_copy",
+        "object_list",
+        "lambda_invoke",
+        "sqs_send",
+        "sqs_receive",
+        "sqs_delete",
+        "sns_publish",
+        "dynamodb_get",
+        "dynamodb_put",
+        "dynamodb_query",
+        "ses_send",
+        "iam_get",
+        "iam_get_role",
+        "secretsmanager_get",
+        "cloudwatch_put",
+        "ecs_run",
+        "sts_assume",
+        "eventbridge_put",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "b11519fa-6cfa-4e2c-ae34-cc42e701a21e",
+      "shortCode": "secret_access_key",
+      "label": "Secret Access Key",
+      "type": "password",
+      "description": "AWS secret access key used to sign SigV4. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "732ce216-5d0a-4c13-aaca-b1778b0ee3be",
+      "shortCode": "access_key_id",
+      "label": "Access Key Id",
+      "type": "password",
+      "description": "AWS access key ID used as the SigV4 credential. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "51233eed-10c1-45af-b490-c9d05559d6ac",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "AWS region, e.g. us-east-1.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "506aa2e9-fc68-409e-96e6-f6161f30d4cc",
+      "shortCode": "session_token",
+      "label": "Session Token",
+      "type": "password",
+      "description": "Optional STS session token. When set, OfficialApiNode adds x-amz-security-token. Empty for long-lived keys. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d10cce87-2ad6-4e66-a8c2-dfd9e553ed3e",
+      "shortCode": "service",
+      "label": "Service",
+      "type": "string",
+      "description": "SigV4 service code for this instance. Must match the operation family: s3 | lambda | sqs | sns | dynamodb | ses | iam | secretsmanager | monitoring | ecs | sts | events. Literal service in the spec is not set — this config is used.",
+      "value": "s3",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cd6c0d31-db9c-46f0-9e73-59a712ba48d1",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1202a33f-4cfc-46cf-bb0c-df1d91460788",
+      "shortCode": "Content",
+      "label": "Content",
+      "type": "object",
+      "description": "SESv2 SendEmail Content for ses_send (Simple/Html/Template). Example: {\"Simple\":{\"Subject\":{\"Data\":\"Hi\"},\"Body\":{\"Text\":{\"Data\":\"Hello\"}}}}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "6d8d3ae8-0271-4289-b8fb-13b6950a6574",
+      "shortCode": "Destination",
+      "label": "Destination",
+      "type": "object",
+      "description": "SESv2 Destination for ses_send (ToAddresses/CcAddresses/BccAddresses). Example: {\"ToAddresses\":[\"bob@example.com\"]}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "e2293772-d4c9-4612-9180-4b68f8b40e67",
+      "shortCode": "FromEmailAddress",
+      "label": "FromEmailAddress",
+      "type": "string",
+      "description": "SESv2 FromEmailAddress for ses_send (sender). Example: alice@example.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "07236804-ebdb-4e93-9d07-bf3e58e02f4d",
+      "shortCode": "MetricData",
+      "label": "MetricData",
+      "type": "object",
+      "description": "CloudWatch PutMetricData MetricData array for cloudwatch_put. Example: [{\"MetricName\":\"Latency\",\"Value\":12,\"Unit\":\"Milliseconds\"}].",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

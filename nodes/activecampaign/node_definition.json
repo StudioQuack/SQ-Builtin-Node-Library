@@ -1,0 +1,475 @@
+{
+  "_id": "9f13e19a-b7c0-40b2-af42-c2fdd526c133",
+  "version": "1.0.0",
+  "name": "ActiveCampaign",
+  "label": "ActiveCampaign — CRM + email automation (REST v3)",
+  "description": "Official ActiveCampaign REST API v3 (/api/3). Handler: OfficialApiNode. Header Api-Token. Account API host from Settings → Developer (US typically *.api-us1.com). Contact–organization endpoints are deprecated — use Account–Contact. Customer owns the ActiveCampaign account. api_key is never logged or returned. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "contacts",
+  "tags": [
+    "crm",
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "0b9c0438-60fe-40fb-bd36-8cebaf2fd9d7",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Set operation to override config.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.create",
+          "description": "Overrides config operation when non-blank. EXACT catalog verb.",
+          "children": []
+        },
+        {
+          "shortCode": "contact",
+          "label": "contact",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "v3 contact envelope escape hatch for contact.create/update. Purpose fields email/firstName/lastName/phone merge into contact via bodyMap. Custom fieldValues stay here. Example: {\"fieldValues\":[{\"field\":1,\"value\":\"x\"}]}.",
+          "children": []
+        },
+        {
+          "shortCode": "contactId",
+          "label": "contactId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact id for get/update/delete and nested as contactList.contact on contactList.add/remove. Example: 123.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact email for contact.create/update (nested as contact.email; required on create) and contact.list filter. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "firstName",
+          "label": "firstName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact first name on contact.create/update. Nested as contact.firstName. Example: Ada.",
+          "children": []
+        },
+        {
+          "shortCode": "lastName",
+          "label": "lastName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact last name on contact.create/update. Nested as contact.lastName. Example: Lovelace.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact phone on contact.create/update. Nested as contact.phone. Example: +12025550100.",
+          "children": []
+        },
+        {
+          "shortCode": "list",
+          "label": "list",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List id on contactList.add/remove. Nested as contactList.list. Example: 2.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List subscription status on contactList.add/remove. Nested as contactList.status. EXACT: 1 subscribe | 2 unsubscribe. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Account name on account.create/update. Nested as account.name. Example: Acme.",
+          "children": []
+        },
+        {
+          "shortCode": "listid",
+          "label": "listid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List id query filter for contact.list. Example: 2.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Per-operation field `limit`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Per-operation field `offset`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "contactList",
+          "label": "contactList",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "{contact, list, status} escape hatch for contactList.add/remove. Purpose fields contactId/list/status merge in via bodyMap. status EXACT: 1 subscribe | 2 unsubscribe.",
+          "children": []
+        },
+        {
+          "shortCode": "contactTag",
+          "label": "contactTag",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "{contact, tag} integer ids.",
+          "children": []
+        },
+        {
+          "shortCode": "contactTagId",
+          "label": "contactTagId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `contactTagId`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "account",
+          "label": "account",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "v3 account envelope escape hatch for account.create/update. Purpose field name merges as account.name. Example: {\"accountUrl\":\"https://acme.com\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "accountId",
+          "label": "accountId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `accountId`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `search`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "accountContact",
+          "label": "accountContact",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Per-operation field `accountContact`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "accountContactId",
+          "label": "accountContactId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `accountContactId`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "deal",
+          "label": "deal",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Per-operation field `deal`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "dealId",
+          "label": "dealId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `dealId`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "note",
+          "label": "note",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Per-operation field `note`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "noteId",
+          "label": "noteId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `noteId`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "tag",
+          "label": "tag",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Per-operation field `tag`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "tagId",
+          "label": "tagId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `tagId`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "ecomOrder",
+          "label": "ecomOrder",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Deep Data order (connectionid, email, externalid, totalPrice, currency, orderProducts).",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `id`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "ecomCustomer",
+          "label": "ecomCustomer",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Per-operation field `ecomCustomer`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "connection",
+          "label": "connection",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Per-operation field `connection`. Omit when unused. Never put secrets here.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "fb2e5c96-1f14-4661-974e-c17ba5584e39",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Minimize retained PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "bcca2173-0c82-4bb6-8f54-1fb6c1cf16ae",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: contact.create | contact.get | contact.list | contact.update | contact.delete | contactList.add | contactList.remove | contactTag.add | contactTag.remove | account.create | account.get | account.list | account.update | account.delete | accountContact.create | accountContact.update | accountContact.delete | deal.create | deal.get | deal.list | deal.update | deal.delete | deal.note.create | deal.note.update | list.list | tag.create | tag.get | tag.list | tag.update | tag.delete | ecommerce.order.create | ecommerce.order.get | ecommerce.order.list | ecommerce.order.update | ecommerce.order.delete | ecommerce.customer.create | ecommerce.customer.get | ecommerce.customer.list | ecommerce.customer.update | ecommerce.customer.delete | ecommerce.orderProduct.get | ecommerce.orderProduct.list | connection.create | connection.get | connection.list | connection.update | connection.delete | trigger.listen.",
+      "value": "contact.create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "contact.create",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "contact.delete",
+        "contactList.add",
+        "contactList.remove",
+        "contactTag.add",
+        "contactTag.remove",
+        "account.create",
+        "account.get",
+        "account.list",
+        "account.update",
+        "account.delete",
+        "accountContact.create",
+        "accountContact.update",
+        "accountContact.delete",
+        "deal.create",
+        "deal.get",
+        "deal.list",
+        "deal.update",
+        "deal.delete",
+        "deal.note.create",
+        "deal.note.update",
+        "list.list",
+        "tag.create",
+        "tag.get",
+        "tag.list",
+        "tag.update",
+        "tag.delete",
+        "ecommerce.order.create",
+        "ecommerce.order.get",
+        "ecommerce.order.list",
+        "ecommerce.order.update",
+        "ecommerce.order.delete",
+        "ecommerce.customer.create",
+        "ecommerce.customer.get",
+        "ecommerce.customer.list",
+        "ecommerce.customer.update",
+        "ecommerce.customer.delete",
+        "ecommerce.orderProduct.get",
+        "ecommerce.orderProduct.list",
+        "connection.create",
+        "connection.get",
+        "connection.list",
+        "connection.update",
+        "connection.delete",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "c105f77d-b8c7-4a11-908d-02d0f32a056f",
+      "shortCode": "api_url",
+      "label": "API URL host",
+      "type": "string",
+      "description": "Host only from Settings → Developer, no scheme (example: acme.api-us1.com). US accounts use *.api-us1.com; EU and other DCs show a different host on that tab. Interpolated as https://{api_url}/api/3/…",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "29498ec5-1ac3-4f40-bf8e-15026deeefbc",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Per-user API key from Settings → Developer. Header Api-Token. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "12fccb41-c1f7-4566-9bbc-3631ad5902e4",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

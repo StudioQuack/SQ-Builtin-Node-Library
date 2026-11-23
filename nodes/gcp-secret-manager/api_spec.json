@@ -1,0 +1,109 @@
+{
+  "baseUrl": "https://secretmanager.googleapis.com/v1",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "access-secret-version": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/projects/{projectId}/secrets/{secretId}/versions/{version}:access",
+      "required": [
+        "projectId",
+        "secretId",
+        "version"
+      ]
+    },
+    "add-secret-version": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/projects/{projectId}/secrets/{secretId}:addVersion",
+      "required": [
+        "projectId",
+        "secretId"
+      ],
+      "bodyFrom": [
+        "data",
+        "dataCrc32c"
+      ],
+      "bodyMap": {
+        "data": "payload.data",
+        "dataCrc32c": "payload.dataCrc32c"
+      }
+    },
+    "create-secret": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/projects/{projectId}/secrets",
+      "required": [
+        "projectId",
+        "secretId"
+      ],
+      "queryFrom": [
+        "secretId"
+      ],
+      "bodyFrom": [
+        "replication",
+        "labels",
+        "expireTime",
+        "ttl",
+        "annotations"
+      ]
+    },
+    "get-secret": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/projects/{projectId}/secrets/{secretId}",
+      "required": [
+        "projectId",
+        "secretId"
+      ]
+    },
+    "list-secrets": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/projects/{projectId}/secrets",
+      "required": [
+        "projectId"
+      ],
+      "queryFrom": [
+        "pageSize",
+        "pageToken",
+        "filter"
+      ]
+    },
+    "destroy-secret-version": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/projects/{projectId}/secrets/{secretId}/versions/{version}:destroy",
+      "required": [
+        "projectId",
+        "secretId",
+        "version"
+      ],
+      "bodyFrom": [
+        "etag"
+      ]
+    },
+    "delete-secret": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/projects/{projectId}/secrets/{secretId}",
+      "required": [
+        "projectId",
+        "secretId"
+      ],
+      "queryFrom": [
+        "etag"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

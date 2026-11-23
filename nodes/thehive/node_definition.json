@@ -1,0 +1,520 @@
+{
+  "_id": "2343708f-0f30-4395-916f-1a4dff29afed",
+  "version": "1.0.0",
+  "name": "TheHive",
+  "label": "TheHive 5 API v1 — alerts, cases, observables, tasks, query",
+  "description": "TheHive 5 API v1. Docs: https://docs.strangebee.com/thehive/api-docs. create-alert requires type, source, sourceRef, title, description. create-case requires title, description. Search ops POST /api/v1/query with INPUT query. Handler: OfficialApiNode. Bearer api_key. thehiveHost is the origin. Never log api_key or case bodies.",
+  "icon": "bug_report",
+  "tags": [
+    "soar"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "9a824652-3217-4a22-a0dd-cd839d47ffac",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path/query/body keys match api_spec.json.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "create-alert",
+          "description": "Overrides config operation when non-blank. EXACT: create-alert | get-alert | search-alerts | update-alert | delete-alert | promote-alert | merge-alert | create-case | get-case | search-cases | update-case | delete-case | get-timeline | add-case-attachment | create-observable | get-observable | search-observables | update-observable | delete-observable | execute-analyzer | create-task | get-task | search-tasks | update-task | delete-task | create-log | get-log | create-comment | search-comments | execute-query | listen.",
+          "children": []
+        },
+        {
+          "shortCode": "alertId",
+          "label": "alertId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alert id.",
+          "children": []
+        },
+        {
+          "shortCode": "caseId",
+          "label": "caseId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Case id or name for case/task/comment/observable-in-case ops.",
+          "children": []
+        },
+        {
+          "shortCode": "observableId",
+          "label": "observableId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Observable id.",
+          "children": []
+        },
+        {
+          "shortCode": "taskId",
+          "label": "taskId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task id.",
+          "children": []
+        },
+        {
+          "shortCode": "analyzerId",
+          "label": "analyzerId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "execute-analyzer: Cortex analyzer id.",
+          "children": []
+        },
+        {
+          "shortCode": "artifactId",
+          "label": "artifactId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "execute-analyzer: observable/artifact id.",
+          "children": []
+        },
+        {
+          "shortCode": "cortexId",
+          "label": "cortexId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "execute-analyzer: Cortex instance id.",
+          "children": []
+        },
+        {
+          "shortCode": "attachment",
+          "label": "attachment",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "add-case-attachment: platform file ref-id. Official API is multipart; OfficialApiNode JSON-posts.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comment/log/observable message. Required on create-comment and create-log. Also create-observable.",
+          "children": []
+        },
+        {
+          "shortCode": "parameters",
+          "label": "parameters",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `parameters` for operation: execute-analyzer.",
+          "children": []
+        },
+        {
+          "shortCode": "isExternal",
+          "label": "isExternal",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "create-comment isExternal. true = visible to external users.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alert type (1–32 chars). Required on create-alert. Example: SIEM.",
+          "children": []
+        },
+        {
+          "shortCode": "source",
+          "label": "source",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alert source (1–32 chars). Required on create-alert. Example: Splunk.",
+          "children": []
+        },
+        {
+          "shortCode": "sourceRef",
+          "label": "sourceRef",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "External reference (1–128 chars). Required on create-alert. Example: SIEM-2026-001.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alert/case/task title. Required on create-alert, create-case, create-task. Also used on updates.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Markdown description. Required on create-alert and create-case. Also create-task / updates.",
+          "children": []
+        },
+        {
+          "shortCode": "severity",
+          "label": "severity",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "1=low 2=medium 3=high 4=critical. create/update alert and case. Default 2.",
+          "children": []
+        },
+        {
+          "shortCode": "date",
+          "label": "date",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Event epoch milliseconds on create/update alert and case. Omit to use now.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "String tags on create/update alert, case, observable.",
+          "children": []
+        },
+        {
+          "shortCode": "tlp",
+          "label": "tlp",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "TLP 0–4 on create/update alert, case, observable. Default 2.",
+          "children": []
+        },
+        {
+          "shortCode": "pap",
+          "label": "pap",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "PAP 0–3 on create/update alert, case, observable. Default 2.",
+          "children": []
+        },
+        {
+          "shortCode": "flag",
+          "label": "flag",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Flagged on create/update alert, case, task.",
+          "children": []
+        },
+        {
+          "shortCode": "customFields",
+          "label": "customFields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official customFields object or array on create/update alert and case.",
+          "children": []
+        },
+        {
+          "shortCode": "assignee",
+          "label": "assignee",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User login to assign on create/update alert, case, task.",
+          "children": []
+        },
+        {
+          "shortCode": "observables",
+          "label": "observables",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional observables on create-alert. Each: dataType, data, message.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Case/task status. create/update case (New|InProgress|Closed) and task (Waiting|InProgress|Completed|Cancel).",
+          "children": []
+        },
+        {
+          "shortCode": "template",
+          "label": "template",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Case template name or id on create-case.",
+          "children": []
+        },
+        {
+          "shortCode": "dataType",
+          "label": "dataType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Observable dataType. Required on create-observable. ip | domain | url | mail | hash | filename | …",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Observable value on create/update-observable. Example: 192.0.2.1. Not for file type.",
+          "children": []
+        },
+        {
+          "shortCode": "ioc",
+          "label": "ioc",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Observable ioc flag on create/update-observable.",
+          "children": []
+        },
+        {
+          "shortCode": "sighted",
+          "label": "sighted",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Observable sighted flag on create/update-observable.",
+          "children": []
+        },
+        {
+          "shortCode": "group",
+          "label": "group",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task group on create/update-task. Example: Identification.",
+          "children": []
+        },
+        {
+          "shortCode": "dueDate",
+          "label": "dueDate",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Task dueDate epoch milliseconds on create/update-task.",
+          "children": []
+        },
+        {
+          "shortCode": "mandatory",
+          "label": "mandatory",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Task mandatory on create/update-task.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "TheHive Query DSL body for search-* / execute-query / get-log. Official POST /api/v1/query. Example: {\"query\":[{\"_name\":\"listAlert\"},{\"_name\":\"page\",\"from\":0,\"to\":10}]}.",
+          "children": []
+        },
+        {
+          "shortCode": "startDate",
+          "label": "startDate",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Task log startDate epoch ms on create-log.",
+          "children": []
+        },
+        {
+          "shortCode": "includeInTimeline",
+          "label": "includeInTimeline",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "create-log includeInTimeline.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b5e85fd8-b886-4b5d-9e67-3cc9e66757b1",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "06d58a86-efd0-465d-949d-ce6730b2774d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb. Search/* and get-log POST /api/v1/query. listen is ingress.",
+      "value": "search-cases",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "create-alert",
+        "get-alert",
+        "search-alerts",
+        "update-alert",
+        "delete-alert",
+        "promote-alert",
+        "merge-alert",
+        "create-case",
+        "get-case",
+        "search-cases",
+        "update-case",
+        "delete-case",
+        "get-timeline",
+        "add-case-attachment",
+        "create-observable",
+        "get-observable",
+        "search-observables",
+        "update-observable",
+        "delete-observable",
+        "execute-analyzer",
+        "create-task",
+        "get-task",
+        "search-tasks",
+        "update-task",
+        "delete-task",
+        "create-log",
+        "get-log",
+        "create-comment",
+        "search-comments",
+        "execute-query",
+        "listen"
+      ]
+    },
+    {
+      "_id": "5f271122-132e-4f4b-8b0f-ff3479f4db4d",
+      "shortCode": "thehiveHost",
+      "label": "TheHive host",
+      "type": "string",
+      "description": "TheHive 5 host without scheme. Example: thehive.example.com:9000. OfficialApiNode URL-encodes path placeholders.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "854a4c3e-29ab-4975-ad4b-17875ac53526",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "TheHive API key. Authorization: Bearer. StudioQuack secret. Never on INPUT or in logs.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "74bae5b5-6667-4fd3-a294-104f68abc95a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

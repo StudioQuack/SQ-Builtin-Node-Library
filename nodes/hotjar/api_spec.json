@@ -1,0 +1,44 @@
+{
+  "baseUrl": "https://api.hotjar.io",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "survey.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/sites/{site_id}/surveys",
+      "required": ["site_id"],
+      "queryFrom": ["limit", "cursor", "with_questions"]
+    },
+    "survey.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/sites/{site_id}/surveys/{survey_id}",
+      "required": ["site_id", "survey_id"]
+    },
+    "survey.response.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/sites/{site_id}/surveys/{survey_id}/responses",
+      "required": ["site_id", "survey_id"],
+      "queryFrom": ["limit", "cursor"]
+    },
+    "user.lookup": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/organizations/{organization_id}/user-lookup",
+      "required": ["organization_id"],
+      "bodyFrom": ["data_subject_email", "data_subject_site_id_to_user_id_map", "delete_all_hits"],
+      "contentType": "application/json; charset=utf-8"
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

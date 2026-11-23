@@ -1,0 +1,256 @@
+{
+  "_id": "81f2e853-cb35-47e7-9dd6-d14634c52f84",
+  "version": "1.0.0",
+  "name": "ERPNext",
+  "label": "ERPNext — Frappe REST /api/resource/{Doctype}",
+  "description": "Official Frappe REST /api/resource/{Doctype}. Docs: https://docs.frappe.io/framework/user/en/api/rest. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. Accounting doctypes (Sales Invoice, Payment Entry, …) via doctype — one node. Replace example host; engine baseUrl is fixed.",
+  "icon": "account_balance",
+  "tags": [
+    "erpnext",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "52bb5d1a-cd31-424d-bdc1-bee9bf9003f2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for ERPNext. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "resource_get",
+          "description": "Overrides config operation. EXACT: resource_get | resource_list | resource_create | resource_update | resource_delete. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "doctype",
+          "label": "doctype",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `doctype` for operations: resource_get, resource_list, resource_create, resource_update, resource_delete. Required by: resource_get, resource_list, resource_create, resource_update, resource_delete.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `name` for operations: resource_get, resource_update, resource_delete. Required by: resource_get, resource_update, resource_delete.",
+          "children": []
+        },
+        {
+          "shortCode": "doc",
+          "label": "doc",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Frappe document fields merged at the JSON root for resource_create (POST /api/resource/{doctype}) and resource_update (PUT /api/resource/{doctype}/{name}). Keys are the DocType's fieldnames; doctype/name stay on the path. Example: {\"description\":\"Follow up\"}. https://docs.frappe.io/framework/user/en/api/rest",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "resource_list query fields: JSON array string of fieldnames. Example: [\"name\",\"status\"].",
+          "children": []
+        },
+        {
+          "shortCode": "filters",
+          "label": "filters",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "resource_list query filters: JSON array string. Example: [[\"status\",\"=\",\"Open\"]].",
+          "children": []
+        },
+        {
+          "shortCode": "limit_page_length",
+          "label": "limit_page_length",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Query-string parameter `limit_page_length` for operation: resource_list.",
+          "children": []
+        },
+        {
+          "shortCode": "or_filters",
+          "label": "or_filters",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "resource_list or_filters JSON array string.",
+          "children": []
+        },
+        {
+          "shortCode": "limit_start",
+          "label": "limit_start",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "resource_list offset. Official limit_start.",
+          "children": []
+        },
+        {
+          "shortCode": "order_by",
+          "label": "order_by",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "resource_list order_by, e.g. modified desc.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ce97c041-8cfe-4149-bd21-23e64256ad87",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5c36e20a-5b0b-422c-871e-8c826bf161db",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: resource_get | resource_list | resource_create | resource_update | resource_delete. Default resource_get. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "resource_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "resource_get",
+        "resource_list",
+        "resource_create",
+        "resource_update",
+        "resource_delete"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "228bc97e-27c8-4d83-ace6-d0b6f96f9546",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "ERPNext credential (header Authorization). StudioQuack secret. Never INPUT, never logged. Pack Frappe token as api_key:api_secret (engine sends Authorization: token {api_key}).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "020ac270-32b3-4d43-8674-981683541db0",
+      "shortCode": "base_url",
+      "label": "base_url",
+      "type": "string",
+      "description": "ERPNext / Frappe site origin, no trailing slash. Example: https://erp.example.com.",
+      "value": "https://erp.example.com",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c4bdd02a-b49c-402a-b1fb-b2f857913d4c",
+      "shortCode": "doctype",
+      "label": "doctype",
+      "type": "string",
+      "description": "Default DocType when INPUT doctype is empty. Example: ToDo.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2cdac815-1331-456e-beae-0346cd63adbf",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

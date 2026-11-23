@@ -1,0 +1,229 @@
+{
+  "_id": "a5b78278-ea24-4600-880c-f6e8f6b1ebd5",
+  "version": "1.0.0",
+  "name": "Buffer",
+  "label": "Buffer GraphQL — organizations, channels, posts",
+  "description": "Official Buffer GraphQL API at https://api.buffer.com. Docs: https://developers.buffer.com/guides/posts-and-scheduling.html. POST / with {query, variables}. post_create takes text, channelId, schedulingType, mode, dueAt (nested into variables.input). Bearer access_token. Never log the token.",
+  "icon": "schedule",
+  "tags": [
+    "buffer",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b6fb9ca9-ddb2-4ad1-a0dd-bdde856ec41d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "GraphQL query plus purpose-oriented variables. post_create: text, channelId, schedulingType, mode. Do not put access_token here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which GraphQL call this invoke represents. EXACT: organization_list | channel_list | post_create | post_list. The HTTP path is always POST /. Example: post_create.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official GraphQL document (body `query`). When empty, send a document that matches the operation (see README). Example: mutation($input: CreatePostInput!) { createPost(input: $input) { ... on PostActionSuccess { post { id } } ... on MutationError { message } } }.",
+          "children": []
+        },
+        {
+          "shortCode": "organizationId",
+          "label": "organizationId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Buffer organization id. channel_list / post_list: variables.input.organizationId. Example: org_123.",
+          "children": []
+        },
+        {
+          "shortCode": "channelId",
+          "label": "channelId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Buffer channel id (connected social profile). post_create required variables.input.channelId. Example: channel_456.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_create required post text (variables.input.text). Example: Hello from Buffer.",
+          "children": []
+        },
+        {
+          "shortCode": "schedulingType",
+          "label": "schedulingType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_create variables.input.schedulingType. Official: automatic. Example: automatic.",
+          "children": []
+        },
+        {
+          "shortCode": "mode",
+          "label": "mode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_create variables.input.mode. Official examples: addToQueue | shareNow | customScheduled. Example: addToQueue.",
+          "children": []
+        },
+        {
+          "shortCode": "dueAt",
+          "label": "dueAt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_create variables.input.dueAt (ISO-8601 UTC) when mode is customScheduled. Example: 2026-11-01T15:00:00.000Z.",
+          "children": []
+        },
+        {
+          "shortCode": "first",
+          "label": "first",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "post_list variables.first (page size). Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_list variables.after (cursor).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "bea48798-95a3-4f74-b692-436d3f8028b5",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (GraphQL JSON). HTTP 200 may still contain errors[]. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx. Inspect data.errors and MutationError unions.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider GraphQL JSON (data and/or errors).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "f45994d2-2f34-4c19-972f-df10114ceb20",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: organization_list | channel_list | post_create | post_list. All four POST https://api.buffer.com with the INPUT JSON as the body.",
+      "value": "channel_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "organization_list",
+        "channel_list",
+        "post_create",
+        "post_list"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "76d044ba-b236-43a2-961a-a0ea1cd343c0",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Buffer personal API key or OAuth access token (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT. Empty → no HTTP.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6181ceae-ac2b-48dc-98e2-736ba80d50d0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

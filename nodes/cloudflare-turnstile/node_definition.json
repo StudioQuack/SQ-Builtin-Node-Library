@@ -1,0 +1,146 @@
+{
+  "_id": "20e459e9-3482-4e69-aa34-10c70eb42e0a",
+  "version": "1.0.0",
+  "name": "Cloudflare Turnstile",
+  "label": "Turnstile Siteverify API v0 (server-side)",
+  "description": "Official Turnstile Siteverify via OfficialApiNode. Docs: https://developers.cloudflare.com/turnstile/get-started/server-side-validation/. POST https://challenges.cloudflare.com/turnstile/v0/siteverify. Tokens expire after 300 seconds and are single-use. Not the Cloudflare DNS/zone API. Auth type none: siteverify expects JSON/form field secret (config secret). Server-side only.",
+  "icon": "shield",
+  "tags": [
+    "bot-defense"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "472b57f9-49d7-4c4b-8079-db75775cd039",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path/query/body keys match api_spec.json.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "response",
+          "label": "response",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Token from cf-turnstile-response (max 2048 chars). Required. Valid ~300 s, single-use.",
+          "children": []
+        },
+        {
+          "shortCode": "remoteip",
+          "label": "remoteip",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional visitor IP (remoteip).",
+          "children": []
+        },
+        {
+          "shortCode": "idempotency_key",
+          "label": "idempotency_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional UUID for safe transport retry of the same token.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "48bd8603-91e0-4ac3-bd0e-887120c0a1f4",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "dfa83894-5705-4494-9f2e-108cb3b8a25d",
+      "shortCode": "secret",
+      "label": "Secret",
+      "type": "password",
+      "description": "Turnstile widget secret. Sent as Siteverify body field secret. Never on INPUT or in the frontend.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0bcd808e-889f-4287-a5ce-76205cf6294c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Tokens expire in 300 s. Default 15.",
+      "value": "15",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

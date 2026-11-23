@@ -1,0 +1,261 @@
+{
+  "_id": "c7246782-19db-4503-b917-edaa30eaa7f5",
+  "version": "1.0.0",
+  "name": "Replicate",
+  "label": "Replicate",
+  "description": "Official Replicate HTTP API v1 prediction runner (INPUT input → OUTPUT output). Not an Agent chat model — do not attach to the AI Agent model FUNCTION port. operation selects run (POST /v1/models/{owner}/{name}/predictions), predict (POST /v1/predictions), get_prediction, cancel, or list_models. Auth is StudioQuack secret api_token (r8_…) sent as Authorization Bearer. Docs: https://replicate.com/docs/reference/http. Terms: https://replicate.com/terms. Never log api_token.",
+  "icon": "smart_toy",
+  "tags": [
+    "replicate",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "95a48214-5594-4297-b64b-e8b8cd4c7933",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. run needs owner, name, and nested input object. predict needs version (official owner/name or community version id) and nested input. get_prediction/cancel need prediction_id. list_models accepts cursor. Do not put api_token here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "owner",
+          "label": "owner",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Model owner for operation=run (official path /v1/models/{owner}/{name}/predictions). Example: stability-ai.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Model name for operation=run. Example: sdxl.",
+          "children": []
+        },
+        {
+          "shortCode": "version",
+          "label": "version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "64-hex version id (or owner/name:hex) for operation=predict (POST /v1/predictions). Required by that path.",
+          "children": []
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Model-specific prediction payload (the version openapi_schema). Nested object named input, not the port name. Example: {\"prompt\":\"a red cube\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "stream",
+          "label": "stream",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "predict. true requests SSE streaming when the model supports it.",
+          "children": []
+        },
+        {
+          "shortCode": "prediction_id",
+          "label": "prediction_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prediction id from create (e.g. gm3qorzd…) for get_prediction and cancel.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination cursor for list_models (from previous next URL).",
+          "children": []
+        },
+        {
+          "shortCode": "webhook",
+          "label": "webhook",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `webhook` for operations: run, predict.",
+          "children": []
+        },
+        {
+          "shortCode": "webhook_events_filter",
+          "label": "webhook_events_filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `webhook_events_filter` for operations: run, predict.",
+          "children": []
+        },
+        {
+          "shortCode": "_omit",
+          "label": "_omit",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `_omit` for operation: cancel.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_by",
+          "label": "sort_by",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sort_by` for operation: list_models.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_direction",
+          "label": "sort_direction",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sort_direction` for operation: list_models.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ecb9cc88-f80e-4c45-aecb-af2c0579f1b7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Prediction or model-list JSON. Success: {status,http_status,data}. Secrets redacted. OfficialApiNode does not poll — run returns the create response (often starting). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure. Prediction object also has its own status: starting | processing | succeeded | failed | canceled | aborted.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Replicate JSON (prediction object or paginated models list).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ecb2ed82-5116-48a3-92dc-241fda78b0d4",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Replicate verb. EXACT values: run | predict | get_prediction | cancel | list_models. Default run = POST /v1/models/{owner}/{name}/predictions. predict = POST /v1/predictions (community version id).",
+      "value": "run",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "run",
+        "predict",
+        "get_prediction",
+        "cancel",
+        "list_models"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "3ce77655-1c1b-47a2-9d5a-32a2e7a3ce98",
+      "shortCode": "api_token",
+      "label": "API Token",
+      "type": "password",
+      "description": "Replicate API token (starts with r8_). Sent as Authorization: Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_token is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "79826906-9b08-458b-93e8-e121a499487a",
+      "shortCode": "version",
+      "label": "Version",
+      "type": "string",
+      "description": "Community version id, `{owner}/{name}:{version_id}`, or official `{owner}/{name}` (POST /v1/predictions accepts all three since 2025-08-05). Also send on INPUT so OfficialApiNode includes it in the JSON body. https://replicate.com/docs/reference/http#predictions.create",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a2fd4605-7246-4f1c-a640-1e1c1017d10b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Single HTTP call timeout (create/get/cancel). Default 60. Floor 1. OfficialApiNode does not poll after Prefer wait.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

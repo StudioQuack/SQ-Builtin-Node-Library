@@ -1,0 +1,248 @@
+{
+  "_id": "14a71c69-0341-5b0e-8a49-fd4847ec6536",
+  "version": "1.0.0",
+  "name": "OpenWeatherMap",
+  "label": "OpenWeatherMap",
+  "description": "OpenWeatherMap official API via OfficialApiNode (api_spec.json). Operations: weather_current, weather_forecast5, onecall, geo_direct. Docs: https://openweathermap.org/current. OpenWeather terms. One Call 3.0 is a separate SKU. Do not use retired /data/2.5/onecall. Attribution required when displaying. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "cloud",
+  "tags": [
+    "weather",
+    "openweathermap"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4608f680-e826-5ebf-a167-c04a6496154c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One OpenWeatherMap request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"weather_current\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: weather_current | weather_forecast5 | onecall | geo_direct. Default: first listed or instance operation. Example: 'weather_current'.",
+          "children": [],
+          "_id": "a62ff6fd-8240-5ea6-9c55-7f6929895c77"
+        },
+        {
+          "shortCode": "exclude",
+          "label": "exclude",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `exclude` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "dd68a2e7-eded-5ea8-913a-a5a1202caf17"
+        },
+        {
+          "shortCode": "lang",
+          "label": "lang",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `lang` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "1775e457-0150-5071-a1f7-e63bddfd714f"
+        },
+        {
+          "shortCode": "lat",
+          "label": "lat",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `lat` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "89853eda-6f37-5eb8-8a22-85f4baf471a7"
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `limit` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "39919f22-e645-5771-b883-bc10121ce892"
+        },
+        {
+          "shortCode": "lon",
+          "label": "lon",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `lon` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "9249162f-8a06-52ca-9a1f-25b5906a63c6"
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `q` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "10ee928f-65c8-5bf5-8efc-1a22e7d13b39"
+        },
+        {
+          "shortCode": "units",
+          "label": "units",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `units` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "8ebf4c28-d736-53bd-aca5-9a8eaa02bc76"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ac293596-ab0e-5426-976c-c67a466928e9",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "81324222-7e32-5a75-9997-40c7cdc160d1"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "54403460-8f53-5123-8d1b-aaf6d7e1bfdd"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "7b4e05cf-e39e-50b0-9de0-d5e8ab96e3c1"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e4bc97bd-2607-5d20-85db-8647794e4c5f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: weather_current, weather_forecast5, onecall, geo_direct.",
+      "value": "weather_current",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "weather_current",
+        "weather_forecast5",
+        "onecall",
+        "geo_direct"
+      ]
+    },
+    {
+      "_id": "4034afb5-5ab6-5c75-bb17-4ed71ef4a669",
+      "shortCode": "appid",
+      "label": "Appid",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "da495b2e-7636-5c1b-b948-a223c48c76bd",
+      "shortCode": "units",
+      "label": "Units",
+      "type": "string",
+      "description": "Units: standard | metric | imperial. Default metric.",
+      "value": "metric",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e9f64255-d54e-5454-b5e4-6416b319c5d5",
+      "shortCode": "lang",
+      "label": "Lang",
+      "type": "string",
+      "description": "Optional response language code.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a7d5ec92-b876-5fd0-a425-31af1b67ec4c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 20. Keep under the daemon sandbox request budget.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

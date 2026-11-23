@@ -1,0 +1,206 @@
+{
+  "_id": "5afdcee4-6710-478a-ad07-650df86d129e",
+  "version": "1.0.0",
+  "name": "Gumroad",
+  "label": "Gumroad — Gumroad OAuth API v2",
+  "description": "Official Gumroad OAuth API v2. Docs: https://app.gumroad.com/api. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. Ping/webhooks land on BPMN message events — same node, no Gumroad Trigger sibling.",
+  "icon": "account_balance",
+  "tags": [
+    "gumroad",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "937b6be6-469c-4549-b509-311825b3bb6b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Gumroad. Secrets never on this port. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "sale_list",
+          "description": "Overrides config operation. EXACT: sale_list | product_list | subscriber_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page` for operation: sale_list.",
+          "children": []
+        },
+        {
+          "shortCode": "product_id",
+          "label": "product_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Gumroad product id for subscriber_list (from product_list). Required on INPUT or configurationParameters when operation is subscriber_list.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "After date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "sale_list after (YYYY-MM-DD) — sales on or after this date. Example: 2026-01-01.",
+          "children": []
+        },
+        {
+          "shortCode": "before",
+          "label": "Before date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "sale_list before (YYYY-MM-DD) — sales on or before this date.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "Buyer email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "sale_list / subscriber_list email filter. Example: ada@example.com. PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6b95dbe4-fe5b-4cb9-b659-7e7450a6dc5e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "086fe394-737b-4079-8c38-be5c95272615",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: sale_list | product_list | subscriber_list | trigger. Default sale_list. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "sale_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "sale_list",
+        "product_list",
+        "subscriber_list",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "865376aa-3cda-46af-a1a2-e74c9a5f504d",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Gumroad OAuth access token. Query `access_token` still works; official preferred is Authorization: Bearer. StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a8c1e2f0-9b3d-4c5e-8f7a-1d2e3f4a5b6c",
+      "shortCode": "product_id",
+      "label": "Default product id",
+      "type": "string",
+      "description": "Default Gumroad product id for subscriber_list when INPUT omits product_id. Obtain from product_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6bf9ea97-f897-4693-80c8-706cbb3a0554",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

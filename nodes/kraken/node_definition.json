@@ -1,0 +1,213 @@
+{
+  "_id": "5b527683-9119-48fb-a1ca-76bf0a80248d",
+  "version": "1.0.0",
+  "name": "Kraken",
+  "label": "Kraken — Kraken REST 0",
+  "description": "Official Kraken REST 0. Docs: https://docs.kraken.com/api/. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. Crypto exchange ToS; geo KYC. Not investment advice. Private methods require API-Sign (engine limitation).",
+  "icon": "account_balance",
+  "tags": [
+    "kraken",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "973197ca-0ba8-49ae-84bf-ad547e254fad",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Kraken. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "ticker",
+          "description": "Overrides config operation. EXACT: ticker | ohlc | balance | add_order | cancel_order | ledgers. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "pair",
+          "label": "pair",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Asset pair for ticker / ohlc / add_order. Example: XBTUSD.",
+          "children": []
+        },
+        {
+          "shortCode": "interval",
+          "label": "interval",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "OHLC interval minutes. Official interval. Typical: 1 | 5 | 15 | 60 | 1440.",
+          "children": []
+        },
+        {
+          "shortCode": "nonce",
+          "label": "nonce",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Increasing nonce for private POSTs (balance, add_order, cancel_order, ledgers). Kraken also requires API-Sign HMAC which this handler cannot compute — private ops will 401 without an external signer.",
+          "children": []
+        },
+        {
+          "shortCode": "ordertype",
+          "label": "ordertype",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "add_order ordertype. EXACT: market | limit | stop-loss | take-profit | stop-loss-limit | take-profit-limit.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "add_order side. EXACT: buy | sell.",
+          "children": []
+        },
+        {
+          "shortCode": "volume",
+          "label": "volume",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Order volume in base currency for add_order. Example: 0.01.",
+          "children": []
+        },
+        {
+          "shortCode": "txid",
+          "label": "txid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Transaction id for cancel_order.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3d35d08a-ad8c-4084-a6c0-ad88089a620d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "eeb64ed5-aba4-48ce-aba6-d413deb30322",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: ticker | ohlc | balance | add_order | cancel_order | ledgers. Default ticker. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "ticker",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "ticker",
+        "ohlc",
+        "balance",
+        "add_order",
+        "cancel_order",
+        "ledgers"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "d98dd352-c665-4d12-aa3b-adfc967cc653",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Kraken API-Key header. StudioQuack secret. Never INPUT, never logged. Private endpoints also require API-Sign (HMAC of the private secret); OfficialApiNode cannot HMAC, so signed private methods cannot work.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3ca830a3-c6dd-4b75-a663-19a066694e6b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

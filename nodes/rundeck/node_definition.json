@@ -1,0 +1,256 @@
+{
+  "_id": "94b4bb3c-f97e-4efa-94ab-cacd3ccb6c3b",
+  "version": "1.0.0",
+  "name": "Rundeck",
+  "label": "Rundeck API",
+  "description": "Rundeck API 59 via OfficialApiNode. Docs: https://docs.rundeck.com/docs/api/ (current 59, minimum 17). Operations: job_run, job_get, execution_get, execution_list. Packaged example host is rundeck.example.com — point the path version at a version your server supports. Auth secret api_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "rundeck",
+    "jobs",
+    "runbook"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "8d3b9bab-0ec5-4f02-9eeb-a73d7ed2ce41",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "job_run",
+          "description": "Which official API call to run. EXACT values: job_run | job_get | execution_get | execution_list. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'job_run'.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job or execution id.",
+          "children": []
+        },
+        {
+          "shortCode": "options",
+          "label": "options",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `options` for operation: job_run.",
+          "children": []
+        },
+        {
+          "shortCode": "argString",
+          "label": "argString",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "job_run command-line style args, e.g. -opt value. Alternative to options.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "job_run node filter. Example: name: web-.*.",
+          "children": []
+        },
+        {
+          "shortCode": "asUser",
+          "label": "asUser",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "job_run run-as user (admin).",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "execution_list filter. EXACT: running | succeeded | failed | aborted. Example: running.",
+          "children": []
+        },
+        {
+          "shortCode": "jobIdFilter",
+          "label": "jobIdFilter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "execution_list job id filter.",
+          "children": []
+        },
+        {
+          "shortCode": "max",
+          "label": "max",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `max` for operation: execution_list.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `offset` for operation: execution_list.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3ac73bf6-30f7-4b7e-86f6-05c9dc17efa6",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a8c95849-7787-4572-bfd4-36c66fcd657a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: job_run, job_get, execution_get, execution_list. listen is BPMN ingress, not a socket.",
+      "value": "job_run",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "job_run",
+        "job_get",
+        "execution_get",
+        "execution_list"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "2fd960af-2e3b-40c5-88ee-c01d3086df5b",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "Rundeck API token. Header X-Rundeck-Auth-Token.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "19a6cc9d-00c8-4d0d-978b-71e0bbc1d61b",
+      "shortCode": "base_url",
+      "label": "Server URL",
+      "type": "string",
+      "description": "Rundeck server URL (scheme + host[:port], no trailing slash, without /api). The node appends /api/59. Required. Example: https://rundeck.example.com.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b75df17a-0bc6-4e29-9244-d4406bc6a53f",
+      "shortCode": "project",
+      "label": "Project",
+      "type": "string",
+      "description": "Rundeck project name.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "263be342-43ea-4ec8-a7f7-ddf8f5b67295",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

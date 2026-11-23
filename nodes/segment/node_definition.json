@@ -1,0 +1,271 @@
+{
+  "_id": "e93585a3-9405-4e7c-a6bf-dfd4ba8a3927",
+  "version": "1.0.0",
+  "name": "Segment",
+  "label": "Segment HTTP Tracking API — identify, track, page, screen, group, alias",
+  "description": "Segment HTTP Tracking API v1 at {data_plane_url}/v1. Docs: https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/. identify/track/page/screen/group/alias use official userId, event, properties, traits. Basic auth write_key. Handler: OfficialApiNode. Never log write_key.",
+  "icon": "hub",
+  "tags": [
+    "cdp",
+    "analytics"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f162d5c7-d660-4bb1-a45b-5b49d8a15555",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets (write_key) here. Example: {\"operation\":\"track\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "identify",
+          "description": "Overrides config operation when non-blank. EXACT: 'identify' | 'track' | 'page' | 'screen' | 'group' | 'alias'.",
+          "children": []
+        },
+        {
+          "shortCode": "userId",
+          "label": "userId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Your user id. Required on alias; identify/track/page/screen/group need userId or anonymousId. Example: user-42.",
+          "children": []
+        },
+        {
+          "shortCode": "anonymousId",
+          "label": "anonymousId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Anonymous id when userId is unknown. identify/track/page/screen/group.",
+          "children": []
+        },
+        {
+          "shortCode": "event",
+          "label": "event",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event name for track. Required. Example: Order Completed.",
+          "children": []
+        },
+        {
+          "shortCode": "properties",
+          "label": "properties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official properties object for track / page / screen. Event-specific keys (revenue, path, url, title). Example: {\"revenue\":25,\"currency\":\"USD\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "traits",
+          "label": "traits",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official traits object for identify / group (email, name, plan).",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Page/screen name for page / screen.",
+          "children": []
+        },
+        {
+          "shortCode": "groupId",
+          "label": "groupId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "group groupId. Required on group.",
+          "children": []
+        },
+        {
+          "shortCode": "previousId",
+          "label": "previousId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "alias previousId (old userId). Required with userId.",
+          "children": []
+        },
+        {
+          "shortCode": "timestamp",
+          "label": "timestamp",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO-8601 timestamp on all calls. Server time when omitted.",
+          "children": []
+        },
+        {
+          "shortCode": "context",
+          "label": "context",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official context object (ip, userAgent, page, campaign).",
+          "children": []
+        },
+        {
+          "shortCode": "integrations",
+          "label": "integrations",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official integrations object, e.g. {\"All\":false,\"Mixpanel\":true}.",
+          "children": []
+        },
+        {
+          "shortCode": "messageId",
+          "label": "messageId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional idempotency messageId.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b2b4d7d8-392d-4705-9db4-63df31559e69",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. PII may be present — do not log bodies.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "893d7273-8d88-4a76-b225-c58cc91ed03f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: identify | track | page | screen | group | alias.",
+      "value": "track",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "identify",
+        "track",
+        "page",
+        "screen",
+        "group",
+        "alias"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "4e43364f-c1c2-41b6-8f4c-8424953fc6d5",
+      "shortCode": "write_key",
+      "label": "Write key",
+      "type": "password",
+      "description": "Segment source write key (StudioQuack secret). Official: JSON writeKey or Basic write_key: (empty password). This node uses HTTP Basic. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "35031fa0-c2ec-4792-8f82-ffa4229ac60d",
+      "shortCode": "data_plane_url",
+      "label": "Data plane URL",
+      "type": "string",
+      "description": "Tracking API origin used as `{data_plane_url}/v1`. Default https://api.segment.io (Oregon). EU Business: https://events.eu1.segmentapis.com. No trailing slash.",
+      "value": "https://api.segment.io",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bbe35466-9561-4737-839b-9305d2ed2a56",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 uses api_spec default. Keep below the daemon invoke budget.",
+      "value": "15",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

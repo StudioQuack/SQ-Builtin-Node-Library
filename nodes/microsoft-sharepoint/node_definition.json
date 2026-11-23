@@ -1,0 +1,277 @@
+{
+  "_id": "a7fb022e-af99-474e-bfc7-70f8fbd3ccbb",
+  "version": "1.0.0",
+  "name": "Microsoft SharePoint",
+  "label": "Microsoft Graph SharePoint",
+  "description": "Microsoft Graph SharePoint via OfficialApiNode. Base https://graph.microsoft.com/v1.0. Docs: https://learn.microsoft.com/en-us/graph/api/resources/sharepoint?view=graph-rest-1.0 and https://learn.microsoft.com/en-us/graph/api/listitem-create?view=graph-rest-1.0. Prefer Sites.Selected. item_create/item_update send Graph fields (column map) plus Title. file_upload PUTs raw file bytes. Handler: OfficialApiNode. OUTPUT is {status,http_status,data}.",
+  "icon": "share",
+  "tags": [
+    "microsoft",
+    "sharepoint",
+    "files",
+    "lists"
+  ],
+  "category": "Productivity & Collaboration",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "91a678fb-b903-46f2-ada9-1648058709f3",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Microsoft SharePoint official API call. Delivered as inputVariables.input. Set operation plus the path/query/body fields that operation lists in api_spec.json. Do not put secrets on this port. Example: {\"operation\":\"file_download\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "file_download",
+          "description": "Which official Graph call to run. EXACT: file_download | file_upload | file_update | item_create | item_get | item_list | item_update | item_delete | list_get | list_list. Example: item_create.",
+          "children": []
+        },
+        {
+          "shortCode": "site_id",
+          "label": "site_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SharePoint site id (hostname,siteId,webId) for every path. Example: contoso.sharepoint.com,guid,guid. Config site_id is used when INPUT is empty.",
+          "children": []
+        },
+        {
+          "shortCode": "item_id",
+          "label": "item_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Drive item id (file_*) or list item id (item_get/update/delete). Example: 01BYE5RZ6QN3ZWBTUFOFD3GSPGOHDJD36K.",
+          "children": []
+        },
+        {
+          "shortCode": "filename",
+          "label": "filename",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Server-relative file name for file_upload PUT /root:/{filename}:/content. Example: Reports/q1.xlsx.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "File bytes for file_upload. Platform file list [{mime_type, source, data, name}]. Sent as the raw PUT body (application/octet-stream).",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "New drive-item name for file_update (PATCH item). Example: Q1-final.xlsx.",
+          "children": []
+        },
+        {
+          "shortCode": "list_id",
+          "label": "list_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SharePoint list id (GUID) for item_* and list_get. Example: 22e03ef3-6ef4-424d-a1d3-92a337807c30.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Column values object for item_create and item_update (Graph fieldValueSet). Keys are internal column names including Title. Example: {\"Title\":\"Widget\",\"Color\":\"Purple\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "$top",
+          "label": "$top",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for item_list. Positive integer. Graph default 200. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "$skiptoken",
+          "label": "$skiptoken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "odata.nextLink skip token from a previous item_list. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "$expand",
+          "label": "$expand",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OData $expand for item_get and item_list. EXACT common: fields | fields($select=Title,Color). Example: fields.",
+          "children": []
+        },
+        {
+          "shortCode": "$select",
+          "label": "$select",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OData $select for item_get and item_list. Comma-separated list item properties. Example: id,createdDateTime,fields.",
+          "children": []
+        },
+        {
+          "shortCode": "$filter",
+          "label": "$filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OData $filter for item_list. Example: fields/Title eq 'Widget'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b54a639c-01b9-4620-8db4-0c0e322a6d43",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or the raw string when not JSON. Example: {}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "1746f620-84b2-4f95-9cca-a83c69a61085",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: file_download, file_upload, file_update, item_create, item_get, item_list, item_update, item_delete, list_get, list_list. Default: file_download. Example: file_download.",
+      "value": "file_download",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "file_download",
+        "file_upload",
+        "file_update",
+        "item_create",
+        "item_get",
+        "item_list",
+        "item_update",
+        "item_delete",
+        "list_get",
+        "list_list"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "e237623a-6802-4004-ad88-dadafc6a7477",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Provider credential for auth.type=bearer (configKey access_token). REQUIRED secret — StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6427fb8a-ef69-468f-a957-61349d3fddfe",
+      "shortCode": "site_id",
+      "label": "Site Id",
+      "type": "string",
+      "description": "Default site id (hostname,siteId,webId). Example: 'contoso.sharepoint.com,guid,guid'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e3c1c045-ff46-4711-b11c-ba6fecd069f4",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative → 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

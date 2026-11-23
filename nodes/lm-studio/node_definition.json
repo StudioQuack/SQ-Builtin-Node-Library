@@ -1,0 +1,448 @@
+{
+  "_id": "f35caf94-fb71-440a-9dc1-318acf8efa91",
+  "version": "1.0.0",
+  "name": "LM Studio",
+  "label": "LM Studio",
+  "description": "Official LM Studio OpenAI-compatible local server (INPUT llm_input → OUTPUT llm_output). Default base http://127.0.0.1:1234/v1. operation selects chat (POST /chat/completions) or list_models (GET /models). Optional api_key when Developer → Server Settings requires a token. Dedicated node for discovery/list — not a replacement for shipped Local LLM chat. Customer-host only. Docs: https://lmstudio.ai/docs/developer/openai-compat. Terms: https://lmstudio.ai/app-terms. File/image use type file. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "lm",
+    "studio",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "98493aa2-f33b-497c-b08c-1c46cd8b73a4",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {operation?, messages, tools?, stream?, model?, file?}. operation EXACT: chat | list_models; it overrides the instance select. Image sources use type file (platform ref-id). Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which official call to run. EXACT values: chat | list_models. Overrides instance Operation when set. chat = POST /chat/completions; list_models = GET /models. Example: list_models.",
+          "children": []
+        },
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Chat messages [{role, content}] for chat. Official messages. role EXACT: system | user | assistant.",
+          "children": []
+        },
+        {
+          "shortCode": "model",
+          "label": "model",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Model id for chat. Also config default. Example: llama-3.1-8b.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Optional image/file for multimodal chat (inputFiles).",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "[]",
+          "description": "Extra files for chat.",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "temperature",
+          "label": "temperature",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Sampling temperature 0–2. Official temperature.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Nucleus sampling. Official top_p.",
+          "children": []
+        },
+        {
+          "shortCode": "top_k",
+          "label": "top_k",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Official top_k.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Max completion tokens. Official max_tokens.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Stop sequences. Official stop.",
+          "children": []
+        },
+        {
+          "shortCode": "presence_penalty",
+          "label": "presence_penalty",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Official presence_penalty.",
+          "children": []
+        },
+        {
+          "shortCode": "frequency_penalty",
+          "label": "frequency_penalty",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Official frequency_penalty.",
+          "children": []
+        },
+        {
+          "shortCode": "logit_bias",
+          "label": "logit_bias",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official logit_bias map.",
+          "children": []
+        },
+        {
+          "shortCode": "repeat_penalty",
+          "label": "repeat_penalty",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Official repeat_penalty (llama.cpp).",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Official seed.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a3db2c91-6672-4724-9ae5-a77246cb11e4",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed LM Studio JSON (chat completion or models list).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ab50c723-ac56-466c-b121-206cd54cdb01",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official LM Studio OpenAI-compat verb. EXACT values: chat | list_models. Default chat = POST /v1/chat/completions.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "list_models"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "0f396ed8-1c87-4a6c-b8c2-48025890d4b1",
+      "shortCode": "base_url",
+      "label": "Base URL",
+      "type": "string",
+      "description": "OpenAI-compat root including /v1. Default http://127.0.0.1:1234/v1. Substituted into api_spec baseUrl as {base_url}. Align with lms server start --port.",
+      "value": "http://127.0.0.1:1234/v1",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "61b44bda-c55c-42c9-9e19-26395049c31c",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Optional LM Studio API token (Developer → Server Settings → Manage Tokens). Sent as Authorization Bearer via auth.configKey. Default server requires none. StudioQuack secret binding only. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9355d3be-b270-4d15-8896-cf80d9419aac",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Loaded / JIT model id from list_models. Also send on llm_input so OfficialApiNode includes it in the JSON body.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f4e03bb9-1bb8-41eb-bfdd-e61f1eea7f01",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "de2049ef-d2aa-4867-b296-b0fad8ecce4a",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether LM Studio requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

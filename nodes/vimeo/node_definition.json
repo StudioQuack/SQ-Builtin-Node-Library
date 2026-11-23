@@ -1,0 +1,240 @@
+{
+  "_id": "296231a4-2520-4cd2-9b04-0cc2c79dbc8c",
+  "version": "1.0.0",
+  "name": "Vimeo",
+  "label": "Vimeo API 3.4",
+  "description": "Official Vimeo REST API 3.4 via OfficialApiNode. Base https://api.vimeo.com. extraHeaders send Accept: application/vnd.vimeo.*+json;version=3.4 (https://developer.vimeo.com/api/common-formats). Operations: video_get, video_list, video_upload (placeholder POST /me/videos only — tus binary is out of band), folder_list (/me/projects), trigger (ingress). Auth secret access_token is instance config only. Official API only.",
+  "icon": "play_circle",
+  "tags": [
+    "vimeo",
+    "social",
+    "video"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "7590b1a3-4f73-4abe-86f6-6fa99c44ea68",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. video_get needs video_id. video_list/folder_list accept page, per_page. video_upload accepts name, description. OfficialApiNode does not stream tus bytes. Do not put access_token here. Example: {\"operation\":\"video_get\",\"video_id\":\"258684937\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "video_get",
+          "description": "Overrides config operation when non-blank. EXACT: 'video_get' | 'video_list' | 'video_upload' | 'folder_list' | 'trigger'. trigger is ingress (BPMN message event), not HTTP. Example: 'video_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "video_id",
+          "label": "video_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Numeric Vimeo clip id or URI tail for video_get (path /videos/{video_id}). Strip a leading /videos/ if present. Required for video_get. Example: '258684937'.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "1-based page for video_list and folder_list. Omit = provider default. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for video_list and folder_list. Vimeo max 100. Example: 25.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Video title. video_upload. Example: Launch recap.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Video description. video_upload.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `fields` for operations: video_get, video_list, folder_list.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `query` for operation: video_list.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sort` for operation: video_list.",
+          "children": []
+        },
+        {
+          "shortCode": "direction",
+          "label": "direction",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `direction` for operation: video_list.",
+          "children": []
+        },
+        {
+          "shortCode": "upload",
+          "label": "upload",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Vimeo upload object for video_upload POST /me/videos. Official tus approach: {\"approach\":\"tus\",\"size\":12345}. The actual tus bytes go to upload.upload_link (second step — not this HTTP call). https://developer.vimeo.com/api/upload/videos",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "eae05c5a-a2f7-4e11-a607-9771388b193a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Never includes access_token. trigger returns a BPMN message-event instruction. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Vimeo JSON (clip, paging list, or project list).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "719eb2e7-3d6c-43cb-9ba3-d6bee117a4a9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Vimeo verb. EXACT: video_get | video_list | video_upload | folder_list | trigger. trigger is BPMN ingress, not a socket. Default video_get.",
+      "value": "video_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "video_get",
+        "video_list",
+        "video_upload",
+        "folder_list",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "17170fbc-671d-442b-ad48-a320c0c6940f",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Vimeo OAuth access token. Sent as Authorization: Bearer (StudioQuack secret). Never on INPUT, never logged. Empty → error. Upload/private clips need matching scopes (upload, edit, private).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e3aefe9f-e1c0-4bac-b4f2-4ba4cc7ea47d",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 60. Floor 1. Keep at or below the daemon invoke budget.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

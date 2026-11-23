@@ -1,0 +1,222 @@
+{
+  "_id": "59b38e30-7693-46b0-911c-ec3c2040c65d",
+  "version": "1.0.0",
+  "name": "LinkedIn",
+  "label": "LinkedIn — Community Management Posts API",
+  "description": "Official LinkedIn REST on https://api.linkedin.com. Handler: OfficialApiNode. Organic posts for a person or organization URN (/rest/posts), Images initializeUpload, organization lookup, OpenID member userinfo (/v2/userinfo). extraHeaders send Linkedin-Version: 202608 and X-Restli-Protocol-Version: 2.0.0 (https://learn.microsoft.com/en-us/linkedin/marketing/versioning?view=li-lms-2026-08). access_token is never logged or returned. Do not scrape linkedin.com. Customer owns the LinkedIn developer app.",
+  "icon": "work",
+  "tags": [
+    "linkedin",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b65d990f-d4fe-4fb2-b161-1091bd580a78",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_token here. Example: {\"operation\":\"post_create\",\"commentary\":\"Hello\",\"visibility\":\"PUBLIC\",\"lifecycle_state\":\"PUBLISHED\",\"author\":\"urn:li:organization:123\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "post_create",
+          "description": "Overrides config operation when non-blank. EXACT: post_create | post_get | image_upload | organization_get | member_get | trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "commentary",
+          "label": "commentary",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Post text. Official commentary for post_create. Example: Shipping v1.2 today.",
+          "children": []
+        },
+        {
+          "shortCode": "visibility",
+          "label": "visibility",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Full visibility object escape hatch for post_create. Typical: {\"COMING_SOON\"} is wrong — use {\"feedDistribution\":\"MAIN_FEED\"} inside distribution, or visibility_code.",
+          "children": []
+        },
+        {
+          "shortCode": "author",
+          "label": "author",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Author URN. Official author. Example: urn:li:person:AbCdEf or urn:li:organization:123. post_create / image_upload. Also config-worthy.",
+          "children": []
+        },
+        {
+          "shortCode": "post_urn",
+          "label": "post_urn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Post URN path for post_get. Example: urn:li:share:123.",
+          "children": []
+        },
+        {
+          "shortCode": "media",
+          "label": "media",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "initializeUpload request body extras for image_upload.",
+          "children": []
+        },
+        {
+          "shortCode": "organization_id",
+          "label": "organization_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Organization id for organization_get.",
+          "children": []
+        },
+        {
+          "shortCode": "lifecycleState",
+          "label": "lifecycleState",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official lifecycleState (same as lifecycle_state). post_create.",
+          "children": []
+        },
+        {
+          "shortCode": "distribution",
+          "label": "distribution",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official distribution {feedDistribution, targetEntities, thirdPartyDistributionChannels} for post_create.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "99a7514f-422a-4e4e-8911-f4a8e8e87c13",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). trigger is ingress — use a BPMN message event. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (post, image init, organization, or userinfo). Capped. Never contains the token.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "f0e4fab5-c087-448c-a1a3-59aa34ac27c1",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: post_create | post_get | image_upload | organization_get | member_get | trigger. trigger does not open a socket.",
+      "value": "post_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "post_create",
+        "post_get",
+        "image_upload",
+        "organization_get",
+        "member_get",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "34e47da1-3135-4bc3-9b02-9989ed1ce885",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "LinkedIn OAuth 2 member token (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT. Empty → no HTTP.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e625a7e5-c446-42b5-86e8-68381c3a1d37",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget. Example: 30.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

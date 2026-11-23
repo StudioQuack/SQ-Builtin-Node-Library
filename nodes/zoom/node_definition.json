@@ -1,0 +1,359 @@
+{
+  "_id": "2ab9bdcf-69bd-5fa8-8661-f413e8c182a7",
+  "version": "1.0.0",
+  "name": "Zoom",
+  "label": "Zoom — Zoom Meeting API v2",
+  "description": "Zoom via the official Zoom Meeting API v2. Base https://api.zoom.us/v2. Docs: https://developers.zoom.us/docs/api/meetings/. OAuth user or Server-to-Server account token minted outside StudioQuack (JWT apps are retired). Server-to-Server cannot use the `me` keyword — pass a real userId or email. Recordings are personal data. listen = Marketplace event subscriptions as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "videocam",
+  "tags": [
+    "video"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "95cdbe3a-0d67-5738-a085-7cd23d1ad4b0",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Zoom operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"create-meeting\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "create-meeting",
+          "description": "Which official call to run. EXACT values: create-meeting | get-meeting | list-meetings | update-meeting | delete-meeting | list-registrants | add-registrant | list-recordings | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "userId",
+          "label": "userId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Zoom user id or email. User OAuth may use me; Server-to-Server OAuth must use a real userId or email (docs: https://developers.zoom.us/docs/api/using-zoom-apis/). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "meetingId",
+          "label": "meetingId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Meeting id (numeric string). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "topic",
+          "label": "topic",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Meeting topic. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant email. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "first_name",
+          "label": "first_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant first name. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-meeting: meeting type 1 instant | 2 scheduled (API default) | 3 recurring no fixed time | 8 recurring fixed time. list-meetings: scheduled | live | upcoming | upcoming_meetings | previous_meetings. Example: 2.",
+          "children": []
+        },
+        {
+          "shortCode": "start_time",
+          "label": "start_time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Meeting start for create-meeting / update-meeting, yyyy-MM-ddTHH:mm:ssZ (UTC) or local time with timezone. Needed for scheduled meetings (type 2, and type 8 recurrences); ignored for instant meetings (type 1). Example: 2026-12-01T10:00:00Z.",
+          "children": []
+        },
+        {
+          "shortCode": "duration",
+          "label": "duration",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `duration` for operations: create-meeting, update-meeting.",
+          "children": []
+        },
+        {
+          "shortCode": "timezone",
+          "label": "timezone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `timezone` for operations: create-meeting, update-meeting.",
+          "children": []
+        },
+        {
+          "shortCode": "agenda",
+          "label": "agenda",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `agenda` for operations: create-meeting, update-meeting.",
+          "children": []
+        },
+        {
+          "shortCode": "password",
+          "label": "password",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `password` for operation: create-meeting.",
+          "children": []
+        },
+        {
+          "shortCode": "settings",
+          "label": "settings",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `settings` for operations: create-meeting, update-meeting.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page_size` for operations: list-meetings, list-registrants.",
+          "children": []
+        },
+        {
+          "shortCode": "next_page_token",
+          "label": "next_page_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `next_page_token` for operations: list-meetings, list-registrants.",
+          "children": []
+        },
+        {
+          "shortCode": "last_name",
+          "label": "last_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `last_name` for operation: add-registrant.",
+          "children": []
+        },
+        {
+          "shortCode": "address",
+          "label": "address",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant street. add-registrant.",
+          "children": []
+        },
+        {
+          "shortCode": "city",
+          "label": "city",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant city. add-registrant.",
+          "children": []
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant country (two-letter). add-registrant. Example: US.",
+          "children": []
+        },
+        {
+          "shortCode": "zip",
+          "label": "zip",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant postal code. add-registrant.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant state. add-registrant.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant phone. add-registrant. PII — do not log.",
+          "children": []
+        },
+        {
+          "shortCode": "org",
+          "label": "org",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant organization. add-registrant.",
+          "children": []
+        },
+        {
+          "shortCode": "job_title",
+          "label": "job_title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant job title. add-registrant.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "590a2117-4036-53ef-806a-55535e41a342",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ad6b865f-02ce-5923-8529-af7683fb16c0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: create-meeting, get-meeting, list-meetings, update-meeting, delete-meeting, list-registrants, add-registrant, list-recordings, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "create-meeting",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "create-meeting",
+        "get-meeting",
+        "list-meetings",
+        "update-meeting",
+        "delete-meeting",
+        "list-registrants",
+        "add-registrant",
+        "list-recordings",
+        "listen"
+      ]
+    },
+    {
+      "_id": "58b056fb-e843-5c25-9208-3966559eac3d",
+      "shortCode": "access_token",
+      "label": "Zoom access token",
+      "type": "password",
+      "description": "OAuth or Server-to-Server access token minted outside StudioQuack. Header Authorization: Bearer. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f5beffc1-1dc7-5f57-bb4d-77137c907b3a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

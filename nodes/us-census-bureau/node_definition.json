@@ -1,0 +1,226 @@
+{
+  "_id": "076e7939-ea47-595a-8442-068a1788f77b",
+  "version": "1.0.0",
+  "name": "US Census Bureau",
+  "label": "US Census Bureau",
+  "description": "US Census Bureau official API via OfficialApiNode (api_spec.json). Operations: census_get, geography_list. Docs: https://www.census.gov/data/developers/guidance/api-user-guide.html. Census Data API (https://api.census.gov/data). A free API key is required for all queries as of 2026 (https://www.census.gov/library/video/2026/adrm/requesting-a-census-data-api-key.html). US Government work is generally public domain plus embargo notes. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "chart",
+  "tags": [
+    "stats",
+    "census"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "2d936f4a-3bc3-5836-b330-bb65b073e065",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One US Census Bureau request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"census_get\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: census_get | geography_list. Default: first listed or instance operation. Example: 'census_get'.",
+          "children": [],
+          "_id": "d57e6db5-798c-5998-95ee-197c61e9862f"
+        },
+        {
+          "shortCode": "dataset",
+          "label": "dataset",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required for census_get and geography_list. Two path segments program/dataset (e.g. dec/sf1, acs/acs5). Single segment like dec returns a catalog, not rows.",
+          "children": [],
+          "_id": "56ff49f0-4aed-5670-86c3-2aa51e555b1c"
+        },
+        {
+          "shortCode": "for",
+          "label": "for",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Geography clause. Required on census_get. Example: county:* or state:06.",
+          "children": [],
+          "_id": "337654a6-0ebd-56ac-b5c8-e5e2efa126ab"
+        },
+        {
+          "shortCode": "get",
+          "label": "get",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated Census variables. Required on census_get. Example: NAME,B01001_001E. https://www.census.gov/data/developers/guidance/api-user-guide.html",
+          "children": [],
+          "_id": "c513a079-0ade-5e6a-b18e-0676cddfc5db"
+        },
+        {
+          "shortCode": "in",
+          "label": "in",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Parent geography. census_get. Example: state:06.",
+          "children": [],
+          "_id": "2f70f226-da74-5b53-842e-18260a4c35aa"
+        },
+        {
+          "shortCode": "vintage",
+          "label": "vintage",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required for census_get and geography_list. Four-digit dataset year in the URL path. Example: 2010.",
+          "children": [],
+          "_id": "5c6a4e12-3d20-52bf-b137-8d95f024dfdf"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0933a52b-92d7-512f-97f3-65a66008e078",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "55557197-9bc0-518c-b116-0a661389d09f"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "d69d43c3-6b86-52a4-b869-cbcfeac2bfb2"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "8eacf163-9a5c-5738-836d-2cf59f9b9767"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "d98b71d1-2122-5e96-9be9-01df0feb2b88",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: census_get, geography_list.",
+      "value": "census_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "census_get",
+        "geography_list"
+      ]
+    },
+    {
+      "_id": "041eb94b-4b31-5360-b7e4-f6903991b825",
+      "shortCode": "key",
+      "label": "Key",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "48b26356-a625-5fdd-a176-421a7d395270",
+      "shortCode": "vintage",
+      "label": "Vintage",
+      "type": "string",
+      "description": "Default year/vintage, e.g. 2023.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a71b1d69-4f89-528f-85f7-9371162d0fa8",
+      "shortCode": "dataset",
+      "label": "Dataset",
+      "type": "string",
+      "description": "Default dataset path, e.g. acs/acs1.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "117a7ca5-aa9d-5dec-bdd8-61c0c19c6f6d",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 30. Keep under the daemon sandbox request budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,343 @@
+{
+  "_id": "1bac1deb-a7ed-5b63-9839-92dc69ea0e63",
+  "version": "1.0.0",
+  "name": "Magento",
+  "label": "Magento 2 / Adobe Commerce REST V1",
+  "description": "Magento Open Source / Adobe Commerce REST /rest/V1. Customer create/update take email, firstname, lastname (nested under customer) plus optional password. Product create/update take sku, name, price, status, type_id. Docs: https://developer.adobe.com/commerce/webapi/rest/. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "storefront",
+  "tags": [
+    "magento",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4f676384-25f2-5a85-b94b-a96d131d1aad",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "customer_create",
+          "description": "Official API verb. EXACT: customer_create | customer_get | customer_list | customer_update | customer_delete | invoice_create | order_cancel | order_get | order_list | order_ship | product_create | product_get | product_list | product_update | product_delete. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer or order id for get/update/delete/cancel. Example: 3.",
+          "children": []
+        },
+        {
+          "shortCode": "searchCriteria[pageSize]",
+          "label": "searchCriteria[pageSize]",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Magento searchCriteria[pageSize] query for customer_list, order_list, product_list. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "orderId",
+          "label": "orderId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Order id for invoice_create and order_ship. Example: 12.",
+          "children": []
+        },
+        {
+          "shortCode": "sku",
+          "label": "sku",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product SKU. Path for product_get/update/delete; also product.sku on create/update. Example: 24-MB01.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer email. Wired to customer.email on customer_create / customer_update. Example: jane@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "firstname",
+          "label": "firstname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer first name. Wired to customer.firstname. Example: Jane.",
+          "children": []
+        },
+        {
+          "shortCode": "lastname",
+          "label": "lastname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer last name. Wired to customer.lastname. Example: Doe.",
+          "children": []
+        },
+        {
+          "shortCode": "password",
+          "label": "password",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "New customer password (customer_create only). Official top-level password. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "store_id",
+          "label": "store_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Store view id. Wired to customer.store_id. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "website_id",
+          "label": "website_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Website id. Wired to customer.website_id. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "addresses",
+          "label": "addresses",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Customer addresses array. Wired to customer.addresses. Official Magento address objects.",
+          "children": []
+        },
+        {
+          "shortCode": "customer",
+          "label": "customer",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Customer envelope escape hatch for customer_create/update. Purpose fields email/firstname/lastname/store_id/website_id/addresses merge as customer.* via bodyMap. password stays at the JSON root.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product name. Wired to product.name on product_create / product_update. Example: Watch.",
+          "children": []
+        },
+        {
+          "shortCode": "price",
+          "label": "price",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Product price. Wired to product.price. Example: 19.99.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Product status. Wired to product.status. EXACT: 1 enabled | 2 disabled.",
+          "children": []
+        },
+        {
+          "shortCode": "type_id",
+          "label": "type_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product type. Wired to product.type_id. Typical: simple | configurable | virtual | downloadable. Example: simple.",
+          "children": []
+        },
+        {
+          "shortCode": "attribute_set_id",
+          "label": "attribute_set_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Attribute set id. Wired to product.attribute_set_id. Example: 4.",
+          "children": []
+        },
+        {
+          "shortCode": "weight",
+          "label": "weight",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Product weight. Wired to product.weight.",
+          "children": []
+        },
+        {
+          "shortCode": "product",
+          "label": "product",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Product envelope escape hatch for product_create/update. Purpose fields sku/name/price/status/type_id/attribute_set_id/weight merge as product.* via bodyMap.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "4548a7fd-8475-5762-95ff-489a6f204457",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "47efe820-eed9-5707-96e8-5db38f61aca0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: customer_create | customer_get | customer_list | customer_update | customer_delete | invoice_create | order_cancel | order_get | order_list | order_ship | product_create | product_get | product_list | product_update | product_delete. trigger does not open a socket.",
+      "value": "customer_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "customer_create",
+        "customer_get",
+        "customer_list",
+        "customer_update",
+        "customer_delete",
+        "invoice_create",
+        "order_cancel",
+        "order_get",
+        "order_list",
+        "order_ship",
+        "product_create",
+        "product_get",
+        "product_list",
+        "product_update",
+        "product_delete"
+      ]
+    },
+    {
+      "_id": "cf3c4ffc-f07e-5230-b947-e875e564252c",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type bearer. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "12e1158f-a825-5458-a700-1bfa3ab067fb",
+      "shortCode": "store_host",
+      "label": "Store Host",
+      "type": "string",
+      "description": "Store hostname only (magento.example.com), no scheme.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d47f029a-ed77-5f2a-85c6-244a37c54ec7",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,466 @@
+{
+  "_id": "bb31ad0c-e31b-4e65-8441-d8a0901fad22",
+  "version": "1.0.0",
+  "name": "LinkedIn Ads",
+  "label": "LinkedIn Marketing API 202608 — ad accounts, campaigns, creatives, conversions",
+  "description": "Official LinkedIn Marketing API on https://api.linkedin.com/rest/. Handler: OfficialApiNode. NOT social share. Bearer oauth_access_token. extraHeaders send Linkedin-Version: 202608 and X-Restli-Protocol-Version: 2.0.0 (https://learn.microsoft.com/en-us/linkedin/marketing/versioning?view=li-lms-2026-08). trigger.lead is ingress. Leads are PII. Customer owns the ad account. oauth_access_token is never logged or returned.",
+  "icon": "ads_click",
+  "tags": [
+    "ads"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f31008bf-558b-4d05-87b8-61d93c916255",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put oauth_access_token here. ad_account_id may come from config. Example: {\"operation\":\"account.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "account.list",
+          "description": "Overrides config. EXACT Marketing API verbs including trigger.lead.",
+          "children": []
+        },
+        {
+          "shortCode": "ad_account_id",
+          "label": "ad_account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sponsored account URN or id. Path adAccounts/{ad_account_id}. Also config. Example: 123456.",
+          "children": []
+        },
+        {
+          "shortCode": "count",
+          "label": "count",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size.",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Offset.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Rest.li finder (e.g. analytics).",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign or audience name. campaign.create / audience.create.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign type on campaign.create (SPONSORED_UPDATES, TEXT_AD, …) or DMP segment content type on audience.create (USER | COMPANY | USER_LIST_UPLOAD | COMPANY_LIST_UPLOAD). Example: USER.",
+          "children": []
+        },
+        {
+          "shortCode": "campaignGroup",
+          "label": "campaignGroup",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign group URN for campaign.create. Official campaignGroup.",
+          "children": []
+        },
+        {
+          "shortCode": "costType",
+          "label": "costType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "campaign.create costType. EXACT typical: CPM | CPC | CPV.",
+          "children": []
+        },
+        {
+          "shortCode": "runSchedule",
+          "label": "runSchedule",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official runSchedule {start, end} epoch ms for campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "targetingCriteria",
+          "label": "targetingCriteria",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official targetingCriteria for campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "unitCost",
+          "label": "unitCost",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official unitCost {amount, currencyCode} for campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "objectiveType",
+          "label": "objectiveType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "campaign.create objectiveType. Example: WEBSITE_VISIT | BRAND_AWARENESS.",
+          "children": []
+        },
+        {
+          "shortCode": "locale",
+          "label": "locale",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official locale {country, language} for campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign id path for campaign.get / campaign.update.",
+          "children": []
+        },
+        {
+          "shortCode": "patch",
+          "label": "patch",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Rest.li patch {patch: {$set: …}} for campaign.update.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign",
+          "label": "campaign",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Creative campaign URN for creative.create.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Status: campaign status, or the creative intendedStatus on creative.create. EXACT: ACTIVE | PAUSED | DRAFT. Example: ACTIVE.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Creative content for creative.create (Creatives API; replaces the retired adCreativesV2 variables). Reference an existing post/share or inline ad content. Example: {\"reference\":\"urn:li:share:7012345678901234567\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "pivot",
+          "label": "pivot",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Analytics pivot e.g. CAMPAIGN.",
+          "children": []
+        },
+        {
+          "shortCode": "timeGranularity",
+          "label": "timeGranularity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DAILY / MONTHLY.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Metric names (max 20).",
+          "children": []
+        },
+        {
+          "shortCode": "accounts",
+          "label": "accounts",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Account URNs for analytics.",
+          "children": []
+        },
+        {
+          "shortCode": "campaigns",
+          "label": "campaigns",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign URNs for analytics.",
+          "children": []
+        },
+        {
+          "shortCode": "dateRange",
+          "label": "dateRange",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Analytics date range as the API documents.",
+          "children": []
+        },
+        {
+          "shortCode": "account",
+          "label": "account",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "urn:li:sponsoredAccount:… (leads/audience).",
+          "children": []
+        },
+        {
+          "shortCode": "sourcePlatform",
+          "label": "sourcePlatform",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Where audience profiles come from, required by audience.create (POST /dmpSegments). EXACT: DIRECT_API | AGENCY_API | PARTNER_API | LIST_UPLOAD (LIST_UPLOAD with *_LIST_UPLOAD types). Example: DIRECT_API.",
+          "children": []
+        },
+        {
+          "shortCode": "destinations",
+          "label": "destinations",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "DMP destinations.",
+          "children": []
+        },
+        {
+          "shortCode": "owner",
+          "label": "owner",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lead form owner URN.",
+          "children": []
+        },
+        {
+          "shortCode": "form",
+          "label": "form",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "urn:li:adForm:…",
+          "children": []
+        },
+        {
+          "shortCode": "conversion",
+          "label": "conversion",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Conversion URN for conversion.upload.",
+          "children": []
+        },
+        {
+          "shortCode": "conversionHappenedAt",
+          "label": "conversionHappenedAt",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Event time epoch ms for conversion.upload.",
+          "children": []
+        },
+        {
+          "shortCode": "user",
+          "label": "user",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "User identifiers for conversion.upload. Official user.",
+          "children": []
+        },
+        {
+          "shortCode": "eventId",
+          "label": "eventId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Idempotency id for conversion.upload.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "56dfaa56-34bf-469d-bf43-2c5fe621fbc9",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Do not log emails, phones, or secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "32b6acff-15c7-4bce-9b66-2eb7d40801eb",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT ads verbs.",
+      "value": "account.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "account.list",
+        "campaign.create",
+        "campaign.get",
+        "campaign.list",
+        "campaign.update",
+        "creative.create",
+        "creative.list",
+        "analytics.get",
+        "audience.create",
+        "leadForm.list",
+        "lead.get",
+        "conversion.upload",
+        "trigger.lead"
+      ]
+    },
+    {
+      "_id": "42503e8d-89ba-4024-ad10-2f2672a2cf95",
+      "shortCode": "oauth_access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "LinkedIn member access token with ads scopes (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT. Engine must send Linkedin-Version: 202608.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2835116f-930d-4a63-9ed2-f5e3e41491ef",
+      "shortCode": "ad_account_id",
+      "label": "Ad account id",
+      "type": "string",
+      "description": "Numeric sponsored account id used in paths when input omits it.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c82c9d96-bc76-4f9f-838a-047843f5515c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Analytics may need more.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

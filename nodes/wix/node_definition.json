@@ -1,0 +1,483 @@
+{
+  "_id": "968e5ddb-1e38-5841-99c0-26579b68974d",
+  "version": "1.0.0",
+  "name": "Wix Stores",
+  "label": "Wix eCommerce REST — orders, catalog, inventory",
+  "description": "Wix eCom Orders v1 (POST /ecom/v1/orders/search), Stores Catalog v1 reader (POST /stores-reader/v1/products/query still published), Inventory v3 PATCH /stores/v3/inventory-items/{id} on www.wixapis.com. Catalog v3 search is POST /stores/v3/products/search — not switched here. Bearer site access token (operator supplies refreshed token). trigger is ingress. App review for public apps. Docs: https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders",
+  "icon": "storefront",
+  "tags": [
+    "wix",
+    "stores",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1e2c6766-3d47-5800-bf2f-e9ec7bb8d3da",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "order_list",
+          "description": "Official API verb. EXACT: order_list | order_get | product_list | product_get | inventory_update | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id for get/update/delete path {id} when that operation needs it.",
+          "children": []
+        },
+        {
+          "shortCode": "inventory_item_id",
+          "label": "inventory_item_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `inventory_item_id` for operation: inventory_update. Required by: inventory_update.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Wix query-language filter. order_list nests as search.filter; product_list as query.filter. Example: {\"status\":\"APPROVED\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Sort objects [{fieldName, order: ASC|DESC}]. Max 4. order_list → search.sort; product_list → query.sort. Example: [{\"fieldName\":\"createdDate\",\"order\":\"DESC\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "order_list cursorPaging.limit. 0-100, default 100. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "order_list paging cursor from the previous pagingMetadata. Omit on the first page.",
+          "children": []
+        },
+        {
+          "shortCode": "paging",
+          "label": "paging",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "product_list query.paging {limit, offset}. Example: {\"limit\":50,\"offset\":0}.",
+          "children": []
+        },
+        {
+          "shortCode": "trackQuantity",
+          "label": "trackQuantity",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "inventory_update. Whether Wix tracks quantity for this item. Nested as inventoryItem.trackQuantity.",
+          "children": []
+        },
+        {
+          "shortCode": "revision",
+          "label": "revision",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "inventory_update current inventory item revision (required by Inventory v3 to prevent overwrites; increments by 1 on every update). Read it from the item first, then pass it unchanged. Nested as inventoryItem.revision. Example: \"1\".",
+          "children": []
+        },
+        {
+          "shortCode": "quantity",
+          "label": "quantity",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "inventory_update stock level for quantity-tracked items (integer -99999..99999). Nested as inventoryItem.quantity. Example: 106.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "dc7b602e-46a9-5717-a687-6139a8b34af1",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "fd45a18c-caa5-5ac5-8fc1-7ecb1bc31f44",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: order_list | order_get | product_list | product_get | inventory_update | trigger. trigger does not open a socket.",
+      "value": "order_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "order_list",
+        "order_get",
+        "product_list",
+        "product_get",
+        "inventory_update",
+        "trigger"
+      ],
+      "filterRules": [
+        {
+          "when": "order_list",
+          "targets": [
+            {
+              "param": "site_id",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            },
+            {
+              "param": "sort",
+              "visible": true
+            },
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "cursor",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "order_get",
+          "targets": [
+            {
+              "param": "site_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "product_list",
+          "targets": [
+            {
+              "param": "site_id",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            },
+            {
+              "param": "sort",
+              "visible": true
+            },
+            {
+              "param": "paging",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "product_get",
+          "targets": [
+            {
+              "param": "site_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "inventory_update",
+          "targets": [
+            {
+              "param": "site_id",
+              "visible": true
+            },
+            {
+              "param": "inventory_item_id",
+              "visible": true
+            },
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "quantity",
+              "visible": true
+            },
+            {
+              "param": "trackQuantity",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "6edb594f-56e6-59f7-8c2b-ed8b21bd5809",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type bearer. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6bc53fe2-64fd-5b3e-b8fb-745a9cbbae5a",
+      "shortCode": "site_id",
+      "label": "Site Id",
+      "type": "string",
+      "description": "Wix site id. Sent as wix-site-id on every site-level REST call.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ea41dad0-0c80-4c29-baa9-7007ab6979ff",
+      "shortCode": "filter",
+      "label": "Filter",
+      "type": "object",
+      "description": "Wix query-language filter. order_list nests as search.filter; product_list as query.filter. Example: {\"status\":\"APPROVED\"}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f86dc6d4-6091-4e5e-bee8-4e58d3128727",
+      "shortCode": "sort",
+      "label": "Sort",
+      "type": "list",
+      "description": "Sort objects [{fieldName, order: ASC|DESC}]. Max 4. order_list → search.sort; product_list → query.sort. Example: [{\"fieldName\":\"createdDate\",\"order\":\"DESC\"}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d61d77e5-4552-4e62-ae4c-40f430af05b2",
+      "shortCode": "limit",
+      "label": "Limit",
+      "type": "number",
+      "description": "order_list cursorPaging.limit. 0-100, default 100. Example: 50.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dc454981-3b21-4dde-8d51-d43cde289ff4",
+      "shortCode": "cursor",
+      "label": "Cursor",
+      "type": "string",
+      "description": "order_list paging cursor from the previous pagingMetadata. Omit on the first page.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6b27d559-b12b-4c09-8e7b-4da173725e49",
+      "shortCode": "id",
+      "label": "ID",
+      "type": "string",
+      "description": "Resource id for get/update/delete path {id} when that operation needs it.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b1022568-148c-4412-a2c1-da8ba232a78e",
+      "shortCode": "paging",
+      "label": "Paging",
+      "type": "object",
+      "description": "product_list query.paging {limit, offset}. Example: {\"limit\":50,\"offset\":0}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cf56cb93-460b-45f5-85f1-a7b8995a4008",
+      "shortCode": "inventory_item_id",
+      "label": "Inventory Item ID",
+      "type": "string",
+      "description": "URL path parameter `inventory_item_id` for operation: inventory_update. Required by: inventory_update.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ba9e244c-ee71-424e-80b4-a325e484eb57",
+      "shortCode": "revision",
+      "label": "Revision",
+      "type": "string",
+      "description": "Fallback inventory_update revision when INPUT revision is blank. Inventory v3 requires the item's CURRENT revision (it increments on every update), so prefer passing it per run on INPUT. Nested as inventoryItem.revision. Example: \"1\".",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "87a68ef3-a92e-48d5-b614-e9543ed181ca",
+      "shortCode": "quantity",
+      "label": "Quantity",
+      "type": "number",
+      "description": "Default inventory_update stock level when INPUT quantity is blank (integer -99999..99999, quantity-tracked items only). Nested as inventoryItem.quantity. Example: 106.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ef0a3f85-a75f-4e2d-8a3d-76f1e65db9e1",
+      "shortCode": "trackQuantity",
+      "label": "Trackquantity",
+      "type": "boolean",
+      "description": "inventory_update. Whether Wix tracks quantity for this item. Nested as inventoryItem.trackQuantity.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7cd4db68-7e98-5edd-9801-5bf917bb21cc",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

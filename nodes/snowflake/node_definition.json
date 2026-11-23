@@ -1,0 +1,254 @@
+{
+  "_id": "d1cb7519-4341-4c4d-a1fb-79fb4e5a6644",
+  "version": "1.0.0",
+  "name": "Snowflake",
+  "label": "Snowflake SQL API v2 — statements",
+  "description": "Snowflake SQL API v2 at https://{account_url}/api/v2/statements. Docs: https://docs.snowflake.com/en/developer-guide/sql-api/reference. Header X-Snowflake-Authorization-Token-Type from config token_type (OAUTH | KEYPAIR_JWT | PROGRAMMATIC_ACCESS_TOKEN). Handler: OfficialApiNode. Never log access_token or SQL that embeds secrets.",
+  "icon": "database",
+  "tags": [
+    "sql",
+    "warehouse"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4fe746ee-35e9-4ee9-8a56-756beb95c402",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. execute.sql requires statement; optional timeout, database, schema, warehouse, bindings. statement.get / statement.cancel require statementHandle. Do not put access_token here. Example: {\"operation\":\"execute.sql\",\"statement\":\"SELECT 1\",\"warehouse\":\"COMPUTE_WH\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "execute.sql",
+          "description": "Overrides config operation when non-blank. EXACT: 'execute.sql' | 'statement.get' | 'statement.cancel'.",
+          "children": []
+        },
+        {
+          "shortCode": "statement",
+          "label": "statement",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SQL text for execute.sql (POST /api/v2/statements). Required. Do not log if it embeds secrets. Example: select current_version();",
+          "children": []
+        },
+        {
+          "shortCode": "timeout",
+          "label": "timeout",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Statement timeout seconds for execute.sql body. Official timeout. Example: 60.",
+          "children": []
+        },
+        {
+          "shortCode": "database",
+          "label": "database",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Snowflake database for execute.sql body.",
+          "children": []
+        },
+        {
+          "shortCode": "schema",
+          "label": "schema",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Snowflake schema for execute.sql body.",
+          "children": []
+        },
+        {
+          "shortCode": "warehouse",
+          "label": "warehouse",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Warehouse for execute.sql body.",
+          "children": []
+        },
+        {
+          "shortCode": "bindings",
+          "label": "bindings",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Typed bind map for execute.sql, official bindings object {\"1\":{\"type\":\"FIXED\",\"value\":\"1\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "statementHandle",
+          "label": "statementHandle",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path id for statement.get and statement.cancel.",
+          "children": []
+        },
+        {
+          "shortCode": "partition",
+          "label": "partition",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional GET query param partition (result partition number).",
+          "children": []
+        },
+        {
+          "shortCode": "requestId",
+          "label": "requestId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional UUID. GET: query param. cancel: JSON body if set.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7b5dcc40-a078-470e-bf0b-3e027043ae88",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (result set or handle). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx (including 202 accepted).",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (statementHandle, data, resultSetMetaData).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "66d2c16d-80ca-4ae8-bd2a-2651fc2c105a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: execute.sql | statement.get | statement.cancel.",
+      "value": "execute.sql",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "execute.sql",
+        "statement.get",
+        "statement.cancel"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "18ed3451-d8ee-4311-a20f-ffab2dfe4892",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Bearer PAT, OAuth access token, or key-pair JWT (StudioQuack secret). Never the account password. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "be4c6c87-130a-4b22-881a-ff91bfd2d0b2",
+      "shortCode": "token_type",
+      "label": "Token type",
+      "type": "string",
+      "description": "X-Snowflake-Authorization-Token-Type. EXACT: KEYPAIR_JWT | OAUTH | PROGRAMMATIC_ACCESS_TOKEN (https://docs.snowflake.com/en/developer-guide/sql-api/authenticating). Default KEYPAIR_JWT. Blank omits the header.",
+      "value": "KEYPAIR_JWT",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "eea1069b-5104-4ff3-8deb-f5aa70d57aa1",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 45. Distinct from SQL API body timeout.",
+      "value": "45",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "61fc0a66-1e05-4f79-afbf-428146ac2f27",
+      "shortCode": "account_url",
+      "label": "Account URL host",
+      "type": "string",
+      "description": "Account locator host without scheme, e.g. xy12345.us-east-1.snowflakecomputing.com. Substituted into https://{account_url}.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

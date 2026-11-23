@@ -1,0 +1,1113 @@
+{
+  "_id": "0db949db-eee8-4b10-a14d-b65b16702e1a",
+  "version": "1.0.0",
+  "name": "Hugging Face",
+  "label": "Hugging Face",
+  "description": "Official Hugging Face Inference Providers (router) + Hub search on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). operation selects chat (POST router /v1/chat/completions), embeddings, inference, models_search, or datasets_search. Auth is StudioQuack secret api_token (hf_…) sent as Bearer. Respect gated model cards. Docs: https://huggingface.co/docs/inference-providers/en/index. Terms: https://huggingface.co/terms-of-service. Never log api_token.",
+  "icon": "psychology",
+  "tags": [
+    "hugging",
+    "face",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "97d04997-5d08-40eb-b8c1-51f73ce85199",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, stream?, model?, inputs?, search?, file?}. Media use type file (platform ref-id). Do not put api_token here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Conversation for operation=chat. List of {role, content}. VLMs may include image_url parts. Image sources use type file. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "inputs",
+          "label": "inputs",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Feature-extraction / generic inference payload (string, string[], or task JSON). Used by embeddings and inference.",
+          "children": []
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Hub substring for models_search / datasets_search.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for VL chat or inference image tasks. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tools` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "tool_choice",
+          "label": "tool_choice",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tool_choice` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "temperature",
+          "label": "temperature",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `temperature` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_p` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_tokens` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "frequency_penalty",
+          "label": "frequency_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `frequency_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "presence_penalty",
+          "label": "presence_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `presence_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `stop` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `seed` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "logprobs",
+          "label": "logprobs",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `logprobs` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_logprobs",
+          "label": "top_logprobs",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_logprobs` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `input` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "normalize",
+          "label": "normalize",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `normalize` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt_name",
+          "label": "prompt_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `prompt_name` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "truncate",
+          "label": "truncate",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `truncate` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "truncation_direction",
+          "label": "truncation_direction",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `truncation_direction` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "parameters",
+          "label": "parameters",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `parameters` for operation: inference.",
+          "children": []
+        },
+        {
+          "shortCode": "author",
+          "label": "author",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `author` for operations: models_search, datasets_search.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `filter` for operations: models_search, datasets_search.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sort` for operations: models_search, datasets_search.",
+          "children": []
+        },
+        {
+          "shortCode": "direction",
+          "label": "direction",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `direction` for operations: models_search, datasets_search.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operations: models_search, datasets_search.",
+          "children": []
+        },
+        {
+          "shortCode": "full",
+          "label": "full",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `full` for operations: models_search, datasets_search.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "509eaac2-098d-4079-9502-6dbd8c60f258",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. HTTP 403 gated → accept the license on huggingface.co/<id>. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Hugging Face JSON (chat, embeddings, inference, or Hub list).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "71507379-8b4f-4ae3-b47b-bcfe2533200f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Hugging Face verb. EXACT values: chat | embeddings | inference | models_search | datasets_search. Default chat = POST router /v1/chat/completions.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "embeddings",
+        "inference",
+        "models_search",
+        "datasets_search"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "chat",
+          "targets": [
+            {
+              "param": "model",
+              "visible": true
+            },
+            {
+              "param": "temperature",
+              "visible": true
+            },
+            {
+              "param": "response_format",
+              "visible": true
+            },
+            {
+              "param": "messages",
+              "visible": true
+            },
+            {
+              "param": "seed",
+              "visible": true
+            },
+            {
+              "param": "stop",
+              "visible": true
+            },
+            {
+              "param": "logprobs",
+              "visible": true
+            },
+            {
+              "param": "max_tokens",
+              "visible": true
+            },
+            {
+              "param": "tool_choice",
+              "visible": true
+            },
+            {
+              "param": "frequency_penalty",
+              "visible": true
+            },
+            {
+              "param": "tools",
+              "visible": true
+            },
+            {
+              "param": "presence_penalty",
+              "visible": true
+            },
+            {
+              "param": "top_p",
+              "visible": true
+            },
+            {
+              "param": "top_logprobs",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "embeddings",
+          "targets": [
+            {
+              "param": "model",
+              "visible": true
+            },
+            {
+              "param": "provider",
+              "visible": true
+            },
+            {
+              "param": "input",
+              "visible": true
+            },
+            {
+              "param": "prompt_name",
+              "visible": true
+            },
+            {
+              "param": "truncate",
+              "visible": true
+            },
+            {
+              "param": "normalize",
+              "visible": true
+            },
+            {
+              "param": "inputs",
+              "visible": true
+            },
+            {
+              "param": "truncation_direction",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "inference",
+          "targets": [
+            {
+              "param": "model",
+              "visible": true
+            },
+            {
+              "param": "provider",
+              "visible": true
+            },
+            {
+              "param": "inputs",
+              "visible": true
+            },
+            {
+              "param": "parameters",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "models_search",
+          "targets": [
+            {
+              "param": "direction",
+              "visible": true
+            },
+            {
+              "param": "full",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            },
+            {
+              "param": "sort",
+              "visible": true
+            },
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "author",
+              "visible": true
+            },
+            {
+              "param": "search",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "datasets_search",
+          "targets": [
+            {
+              "param": "direction",
+              "visible": true
+            },
+            {
+              "param": "full",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            },
+            {
+              "param": "sort",
+              "visible": true
+            },
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "author",
+              "visible": true
+            },
+            {
+              "param": "search",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "920e5c7d-1a45-4e01-b08c-ab86b8148391",
+      "shortCode": "api_token",
+      "label": "API token",
+      "type": "password",
+      "description": "Hugging Face user access token (hf_…) with Inference Providers permission. Sent as Authorization: Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_token is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0d5095cc-173a-44dd-840b-a411d5e48f22",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Hub id org/name. Chat may append :fastest / :cheapest / :providerName (official routing suffix). Options are curated examples only — the Hub catalog is unbounded. Verify at https://huggingface.co/docs/inference-providers . Docs: https://huggingface.co/docs/api-inference .",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "Qwen/Qwen3.5-9B",
+        "deepseek-ai/DeepSeek-V4-Pro",
+        "moonshotai/Kimi-K3",
+        "meta-llama/Llama-3.3-70B-Instruct",
+        "openai/gpt-oss-120b"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "8e966c6e-bd9c-4c87-9779-c0abff7f2028",
+      "shortCode": "provider",
+      "label": "Provider",
+      "type": "string",
+      "description": "Inference Providers id for embeddings/inference path /{provider}/models/{model}. Default hf-inference. Chat: prefer model suffix over this field. Verify live providers page before relying on a name.",
+      "value": "hf-inference",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7e72ca42-00af-46fe-af56-1f9102bdfbd0",
+      "shortCode": "temperature",
+      "label": "Temperature",
+      "type": "string",
+      "description": "Request-body parameter `temperature` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8223832d-8b36-47cc-8081-0312df5df09e",
+      "shortCode": "response_format",
+      "label": "Response Format",
+      "type": "string",
+      "description": "Request-body parameter `response_format` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1adf6637-2f7f-4c6c-8519-dab5cb7f1544",
+      "shortCode": "messages",
+      "label": "Messages",
+      "type": "object",
+      "description": "Conversation for operation=chat. List of {role, content}. VLMs may include image_url parts. Image sources use type file. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d7642d50-7c7e-4d32-9c91-a6ca406482d1",
+      "shortCode": "seed",
+      "label": "Seed",
+      "type": "string",
+      "description": "Request-body parameter `seed` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "593ffe54-ffe6-4bae-8ea4-1d5f8acdfd4d",
+      "shortCode": "stop",
+      "label": "Stop",
+      "type": "number",
+      "description": "Request-body parameter `stop` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "471b8353-5e2c-4294-91ea-e3e20366e401",
+      "shortCode": "logprobs",
+      "label": "Logprobs",
+      "type": "string",
+      "description": "Request-body parameter `logprobs` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9f3a85e8-f588-4e12-994c-41a176051eee",
+      "shortCode": "max_tokens",
+      "label": "Max Tokens",
+      "type": "string",
+      "description": "Request-body parameter `max_tokens` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5d5dab87-31c1-4917-a677-ead554ab0e82",
+      "shortCode": "tool_choice",
+      "label": "Tool Choice",
+      "type": "string",
+      "description": "Request-body parameter `tool_choice` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3013f67d-edb1-4e08-aad5-b6a5b3b374de",
+      "shortCode": "frequency_penalty",
+      "label": "Frequency Penalty",
+      "type": "string",
+      "description": "Request-body parameter `frequency_penalty` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "70f15a62-81ef-46ee-8e8b-1722c2744e08",
+      "shortCode": "tools",
+      "label": "Tools",
+      "type": "list",
+      "description": "Request-body parameter `tools` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "153318e7-523c-44f0-8181-6c8bd2888f3f",
+      "shortCode": "presence_penalty",
+      "label": "Presence Penalty",
+      "type": "string",
+      "description": "Request-body parameter `presence_penalty` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "749b9cbd-55b7-4955-82a5-964212dd90c1",
+      "shortCode": "top_p",
+      "label": "Top P",
+      "type": "string",
+      "description": "Request-body parameter `top_p` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7ebc8510-a6b6-4fd5-a3ec-03dda7de86af",
+      "shortCode": "top_logprobs",
+      "label": "Top Logprobs",
+      "type": "string",
+      "description": "Request-body parameter `top_logprobs` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "810714b1-2062-4278-adc3-7d35ffd80bb5",
+      "shortCode": "input",
+      "label": "Input",
+      "type": "string",
+      "description": "Request-body parameter `input` for operation: embeddings.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9d5905ce-0efd-4064-95bf-34653e3b7d70",
+      "shortCode": "prompt_name",
+      "label": "Prompt Name",
+      "type": "string",
+      "description": "Request-body parameter `prompt_name` for operation: embeddings.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "37f99619-ad99-4353-8fd9-dbfb81ebb9b7",
+      "shortCode": "truncate",
+      "label": "Truncate",
+      "type": "number",
+      "description": "Request-body parameter `truncate` for operation: embeddings.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "59499bbb-a78f-42e4-9e1e-533f275b6d9d",
+      "shortCode": "normalize",
+      "label": "Normalize",
+      "type": "string",
+      "description": "Request-body parameter `normalize` for operation: embeddings.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8d322bc7-fdfc-4c6d-b3f0-d1b77de4c43b",
+      "shortCode": "inputs",
+      "label": "Inputs",
+      "type": "object",
+      "description": "Feature-extraction / generic inference payload (string, string[], or task JSON). Used by embeddings and inference.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "209c8a59-fc2d-4499-abd1-9e87fd9c1038",
+      "shortCode": "truncation_direction",
+      "label": "Truncation Direction",
+      "type": "string",
+      "description": "Request-body parameter `truncation_direction` for operation: embeddings.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0e821301-df95-41ca-95ef-865bc2b2776d",
+      "shortCode": "parameters",
+      "label": "Parameters",
+      "type": "object",
+      "description": "Request-body parameter `parameters` for operation: inference.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "77b487c3-3fe7-4b9c-8541-4529fb7d5308",
+      "shortCode": "direction",
+      "label": "Direction",
+      "type": "string",
+      "description": "Query-string parameter `direction` for operations: models_search, datasets_search.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5511d4a7-ef78-4273-bea1-ad8f66eca8b0",
+      "shortCode": "full",
+      "label": "Full",
+      "type": "string",
+      "description": "Query-string parameter `full` for operations: models_search, datasets_search.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "98a749a2-da43-49ad-a1b2-a91dd4844e93",
+      "shortCode": "filter",
+      "label": "Filter",
+      "type": "string",
+      "description": "Query-string parameter `filter` for operations: models_search, datasets_search.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1ddaa903-d5e8-423f-90ba-d25d6072aa64",
+      "shortCode": "sort",
+      "label": "Sort",
+      "type": "string",
+      "description": "Query-string parameter `sort` for operations: models_search, datasets_search.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "41abb7f5-3903-43cf-b4a5-d833d795feab",
+      "shortCode": "limit",
+      "label": "Limit",
+      "type": "number",
+      "description": "Query-string parameter `limit` for operations: models_search, datasets_search.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "171e8431-e093-4136-b280-9cab61cc5caf",
+      "shortCode": "author",
+      "label": "Author",
+      "type": "string",
+      "description": "Query-string parameter `author` for operations: models_search, datasets_search.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "94ae8eb3-f82c-420c-9c3c-a1b0d857b326",
+      "shortCode": "search",
+      "label": "Search",
+      "type": "string",
+      "description": "Hub substring for models_search / datasets_search.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5430b83c-00b6-417a-9aca-918a40936813",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1. Cold hf-inference models can 503/504 while loading.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "af410854-0d79-4ffb-b787-7d60233068b7",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether Hugging Face requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,218 @@
+{
+  "_id": "e5c5b4d7-525d-4e0f-b070-187f8da5eeb3",
+  "version": "1.0.0",
+  "name": "LaunchDarkly",
+  "label": "LaunchDarkly REST API",
+  "description": "LaunchDarkly REST API via OfficialApiNode. Docs: https://launchdarkly.com/docs/api. Operations: flag_get, flag_list, flag_toggle, flag_patch, segment_get, environment_list, listen. Auth is Authorization: <token> with no Bearer prefix. Every request sends LD-API-Version: 20240415 via extraHeaders (https://launchdarkly.com/docs/guides/api/api-migration-guide). Auth secret api_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "launchdarkly",
+    "flags"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3e8be38d-fd5f-4546-8d69-86731d062ac3",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "flag_get",
+          "description": "Which official API call to run. EXACT values: flag_get | flag_list | flag_toggle | flag_patch | segment_get | environment_list | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'flag_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "featureKey",
+          "label": "featureKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Flag key for flag_get / flag_toggle / flag_patch. Example: checkout-v2.",
+          "children": []
+        },
+        {
+          "shortCode": "environmentKey",
+          "label": "environmentKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Environment key for segment_get (path) and to build JSON-patch paths for flag_toggle. Example: production.",
+          "children": []
+        },
+        {
+          "shortCode": "patch",
+          "label": "patch",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "JSON Patch array sent as the whole PATCH /flags/{projectKey}/{featureKey} body for flag_toggle and flag_patch. Each item is {op, path, value}. Example: [{\"op\":\"replace\",\"path\":\"/environments/production/on\",\"value\":true}]. https://launchdarkly.com/docs/api/feature-flags/patch-feature-flag",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for flag_list. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Offset for flag_list.",
+          "children": []
+        },
+        {
+          "shortCode": "segmentKey",
+          "label": "segmentKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Segment key for segment_get.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3f73e297-6b51-4c88-949c-84c4b5c9f01e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "abd7a5db-429b-46fb-b01f-645809ba99fc",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: flag_get, flag_list, flag_toggle, flag_patch, segment_get, environment_list, listen. listen is BPMN ingress, not a socket.",
+      "value": "flag_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "flag_get",
+        "flag_list",
+        "flag_toggle",
+        "flag_patch",
+        "segment_get",
+        "environment_list",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "186db082-9a6a-4783-972b-e874c113f9a1",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "LaunchDarkly access token. Authorization: <token> (no Bearer). LD-API-Version: 20240415 is sent via extraHeaders (https://launchdarkly.com/docs/guides/api/rest-api). Flag changes are production traffic.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ee4665ec-4647-4394-b630-5e513c2cb634",
+      "shortCode": "projectKey",
+      "label": "Projectkey",
+      "type": "string",
+      "description": "Project key.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0d4405ce-661e-4844-9891-327ecdc19c60",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

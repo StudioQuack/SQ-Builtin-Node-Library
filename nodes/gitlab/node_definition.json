@@ -1,0 +1,459 @@
+{
+  "_id": "cd7d53c3-c993-481f-8c18-be8de73a2ff4",
+  "version": "1.0.0",
+  "name": "GitLab",
+  "label": "GitLab REST API v4",
+  "description": "GitLab REST API v4 via OfficialApiNode. Docs: https://docs.gitlab.com/api/rest/. Operations: project_get, project_list, file_get, file_create, file_update, file_delete, issue_create, issue_get, issue_update, issue_note, mr_create, mr_get, mr_update, mr_accept, pipeline_create, pipeline_get, job_cancel, job_retry, release_create, branch_create, tag_create, listen. Auth secret access_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "gitlab",
+    "git",
+    "ci"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "8210dc8d-62aa-4215-830a-e8f4d74cfaee",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "project_get",
+          "description": "Which official API call to run. EXACT values: project_get | project_list | file_get | file_create | file_update | file_delete | issue_create | issue_get | issue_update | issue_note | mr_create | mr_get | mr_update | mr_accept | pipeline_create | pipeline_get | job_cancel | job_retry | release_create | branch_create | tag_create | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'project_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project id or URL-encoded namespace/path. Required for project-scoped ops.",
+          "children": []
+        },
+        {
+          "shortCode": "iid",
+          "label": "iid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project-level issue or MR iid (not global id).",
+          "children": []
+        },
+        {
+          "shortCode": "file_path",
+          "label": "file_path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Repository file path. Encoded including slashes.",
+          "children": []
+        },
+        {
+          "shortCode": "ref",
+          "label": "ref",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Branch, tag, or SHA.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Repository file payload for file_create / file_update (encoding=text|base64). For issue_create/issue_update use `description`; for issue_note use `body` (this field is copied when those are omitted). For branch_create / tag_create agents may place the new branch or tag name here.",
+          "children": []
+        },
+        {
+          "shortCode": "membership",
+          "label": "membership",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Query-string parameter `membership` for operation: project_list.",
+          "children": []
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `search` for operation: project_list.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page` for operation: project_list.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `per_page` for operation: project_list.",
+          "children": []
+        },
+        {
+          "shortCode": "branch",
+          "label": "branch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string/request-body parameter `branch` for operations: file_create, file_update, file_delete, branch_create.",
+          "children": []
+        },
+        {
+          "shortCode": "commit_message",
+          "label": "commit_message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string/request-body parameter `commit_message` for operations: file_create, file_update, file_delete.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `title` for operations: issue_create, issue_update, mr_create, mr_update.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `description` for operations: issue_create, issue_update, mr_create, mr_update, release_create.",
+          "children": []
+        },
+        {
+          "shortCode": "labels",
+          "label": "labels",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `labels` for operations: issue_create, issue_update.",
+          "children": []
+        },
+        {
+          "shortCode": "state_event",
+          "label": "state_event",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `state_event` for operations: issue_update, mr_update.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Issue note markdown for issue_note. Official GitLab `body` (the note text, not a generic blob). Max 1,000,000 characters. Example: Ship it after QA.",
+          "children": []
+        },
+        {
+          "shortCode": "source_branch",
+          "label": "source_branch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `source_branch` for operation: mr_create.",
+          "children": []
+        },
+        {
+          "shortCode": "target_branch",
+          "label": "target_branch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `target_branch` for operation: mr_create.",
+          "children": []
+        },
+        {
+          "shortCode": "pipeline_id",
+          "label": "pipeline_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `pipeline_id` for operation: pipeline_get. Required by: pipeline_get.",
+          "children": []
+        },
+        {
+          "shortCode": "job_id",
+          "label": "job_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `job_id` for operations: job_cancel, job_retry. Required by: job_cancel, job_retry.",
+          "children": []
+        },
+        {
+          "shortCode": "tag_name",
+          "label": "tag_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string/request-body parameter `tag_name` for operations: release_create, tag_create.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `name` for operation: release_create.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `message` for operation: tag_create.",
+          "children": []
+        },
+        {
+          "shortCode": "internal",
+          "label": "internal",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "When true, issue_note is an internal (confidential) note. Official `internal`. Overrides deprecated confidential.",
+          "children": []
+        },
+        {
+          "shortCode": "created_at",
+          "label": "created_at",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO-8601 created time for issue_note (owner/admin only). Example: 2016-03-11T03:45:40Z.",
+          "children": []
+        },
+        {
+          "shortCode": "encoding",
+          "label": "encoding",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "file_create / file_update content encoding. EXACT: text | base64. Default text.",
+          "children": []
+        },
+        {
+          "shortCode": "author_email",
+          "label": "author_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional commit author email for file_create / file_update.",
+          "children": []
+        },
+        {
+          "shortCode": "author_name",
+          "label": "author_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional commit author name for file_create / file_update.",
+          "children": []
+        },
+        {
+          "shortCode": "assignee_id",
+          "label": "assignee_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "User id to assign on issue_create. Official assignee_id.",
+          "children": []
+        },
+        {
+          "shortCode": "milestone_id",
+          "label": "milestone_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Milestone id on issue_create. Official milestone_id.",
+          "children": []
+        },
+        {
+          "shortCode": "confidential",
+          "label": "confidential",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "When true, issue_create makes a confidential issue.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "fd9872db-df57-473d-9b3a-7bc856ba0b39",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a31bc10a-2977-430f-8b87-0571abd9fb42",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: project_get, project_list, file_get, file_create, file_update, file_delete, issue_create, issue_get, issue_update, issue_note, mr_create, mr_get, mr_update, mr_accept, pipeline_create, pipeline_get, job_cancel, job_retry, release_create, branch_create, tag_create, listen. listen is BPMN ingress, not a socket.",
+      "value": "project_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "project_get",
+        "project_list",
+        "file_get",
+        "file_create",
+        "file_update",
+        "file_delete",
+        "issue_create",
+        "issue_get",
+        "issue_update",
+        "issue_note",
+        "mr_create",
+        "mr_get",
+        "mr_update",
+        "mr_accept",
+        "pipeline_create",
+        "pipeline_get",
+        "job_cancel",
+        "job_retry",
+        "release_create",
+        "branch_create",
+        "tag_create",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "69065ab4-820a-4fc7-a66a-19b579c6e2f7",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "GitLab personal, project, or group access token. Sent as PRIVATE-TOKEN. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1c763c17-8561-46a4-92d0-e60155319de4",
+      "shortCode": "id",
+      "label": "id",
+      "type": "string",
+      "description": "Default GitLab project id or URL-encoded path when INPUT id is empty. Example: group%2Fproject.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e541c764-39cc-454d-9c60-5f097a469153",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

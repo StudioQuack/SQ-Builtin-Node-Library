@@ -1,0 +1,250 @@
+{
+  "_id": "bd4e5d5c-f319-4f96-a029-acc9a620b9df",
+  "version": "1.0.0",
+  "name": "Cortex",
+  "label": "Cortex analyzers/responders API (customer-hosted)",
+  "description": "Official Cortex REST (Cortex 2+) via OfficialApiNode. Docs: https://docs.strangebee.com/cortex/api/api-guide/. Auth header Authorization with empty prefix (raw API key). Submitting observables may share IOCs/file bytes with third-party scanners configured on that Cortex. cortexHost is host[:port] without scheme (default listen 9001). File observables need multipart; OfficialApiNode sends JSON.",
+  "icon": "psychology",
+  "tags": [
+    "soar"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "16922fdf-97af-45bd-ac38-dce5a863883f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path/query/body keys match api_spec.json.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "execute-analyzer",
+          "description": "Overrides config operation when non-blank. EXACT: execute-analyzer | get-job | get-job-report | execute-responder.",
+          "children": []
+        },
+        {
+          "shortCode": "analyzerId",
+          "label": "analyzerId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Enabled analyzer instance id for execute-analyzer.",
+          "children": []
+        },
+        {
+          "shortCode": "responderId",
+          "label": "responderId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Enabled responder instance id for execute-responder.",
+          "children": []
+        },
+        {
+          "shortCode": "jobId",
+          "label": "jobId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job id for get-job / get-job-report.",
+          "children": []
+        },
+        {
+          "shortCode": "dataType",
+          "label": "dataType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Observable type (ip, domain, hash, file, …) or responder datatype.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Observable value or responder JSON. Do not log IOCs.",
+          "children": []
+        },
+        {
+          "shortCode": "tlp",
+          "label": "tlp",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "TLP 0–3.",
+          "children": []
+        },
+        {
+          "shortCode": "force",
+          "label": "force",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "execute-analyzer: 1 to bypass job cache.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `message` for operations: execute-analyzer, execute-responder.",
+          "children": []
+        },
+        {
+          "shortCode": "parameters",
+          "label": "parameters",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `parameters` for operations: execute-analyzer, execute-responder.",
+          "children": []
+        },
+        {
+          "shortCode": "pap",
+          "label": "pap",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `pap` for operation: execute-responder.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b619ec94-9a62-4e38-bb40-f41b3aee30ec",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5cde61b7-e758-448e-819b-066936491563",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb when input.operation is blank.",
+      "value": "execute-analyzer",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "execute-analyzer",
+        "get-job",
+        "get-job-report",
+        "execute-responder"
+      ]
+    },
+    {
+      "_id": "712cc143-1b5a-46c2-b446-64b81ff8d4f4",
+      "shortCode": "cortexHost",
+      "label": "Cortex host",
+      "type": "string",
+      "description": "Cortex host without scheme. Example: cortex.example.com:9001. OfficialApiNode URL-encodes path placeholders.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "91943f7c-090c-4870-9f7d-cdba04924ef3",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Cortex API key. Header Authorization with empty prefix (raw key). StudioQuack secret. Never on INPUT or in logs.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dd8fbfb3-970e-4d36-944d-12d67b37735f",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Analyzer jobs can be slow. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,186 @@
+{
+  "_id": "e9f52ac4-576c-4bb4-8ec2-7fc3ba4dcf97",
+  "version": "1.0.0",
+  "name": "CrateDB",
+  "label": "CrateDB HTTP — POST /_sql",
+  "description": "Official CrateDB HTTP SQL. POST /_sql with JSON stmt and args (table.insert also bulk_args). Default http://localhost:4200; edit api_spec.baseUrl for the cluster (engine cannot bind host). Handler: OfficialApiNode. HTTP Basic username+password. Customer owns the cluster. password is never logged or returned.",
+  "icon": "database",
+  "tags": [
+    "sql",
+    "olap"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "19e28187-2fb0-4fdf-b9d2-92ab21163d99",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Both ops require stmt. execute.sql optional args. table.insert optional args or bulk_args (list of arg lists). Do not put password here. Example: {\"operation\":\"execute.sql\",\"stmt\":\"SELECT 1\",\"args\":[]}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "execute.sql",
+          "description": "Overrides config operation when non-blank. EXACT: 'execute.sql' | 'table.insert'.",
+          "children": []
+        },
+        {
+          "shortCode": "stmt",
+          "label": "stmt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SQL with ? or $1 placeholders. Official JSON key stmt.",
+          "children": []
+        },
+        {
+          "shortCode": "args",
+          "label": "args",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parameter array for one execution. Official JSON key args.",
+          "children": []
+        },
+        {
+          "shortCode": "bulk_args",
+          "label": "bulk_args",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "List of arg lists for table.insert bulk INSERT. Official JSON key bulk_args. Bulk cannot return result sets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "d04832b1-6cee-48e1-b898-4bf956ad1d01",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (cols/rows/rowcount). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (cols, rows, rowcount, duration).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "87f7ab57-0363-432a-a010-0280a1ad01fc",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: execute.sql | table.insert.",
+      "value": "execute.sql",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "execute.sql",
+        "table.insert"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "00165106-5477-44bb-b36c-fa3f6e5ab4ef",
+      "shortCode": "username",
+      "label": "Username",
+      "type": "string",
+      "description": "HTTP Basic username. Default CrateDB user is often 'crate'.",
+      "value": "crate",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d6223f73-8d5d-414f-95a2-4b3a2b23c978",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "HTTP Basic password (StudioQuack secret). Never log or place on INPUT. Must be non-empty even if the cluster uses trust auth.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "84900e91-8faf-4b97-bbfd-f28fcdb88b7d",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

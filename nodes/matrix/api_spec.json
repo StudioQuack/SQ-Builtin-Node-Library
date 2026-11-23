@@ -1,0 +1,136 @@
+{
+  "baseUrl": "https://",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "get-account": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{homeserver}/_matrix/client/v3/account/whoami",
+      "contentType": "application/json"
+    },
+    "get-event": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{homeserver}/_matrix/client/v3/rooms/{roomId}/event/{eventId}",
+      "contentType": "application/json",
+      "required": [
+        "roomId",
+        "eventId"
+      ]
+    },
+    "send-message": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "{homeserver}/_matrix/client/v3/rooms/{roomId}/send/m.room.message/{txnId}",
+      "contentType": "application/json",
+      "required": [
+        "roomId",
+        "txnId"
+      ],
+      "bodyFrom": [
+        "msgtype",
+        "body"
+      ]
+    },
+    "list-messages": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{homeserver}/_matrix/client/v3/rooms/{roomId}/messages",
+      "contentType": "application/json",
+      "required": [
+        "roomId",
+        "dir"
+      ],
+      "queryFrom": [
+        "from",
+        "dir",
+        "limit"
+      ]
+    },
+    "send-media": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{homeserver}/_matrix/media/v3/upload",
+      "contentType": "application/json",
+      "queryFrom": [
+        "filename"
+      ]
+    },
+    "create-room": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{homeserver}/_matrix/client/v3/createRoom",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "name",
+        "topic",
+        "preset",
+        "invite"
+      ]
+    },
+    "invite-room": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{homeserver}/_matrix/client/v3/rooms/{roomId}/invite",
+      "contentType": "application/json",
+      "required": [
+        "roomId",
+        "user_id"
+      ],
+      "bodyFrom": [
+        "user_id"
+      ]
+    },
+    "join-room": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{homeserver}/_matrix/client/v3/join/{roomIdOrAlias}",
+      "contentType": "application/json",
+      "required": [
+        "roomIdOrAlias"
+      ]
+    },
+    "kick-room": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{homeserver}/_matrix/client/v3/rooms/{roomId}/kick",
+      "contentType": "application/json",
+      "required": [
+        "roomId",
+        "user_id"
+      ],
+      "bodyFrom": [
+        "user_id",
+        "reason"
+      ]
+    },
+    "leave-room": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{homeserver}/_matrix/client/v3/rooms/{roomId}/leave",
+      "contentType": "application/json",
+      "required": [
+        "roomId"
+      ]
+    },
+    "list-members": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{homeserver}/_matrix/client/v3/rooms/{roomId}/members",
+      "contentType": "application/json",
+      "required": [
+        "roomId"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

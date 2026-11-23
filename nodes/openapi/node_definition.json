@@ -1,0 +1,236 @@
+{
+  "_id": "bfc34d22-7995-42b5-8418-3a399085165f",
+  "version": "1.0.0",
+  "name": "OpenAPI",
+  "label": "OpenAPI 3 invoke",
+  "description": "Generic HTTP GET stub via OfficialApiNode (not an OpenAPI parser). Docs: https://spec.openapis.org/oas/latest.html. Operations: import_spec and list_operations GET /{spec_path}; invoke GET /{path} only — methods beyond GET are not selectable. Default baseUrl https://example.com. Auth secret auth_token is instance config only (never on INPUT, never logged). Failures are output.error. JDK HTTP.",
+  "icon": "hub",
+  "tags": [
+    "openapi",
+    "swagger",
+    "http"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5e00a716-a0cd-42a6-be36-d9b5a8b8aeff",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "import_spec",
+          "description": "Which official API call to run. EXACT values: import_spec | list_operations | invoke. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'import_spec'.",
+          "children": []
+        },
+        {
+          "shortCode": "spec_path",
+          "label": "spec_path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path or URL segment of an OpenAPI document for import_spec / list_operations. Example: openapi.json.",
+          "children": []
+        },
+        {
+          "shortCode": "path",
+          "label": "path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Relative path to invoke. Example: /pets/1.",
+          "children": []
+        },
+        {
+          "shortCode": "method",
+          "label": "method",
+          "type": "select",
+          "required": false,
+          "value": "GET",
+          "description": "HTTP method for invoke. EXACT: GET | POST | PUT | PATCH | DELETE. Default GET.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JSON request body for invoke when method is not GET/HEAD. Example: {\"name\":\"Rex\"}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "fe0c98a1-84da-436c-9f61-0e3f08dcb7a5",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5b280517-0e3d-4481-b63e-2b64828902f4",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: import_spec, list_operations, invoke. listen is BPMN ingress, not a socket.",
+      "value": "import_spec",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "import_spec",
+        "list_operations",
+        "invoke"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "invoke",
+          "targets": [
+            {
+              "param": "method",
+              "visible": true
+            },
+            {
+              "param": "body",
+              "visible": true
+            },
+            {
+              "param": "path",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "3ca61729-d5b9-45e2-be6e-9b9e733b37dc",
+      "shortCode": "auth_token",
+      "label": "Auth Token",
+      "type": "password",
+      "description": "Optional passthrough bearer for invoke. Leave unused for public specs.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "11b71fe6-6d25-4b0c-96c3-d75b4309c0cd",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3bcb3447-6ca6-4423-a386-7826af1d0443",
+      "shortCode": "method",
+      "label": "Method",
+      "type": "select",
+      "description": "HTTP method for invoke. EXACT: GET | POST | PUT | PATCH | DELETE. Default GET.",
+      "value": "GET",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {},
+      "options": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE"
+      ]
+    },
+    {
+      "_id": "b8f556fe-b68a-4904-97fd-5203dc4fc8c5",
+      "shortCode": "body",
+      "label": "Body",
+      "type": "object",
+      "description": "JSON request body for invoke when method is not GET/HEAD. Example: {\"name\":\"Rex\"}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

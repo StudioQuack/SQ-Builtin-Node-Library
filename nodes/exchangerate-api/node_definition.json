@@ -1,0 +1,212 @@
+{
+  "_id": "2d315c62-2f31-56ed-a034-0b2072d89792",
+  "version": "1.0.0",
+  "name": "ExchangeRate-API",
+  "label": "ExchangeRate-API",
+  "description": "ExchangeRate-API official API via OfficialApiNode (api_spec.json). Operations: latest, historical, convert, quota. Docs: https://www.exchangerate-api.com/docs/standard-requests. ExchangeRate-API v6 (https://v6.exchangerate-api.com). Key in path (or Bearer with key omitted from path — this node uses path keys). HTTPS for all keyed plans including Free. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "currency",
+  "tags": [
+    "fx",
+    "exchangerate"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d5ea56a3-8ced-5414-adb9-e05d7fe05346",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One ExchangeRate-API request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"latest\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: latest | historical | convert | quota. Default: first listed or instance operation. Example: 'latest'.",
+          "children": [],
+          "_id": "9a9f3862-9791-5a89-aaed-c9ab0fa3b804"
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "convert path amount. Optional (pair without amount still works). Example: 25.5.",
+          "children": [],
+          "_id": "8aafb2db-d0d3-5196-a719-cc9def2c8940"
+        },
+        {
+          "shortCode": "base_code",
+          "label": "base_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `base_code` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "af46f436-300e-5f00-a609-bb429c1138a5"
+        },
+        {
+          "shortCode": "day",
+          "label": "day",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Sent as path, query, or JSON body field `day` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "fd594ba4-d95e-53da-884a-00fabc8d0bfe"
+        },
+        {
+          "shortCode": "month",
+          "label": "month",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Sent as path, query, or JSON body field `month` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "100ed15c-2f02-57ad-af98-267417038b66"
+        },
+        {
+          "shortCode": "target_code",
+          "label": "target_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `target_code` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "1d6ee816-4ee8-5ee9-86e3-38345fda8fa8"
+        },
+        {
+          "shortCode": "year",
+          "label": "year",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Sent as path, query, or JSON body field `year` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "d974409b-5db3-571b-96ed-d8b9b9dc6cef"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "12fc4d15-4f1c-5f30-8b00-03e5c183a93f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "7484a5b0-5a65-5acc-84c5-8665174a368c"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "0c7b0e4a-1159-5d9c-83a3-02672de3c09e"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "20615931-35a1-5ce8-87ae-5c8d80613a08"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a2a5dbc3-2c62-58c1-bfdd-960ee8d13ce9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: latest, historical, convert, quota.",
+      "value": "latest",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "latest",
+        "historical",
+        "convert",
+        "quota"
+      ]
+    },
+    {
+      "_id": "212c762d-7631-5445-98a2-9fc1004e370c",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "v6 API key used in the path. Bind a StudioQuack secret.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c14b6e0a-be72-540b-906f-f6eae6e7eac4",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 20. Keep under the daemon sandbox request budget.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

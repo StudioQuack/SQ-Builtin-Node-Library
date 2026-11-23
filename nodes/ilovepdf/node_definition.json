@@ -1,0 +1,273 @@
+{
+  "_id": "55ec3052-8e57-5840-aa38-9f9d773158b2",
+  "version": "1.0.0",
+  "name": "iLovePDF",
+  "label": "iLovePDF REST API",
+  "description": "iLovePDF REST start/{tool} only. Handler: OfficialApiNode. Docs: https://developer.ilovepdf.com/docs/api-reference. Each operation calls GET /start/{tool} and returns a task id. Upload, process and download are separate signed calls the engine cannot chain. Auth: public_key (JWT is minted by iLovePDF start). Never log public_key.",
+  "icon": "picture_as_pdf",
+  "tags": [
+    "ilovepdf",
+    "pdf"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "72695f34-1543-5ea3-a74e-647cb266e48b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "merge",
+          "description": "Overrides config operation. Accepted: merge, split, compress, pdfjpg, imagepdf, unlock, protect, rotate, repair, watermark.",
+          "children": []
+        },
+        {
+          "shortCode": "ranges",
+          "label": "Ranges",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Page ranges for split when split_mode=ranges. Example: 1-3,5.",
+          "children": []
+        },
+        {
+          "shortCode": "password",
+          "label": "Password",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Password for protect (required) or unlock (encrypted file password).",
+          "children": []
+        },
+        {
+          "shortCode": "rotate",
+          "label": "Rotate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-file rotation for rotate op (degrees in files[]). Example: 90.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "Text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Watermark text when mode=text. Required for text watermarks.",
+          "children": []
+        },
+        {
+          "shortCode": "files",
+          "label": "Files",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Files array for merge/process (multiple server_filenames). Example: [{\"server_filename\":\"...\"}].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "57b4848b-57e5-5463-929d-41b946e4fdbb",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "278ea45f-65ec-58d0-8503-6155365d45a9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "merge",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "merge",
+        "split",
+        "compress",
+        "pdfjpg",
+        "imagepdf",
+        "unlock",
+        "protect",
+        "rotate",
+        "repair",
+        "watermark"
+      ]
+    },
+    {
+      "_id": "17729156-7908-5537-99cf-cd7cec809fa8",
+      "shortCode": "public_key",
+      "label": "Public Key",
+      "type": "password",
+      "description": "Bearer JWT minted outside StudioQuack (POST /v1/auth with the project public key, or a self-signed JWT). Not the raw public key. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7c2c32e9-972f-48c7-aa8a-2d645a54cf7e",
+      "shortCode": "ranges",
+      "label": "Ranges",
+      "type": "string",
+      "description": "Page ranges for split when split_mode=ranges. Example: 1-3,5.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "653f1bb9-2028-4f77-8470-bcc68f24aadd",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "Password for protect (required) or unlock (encrypted file password).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "41c784c9-e229-453d-be82-21d57ec4627e",
+      "shortCode": "rotate",
+      "label": "Rotate",
+      "type": "string",
+      "description": "Per-file rotation for rotate op (degrees in files[]). Example: 90.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "bf767286-e4ff-4af8-b7a3-7e6694f050c7",
+      "shortCode": "text",
+      "label": "Text",
+      "type": "string",
+      "description": "Watermark text when mode=text. Required for text watermarks.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "acc44e1c-299b-4e0a-8e40-ce3bcf257c7a",
+      "shortCode": "files",
+      "label": "Files",
+      "type": "object",
+      "description": "Files array for merge/process (multiple server_filenames). Example: [{\"server_filename\":\"...\"}].",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "cca5238e-5fd6-51e8-aa08-0fd0efbfc817",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 120.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

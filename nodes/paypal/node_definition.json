@@ -1,0 +1,295 @@
+{
+  "_id": "f9296d53-a4ff-4d82-825b-7c0b0fe644fe",
+  "version": "1.0.0",
+  "name": "PayPal",
+  "label": "PayPal — PayPal REST Orders v2 + Payouts v1 + Payments captures",
+  "description": "Official PayPal REST Orders v2 + Payouts v1 + Payments captures. Docs: https://developer.paypal.com/docs/api/orders/v2/. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. Bind a client-credentials access_token (or refresh it outside the graph). Sandbox host is api-m.sandbox.paypal.com. PCI: PayPal JS / vault tokens only.",
+  "icon": "account_balance",
+  "tags": [
+    "paypal",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "8926537a-d755-4f02-b546-dece13bb405a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for PayPal. Secrets never on this port. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "order_create",
+          "description": "Overrides config operation. EXACT: order_create | order_capture | refund | payout_create | payout_get | payout_item_get | payout_item_cancel | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "Environment",
+          "type": "string",
+          "required": false,
+          "value": "api-m.paypal.com",
+          "description": "api-m.sandbox.paypal.com vs api-m.paypal.com. Substituted into baseUrl as https://{environment}.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id when the path uses {id}.",
+          "children": []
+        },
+        {
+          "shortCode": "intent",
+          "label": "intent",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "order_create: CAPTURE | AUTHORIZE. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "purchase_units",
+          "label": "purchase_units",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "order_create: purchase units, e.g. [{\"amount\":{\"currency_code\":\"USD\",\"value\":\"10.00\"}}]. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "payer",
+          "label": "payer",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "order_create optional payer {name, email_address}. Example: {\"email_address\":\"ada@example.com\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "payment_source",
+          "label": "payment_source",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "order_create payment_source (paypal, card token — never PAN).",
+          "children": []
+        },
+        {
+          "shortCode": "application_context",
+          "label": "application_context",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "order_create {return_url, cancel_url, brand_name, user_action}. Example: {\"user_action\":\"PAY_NOW\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "invoice_id",
+          "label": "invoice_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "refund invoice id. Example: INV-1001.",
+          "children": []
+        },
+        {
+          "shortCode": "note_to_payer",
+          "label": "note_to_payer",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "refund note to the payer.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "refund: optional partial amount {\"currency_code\":\"USD\",\"value\":\"5.00\"}; omit for a full refund.",
+          "children": []
+        },
+        {
+          "shortCode": "sender_batch_header",
+          "label": "sender_batch_header",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `sender_batch_header` for operation: payout_create.",
+          "children": []
+        },
+        {
+          "shortCode": "items",
+          "label": "items",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `items` for operation: payout_create.",
+          "children": []
+        },
+        {
+          "shortCode": "payout_batch_id",
+          "label": "payout_batch_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `payout_batch_id` for operation: payout_get. Required by: payout_get.",
+          "children": []
+        },
+        {
+          "shortCode": "payout_item_id",
+          "label": "payout_item_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `payout_item_id` for operations: payout_item_get, payout_item_cancel. Required by: payout_item_get, payout_item_cancel.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "4c1d565c-5a7f-4d54-9bab-dfe12bb15e52",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c9b74500-53e1-443d-9ee9-f29e09337c37",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: order_create | order_capture | refund | payout_create | payout_get | payout_item_get | payout_item_cancel | trigger. Default order_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "order_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "order_create",
+        "order_capture",
+        "refund",
+        "payout_create",
+        "payout_get",
+        "payout_item_get",
+        "payout_item_cancel",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "cbc4e14d-5592-4ddf-8d85-cfe6296ac5bc",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "OAuth access token minted outside StudioQuack (POST /v1/oauth2/token). Bearer Authorization. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "594fc72e-8f81-46c8-8bae-01dc37bf9550",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "api-m.sandbox.paypal.com vs api-m.paypal.com. Substituted into baseUrl as https://{environment}.",
+      "value": "api-m.paypal.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "api-m.paypal.com",
+        "api-m.sandbox.paypal.com"
+      ]
+    },
+    {
+      "_id": "28de3e64-0292-4c2c-a1d4-eafbe60fba9d",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

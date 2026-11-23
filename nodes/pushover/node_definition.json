@@ -1,0 +1,234 @@
+{
+  "_id": "c9cb1622-65eb-5a91-806b-0b5e3517dc0f",
+  "version": "1.0.0",
+  "name": "Pushover",
+  "label": "Pushover — Pushover Message API v1",
+  "description": "Pushover via the official Pushover Message API v1. Base https://api.pushover.net/1. Docs: https://pushover.net/api. Emergency priority has extra cost / quota. Do not implement Glances or Open Client. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "notifications",
+  "tags": [
+    "push"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "bdee7792-e1d5-5ad6-97ea-f0e532f65ad1",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Pushover operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"push\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "push",
+          "description": "Which official call to run. EXACT values: push | list-sounds. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Notification body (required for push). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional title. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "priority",
+          "label": "priority",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "-2 .. 2. Emergency (2) requires retry ≥30 and expire ≤10800. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "retry",
+          "label": "retry",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Emergency retry seconds (min 30). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "expire",
+          "label": "expire",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Emergency expire seconds (max 10800). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "sound",
+          "label": "sound",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sound name from list-sounds. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `url` for operation: push.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8775a835-64b5-52c3-badd-8ce70f61a331",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0d6c3508-21a4-581f-a627-cd906dff11de",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: push, list-sounds. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "push",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "push",
+        "list-sounds"
+      ]
+    },
+    {
+      "_id": "833836b7-154f-5e0d-ad88-8445667937c6",
+      "shortCode": "token",
+      "label": "Application token",
+      "type": "password",
+      "description": "Pushover application API token. Query/body token. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "75bfff54-6a95-5355-8cbc-b9f2c464e864",
+      "shortCode": "user",
+      "label": "user",
+      "type": "password",
+      "description": "Recipient user or group key (30 chars). Form/query user. StudioQuack secret.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "71276a29-0b67-5aba-ae67-e2168e57e27c",
+      "shortCode": "device",
+      "label": "device",
+      "type": "string",
+      "description": "Optional default device name.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5174b729-e28a-582e-b4d3-67848e08387c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

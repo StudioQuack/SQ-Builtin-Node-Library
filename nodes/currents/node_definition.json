@@ -1,0 +1,228 @@
+{
+  "_id": "64e68ec8-c4e1-44df-8236-4d21be0b440c",
+  "version": "1.0.0",
+  "name": "Currents",
+  "label": "Currents News API",
+  "description": "Official Currents News API v1 (currentsapi.services — not currents.dev). Bearer auth. search, latest, available catalogues. Keep publisher URLs. No paywall bypass.",
+  "icon": "newspaper",
+  "tags": [
+    "currents",
+    "news"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f0442cdc-8e08-4401-b0f9-39a680dc5bda",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-invoke fields for Currents. Do not put secrets here. Example: {\"operation\":\"search\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "search",
+          "description": "Overrides config operation. EXACT: search | latest | available. Example: 'search'.",
+          "children": []
+        },
+        {
+          "shortCode": "keywords",
+          "label": "keywords",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search keywords. Example: semiconductor supply.",
+          "children": []
+        },
+        {
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Language code. Example: en.",
+          "children": []
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Region code. Example: US.",
+          "children": []
+        },
+        {
+          "shortCode": "category",
+          "label": "category",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Category. Example: technology.",
+          "children": []
+        },
+        {
+          "shortCode": "start_date",
+          "label": "start_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "YYYY-MM-DDTHH:MM:SS+00:00. Example: 2026-08-01T00:00:00+00:00.",
+          "children": []
+        },
+        {
+          "shortCode": "end_date",
+          "label": "end_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Same format as start_date.",
+          "children": []
+        },
+        {
+          "shortCode": "catalog",
+          "label": "catalog",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "available only. Official path segment: languages | regions | categories (maps to GET /available/{segment}). Alias shortCode kind.",
+          "children": []
+        },
+        {
+          "shortCode": "kind",
+          "label": "kind",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alias for catalog on operation available (same values: languages | regions | categories). Example: categories.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alias for keywords on operation search.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "28af0abe-3892-4b66-95fc-a4a773f398a7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data} on 2xx. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT: 'ok'. Absent on failure. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status from the provider. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). OfficialApiNode places the provider payload here. Example: provider object.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0427d479-12a8-4804-9426-e5df43105dc0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: search | latest | available. Example: 'search'.",
+      "value": "search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "search",
+        "latest",
+        "available"
+      ]
+    },
+    {
+      "_id": "8a9e4312-dd87-4be3-b367-63091f5203b8",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Currents API key. Authorization: Bearer. https://currentsapi.services/",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "624fee57-4cf3-4257-b86c-38553c9e43fc",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. <=0 falls back to 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

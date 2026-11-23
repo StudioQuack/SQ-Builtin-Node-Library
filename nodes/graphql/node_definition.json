@@ -1,0 +1,225 @@
+{
+  "_id": "18a7ee74-016f-4e0a-809b-4d27826f8458",
+  "version": "1.0.0",
+  "name": "GraphQL",
+  "label": "GraphQL over HTTP",
+  "description": "Generic GraphQL client. Sends query or mutate over HTTP (GraphQL-over-HTTP) to an operator-supplied endpoint using JDK HTTP via OfficialApiNode. Prefer a typed provider node when one exists. TLS is verified. Subscriptions over WebSocket are out of scope.",
+  "icon": "",
+  "tags": [
+    "graphql",
+    "api"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "2b6ad262-7eb7-4d3d-9a97-45bbf6024541",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One GraphQL operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'query'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "query",
+          "description": "query | mutate. Overrides config when set.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GraphQL query or mutation document. Required. Example: query { viewer { id } }.",
+          "children": []
+        },
+        {
+          "shortCode": "variables",
+          "label": "variables",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "GraphQL variables object. query / mutate. Example: {\"id\":\"1\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "operationName",
+          "label": "operationName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GraphQL operationName when the document has several operations. query / mutate.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "46be1747-d7d9-44c9-b43e-30c06f04d3bc",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5eb756d2-54a2-42e6-bf25-e756a2687a04",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: query | mutate. Required. Example: 'query'.",
+      "value": "query",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "query",
+        "mutate"
+      ]
+    },
+    {
+      "_id": "1528b7ee-9207-4cb6-a877-3dbc075c950c",
+      "shortCode": "endpoint",
+      "label": "Endpoint",
+      "type": "string",
+      "description": "Absolute GraphQL HTTP URL (https). Required. Example: 'https://api.example.com/graphql'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6d40766b-bc43-4367-9e4d-cdf153d01b3a",
+      "shortCode": "auth_token",
+      "label": "Auth Token",
+      "type": "password",
+      "description": "Bearer token for the GraphQL host (Authorization: Bearer). Secret. Blank when the host needs no auth.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "491e093e-83f1-43ad-b516-a13b18ba9cce",
+      "shortCode": "query",
+      "label": "Query",
+      "type": "string",
+      "description": "GraphQL query or mutation document. Required. Example: query { viewer { id } }.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5ff197a0-baa0-4bcf-ab6c-52a2b16c4962",
+      "shortCode": "variables",
+      "label": "Variables",
+      "type": "object",
+      "description": "GraphQL variables object. query / mutate. Example: {\"id\":\"1\"}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "683f7b50-db58-45dc-832a-e52c79e60532",
+      "shortCode": "operationName",
+      "label": "Operationname",
+      "type": "string",
+      "description": "GraphQL operationName when the document has several operations. query / mutate.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b8a5ab63-cc5c-4f7f-8ccc-deb90a9bc172",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

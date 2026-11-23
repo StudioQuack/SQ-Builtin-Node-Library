@@ -1,0 +1,410 @@
+{
+  "_id": "93b7680b-9064-4edb-bf51-86735239bfb9",
+  "version": "1.0.0",
+  "name": "Spotify",
+  "label": "Spotify Web API — search, tracks, playlists, player",
+  "description": "Official Spotify Web API at https://api.spotify.com/v1. Handler: OfficialApiNode. Auth is OAuth bearer access_token minted outside StudioQuack. Feb 2026 search: limit default 5, max 10. Customer owns the Spotify app and grant. Never log tokens. Docs: https://developer.spotify.com/documentation/web-api",
+  "icon": "library_music",
+  "tags": [
+    "spotify",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "450d565d-7d44-438f-afdd-351631510125",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. search needs q + type (limit, market optional). track_get needs track_id. playlist_get / playlist_add need playlist_id; playlist_add also needs uris. player_state has no extra fields. Do not put access_token here. Example: {\"operation\":\"search\",\"q\":\"radiohead\",\"type\":\"track\",\"limit\":5}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "search",
+          "description": "Overrides config operation when non-blank. EXACT: search | track_get | playlist_get | playlist_add | player_state | trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search query for search (GET /search). Required with type. Example: 'radiohead'.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Spotify search type(s) for search. Comma-separated: album, artist, playlist, track, show, episode, audiobook. Required. Example: 'track'.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Search page size. Spotify (Feb 2026): default 5, maximum 10. This node forwards the value; Spotify 400s above 10. Example: 5.",
+          "children": []
+        },
+        {
+          "shortCode": "market",
+          "label": "market",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 3166-1 alpha-2 market for search. Optional. Example: 'US'.",
+          "children": []
+        },
+        {
+          "shortCode": "track_id",
+          "label": "track_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Spotify track id for track_get (GET /tracks/{track_id}). Example: '11dFghVXANMlKmJXsNCbNl'.",
+          "children": []
+        },
+        {
+          "shortCode": "playlist_id",
+          "label": "playlist_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Playlist id for playlist_get and playlist_add. Example: '3cEYpjA9oz9GiPac4AsH4n'.",
+          "children": []
+        },
+        {
+          "shortCode": "uris",
+          "label": "uris",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Spotify track/episode URIs for playlist_add. Required. Example: [\"spotify:track:4iV5W9uYEdYUVa79Axb7Rh\"].",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "search offset (0-based).",
+          "children": []
+        },
+        {
+          "shortCode": "position",
+          "label": "position",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "playlist_add insert position (0 = top).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ac76827f-b012-4b77-b437-8fa4d34a24f5",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). trigger returns the BPMN message-event instruction — it does not open a socket. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx. player_state may be HTTP 204 with empty data when nothing is playing.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (search page, Track, Playlist, snapshot, or playback state).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "d0039b05-2ddb-45be-94fb-dfeb267ed97e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: search | track_get | playlist_get | playlist_add | player_state | trigger.",
+      "value": "search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "search",
+        "track_get",
+        "playlist_get",
+        "playlist_add",
+        "player_state",
+        "trigger"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "search",
+          "targets": [
+            {
+              "param": "q",
+              "visible": true
+            },
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "market",
+              "visible": true
+            },
+            {
+              "param": "offset",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "track_get",
+          "targets": [
+            {
+              "param": "track_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "playlist_get",
+          "targets": [
+            {
+              "param": "playlist_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "playlist_add",
+          "targets": [
+            {
+              "param": "playlist_id",
+              "visible": true
+            },
+            {
+              "param": "position",
+              "visible": true
+            },
+            {
+              "param": "uris",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "a8398644-78b2-4d57-95d0-75b84a71b806",
+      "shortCode": "access_token",
+      "label": "OAuth access token",
+      "type": "password",
+      "description": "Spotify OAuth access token minted outside StudioQuack (StudioQuack secret). Sent as Authorization: Bearer. playlist_add needs playlist-modify-public or playlist-modify-private; player_state needs user-read-playback-state. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0b63edba-c13d-4143-b2dc-6417c9faf744",
+      "shortCode": "q",
+      "label": "Q",
+      "type": "string",
+      "description": "Search query for search (GET /search). Required with type. Example: 'radiohead'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b68e78c6-521a-440a-bac4-27f971266528",
+      "shortCode": "limit",
+      "label": "Limit",
+      "type": "number",
+      "description": "Search page size. Spotify (Feb 2026): default 5, maximum 10. This node forwards the value; Spotify 400s above 10. Example: 5.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dd94ae5b-8c9e-4629-802e-25d35b019858",
+      "shortCode": "market",
+      "label": "Market",
+      "type": "string",
+      "description": "ISO 3166-1 alpha-2 market for search. Optional. Example: 'US'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "49cf9984-4175-4a5c-9bd8-6848036647c3",
+      "shortCode": "offset",
+      "label": "Offset",
+      "type": "number",
+      "description": "search offset (0-based).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1a62caa5-d14e-4b15-bfe4-257daa608ef6",
+      "shortCode": "type",
+      "label": "Type",
+      "type": "string",
+      "description": "Spotify search type(s) for search. Comma-separated: album, artist, playlist, track, show, episode, audiobook. Required. Example: 'track'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cb7cce3a-c9bd-4342-ab64-ed23f826cf26",
+      "shortCode": "track_id",
+      "label": "Track ID",
+      "type": "string",
+      "description": "Spotify track id for track_get (GET /tracks/{track_id}). Example: '11dFghVXANMlKmJXsNCbNl'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b4d0d5ca-08eb-4606-b2ee-dc133005d15a",
+      "shortCode": "playlist_id",
+      "label": "Playlist ID",
+      "type": "string",
+      "description": "Playlist id for playlist_get and playlist_add. Example: '3cEYpjA9oz9GiPac4AsH4n'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a1e32f65-d579-418c-8b11-5e3d4b0d726d",
+      "shortCode": "position",
+      "label": "Position",
+      "type": "number",
+      "description": "playlist_add insert position (0 = top).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e07b4e57-ba8a-4ccb-80ee-23b47685eda0",
+      "shortCode": "uris",
+      "label": "Uris",
+      "type": "list",
+      "description": "Spotify track/episode URIs for playlist_add. Required. Example: [\"spotify:track:4iV5W9uYEdYUVa79Axb7Rh\"].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e3b50d12-e17b-4102-a2a9-ecbf4a799958",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,340 @@
+{
+  "_id": "a46f40db-e5cd-5a33-ab99-2fe4e07d3c96",
+  "version": "1.0.0",
+  "name": "Microsoft Teams",
+  "label": "Microsoft Teams — Microsoft Graph v1.0 Teams",
+  "description": "Microsoft Teams via the official Microsoft Graph v1.0 Teams. Base https://graph.microsoft.com/v1.0. Docs: https://learn.microsoft.com/en-us/graph/api/resources/teams-api-overview. Graph v1.0. Sending channel/chat messages requires delegated ChannelMessage.Send / ChatMessage.Send. Planner update-task/delete-task send If-Match: {if_match} from INPUT if_match (the task @odata.etag from get-task). listen / send-and-wait are BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data}. Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "groups",
+  "tags": [
+    "chat",
+    "microsoft"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "0a5a919f-6b5b-5e56-8919-18c3e721d2fe",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Microsoft Teams operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"create-channel\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "create-channel",
+          "description": "Which official call to run. EXACT values: create-channel | get-channel | list-channels | update-channel | delete-channel | create-channel-message | list-channel-messages | create-chat-message | get-chat-message | list-chat-messages | create-task | get-task | list-tasks | update-task | delete-task | send-and-wait | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "team_id",
+          "label": "team_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Team id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "channel_id",
+          "label": "channel_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Channel id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "chat_id",
+          "label": "chat_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Chat id (does not create the chat). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "message_id",
+          "label": "message_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Chat message id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "displayName",
+          "label": "displayName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Channel display name. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "planId",
+          "label": "planId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Planner plan id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task title. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Planner task id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "if_match",
+          "label": "if_match",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Planner concurrency token for update-task and delete-task. Pass the task @odata.etag from get-task as-is (including W/\"...\"). Sent as If-Match. A 412 means the etag is stale — GET again. Purpose: operation input.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `description` for operations: create-channel, update-channel.",
+          "children": []
+        },
+        {
+          "shortCode": "membershipType",
+          "label": "membershipType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-channel only. EXACT: standard | private | unknownFutureValue. Default standard.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Graph chatMessage.body {contentType, content}, required by create-channel-message and create-chat-message. contentType EXACT: text | html. Example: {\"contentType\":\"html\",\"content\":\"<p>Hi</p>\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Channel-message subject (create-channel-message). Chat messages ignore subject. Example: Standup notes.",
+          "children": []
+        },
+        {
+          "shortCode": "bucketId",
+          "label": "bucketId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `bucketId` for operation: create-task.",
+          "children": []
+        },
+        {
+          "shortCode": "assignments",
+          "label": "assignments",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Planner assignments map for create-task / update-task. Keys are user ids; value {\"@odata.type\":\"#microsoft.graph.plannerAssignment\",\"orderHint\":\" !\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "percentComplete",
+          "label": "percentComplete",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Planner percentComplete 0–100 for update-task. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "$top",
+          "label": "$top",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for list-channel-messages and list-chat-messages. Positive integer, Graph max 50. Example: 20.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "2aec9042-0291-51de-8487-45e95e17002a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6294d56d-69f0-5629-b6e2-5b42168d82ee",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: create-channel, get-channel, list-channels, update-channel, delete-channel, create-channel-message, list-channel-messages, create-chat-message, get-chat-message, list-chat-messages, create-task, get-task, list-tasks, update-task, delete-task, send-and-wait, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "create-channel",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "create-channel",
+        "get-channel",
+        "list-channels",
+        "update-channel",
+        "delete-channel",
+        "create-channel-message",
+        "list-channel-messages",
+        "create-chat-message",
+        "get-chat-message",
+        "list-chat-messages",
+        "create-task",
+        "get-task",
+        "list-tasks",
+        "update-task",
+        "delete-task",
+        "send-and-wait",
+        "listen"
+      ]
+    },
+    {
+      "_id": "6c01f8e7-054e-5b40-8911-23e171019d17",
+      "shortCode": "access_token",
+      "label": "Graph access token",
+      "type": "password",
+      "description": "Microsoft Graph access token. Header Authorization: Bearer. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "737d9455-2005-5984-ab74-239b333c59d8",
+      "shortCode": "team_id",
+      "label": "team_id",
+      "type": "string",
+      "description": "Default team id when input omits team_id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "37185348-742e-5f72-a90f-4de958731f74",
+      "shortCode": "chat_id",
+      "label": "chat_id",
+      "type": "string",
+      "description": "Default chat id when input omits chat_id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "28f15570-99ce-5c58-ac72-2ca90e007eb6",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

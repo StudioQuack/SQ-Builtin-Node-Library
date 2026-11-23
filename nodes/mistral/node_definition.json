@@ -1,0 +1,552 @@
+{
+  "_id": "8d7dfc02-15bd-4586-8878-aeb1e8fbc534",
+  "version": "1.0.0",
+  "name": "Mistral",
+  "label": "Mistral",
+  "description": "Official Mistral Cloud API (chat, embeddings, FIM, OCR, files) on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). Auth is StudioQuack secret api_key sent as Authorization Bearer. reasoning_effort passes through; with reasoning_effort=high the streamed ThinkChunks (nested content lists) are unwrapped onto the thinking channel. PDF/image uploads use type file (platform ref-id). Docs: https://docs.mistral.ai/api. Terms: https://legal.mistral.ai/terms/commercial-terms-of-service. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "mistral",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4f87a33d-1054-495e-939e-28ddc336e09a",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, prompt?, suffix?, input?, document?, file?}. PDF/image use type file. Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "chat",
+          "description": "Which official call to run. EXACT: chat | embeddings | fim | ocr | files. Example: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Chat Completions messages. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional chat tools. Omit or [] sends no tools.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "FIM prompt (code/text to complete).",
+          "children": []
+        },
+        {
+          "shortCode": "document",
+          "label": "document",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "OCR document: {type:document_url|image_url, document_url|image_url} or a files file_id after files upload.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for files upload (purpose ocr|fine-tune|batch). Max 512 MB. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_p` for operations: chat, fim.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_tokens` for operations: chat, fim.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `stop` for operations: chat, fim.",
+          "children": []
+        },
+        {
+          "shortCode": "random_seed",
+          "label": "random_seed",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `random_seed` for operations: chat, fim.",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "tool_choice",
+          "label": "tool_choice",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tool_choice` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "presence_penalty",
+          "label": "presence_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `presence_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "frequency_penalty",
+          "label": "frequency_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `frequency_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "n",
+          "label": "n",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `n` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "reasoning_effort",
+          "label": "reasoning_effort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `reasoning_effort` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `input` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "output_dimension",
+          "label": "output_dimension",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `output_dimension` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "output_dtype",
+          "label": "output_dtype",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `output_dtype` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "suffix",
+          "label": "suffix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `suffix` for operation: fim.",
+          "children": []
+        },
+        {
+          "shortCode": "pages",
+          "label": "pages",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `pages` for operation: ocr.",
+          "children": []
+        },
+        {
+          "shortCode": "include_image_base64",
+          "label": "include_image_base64",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `include_image_base64` for operation: ocr.",
+          "children": []
+        },
+        {
+          "shortCode": "image_limit",
+          "label": "image_limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `image_limit` for operation: ocr.",
+          "children": []
+        },
+        {
+          "shortCode": "image_min_size",
+          "label": "image_min_size",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `image_min_size` for operation: ocr.",
+          "children": []
+        },
+        {
+          "shortCode": "purpose",
+          "label": "purpose",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `purpose` for operation: files.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "4b81001a-e880-48be-be4e-5b20b147d350",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Mistral JSON (chat, embeddings, FIM, OCR, or file metadata).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "33a10d82-1878-4a3c-87d2-4d46ae2babaa",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Mistral verb. EXACT values: chat | embeddings | fim | ocr | files. Default chat = POST /v1/chat/completions.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "embeddings",
+        "fim",
+        "ocr",
+        "files"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "c438e741-300b-464d-824a-6d7bd4930fc7",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "La Plateforme API key. Sent as Authorization Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "710191b1-a55a-415e-8f1f-03a13d0fa1f0",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Model id. Default mistral-large-latest (still the documented Large alias on Chat Completions). Chat aliases: mistral-large-latest, mistral-medium-latest (Medium 3.5), mistral-small-latest (Small 4), ministral-14b-latest / ministral-8b-latest / ministral-3b-latest (Ministral 3). FIM: codestral-latest. OCR: mistral-ocr-latest (OCR 4.1). Embeddings: mistral-embed / codestral-embed. Verify GET /v1/models. Docs: https://docs.mistral.ai/getting-started/models/models_overview .",
+      "value": "mistral-large-latest",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "mistral-large-latest",
+        "mistral-medium-latest",
+        "mistral-small-latest",
+        "ministral-14b-latest",
+        "ministral-8b-latest",
+        "ministral-3b-latest",
+        "codestral-latest",
+        "mistral-ocr-latest",
+        "mistral-embed",
+        "codestral-embed"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "e1852dd9-c4bc-45e7-a016-fb571eff64dc",
+      "shortCode": "temperature",
+      "label": "Temperature",
+      "type": "number",
+      "description": "Chat/FIM temperature when present on INPUT. Empty → omitted.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bcb697d5-0b1e-4213-898b-05add9ea6cae",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b5a38943-1024-4f04-bc64-e8e48f999d28",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether Mistral requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

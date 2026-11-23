@@ -1,0 +1,376 @@
+{
+  "_id": "aa533855-0120-4d62-a807-3c9d4fcb4517",
+  "version": "1.0.0",
+  "name": "Marketo",
+  "label": "Adobe Marketo Engage REST — leads, lists, campaigns, assets",
+  "description": "Official Adobe Marketo Engage REST at https://{munchkin_id}.mktorest.com/rest. Handler: OfficialApiNode. Authorization Bearer access_token only — query access_token dies 2026-08-31. Customer supplies the token or runs 2-legged Identity outside this node (see README). trigger.listen is ingress. Leads are PII. Customer owns the Marketo subscription. access_token is never logged or returned.",
+  "icon": "hub",
+  "tags": [
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1c09cf5e-142e-48e1-974f-c88e6b0ffbfa",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_token here. Lead writes use body input[] plus action/lookupField. Example: {\"operation\":\"lead.describe\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "lead.create",
+          "description": "Overrides config. EXACT REST verbs including trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "munchkin_id",
+          "label": "munchkin_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Munchkin id interpolated into the host. Also config. Example: 123-ABC-456. All HTTP operations.",
+          "children": []
+        },
+        {
+          "shortCode": "action",
+          "label": "action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "lead.create / lead.upsert action. EXACT: createOnly | updateOnly | createOrUpdate | createDuplicate.",
+          "children": []
+        },
+        {
+          "shortCode": "lookupField",
+          "label": "lookupField",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Dedup field for lead.create / lead.upsert. Typical: email | id.",
+          "children": []
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Official input array of lead maps [{email, firstName, lastName, …}] for lead.create/upsert, list.add, campaign.request, form.submit.",
+          "children": []
+        },
+        {
+          "shortCode": "filterType",
+          "label": "filterType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "lead.get filterType. Typical: email | id | cookies.",
+          "children": []
+        },
+        {
+          "shortCode": "filterValues",
+          "label": "filterValues",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated values for lead.get filterValues.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated field names for lead.get.",
+          "children": []
+        },
+        {
+          "shortCode": "list_id",
+          "label": "list_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Static list id path for list.add / list.remove.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lead id query for list.remove.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Smart campaign id path for campaign.request.",
+          "children": []
+        },
+        {
+          "shortCode": "tokens",
+          "label": "tokens",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "campaign.request / email.sendSample tokens [{name, value}].",
+          "children": []
+        },
+        {
+          "shortCode": "activityTypeIds",
+          "label": "activityTypeIds",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated, max 10.",
+          "children": []
+        },
+        {
+          "shortCode": "nextPageToken",
+          "label": "nextPageToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Paging token required by activity.get: the first one comes from activity.pagingToken (sinceDatetime), later ones from the previous page's nextPageToken. Example: GIYDAOBNGEYS2MBWKQYDAORQGA5DAMBOGAYDAKZQGAYDALBQ.",
+          "children": []
+        },
+        {
+          "shortCode": "sinceDatetime",
+          "label": "sinceDatetime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Start datetime for activity.pagingToken (GET /v1/activities/pagingtoken.json); ISO 8601. The returned nextPageToken feeds activity.get. Example: 2026-11-01T00:00:00Z.",
+          "children": []
+        },
+        {
+          "shortCode": "listId",
+          "label": "listId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Restrict activities to a list.",
+          "children": []
+        },
+        {
+          "shortCode": "leadIds",
+          "label": "leadIds",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Up to 30 lead ids for activities.",
+          "children": []
+        },
+        {
+          "shortCode": "formId",
+          "label": "formId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "form.submit formId.",
+          "children": []
+        },
+        {
+          "shortCode": "programId",
+          "label": "programId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "form.submit programId.",
+          "children": []
+        },
+        {
+          "shortCode": "cookie",
+          "label": "cookie",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Munchkin cookie.",
+          "children": []
+        },
+        {
+          "shortCode": "visitorData",
+          "label": "visitorData",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "pageURL, queryString, leadClientIpAddress, userAgentString.",
+          "children": []
+        },
+        {
+          "shortCode": "email_id",
+          "label": "email_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email asset id for email.sendSample / asset.email.get.",
+          "children": []
+        },
+        {
+          "shortCode": "emailAddress",
+          "label": "emailAddress",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sample recipient for email.sendSample.",
+          "children": []
+        },
+        {
+          "shortCode": "textOnly",
+          "label": "textOnly",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "email.sendSample textOnly.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "42f415b6-7483-4b32-a3fb-ec45f2856434",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Do not log emails, phones, or secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "3d57eb69-7e72-4246-8f7c-c84711d18107",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT REST verbs.",
+      "value": "lead.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "lead.create",
+        "lead.upsert",
+        "lead.get",
+        "lead.describe",
+        "list.add",
+        "list.remove",
+        "campaign.request",
+        "activity.pagingToken",
+        "activity.get",
+        "form.submit",
+        "email.sendSample",
+        "asset.email.get",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "a000d78b-3594-49fb-9999-0a029404b113",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Marketo Bearer token (StudioQuack secret). Authorization: Bearer only — never query access_token (removed 2026-08-31). Identity: {identityUrl}/oauth/token grant_type=client_credentials. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "baceee53-c34e-43b6-9750-257a7efe826e",
+      "shortCode": "munchkin_id",
+      "label": "Munchkin id",
+      "type": "string",
+      "description": "Subscription host prefix for https://{munchkin_id}.mktorest.com. Required.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1b2ca45a-25d6-4a5b-9035-2a27b37b5fd9",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

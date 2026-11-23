@@ -1,0 +1,296 @@
+{
+  "_id": "f82337da-dd51-4ed6-9c9d-0be94d51debf",
+  "version": "1.0.0",
+  "name": "Sage",
+  "label": "Sage — Sage Business Cloud Accounting API v3.1",
+  "description": "Official Sage Business Cloud Accounting API v3.1 at https://api.accounting.sage.com/v3.1. Docs: https://developer.sage.com/accounting/. Bodies nest under contact / sales_invoice / contact_payment. X-Business header from config business_id. Access token minted outside this node (~5 min). Handler: OfficialApiNode. Never log access_token.",
+  "icon": "account_balance",
+  "tags": [
+    "sage",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3309ab4d-8169-4774-9c87-3f926863f401",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Sage. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "contact_create",
+          "description": "Overrides config operation. EXACT: contact_create | invoice_create | invoice_get | payment_create. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sales invoice GUID for invoice_get path /sales_invoices/{id}.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact display name. Nested as contact.name on contact_create. Required. Example: Acme Ltd.",
+          "children": []
+        },
+        {
+          "shortCode": "contact_type_ids",
+          "label": "contact_type_ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Sage contact type GUIDs. Nested as contact.contact_type_ids on contact_create. Required. Customer CUSTOMER, supplier VENDOR. Example: [\"CUSTOMER\"].",
+          "children": []
+        },
+        {
+          "shortCode": "contact_id",
+          "label": "contact_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sage contact GUID. Required on invoice_create (sales_invoice.contact_id) and payment_create (contact_payment.contact_id).",
+          "children": []
+        },
+        {
+          "shortCode": "invoice_lines",
+          "label": "invoice_lines",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Official invoice line objects for invoice_create (sales_invoice.invoice_lines). Each line: description, ledger_account_id, quantity, unit_price, tax_rate_id. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "transaction_type_id",
+          "label": "transaction_type_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Payment type GUID or key for payment_create (contact_payment.transaction_type_id). CUSTOMER_RECEIPT | VENDOR_PAYMENT. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "total_amount",
+          "label": "total_amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Payment total. Nested as contact_payment.total_amount on payment_create. Required. Example: 100.00.",
+          "children": []
+        },
+        {
+          "shortCode": "reference",
+          "label": "reference",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Your reference. contact_create → contact.reference; invoice_create → sales_invoice.reference; payment_create → contact_payment.reference.",
+          "children": []
+        },
+        {
+          "shortCode": "tax_number",
+          "label": "tax_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "VAT/tax number. Nested as contact.tax_number on contact_create. Example: GB123456789.",
+          "children": []
+        },
+        {
+          "shortCode": "notes",
+          "label": "notes",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Free-text notes. contact_create → contact.notes; invoice_create → sales_invoice.notes.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact email. Nested as contact.email on contact_create. Example: billing@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "telephone",
+          "label": "telephone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact phone. Nested as contact.telephone on contact_create.",
+          "children": []
+        },
+        {
+          "shortCode": "main_address",
+          "label": "main_address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official address object for contact_create (contact.main_address): address_line_1, city, postal_code, country_id.",
+          "children": []
+        },
+        {
+          "shortCode": "date",
+          "label": "date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO date YYYY-MM-DD. Required on invoice_create (sales_invoice.date) and payment_create (contact_payment.date). Example: 2026-10-31.",
+          "children": []
+        },
+        {
+          "shortCode": "bank_account_id",
+          "label": "bank_account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sage bank account GUID. Required on payment_create (contact_payment.bank_account_id).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "548c43cf-e9df-4844-a600-84dd34260700",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0f689c21-42cf-4a25-8c51-abe796f5c380",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: contact_create | invoice_create | invoice_get | payment_create. Default contact_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "contact_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "contact_create",
+        "invoice_create",
+        "invoice_get",
+        "payment_create"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "3bb73085-1091-4470-ab8b-0916abe07fc5",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Sage credential (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c46d982a-39cf-40bb-8bb1-b5617f739ede",
+      "shortCode": "business_id",
+      "label": "Business Id",
+      "type": "string",
+      "description": "Sage Business Cloud Accounting X-Business header. Required for multi-business tokens. Sent on every request.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5d9f2df5-17b5-4a7a-bc3b-bdfbcbf939b0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

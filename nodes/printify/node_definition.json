@@ -1,0 +1,334 @@
+{
+  "_id": "5225ac5c-a7d5-518e-9be2-81ec8b5b5c95",
+  "version": "1.0.0",
+  "name": "Printify",
+  "label": "Printify REST v1 — shops, products, orders",
+  "description": "Printify API v1. Bearer token. Customer warrants artwork rights. trigger is shop webhooks (ingress).",
+  "icon": "print",
+  "tags": [
+    "printify",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "cca89d93-0a54-59b3-bc73-68783113a551",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "shop_list",
+          "description": "Official API verb. EXACT: shop_list | product_create | product_publish | order_submit | order_get | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "product_id",
+          "label": "product_id",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `product_id` for operation: product_publish. Required by: product_publish.",
+          "children": []
+        },
+        {
+          "shortCode": "order_id",
+          "label": "order_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `order_id` for operation: order_get. Required by: order_get.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product title for product_create; also a publish flag (boolean true) on product_publish when publishing the title. Example: Classic Tee.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product HTML description for product_create; publish flag on product_publish. Example: 100% cotton.",
+          "children": []
+        },
+        {
+          "shortCode": "blueprint_id",
+          "label": "blueprint_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Printify catalog blueprint id. Required on product_create. Example: 384.",
+          "children": []
+        },
+        {
+          "shortCode": "print_provider_id",
+          "label": "print_provider_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Print provider id. Required on product_create. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "variants",
+          "label": "variants",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "product_create variant list [{id, price, is_enabled}]. Also a publish flag on product_publish. Example: [{\"id\":45740,\"price\":2100,\"is_enabled\":true}].",
+          "children": []
+        },
+        {
+          "shortCode": "print_areas",
+          "label": "print_areas",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "product_create print areas with placeholders/images. Example: [{\"variant_ids\":[45740],\"placeholders\":[{\"position\":\"front\",\"images\":[]}]}].",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Product tags on product_create, or publish flag on product_publish. Example: [\"summer\"].",
+          "children": []
+        },
+        {
+          "shortCode": "images",
+          "label": "images",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "product_publish: send true to publish images. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "keyFeatures",
+          "label": "keyFeatures",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "product_publish: send true to publish key features. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "shipping_template",
+          "label": "shipping_template",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "product_publish: send true to publish the shipping template. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "external_id",
+          "label": "external_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Merchant order id for order_submit. Example: ORD-1001.",
+          "children": []
+        },
+        {
+          "shortCode": "label",
+          "label": "label",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional order label for order_submit.",
+          "children": []
+        },
+        {
+          "shortCode": "line_items",
+          "label": "line_items",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "order_submit line items [{product_id, variant_id, quantity}]. Required. Example: [{\"product_id\":\"abc\",\"variant_id\":45740,\"quantity\":1}].",
+          "children": []
+        },
+        {
+          "shortCode": "shipping_method",
+          "label": "shipping_method",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "order_submit shipping method id. Required. 1=standard. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "send_shipping_notification",
+          "label": "send_shipping_notification",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "order_submit. Whether Printify emails the customer. Default false.",
+          "children": []
+        },
+        {
+          "shortCode": "address_to",
+          "label": "address_to",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "order_submit shipping address {first_name, last_name, email, phone, country, region, address1, city, zip}. Required. Example: {\"first_name\":\"Ada\",\"last_name\":\"Lovelace\",\"email\":\"ada@example.com\",\"country\":\"US\",\"address1\":\"1 Market\",\"city\":\"San Francisco\",\"zip\":\"94105\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "shop_id",
+          "label": "shop_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Printify shop id. Path fallback when config shop_id is empty. Example: 1234567.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "eab8b1b9-cfd7-5616-82d2-baf667432c83",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e2171738-c0d0-572d-9533-130ab12cdcc9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: shop_list | product_create | product_publish | order_submit | order_get | trigger. trigger does not open a socket.",
+      "value": "shop_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "shop_list",
+        "product_create",
+        "product_publish",
+        "order_submit",
+        "order_get",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "df99d6ad-a28b-5269-abd3-815e1482baf5",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type bearer. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "935f96b3-5661-5e7b-8ba5-7e6bb48e221f",
+      "shortCode": "shop_id",
+      "label": "Shop Id",
+      "type": "string",
+      "description": "Printify shop id.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "87e8b1af-7dca-5be5-bb08-f1c218966e79",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

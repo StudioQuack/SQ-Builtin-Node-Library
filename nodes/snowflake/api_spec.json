@@ -1,0 +1,55 @@
+{
+  "baseUrl": "https://{account_url}",
+  "defaultTimeout": 45,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "extraHeaders": {
+    "X-Snowflake-Authorization-Token-Type": "{token_type}"
+  },
+  "operations": {
+    "execute.sql": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/statements",
+      "required": [
+        "statement"
+      ],
+      "bodyFrom": [
+        "statement",
+        "timeout",
+        "database",
+        "schema",
+        "warehouse",
+        "bindings"
+      ]
+    },
+    "statement.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/statements/{statementHandle}",
+      "queryFrom": [
+        "partition",
+        "requestId"
+      ],
+      "required": [
+        "statementHandle"
+      ]
+    },
+    "statement.cancel": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/statements/{statementHandle}/cancel",
+      "required": [
+        "statementHandle"
+      ],
+      "bodyFrom": [
+        "requestId"
+      ]
+    }
+  }
+}

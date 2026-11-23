@@ -1,0 +1,675 @@
+{
+  "_id": "8b8cdc52-9a33-41c6-b0f4-d679aab3091a",
+  "version": "1.0.0",
+  "name": "Salesforce",
+  "label": "Salesforce REST v67.0 — CRM sObjects",
+  "description": "Official Salesforce REST API v67.0 at https://{instance_url}/services/data/v67.0. Docs: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/. Create/update send named sObject fields (Name, LastName, Company, StageName, …). customObject.* merge INPUT fields at the JSON root. Handler: OfficialApiNode. Bearer access_token minted outside this node. trigger.listen is ingress. Never log access_token or VersionData/Body.",
+  "icon": "cloud",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3bbcada3-c8b2-453a-98c8-a108887ab98e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets (access_token) here. Example: {\"operation\":\"account.get\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "account.create",
+          "description": "Overrides config operation when non-blank. EXACT: 'account.create' | 'account.upsert' | 'account.get' | 'account.list' | 'account.update' | 'account.delete' | 'account.addNote' | 'account.metadata' | 'contact.create' | 'contact.upsert' | 'contact.get' | 'contact.list' | 'contact.update' | 'contact.delete' | 'contact.addNote' | 'contact.addToCampaign' | 'lead.create' | 'lead.upsert' | 'lead.get' | 'lead.list' | 'lead.update' | 'lead.delete' | 'lead.addNote' | 'lead.addToCampaign' | 'opportunity.create' | 'opportunity.upsert' | 'opportunity.get' | 'opportunity.list' | 'opportunity.update' | 'opportunity.delete' | 'opportunity.addNote' | 'case.create' | 'case.get' | 'case.list' | 'case.update' | 'case.delete' | 'case.addComment' | 'task.create' | 'task.get' | 'task.list' | 'task.update' | 'task.delete' | 'attachment.create' | 'attachment.get' | 'attachment.list' | 'attachment.update' | 'attachment.delete' | 'customObject.create' | 'customObject.upsert' | 'customObject.get' | 'customObject.list' | 'customObject.update' | 'customObject.delete' | 'document.upload' | 'flow.list' | 'flow.invoke' | 'search.soql' | 'user.get' | 'user.list' | 'trigger.listen'.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Salesforce Id for get/update/delete and CampaignMember/CaseComment parent.",
+          "children": []
+        },
+        {
+          "shortCode": "external_id_field",
+          "label": "external_id_field",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "External Id field API name for upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "external_id",
+          "label": "external_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "External Id match value for upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Full SOQL for *.list and search.soql. GET /query?q=. Cap 16000 chars. Reject DML. Minimize SELECT.",
+          "children": []
+        },
+        {
+          "shortCode": "sobject",
+          "label": "sobject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "API name for customObject.* (e.g. MyThing__c).",
+          "children": []
+        },
+        {
+          "shortCode": "ParentId",
+          "label": "ParentId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note.ParentId or CaseComment.ParentId. Required for *.addNote and case.addComment.",
+          "children": []
+        },
+        {
+          "shortCode": "Title",
+          "label": "Title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job title (Contact/Lead) or ContentVersion/Note Title (document.upload / addNote).",
+          "children": []
+        },
+        {
+          "shortCode": "Body",
+          "label": "Body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note.Body (addNote) or Attachment.Body (base64) on attachment.create. Do not log.",
+          "children": []
+        },
+        {
+          "shortCode": "ContactId",
+          "label": "ContactId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CampaignMember.ContactId for contact.addToCampaign.",
+          "children": []
+        },
+        {
+          "shortCode": "LeadId",
+          "label": "LeadId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CampaignMember.LeadId for lead.addToCampaign.",
+          "children": []
+        },
+        {
+          "shortCode": "CampaignId",
+          "label": "CampaignId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CampaignMember.CampaignId. Required for contact.addToCampaign / lead.addToCampaign.",
+          "children": []
+        },
+        {
+          "shortCode": "Status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Status picklist on Lead/Case/Task/CampaignMember. Org-defined values, e.g. Open | Working | Closed.",
+          "children": []
+        },
+        {
+          "shortCode": "CommentBody",
+          "label": "CommentBody",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CaseComment.CommentBody. Required for case.addComment.",
+          "children": []
+        },
+        {
+          "shortCode": "PathOnClient",
+          "label": "PathOnClient",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ContentVersion.PathOnClient filename for document.upload.",
+          "children": []
+        },
+        {
+          "shortCode": "FirstPublishLocationId",
+          "label": "FirstPublishLocationId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional ContentVersion first-publish linked entity id.",
+          "children": []
+        },
+        {
+          "shortCode": "api_name",
+          "label": "api_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Flow API name for flow.invoke.",
+          "children": []
+        },
+        {
+          "shortCode": "inputs",
+          "label": "inputs",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official invocable flow inputs body.",
+          "children": []
+        },
+        {
+          "shortCode": "ContentLocation",
+          "label": "ContentLocation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ContentLocation` for operation: document.upload.",
+          "children": []
+        },
+        {
+          "shortCode": "Name",
+          "label": "Name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "sObject Name. Required on account.create (Account.Name) and opportunity.create. Used on Account/Opportunity/Attachment create/update/upsert. Example: Acme Ltd.",
+          "children": []
+        },
+        {
+          "shortCode": "FirstName",
+          "label": "FirstName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "First name for contact.create / lead.create (and update/upsert). Example: Ada.",
+          "children": []
+        },
+        {
+          "shortCode": "LastName",
+          "label": "LastName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Last name. Required by Salesforce on contact.create and lead.create. Example: Lovelace.",
+          "children": []
+        },
+        {
+          "shortCode": "Email",
+          "label": "Email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email on Contact/Lead create/update/upsert. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "Phone",
+          "label": "Phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Phone on Account/Contact/Lead create/update/upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "MobilePhone",
+          "label": "MobilePhone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mobile on Contact/Lead create/update/upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "Company",
+          "label": "Company",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Company. Required on lead.create. Example: Analytical Engines.",
+          "children": []
+        },
+        {
+          "shortCode": "AccountId",
+          "label": "AccountId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Related Account Id on Contact/Opportunity/Case create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "Description",
+          "label": "Description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Description on Account/Lead/Opportunity/Case/Task create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "Type",
+          "label": "Type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Type picklist on Account/Opportunity/Case. Org-defined, e.g. Customer | Prospect.",
+          "children": []
+        },
+        {
+          "shortCode": "Industry",
+          "label": "Industry",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Industry picklist on Account/Lead.",
+          "children": []
+        },
+        {
+          "shortCode": "Website",
+          "label": "Website",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Website URL on Account/Lead. Example: https://example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "Subject",
+          "label": "Subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subject on Case/Task create/update. Example: Reset password.",
+          "children": []
+        },
+        {
+          "shortCode": "Origin",
+          "label": "Origin",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Case Origin picklist on case.create/update, e.g. Phone | Email | Web.",
+          "children": []
+        },
+        {
+          "shortCode": "Priority",
+          "label": "Priority",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Priority on Case/Task, e.g. High | Medium | Low.",
+          "children": []
+        },
+        {
+          "shortCode": "Amount",
+          "label": "Amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Opportunity Amount on opportunity.create/update/upsert. Example: 25000.",
+          "children": []
+        },
+        {
+          "shortCode": "StageName",
+          "label": "StageName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Opportunity StageName. Required on opportunity.create. Org-defined, e.g. Prospecting.",
+          "children": []
+        },
+        {
+          "shortCode": "CloseDate",
+          "label": "CloseDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Opportunity CloseDate YYYY-MM-DD. Required on opportunity.create. Example: 2026-12-31.",
+          "children": []
+        },
+        {
+          "shortCode": "BillingStreet",
+          "label": "BillingStreet",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Account BillingStreet on account.create/update/upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "BillingCity",
+          "label": "BillingCity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Account BillingCity on account.create/update/upsert. Example: London.",
+          "children": []
+        },
+        {
+          "shortCode": "BillingState",
+          "label": "BillingState",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Account BillingState on account.create/update/upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "BillingPostalCode",
+          "label": "BillingPostalCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Account BillingPostalCode on account.create/update/upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "BillingCountry",
+          "label": "BillingCountry",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Account BillingCountry on account.create/update/upsert. Example: United Kingdom.",
+          "children": []
+        },
+        {
+          "shortCode": "LeadSource",
+          "label": "LeadSource",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "LeadSource picklist on Lead/Opportunity.",
+          "children": []
+        },
+        {
+          "shortCode": "AnnualRevenue",
+          "label": "AnnualRevenue",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Account/Lead AnnualRevenue.",
+          "children": []
+        },
+        {
+          "shortCode": "NumberOfEmployees",
+          "label": "NumberOfEmployees",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Account/Lead NumberOfEmployees.",
+          "children": []
+        },
+        {
+          "shortCode": "Probability",
+          "label": "Probability",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Opportunity Probability 0–100.",
+          "children": []
+        },
+        {
+          "shortCode": "ActivityDate",
+          "label": "ActivityDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task ActivityDate YYYY-MM-DD on task.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "WhoId",
+          "label": "WhoId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task WhoId (Contact or Lead Id) on task.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "WhatId",
+          "label": "WhatId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task WhatId (Account/Opportunity/Case Id) on task.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "ContentType",
+          "label": "ContentType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Attachment ContentType on attachment.create, e.g. application/pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "VersionData",
+          "label": "VersionData",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ContentVersion VersionData (base64) for document.upload. Required with PathOnClient. Do not log.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "customObject.create / update / upsert: sObject field API names merged at the JSON root (bodyMap $). Example: {\"Name\":\"Widget\",\"My_Field__c\":\"x\"}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "bfded132-1300-44a3-a559-64dd21b78302",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. PII may be present — do not log bodies.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b05fd43f-e6b4-447e-9b82-9da98fb3e779",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: account.create | account.upsert | account.get | account.list | account.update | account.delete | account.addNote | account.metadata | contact.create | contact.upsert | contact.get | contact.list | contact.update | contact.delete | contact.addNote | contact.addToCampaign | lead.create | lead.upsert | lead.get | lead.list | lead.update | lead.delete | lead.addNote | lead.addToCampaign | opportunity.create | opportunity.upsert | opportunity.get | opportunity.list | opportunity.update | opportunity.delete | opportunity.addNote | case.create | case.get | case.list | case.update | case.delete | case.addComment | task.create | task.get | task.list | task.update | task.delete | attachment.create | attachment.get | attachment.list | attachment.update | attachment.delete | customObject.create | customObject.upsert | customObject.get | customObject.list | customObject.update | customObject.delete | document.upload | flow.list | flow.invoke | search.soql | user.get | user.list | trigger.listen.",
+      "value": "account.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "account.create",
+        "account.upsert",
+        "account.get",
+        "account.list",
+        "account.update",
+        "account.delete",
+        "account.addNote",
+        "account.metadata",
+        "contact.create",
+        "contact.upsert",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "contact.delete",
+        "contact.addNote",
+        "contact.addToCampaign",
+        "lead.create",
+        "lead.upsert",
+        "lead.get",
+        "lead.list",
+        "lead.update",
+        "lead.delete",
+        "lead.addNote",
+        "lead.addToCampaign",
+        "opportunity.create",
+        "opportunity.upsert",
+        "opportunity.get",
+        "opportunity.list",
+        "opportunity.update",
+        "opportunity.delete",
+        "opportunity.addNote",
+        "case.create",
+        "case.get",
+        "case.list",
+        "case.update",
+        "case.delete",
+        "case.addComment",
+        "task.create",
+        "task.get",
+        "task.list",
+        "task.update",
+        "task.delete",
+        "attachment.create",
+        "attachment.get",
+        "attachment.list",
+        "attachment.update",
+        "attachment.delete",
+        "customObject.create",
+        "customObject.upsert",
+        "customObject.get",
+        "customObject.list",
+        "customObject.update",
+        "customObject.delete",
+        "document.upload",
+        "flow.list",
+        "flow.invoke",
+        "search.soql",
+        "user.get",
+        "user.list",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "3945d260-9b6c-458f-b19f-87836ad5189e",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Salesforce access_token (StudioQuack secret). Sent as Authorization: Bearer. Obtain via External Client App OAuth refresh or JWT bearer outside this node. Never log or place on INPUT. My Domain base is in api_spec.json (replace yourinstance).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "49c62b92-4383-455d-abe5-7c08b9241465",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 uses api_spec default. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "db477c28-b781-42f3-b820-7de824cf7917",
+      "shortCode": "instance_url",
+      "label": "Instance URL host",
+      "type": "string",
+      "description": "My Domain host only (no scheme), from the token response instance_url host. Example: mycompany.my.salesforce.com. Substituted into https://{instance_url}/services/data/v67.0.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

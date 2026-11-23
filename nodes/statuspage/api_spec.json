@@ -1,0 +1,135 @@
+{
+  "baseUrl": "https://api.statuspage.io/v1",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "Authorization",
+    "prefix": "OAuth ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "page_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/pages/{pageId}",
+      "required": [
+        "pageId"
+      ]
+    },
+    "incident_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/pages/{pageId}/incidents",
+      "required": [
+        "pageId",
+        "name"
+      ],
+      "bodyFrom": [
+        "incident",
+        "name",
+        "status",
+        "impact_override",
+        "body",
+        "component_ids",
+        "components",
+        "deliver_notifications"
+      ],
+      "bodyMap": {
+        "name": "incident.name",
+        "status": "incident.status",
+        "impact_override": "incident.impact_override",
+        "body": "incident.body",
+        "component_ids": "incident.component_ids",
+        "components": "incident.components",
+        "deliver_notifications": "incident.deliver_notifications"
+      }
+    },
+    "incident_update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/pages/{pageId}/incidents/{incident_id}",
+      "required": [
+        "pageId",
+        "incident_id"
+      ],
+      "bodyFrom": [
+        "incident",
+        "name",
+        "status",
+        "body",
+        "component_ids",
+        "components",
+        "deliver_notifications"
+      ],
+      "bodyMap": {
+        "name": "incident.name",
+        "status": "incident.status",
+        "body": "incident.body",
+        "component_ids": "incident.component_ids",
+        "components": "incident.components",
+        "deliver_notifications": "incident.deliver_notifications"
+      }
+    },
+    "incident_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/pages/{pageId}/incidents",
+      "required": [
+        "pageId"
+      ]
+    },
+    "component_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/pages/{pageId}/components/{component_id}",
+      "required": [
+        "pageId",
+        "component_id"
+      ]
+    },
+    "component_update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/pages/{pageId}/components/{component_id}",
+      "required": [
+        "pageId",
+        "component_id",
+        "status"
+      ],
+      "bodyFrom": [
+        "component",
+        "status",
+        "name",
+        "description"
+      ],
+      "bodyMap": {
+        "status": "component.status",
+        "name": "component.name",
+        "description": "component.description"
+      }
+    },
+    "subscriber_add": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/pages/{pageId}/subscribers",
+      "required": [
+        "pageId"
+      ],
+      "bodyFrom": [
+        "subscriber",
+        "email",
+        "phone_number",
+        "skip_confirmation_notification"
+      ],
+      "bodyMap": {
+        "email": "subscriber.email",
+        "phone_number": "subscriber.phone_number",
+        "skip_confirmation_notification": "subscriber.skip_confirmation_notification"
+      }
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

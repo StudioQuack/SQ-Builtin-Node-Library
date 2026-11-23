@@ -1,0 +1,1202 @@
+{
+  "_id": "98d0dd14-278c-4e5c-b729-6e3ede1899ef",
+  "version": "1.0.0",
+  "name": "Brevo",
+  "label": "Brevo REST API v3 — contacts, lists, transactional send",
+  "description": "Official Brevo REST API v3 at https://api.brevo.com/v3. Handler: OfficialApiNode. Header api-key. Contacts, attributes, senders, list membership, transactional SMTP, marketing send-now. trigger.listen is BPMN ingress. Customer owns the Brevo account. Minimize: send only the contact/message fields required. api_key is never logged or returned.",
+  "icon": "forward_to_inbox",
+  "tags": [
+    "email",
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "7c04cd99-a60f-4988-aa5b-529e7d5bf6aa",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example: {\"operation\":\"contact.upsert\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.create",
+          "description": "Overrides config operation when non-blank. EXACT: contact.create | contact.upsert | contact.get | contact.list | contact.update | contact.delete | contactAttribute.create | contactAttribute.getAll | contactAttribute.update | contactAttribute.delete | email.send | email.sendTemplate | sender.create | sender.list | sender.delete | list.add | campaign.send | trigger.listen. trigger.listen is ingress (BPMN message event, no socket).",
+          "children": []
+        },
+        {
+          "shortCode": "identifier",
+          "label": "identifier",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email or numeric contact id for get/update/delete. Path-encoded. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact email for create/upsert. Minimize: this address only.",
+          "children": []
+        },
+        {
+          "shortCode": "updateEnabled",
+          "label": "updateEnabled",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "For contact.upsert set true so POST /contacts updates an existing row. For contact.create leave false/omit.",
+          "children": []
+        },
+        {
+          "shortCode": "attributes",
+          "label": "attributes",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Capitalized Brevo attribute map already defined in the account (FNAME, SMS, …). No government ids.",
+          "children": []
+        },
+        {
+          "shortCode": "listIds",
+          "label": "listIds",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "List id array for create/update/add.",
+          "children": []
+        },
+        {
+          "shortCode": "listId",
+          "label": "listId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Target list id for list.add.",
+          "children": []
+        },
+        {
+          "shortCode": "senderId",
+          "label": "senderId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sender id for sender.delete.",
+          "children": []
+        },
+        {
+          "shortCode": "campaignId",
+          "label": "campaignId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Existing email campaign id for campaign.send.",
+          "children": []
+        },
+        {
+          "shortCode": "templateId",
+          "label": "templateId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Brevo template id for email.sendTemplate.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Recipients [{email, name?}]. Transactional only to consented addresses.",
+          "children": []
+        },
+        {
+          "shortCode": "htmlContent",
+          "label": "htmlContent",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTML body for email.send (or textContent).",
+          "children": []
+        },
+        {
+          "shortCode": "attributeCategory",
+          "label": "attributeCategory",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Attribute ops: normal | transactional | category | calculated | global.",
+          "children": []
+        },
+        {
+          "shortCode": "attributeName",
+          "label": "attributeName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Attribute name in the path.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "contact.list page size (provider max 1000).",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "contact.list offset.",
+          "children": []
+        },
+        {
+          "shortCode": "ext_id",
+          "label": "ext_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ext_id` for operations: contact.create, contact.upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "emailBlacklisted",
+          "label": "emailBlacklisted",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `emailBlacklisted` for operations: contact.create, contact.upsert, contact.update.",
+          "children": []
+        },
+        {
+          "shortCode": "smsBlacklisted",
+          "label": "smsBlacklisted",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `smsBlacklisted` for operations: contact.create, contact.upsert, contact.update.",
+          "children": []
+        },
+        {
+          "shortCode": "modifiedSince",
+          "label": "modifiedSince",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `modifiedSince` for operation: contact.list.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sort` for operation: contact.list.",
+          "children": []
+        },
+        {
+          "shortCode": "unlinkListIds",
+          "label": "unlinkListIds",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `unlinkListIds` for operation: contact.update.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `type` for operation: contactAttribute.create.",
+          "children": []
+        },
+        {
+          "shortCode": "enumeration",
+          "label": "enumeration",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `enumeration` for operations: contactAttribute.create, contactAttribute.update.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Attribute value / formula for contactAttribute.create and contactAttribute.update; use only when attributeCategory is calculated or global (required for those categories on create). Example: SUM[ORDER_AMOUNT].",
+          "children": []
+        },
+        {
+          "shortCode": "multiCategoryOptions",
+          "label": "multiCategoryOptions",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Options of a multiple-choice attribute for contactAttribute.create / contactAttribute.update; use only when attributeCategory is normal and type is multiple-choice (required for that case on create). Each option max 200 characters. Example: [\"USA\",\"INDIA\"].",
+          "children": []
+        },
+        {
+          "shortCode": "sender",
+          "label": "sender",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `sender` for operations: email.send, email.sendTemplate.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `subject` for operation: email.send.",
+          "children": []
+        },
+        {
+          "shortCode": "textContent",
+          "label": "textContent",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `textContent` for operation: email.send.",
+          "children": []
+        },
+        {
+          "shortCode": "replyTo",
+          "label": "replyTo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `replyTo` for operation: email.send.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tags` for operation: email.send.",
+          "children": []
+        },
+        {
+          "shortCode": "params",
+          "label": "params",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `params` for operation: email.sendTemplate.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `name` for operation: sender.create.",
+          "children": []
+        },
+        {
+          "shortCode": "emails",
+          "label": "emails",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `emails` for operation: list.add.",
+          "children": []
+        },
+        {
+          "shortCode": "ids",
+          "label": "ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ids` for operation: list.add.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "335e157e-ca1e-4e87-911d-9ed65c1f867b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Log ids only — bodies may contain PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "f0a41036-0296-4c82-8f2a-33635d41c717",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: contact.create, contact.upsert, contact.get, contact.list, contact.update, contact.delete, contactAttribute.create, contactAttribute.getAll, contactAttribute.update, contactAttribute.delete, email.send, email.sendTemplate, sender.create, sender.list, sender.delete, list.add, campaign.send, trigger.listen.",
+      "value": "contact.upsert",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "contact.create",
+        "contact.upsert",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "contact.delete",
+        "contactAttribute.create",
+        "contactAttribute.getAll",
+        "contactAttribute.update",
+        "contactAttribute.delete",
+        "email.send",
+        "email.sendTemplate",
+        "sender.create",
+        "sender.list",
+        "sender.delete",
+        "list.add",
+        "campaign.send",
+        "trigger.listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "contact.create",
+          "targets": [
+            {
+              "param": "ext_id",
+              "visible": true
+            },
+            {
+              "param": "listIds",
+              "visible": true
+            },
+            {
+              "param": "attributes",
+              "visible": true
+            },
+            {
+              "param": "smsBlacklisted",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "updateEnabled",
+              "visible": true
+            },
+            {
+              "param": "emailBlacklisted",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.upsert",
+          "targets": [
+            {
+              "param": "ext_id",
+              "visible": true
+            },
+            {
+              "param": "listIds",
+              "visible": true
+            },
+            {
+              "param": "attributes",
+              "visible": true
+            },
+            {
+              "param": "smsBlacklisted",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "updateEnabled",
+              "visible": true
+            },
+            {
+              "param": "emailBlacklisted",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.get",
+          "targets": [
+            {
+              "param": "identifier",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.list",
+          "targets": [
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "modifiedSince",
+              "visible": true
+            },
+            {
+              "param": "offset",
+              "visible": true
+            },
+            {
+              "param": "sort",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.update",
+          "targets": [
+            {
+              "param": "listIds",
+              "visible": true
+            },
+            {
+              "param": "attributes",
+              "visible": true
+            },
+            {
+              "param": "smsBlacklisted",
+              "visible": true
+            },
+            {
+              "param": "emailBlacklisted",
+              "visible": true
+            },
+            {
+              "param": "identifier",
+              "visible": true
+            },
+            {
+              "param": "unlinkListIds",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.delete",
+          "targets": [
+            {
+              "param": "identifier",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contactAttribute.create",
+          "targets": [
+            {
+              "param": "attributeName",
+              "visible": true
+            },
+            {
+              "param": "attributeCategory",
+              "visible": true
+            },
+            {
+              "param": "enumeration",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "value",
+              "visible": true
+            },
+            {
+              "param": "multiCategoryOptions",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contactAttribute.update",
+          "targets": [
+            {
+              "param": "attributeName",
+              "visible": true
+            },
+            {
+              "param": "attributeCategory",
+              "visible": true
+            },
+            {
+              "param": "enumeration",
+              "visible": true
+            },
+            {
+              "param": "value",
+              "visible": true
+            },
+            {
+              "param": "multiCategoryOptions",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contactAttribute.delete",
+          "targets": [
+            {
+              "param": "attributeName",
+              "visible": true
+            },
+            {
+              "param": "attributeCategory",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "email.send",
+          "targets": [
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "subject",
+              "visible": true
+            },
+            {
+              "param": "htmlContent",
+              "visible": true
+            },
+            {
+              "param": "sender",
+              "visible": true
+            },
+            {
+              "param": "to",
+              "visible": true
+            },
+            {
+              "param": "replyTo",
+              "visible": true
+            },
+            {
+              "param": "textContent",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "email.sendTemplate",
+          "targets": [
+            {
+              "param": "sender",
+              "visible": true
+            },
+            {
+              "param": "to",
+              "visible": true
+            },
+            {
+              "param": "templateId",
+              "visible": true
+            },
+            {
+              "param": "params",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "sender.create",
+          "targets": [
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "sender.delete",
+          "targets": [
+            {
+              "param": "senderId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list.add",
+          "targets": [
+            {
+              "param": "ids",
+              "visible": true
+            },
+            {
+              "param": "emails",
+              "visible": true
+            },
+            {
+              "param": "listId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "campaign.send",
+          "targets": [
+            {
+              "param": "campaignId",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "07d7d02a-a631-482f-b1d3-ea6769dcc768",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Brevo API key. Sent as header api-key (not Authorization). Never log or place on INPUT. Dashboard: SMTP & API → API keys.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b527ec95-df8e-4478-9759-b0cfb51934bf",
+      "shortCode": "ext_id",
+      "label": "Ext ID",
+      "type": "string",
+      "description": "Request-body parameter `ext_id` for operations: contact.create, contact.upsert.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3cde8975-011d-4f05-ab3c-34e1e9b43a94",
+      "shortCode": "listIds",
+      "label": "Listids",
+      "type": "object",
+      "description": "List id array for create/update/add.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b4566f2b-dfd0-4be7-aec1-aa73f7f82ff9",
+      "shortCode": "attributes",
+      "label": "Attributes",
+      "type": "object",
+      "description": "Capitalized Brevo attribute map already defined in the account (FNAME, SMS, …). No government ids.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "518c5921-72c5-4cbe-8f4d-e4686c9d1567",
+      "shortCode": "smsBlacklisted",
+      "label": "Smsblacklisted",
+      "type": "string",
+      "description": "Request-body parameter `smsBlacklisted` for operations: contact.create, contact.upsert, contact.update.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "db892f79-7973-4b4d-8125-a4bc0529fa48",
+      "shortCode": "email",
+      "label": "Email",
+      "type": "string",
+      "description": "Contact email for create/upsert. Minimize: this address only.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7f2e8401-ae6f-4ff3-97c4-78533c0660fa",
+      "shortCode": "updateEnabled",
+      "label": "Updateenabled",
+      "type": "boolean",
+      "description": "For contact.upsert set true so POST /contacts updates an existing row. For contact.create leave false/omit.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b3aa2661-20cf-49ff-936e-d6a4643eb7ab",
+      "shortCode": "emailBlacklisted",
+      "label": "Emailblacklisted",
+      "type": "string",
+      "description": "Request-body parameter `emailBlacklisted` for operations: contact.create, contact.upsert, contact.update.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2215d777-8961-4181-96f8-945d0f36e661",
+      "shortCode": "identifier",
+      "label": "Identifier",
+      "type": "string",
+      "description": "Email or numeric contact id for get/update/delete. Path-encoded. Example: ada@example.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fe8ea80d-694c-4cf7-a7b8-989624911d84",
+      "shortCode": "limit",
+      "label": "Limit",
+      "type": "number",
+      "description": "contact.list page size (provider max 1000).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3d7483ee-7286-4e1c-a8a8-72f5ca7cdc4f",
+      "shortCode": "modifiedSince",
+      "label": "Modifiedsince",
+      "type": "string",
+      "description": "Query-string parameter `modifiedSince` for operation: contact.list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0badb997-aacc-4bec-882c-849e3505a5f0",
+      "shortCode": "offset",
+      "label": "Offset",
+      "type": "number",
+      "description": "contact.list offset.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0ea505e7-562d-44df-ab28-b4301c8054d1",
+      "shortCode": "sort",
+      "label": "Sort",
+      "type": "string",
+      "description": "Query-string parameter `sort` for operation: contact.list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f2519cdd-f1d8-4629-9c15-56ccb955aa48",
+      "shortCode": "unlinkListIds",
+      "label": "Unlinklistids",
+      "type": "list",
+      "description": "Request-body parameter `unlinkListIds` for operation: contact.update.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "08985d36-0900-4c89-93d4-79bcc1ebc518",
+      "shortCode": "attributeName",
+      "label": "Attributename",
+      "type": "string",
+      "description": "Attribute name in the path.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c497fa97-b6bb-4d5a-8726-e84c1256ffad",
+      "shortCode": "attributeCategory",
+      "label": "Attributecategory",
+      "type": "string",
+      "description": "Attribute ops: normal | transactional | category | calculated | global.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "47993211-7367-4fb6-b108-26e5566a165a",
+      "shortCode": "enumeration",
+      "label": "Enumeration",
+      "type": "string",
+      "description": "Request-body parameter `enumeration` for operations: contactAttribute.create, contactAttribute.update.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a357a450-420f-486b-9a9c-55f938d90151",
+      "shortCode": "type",
+      "label": "Type",
+      "type": "string",
+      "description": "Request-body parameter `type` for operation: contactAttribute.create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "61a5dcd3-18aa-4ca7-8a7c-9bb13db2ca54",
+      "shortCode": "value",
+      "label": "Value",
+      "type": "string",
+      "description": "Request-body parameter `value` for operation: contactAttribute.update.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d3e1f282-9ccc-4c63-89f7-c3b2a9f47bcd",
+      "shortCode": "tags",
+      "label": "Tags",
+      "type": "string",
+      "description": "Request-body parameter `tags` for operation: email.send.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "21ab3b6d-333d-4c75-b42e-3efd965188e7",
+      "shortCode": "subject",
+      "label": "Subject",
+      "type": "string",
+      "description": "Request-body parameter `subject` for operation: email.send.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3f37c198-815e-4a47-b281-2746494b9bc8",
+      "shortCode": "htmlContent",
+      "label": "Htmlcontent",
+      "type": "string",
+      "description": "HTML body for email.send (or textContent).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "28e70693-632f-4c78-833d-5f31b1d1ecde",
+      "shortCode": "sender",
+      "label": "Sender",
+      "type": "string",
+      "description": "Request-body parameter `sender` for operations: email.send, email.sendTemplate.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "71d27b08-716e-4bec-a4a0-f24917c8bf83",
+      "shortCode": "to",
+      "label": "to",
+      "type": "object",
+      "description": "Recipients [{email, name?}]. Transactional only to consented addresses.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "20187380-b098-42b3-bc41-ce30ba98edb1",
+      "shortCode": "replyTo",
+      "label": "Replyto",
+      "type": "string",
+      "description": "Request-body parameter `replyTo` for operation: email.send.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c98d7ab0-a920-4b51-8da1-129faeb9299a",
+      "shortCode": "textContent",
+      "label": "Textcontent",
+      "type": "string",
+      "description": "Request-body parameter `textContent` for operation: email.send.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "87c18c9e-c566-47f7-b2d8-18617d9a2328",
+      "shortCode": "templateId",
+      "label": "Templateid",
+      "type": "number",
+      "description": "Brevo template id for email.sendTemplate.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0af6f834-3d3f-44ef-873d-6fff3721a5fd",
+      "shortCode": "params",
+      "label": "Params",
+      "type": "object",
+      "description": "Request-body parameter `params` for operation: email.sendTemplate.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a7a34014-4306-4f33-ac5f-730f2c5803b2",
+      "shortCode": "name",
+      "label": "Name",
+      "type": "string",
+      "description": "Request-body parameter `name` for operation: sender.create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "651c6c7a-fc8f-4cfe-9179-6a0f3af59dcb",
+      "shortCode": "senderId",
+      "label": "Senderid",
+      "type": "string",
+      "description": "Sender id for sender.delete.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6c06b753-c449-4887-bb9d-6adb21bfda0c",
+      "shortCode": "ids",
+      "label": "Ids",
+      "type": "string",
+      "description": "Request-body parameter `ids` for operation: list.add.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ede9fb63-c1c6-4f8c-b264-b2e33fa799c5",
+      "shortCode": "emails",
+      "label": "Emails",
+      "type": "object",
+      "description": "Request-body parameter `emails` for operation: list.add.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "44e824ad-01a8-4786-b605-6f744b29c381",
+      "shortCode": "listId",
+      "label": "Listid",
+      "type": "string",
+      "description": "Target list id for list.add.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8d1c4b2a-8792-4577-892e-83f504ddaf9e",
+      "shortCode": "campaignId",
+      "label": "Campaignid",
+      "type": "string",
+      "description": "Existing email campaign id for campaign.send.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "20a0b4ba-e61e-48f7-8979-b46e145167d4",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

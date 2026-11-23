@@ -1,0 +1,166 @@
+{
+  "_id": "4c840dab-6a42-4e06-810c-7a63cd04410c",
+  "version": "1.0.0",
+  "name": "Moz",
+  "label": "Moz unified JSON-RPC API — URL metrics and links",
+  "description": "Official Moz unified API (JSON-RPC 2.0, currently unversioned) at POST https://api.moz.com/jsonrpc. Handler: OfficialApiNode. Auth: header x-moz-token (api_token). Catalog HMAC accessId+secretKey is legacy Links v1 — OfficialApiNode has no HMAC and this node does not call lsapi.seomoz.com. Use a Moz API token. Customer owns the Moz API SKU. Never log api_token. Do not redistribute bulk link graphs beyond Moz terms.",
+  "icon": "travel_explore",
+  "tags": [
+    "seo",
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d94b96bc-55f8-4a60-8b5c-f08f41d60a54",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example keys match api_spec.json required/queryFrom/bodyFrom.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "urlMetrics.get",
+          "description": "Overrides config operation when non-blank. EXACT: urlMetrics.get | links.list | anchorText.list | topPages.list.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "number",
+          "required": false,
+          "value": "1",
+          "description": "JSON-RPC request id. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "params",
+          "label": "params",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JSON-RPC params object for the method (targets, date_range, …).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "44b20d40-b9b7-4fdd-9940-f509a397e110",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Size-capped. Never log secrets or raw PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "8f471a38-69bc-4fed-988e-9d0a51cff112",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: urlMetrics.get | links.list | anchorText.list | topPages.list.",
+      "value": "urlMetrics.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "urlMetrics.get",
+        "links.list",
+        "anchorText.list",
+        "topPages.list"
+      ]
+    },
+    {
+      "_id": "58124cd3-7481-465d-add5-a83f7576bf23",
+      "shortCode": "api_token",
+      "label": "API token",
+      "type": "password",
+      "description": "Moz API token (StudioQuack secret). Header x-moz-token. Up to 5 per account. Never on INPUT. Never log. HMAC accessId/secretKey is not sent.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7b23f5ae-846f-4c33-9d06-f3f7ef403c40",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

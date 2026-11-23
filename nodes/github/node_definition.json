@@ -1,0 +1,253 @@
+{
+  "_id": "cc8bd8a8-4294-4b53-9ae5-a7a1923e87ec",
+  "version": "1.0.0",
+  "name": "GitHub Search",
+  "label": "GitHub REST API v3 - Repository and Release Search",
+  "description": "Read-only GitHub REST API v3 node for public (and, with a PAT, authorized private) repository search, a single repository lookup, and the latest GitHub Release. EXACT actions: 'search_repositories' (default, GET /search/repositories), 'get_repo' (GET /repos/{owner}/{repo}), 'get_latest_release' (GET /repos/{owner}/{repo}/releases/latest). Works without auth for public data; a Personal Access Token is recommended for higher quotas and private/org repos the token can read. Search has its own quota: authenticated Search API is about 30 requests/minute; unauthenticated search is lower (typically 10/minute). Core REST with a PAT is typically 5,000 requests/hour (60/hour unauthenticated). The PAT is sent only as Authorization: Bearer and is NEVER logged or returned on the output port. Useful for competitor-displacement discovery; this node searches repositories and releases only (not issues, discussions, or code). Example input: {\"action\":\"search_repositories\",\"query\":\"language:python stars:>100 topic:automation\",\"per_page\":5}.",
+  "icon": "hub",
+  "tags": [
+    "github",
+    "git",
+    "rest",
+    "repository",
+    "search"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One GitHub REST operation. The daemon delivers this object as inputVariables.input, or as currentNode.inputList[] with targetPortValue=input (a one-element list is unwrapped to the object). Required shape: a JSON object. Choose action, then supply that action's required fields (query or q for search_repositories; owner AND repo for get_repo and get_latest_release). Unknown keys are ignored. Example: {\"action\":\"get_repo\",\"owner\":\"microsoft\",\"repo\":\"autogen\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "action",
+          "label": "action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which GitHub REST operation to run. EXACT accepted values (case-sensitive): 'search_repositories' | 'get_repo' | 'get_latest_release'. Omit, null, or blank → 'search_repositories'. Any other string fails with output.error 'Unknown action: {action}. Use search_repositories, get_repo, or get_latest_release.' (no HTTP call). Example: 'get_latest_release'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GitHub search syntax for action='search_repositories' (ignored by get_repo and get_latest_release). REQUIRED when action is search_repositories; omit, null, or blank fails with output.error 'query is required for search_repositories.' and no HTTP call. Alias: the same string may be sent as 'q' instead of 'query' (query wins when both are non-blank). Supports GitHub qualifiers: language:, stars:, forks:, topic:, org:, user:, in:name, in:description. Example: 'language:python stars:>100 topic:automation'.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search sort for action='search_repositories' only (ignored otherwise). EXACT accepted values: 'stars' | 'forks' | 'updated' | 'help-wanted-issues'. Omit, null, or blank → 'stars'. Any other string is forwarded to GitHub as-is and typically returns HTTP 422 (surfaced as output.error 'GitHub API Error: HTTP 422 for url: …'). Example: 'updated'.",
+          "children": []
+        },
+        {
+          "shortCode": "order",
+          "label": "order",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search order for action='search_repositories' only (ignored otherwise). EXACT accepted values: 'desc' | 'asc'. Omit, null, or blank → 'desc'. Any other string is forwarded to GitHub as-is and typically returns HTTP 422. Example: 'asc'.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for action='search_repositories' only (ignored otherwise). Accepted: positive number or numeric string. Omit/null → instance config default_per_page (20). Values <= 0 also use that default. The request sends min(per_page, 100); GitHub's documented maximum is 100. Non-numeric strings fall back to the default. Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "1-based search page for action='search_repositories' only (ignored otherwise). Accepted: integer or numeric string. Omit, null, or non-numeric → 1. Example: 2. GitHub Search only returns the first 1,000 matches (page * per_page must stay within that window or GitHub returns HTTP 422).",
+          "children": []
+        },
+        {
+          "shortCode": "owner",
+          "label": "owner",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GitHub user or organization login for action='get_repo' and action='get_latest_release' (ignored by search_repositories). REQUIRED together with repo for those actions; omit, null, or blank (either field) fails with output.error 'owner and repo are required for get_repo.' or 'owner and repo are required for get_latest_release.' and no HTTP call. Path-encoded in the URL. Not owner/repo combined — that belongs in repo as the name only. Example: 'microsoft'.",
+          "children": []
+        },
+        {
+          "shortCode": "repo",
+          "label": "repo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Repository name (the name segment only, not 'owner/name') for action='get_repo' and action='get_latest_release'. REQUIRED together with owner for those actions; omit/blank fails with the same owner-and-repo error as owner. Path-encoded in the URL. Example: 'autogen'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d60",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Single OUTPUT object. Success always includes status='ok' plus action-specific fields (repositories for search_repositories, repository for get_repo, release for get_latest_release). The Personal Access Token is never present on this object. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Success flag. EXACT accepted value on success: 'ok'. Present only when the GitHub call succeeded (including get_latest_release HTTP 404, which is treated as success with release=null). Absent when output.error is set. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "total_count",
+          "label": "Total Count",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Present for action='search_repositories' only. Total matching repositories in GitHub's search index (not the page length). Integer. Omit/absent on get_repo, get_latest_release, and errors. Example: 1842.",
+          "children": []
+        },
+        {
+          "shortCode": "repos_returned",
+          "label": "Repos Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Present for action='search_repositories' only. Number of objects in repositories[] on this page (0 if GitHub returned no items). Integer. Absent on other actions and on errors. Example: 5.",
+          "children": []
+        },
+        {
+          "shortCode": "rate_limit_remaining",
+          "label": "Rate Limit Remaining",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present for action='search_repositories' only. Value of the X-RateLimit-Remaining response header as a string, or EXACT 'unknown' when the header is missing. Example: '29'. This is the Search API remaining quota for search_repositories, not the core REST quota.",
+          "children": []
+        },
+        {
+          "shortCode": "repositories",
+          "label": "Repositories",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Present for action='search_repositories' only. Array of repository summaries (may be empty []). Each object has: full_name (string, e.g. 'microsoft/autogen'), description (string, truncated to 300 characters; empty string when GitHub has none), html_url (string), stargazers_count (number, default 0), forks_count (number, default 0), open_issues_count (number, default 0), language (string or null), topics (array of strings, or [] when missing), license (SPDX id string or null), pushed_at / created_at / updated_at (ISO-8601 strings, empty when missing). Absent on other actions. Example item: {\"full_name\":\"microsoft/autogen\",\"language\":\"Python\",\"license\":\"MIT\",\"topics\":[\"agents\"]}.",
+          "children": []
+        },
+        {
+          "shortCode": "repository",
+          "label": "Repository",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Present for action='get_repo' only. Single repository object, not truncated. Fields: full_name (string), description (full string, empty when GitHub has none — not truncated), html_url (string), stargazers_count / forks_count / open_issues_count / subscribers_count (numbers, default 0), language (string or null), topics (array or []), license (SPDX id string or null), pushed_at / created_at (ISO-8601 strings), default_branch (string, e.g. 'main'). Absent on other actions. Example: {\"full_name\":\"microsoft/autogen\",\"default_branch\":\"main\",\"subscribers_count\":1200}.",
+          "children": []
+        },
+        {
+          "shortCode": "release",
+          "label": "Release",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Present for action='get_latest_release'. On success with a release: object with tag_name (string), name (string), body (string truncated to 1000 characters), published_at (ISO-8601 string), html_url (string), prerelease (boolean, default false), author (GitHub login string, empty when missing). EXACT 404 behaviour: HTTP 404 is success — release is JSON null and message is 'No releases found.' Other 4xx/5xx set output.error instead. Absent on other actions. Example: {\"tag_name\":\"v1.2.0\",\"prerelease\":false,\"author\":\"octocat\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "Message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Informational string on success paths that are not errors. EXACT value when get_latest_release hits HTTP 404: 'No releases found.' Absent on search_repositories, get_repo, a found release, and on failures (those use error). Example: 'No releases found.'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7b",
+      "shortCode": "personal_access_token",
+      "label": "Personal Access Token",
+      "type": "password",
+      "description": "Optional GitHub Personal Access Token (classic ghp_… or fine-grained github_pat_…). Omit, null, or blank → unauthenticated public API (lower rate limits; private/org repos return HTTP 404/401). Non-blank → every request adds Authorization: Bearer <token> together with Accept: application/vnd.github+json, User-Agent: StudioQuack/1.0, X-GitHub-Api-Version: 2026-03-10 (current REST calendar version — https://docs.github.com/en/rest/about-the-rest-api/api-versions). NEVER logged and NEVER copied onto the output port. To obtain: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens (recommended) or Tokens (classic). For public search/details, a fine-grained token with public-repository read metadata is enough; for private org data select those repositories and read-only metadata/content. Store here as a password. Example: leave empty for public microsoft/autogen lookup.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout in seconds (connect + read) for every GitHub GET. Accepted: positive number or numeric string. Omit, null, or <= 0 → 25. Example: 25. On expiry output.error is exactly 'GitHub API Error: timed out after {n}s' where n is the timeout used. Keep this below the daemon stateful invoke budget (default 300s) or the daemon fails the node first.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9d",
+      "shortCode": "default_per_page",
+      "label": "Default Per Page",
+      "type": "number",
+      "description": "Default search page size used when input.per_page is omitted, null, or <= 0 (search_repositories only). Accepted: positive number or numeric string. Omit, null, or <= 0 → 20. The outbound request still sends min(value, 100). Example: 20. Does not affect get_repo or get_latest_release.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

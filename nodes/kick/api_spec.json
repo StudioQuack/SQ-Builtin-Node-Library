@@ -1,0 +1,54 @@
+{
+  "baseUrl": "https://api.kick.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "user_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/public/v1/users",
+      "queryFrom": ["id"]
+    },
+    "channel_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/public/v1/channels",
+      "queryFrom": ["slug", "broadcaster_user_id"]
+    },
+    "livestream_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/public/v1/livestreams",
+      "queryFrom": ["broadcaster_user_id"]
+    },
+    "livestream_user": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/public/v1/users/livestreams",
+      "required": ["user_id"],
+      "queryFrom": ["user_id"]
+    },
+    "livestream_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/public/v2/livestreams",
+      "queryFrom": ["category_id", "language_code", "limit", "cursor"]
+    },
+    "chat_send": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/public/v1/chat",
+      "required": ["content"],
+      "bodyFrom": ["content", "broadcaster_user_id", "type"]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

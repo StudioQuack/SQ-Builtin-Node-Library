@@ -1,0 +1,345 @@
+{
+  "_id": "d9c0fe38-5909-5452-b503-556bce25b6a5",
+  "version": "1.0.0",
+  "name": "Amazon SP-API",
+  "label": "Amazon Selling Partner API — Orders 2026-01-01, Catalog, Feeds, Reports",
+  "description": "SP-API regional host sellingpartnerapi-{region}.amazon.com (config region: na | eu | fe). Header x-amz-access-token is a Login-with-Amazon access token (refresh out of band). IAM/SigV4 not required since 2023-10-02. Orders path 2026-01-01 is searchOrders/getOrder (v0 getOrders PascalCase query names retired; use marketplaceIds, createdAfter, fulfillmentStatuses). Catalog 2022-04-01, Feeds/Reports 2021-06-30, FBA Inventory v1 current. No Seller Central scrape. Notifications are SQS/EventBridge — trigger is ingress after the operator bridges. Docs: https://developer-docs.amazon.com/sp-api/docs/orders-api-migration-guide Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "storefront",
+  "tags": [
+    "amazon",
+    "spapi",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a77a6f89-39cf-5e06-9c7f-bd66cdd58f9e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "order_list",
+          "description": "Official API verb. EXACT: order_list | order_get | catalog_get | inventory_get | feed_create | report_get | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "marketplaceIds",
+          "label": "marketplaceIds",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Query-string parameter `marketplaceIds` for operations: order_list, catalog_get, inventory_get.",
+          "children": []
+        },
+        {
+          "shortCode": "createdAfter",
+          "label": "createdAfter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `createdAfter` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "createdBefore",
+          "label": "createdBefore",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `createdBefore` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "lastUpdatedAfter",
+          "label": "lastUpdatedAfter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `lastUpdatedAfter` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "lastUpdatedBefore",
+          "label": "lastUpdatedBefore",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `lastUpdatedBefore` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "fulfillmentStatuses",
+          "label": "fulfillmentStatuses",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `fulfillmentStatuses` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "maxResultsPerPage",
+          "label": "maxResultsPerPage",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Query-string parameter `maxResultsPerPage` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "paginationToken",
+          "label": "paginationToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `paginationToken` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "includedData",
+          "label": "includedData",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `includedData` for operations: order_list, catalog_get.",
+          "children": []
+        },
+        {
+          "shortCode": "MarketplaceIds",
+          "label": "MarketplaceIds",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Query-string parameter `MarketplaceIds` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "CreatedAfter",
+          "label": "CreatedAfter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `CreatedAfter` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "LastUpdatedAfter",
+          "label": "LastUpdatedAfter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `LastUpdatedAfter` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "OrderStatuses",
+          "label": "OrderStatuses",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `OrderStatuses` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "orderId",
+          "label": "orderId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `orderId` for operation: order_get. Required by: order_get.",
+          "children": []
+        },
+        {
+          "shortCode": "asin",
+          "label": "asin",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `asin` for operation: catalog_get. Required by: catalog_get.",
+          "children": []
+        },
+        {
+          "shortCode": "granularityType",
+          "label": "granularityType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `granularityType` for operation: inventory_get.",
+          "children": []
+        },
+        {
+          "shortCode": "granularityId",
+          "label": "granularityId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `granularityId` for operation: inventory_get.",
+          "children": []
+        },
+        {
+          "shortCode": "reportId",
+          "label": "reportId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `reportId` for operation: report_get. Required by: report_get.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9479c601-1b35-528a-be11-beab0f0ec354",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0ff425f5-bdff-5309-b5f3-bc064d14d079",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: order_list | order_get | catalog_get | inventory_get | feed_create | report_get | trigger. trigger does not open a socket.",
+      "value": "order_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "order_list",
+        "order_get",
+        "catalog_get",
+        "inventory_get",
+        "feed_create",
+        "report_get",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "0ca20433-c69c-5981-b905-d442ad4aecd3",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Login-with-Amazon access token minted outside StudioQuack (header x-amz-access-token). Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "00b382ea-c84f-40ab-9f47-1ba51f3802a7",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "select",
+      "description": "SP-API regional endpoint the seller account and marketplaces belong to. EXACT: na | eu | fe. na = sellingpartnerapi-na.amazon.com (US, CA, MX, BR), eu = sellingpartnerapi-eu.amazon.com (UK, DE, FR, IT, ES, IN, AE, ...), fe = sellingpartnerapi-fe.amazon.com (JP, AU, SG). Example: eu for marketplace A1PA6795UKMFR9 (DE). Substituted into baseUrl https://sellingpartnerapi-{region}.amazon.com; blank uses na.",
+      "value": "na",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "na",
+        "eu",
+        "fe"
+      ]
+    },
+    {
+      "_id": "aa9dc10d-6778-597a-9934-afe4a3db9a40",
+      "shortCode": "marketplaceIds",
+      "label": "Marketplace Ids",
+      "type": "string",
+      "description": "Default marketplaceIds query (e.g. ATVPDKIKX0DER) when INPUT omits it. Orders 2026-01-01, Catalog 2022-04-01, and FBA Inventory v1.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8f4acc52-40dd-5bff-b2ce-ef66527b62ac",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

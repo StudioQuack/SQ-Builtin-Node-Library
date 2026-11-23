@@ -1,0 +1,171 @@
+{
+  "_id": "4f929805-f7f7-4806-ba72-8c5102762396",
+  "version": "1.0.0",
+  "name": "Rename Keys",
+  "label": "Rename JSON keys",
+  "description": "In-process key rename via mappings or regex. No network. No eval.",
+  "icon": "",
+  "tags": [
+    "rename",
+    "transform"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "209b93d0-d6d1-4571-aa3b-ecd17a5e203a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Rename Keys operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'rename'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "item",
+          "label": "item",
+          "type": "object",
+          "required": true,
+          "value": "{}",
+          "description": "Object or array of objects. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "mappings",
+          "label": "mappings",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "JSON array of from->to strings (e.g. [\"name->fullName\"]) or {from,to} objects.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e3db7feb-926c-4b07-9bd8-52268e739a0d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5d10ab44-0176-4d65-8ee7-6558cde60e45",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: rename. Required. Example: 'rename'.",
+      "value": "rename",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "rename"
+      ]
+    },
+    {
+      "_id": "6d4a404a-839b-432d-83ae-92b138a28d5c",
+      "shortCode": "mappings",
+      "label": "Mappings",
+      "type": "string",
+      "description": "JSON array of from->to strings or {from,to} objects. Example: '[\"n->name\"]' or '[{\"from\":\"n\",\"to\":\"name\"}]'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2b290a7e-2a9c-4712-937b-2bdc9681adfd",
+      "shortCode": "regex",
+      "label": "Regex",
+      "type": "select",
+      "description": "Treat from as a regex. Default false.",
+      "value": "false",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "f3c62cd1-0478-46c4-9533-d25bcfa91da3",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

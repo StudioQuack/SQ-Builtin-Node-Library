@@ -1,0 +1,271 @@
+{
+  "_id": "f534a86d-ebd3-475b-a7e9-0d8b650751b1",
+  "version": "1.0.0",
+  "name": "X (Twitter) Connector",
+  "label": "X / Twitter Connector (API v2)",
+  "description": "Stateless X (Twitter) API v2 client for StudioQuack workflows. Speaks https://api.x.com/2 with either an App-only Bearer Token (public reads: user lookup, mentions, recent search) or a User Access Token from OAuth 2.0 Authorization Code with PKCE (required for DM read/write, post_tweet, and reply_tweet). New apps use pay-per-usage credits (no Free/Basic/Pro for new signups as of 2026-02; https://developer.x.com/#pricing). Default action is 'stats'. EXACT mode values: 'sandbox' (canned stubs, no HTTP; default) or 'live' (real HTTPS to api.x.com). Tokens are read ONLY from configurationParameters (password fields). Do not put tokens on edges. input.mode may override sandbox|live. Reusable — attach via a FUNCTION port to any orchestrator that needs X read/write. Example: action='get_user', handle='studioquack', mode='sandbox' returns status='ok' with a stub user id 9999999. Use is subject to the X Developer Agreement and Policy: https://developer.x.com/en/developer-terms/agreement-and-policy.",
+  "icon": "",
+  "tags": [
+    "twitter",
+    "x",
+    "oauth2",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One X Connector request object delivered as inputVariables.input (or currentNode.inputList targetPortValue=input). Purpose: select the action and supply that action's fields (handle, query, body, ids). EXACT action values: 'get_user', 'list_mentions', 'list_dm_events', 'send_dm', 'search_tweets', 'search_recent' (alias of search_tweets), 'reply_tweet', 'reply' (alias of reply_tweet), 'post_tweet', 'stats'. Omitted/blank action defaults to 'stats'. EXACT mode override values: 'sandbox' | 'live' (any other non-blank string is treated as not-live / sandbox stubs). Do not put tokens on this port. Example: {\"action\":\"get_user\",\"handle\":\"studioquack\"}.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "action",
+          "label": "Action",
+          "type": "string",
+          "required": true,
+          "value": "stats",
+          "description": "Purpose: selects which X API v2 operation to run. Compared case-insensitively after trim; the echoed output.action is this requested alias (search_recent stays search_recent). EXACT accepted values: 'get_user' (GET /2/users/by/username/{handle}; requires handle), 'list_mentions' (GET /2/users/{id}/mentions; requires user_id or default_user_id), 'list_dm_events' (GET /2/dm_conversations/{id}/dm_events or GET /2/dm_events; live requires user_access_token with dm.read), 'send_dm' (POST /2/dm_conversations/with/{recipient_id}/messages; requires recipient_id + body; live requires user_access_token with dm.write), 'search_tweets' (GET /2/tweets/search/recent; requires query), 'search_recent' (alias of search_tweets), 'reply_tweet' (POST /2/tweets with reply.in_reply_to_tweet_id; requires body + in_reply_to_tweet_id|tweet_id|parent_id; live requires user_access_token with tweet.write), 'reply' (alias of reply_tweet), 'post_tweet' (POST /2/tweets; requires body; live requires user_access_token with tweet.write), 'stats' (local capability snapshot; no HTTP). Unknown values return {\"error\":\"Unknown action '{a}'. Valid: ['get_user', 'list_dm_events', 'list_mentions', 'post_tweet', 'reply', 'reply_tweet', 'search_recent', 'search_tweets', 'send_dm', 'stats']\"} with aliases included. Default when omitted/blank: 'stats'. Example: 'get_user'.",
+          "children": []
+        },
+        {
+          "shortCode": "mode",
+          "label": "Mode Override",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: per-call override of configurationParameters.mode. Compared case-insensitively after trim. EXACT accepted values: 'sandbox' (canned stubs, never calls X), 'live' (HTTPS to https://api.x.com/2; requires bearer_token or user_access_token on configuration except for action='stats'). Blank/omitted keeps the instance config (default 'sandbox'). Any other non-blank string is treated as not-live (sandbox stubs), matching Python `mode != 'live'`. Example: 'sandbox'.",
+          "children": []
+        },
+        {
+          "shortCode": "handle",
+          "label": "Handle",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: X username path segment for action='get_user' (GET /2/users/by/username/{handle}). The handler URL-encodes this segment. Required for get_user in sandbox and live; missing/blank fails with Error: ValueError: handle required for get_user. Accepted values: handle without a leading '@' (letters, digits, underscore; encoding allows other UTF-8). Leading '@' is sent as-is if supplied. Example: 'studioquack'.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "User ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: numeric X user id for action='list_mentions' (GET /2/users/{id}/mentions). Required unless configurationParameters.default_user_id is set; missing both fails with Error: ValueError: user_id required (or default_user_id config). Accepted values: X snowflake id as a decimal string. Blank falls through to default_user_id. Example: '44196397'.",
+          "children": []
+        },
+        {
+          "shortCode": "conversation_id",
+          "label": "Conversation ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: DM conversation id for action='list_dm_events'. When set in live mode the handler GET /2/dm_conversations/{id}/dm_events; when blank it GET /2/dm_events (all conversations). Sandbox does NOT require this field (result.conversation_id becomes the supplied id or 'sandbox-conv'). Accepted values: X conversation snowflake as a decimal string, or blank. Example: '1234567890'.",
+          "children": []
+        },
+        {
+          "shortCode": "recipient_id",
+          "label": "Recipient ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: numeric X user id of the DM recipient for action='send_dm' (POST /2/dm_conversations/with/{recipient_id}/messages). Required together with body; missing either fails with Error: ValueError: recipient_id and body required for send_dm. Accepted values: X user snowflake as a decimal string. Example: '1234567'.",
+          "children": []
+        },
+        {
+          "shortCode": "in_reply_to_tweet_id",
+          "label": "In Reply To Tweet ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: parent post id for action='reply_tweet' or alias 'reply'. The handler also accepts input.tweet_id or input.parent_id as fallbacks (first non-blank of in_reply_to_tweet_id, tweet_id, parent_id). Required together with body; missing either fails with Error: ValueError: body and in_reply_to_tweet_id (or tweet_id/parent_id) required for reply_tweet. Live POST /2/tweets sends {\"text\":body,\"reply\":{\"in_reply_to_tweet_id\":parent}}. Accepted values: tweet/post snowflake as a decimal string. Example: '1770000000000000000'.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "Body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: message or post text. Required for 'send_dm' (DM text), 'post_tweet' (new post), and 'reply_tweet'/'reply' (reply text). Missing/blank fails with the matching ValueError for that action. Leading/trailing whitespace is preserved. Accepted values: UTF-8 string. X enforces account/product limits (typically 280 characters for standard posts; DMs have separate policy limits) — the handler does not truncate. Example: 'Hello from StudioQuack'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "Query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: recent-search query for action='search_tweets' or alias 'search_recent' (GET /2/tweets/search/recent). Required; missing/blank fails with Error: ValueError: query required for search_tweets. Official recent search covers about the last 7 days unless the X product tier includes full-archive. Accepted values: X query syntax (operators such as from:, to:, lang:, has:, -is:retweet, @handle, #hashtag). Example: '@studioquack -is:retweet lang:en'.",
+          "children": []
+        },
+        {
+          "shortCode": "since",
+          "label": "Since",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: ISO 8601 lower bound mapped to X query param start_time for action='list_mentions' in live mode. Ignored in sandbox and for other actions. Blank/omitted omits start_time. Accepted values: RFC 3339 / ISO 8601 timestamps X accepts (e.g. YYYY-MM-DDTHH:MM:SSZ). Example: '2026-08-01T00:00:00Z'.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "Limit",
+          "type": "number",
+          "required": false,
+          "value": 25,
+          "description": "Purpose: row cap for list/search actions. Default when omitted/non-numeric: 25. Sandbox list_mentions returns min(limit, 3) stub tweets. Live list_mentions sends max_results=min(max(limit,5),100). Live search_tweets/search_recent sends max_results=min(max(limit,10),100). Live list_dm_events sends max_results=limit with no extra clamp (X may reject out-of-range). Accepted values: integers. Example: 25.",
+          "children": []
+        },
+        {
+          "shortCode": "pagination_token",
+          "label": "pagination_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pagination_token for mentions/search paging (X API next_token). Example: from prior meta.next_token.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": [],
+      "_id": "009e421e-3b65-4977-aed1-17661e123ba6"
+    },
+    {
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Single response object (this is the only reply key). Success: {status:'ok', action:<requested alias>, result:<action payload>}. Tokens never appear in this object; stats.result may include has_bearer/has_user_token booleans only. Example success: {\"status\":\"ok\",\"action\":\"stats\",\"result\":{\"mode\":\"sandbox\",\"base_url\":\"sandbox://x\",\"has_bearer\":false,\"has_user_token\":false,\"default_user_id\":null}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: success marker on the output object. Present only on success. EXACT accepted value: 'ok'. Absent when output.error is set. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "action",
+          "label": "Action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: echo of the requested action alias (not the canonical handler name). Present only on success. EXACT accepted values: 'get_user', 'list_mentions', 'list_dm_events', 'send_dm', 'search_tweets', 'search_recent', 'reply_tweet', 'reply', 'post_tweet', 'stats'. Example: 'search_recent'.",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "Result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Purpose: action-specific payload. Sandbox: canned objects with mode='sandbox' (see node README). Live: raw X API v2 JSON (user object, tweet list, DM events, create response). stats: {mode, base_url ('https://api.x.com/2' when live else 'sandbox://x'), has_bearer, has_user_token, default_user_id or null}. Never contains token strings. Example (sandbox get_user): {\"mode\":\"sandbox\",\"data\":{\"id\":\"9999999\",\"username\":\"studioquack\",\"name\":\"Sandbox User\"}}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": [],
+      "_id": "5d6214e2-5d50-4067-a9d5-6638f6274bee"
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "3f5f68d8-3fde-4566-bb7a-0af222696fb8",
+      "shortCode": "mode",
+      "label": "Mode",
+      "type": "string",
+      "description": "Purpose: instance default for whether the handler calls X. input.mode overrides this per call when non-blank. EXACT accepted values: 'sandbox' (default — canned stubs, no HTTP to api.x.com), 'live' (real HTTPS to https://api.x.com/2; requires configuration bearer_token or user_access_token except when action='stats'). Compared case-insensitively. Any other non-blank value is treated as not-live (sandbox stubs). Example: 'sandbox'.",
+      "value": "sandbox",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "ccdae779-a360-415d-a2e0-5fd76aac6bf8",
+      "shortCode": "bearer_token",
+      "label": "Bearer Token (App-only)",
+      "type": "password",
+      "description": "Purpose: App-only Bearer Token sent as 'Authorization: Bearer <token>' for public reads (get_user, list_mentions, search_tweets). Cannot authorize DMs or write actions. Bind a StudioQuack secret; never paste a production token into the committed JSON and never put this value on an INPUT edge (input.bearer_token is ignored). Accepted values: X Bearer token string, or blank (sandbox; live non-stats requires this or user_access_token). To obtain: (1) Sign up at https://console.x.com and create a Project + App. (2) App → Keys and Tokens → Generate Bearer Token and copy it once. Pay-per-usage applies on X v2. Example: leave '' in sandbox; in live bind $secretRef to the Bearer.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "a827b506-3077-4eac-b8ea-18ab1614316a",
+      "shortCode": "user_access_token",
+      "label": "User Access Token (OAuth 2.0 PKCE)",
+      "type": "password",
+      "description": "Purpose: User Access Token from OAuth 2.0 Authorization Code with PKCE. Required in live mode for list_dm_events, send_dm, post_tweet, and reply_tweet. Also usable for public reads. Bind a StudioQuack secret; never put this on an INPUT edge (input.user_access_token is ignored). Accepted values: OAuth 2 access_token string, or blank. Required X scopes: tweet.read users.read dm.read dm.write tweet.write offline.access. To obtain: (1) console.x.com App → User authentication settings → enable OAuth 2.0, permissions 'Read and write and Direct message', set callback + website URL. (2) Note Client ID (and Client Secret if confidential). (3) PKCE code_verifier (43–128 URL-safe chars) and SHA-256 code_challenge. (4) Authorize at https://x.com/i/oauth2/authorize?response_type=code&client_id=CLIENT_ID&redirect_uri=REDIRECT&scope=tweet.read%20users.read%20dm.read%20dm.write%20tweet.write%20offline.access&state=STATE&code_challenge=CHALLENGE&code_challenge_method=S256. (5) POST https://api.x.com/2/oauth2/token grant_type=authorization_code with code, redirect_uri, code_verifier, client_id. Refresh with grant_type=refresh_token. Example: leave '' in sandbox; in live bind $secretRef to the access_token.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "1ad561c8-77e6-45d0-b646-99e1072340e7",
+      "shortCode": "pagination_token",
+      "label": "Pagination Token",
+      "type": "string",
+      "description": "Default pagination_token for mentions/search paging when INPUT omits it.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "fe465f15-1961-487a-a0f0-87f35a497e52",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Purpose: per-call HTTP connect/read timeout for live requests to https://api.x.com/2 (unused in sandbox). Accepted values: positive integers (seconds). Default: 25. Omitted, non-numeric, or ≤0 falls back to 25. The handler does not clamp an upper bound; keep this within the daemon/job budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "ea078bc8-9c88-4af0-87ab-98e0c5b08d34",
+      "shortCode": "default_user_id",
+      "label": "Default User ID",
+      "type": "string",
+      "description": "Purpose: fallback X user id for action='list_mentions' when input.user_id is blank. stats.result.default_user_id echoes this value or null when blank. Accepted values: X user snowflake as a decimal string, or blank (no fallback; list_mentions then requires input.user_id). Find the id once via get_user with your handle. Example: '44196397'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    }
+  ],
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

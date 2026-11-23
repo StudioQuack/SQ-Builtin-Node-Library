@@ -1,0 +1,207 @@
+{
+  "_id": "07de5ae3-0f65-421f-aee4-e5a49485952d",
+  "version": "1.0.0",
+  "name": "NetSuite",
+  "label": "NetSuite — SuiteTalk REST record + SuiteQL (OAuth 2.0)",
+  "description": "Official SuiteTalk REST record + SuiteQL (OAuth 2.0). Docs: https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/book_1559132836.html. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. DO NOT BUILD SOAP / new TBA (Oracle 2026.1+ prefers REST + OAuth 2). saved_search omitted — use SuiteQL. Host is https://{account_id}.suitetalk.api.netsuite.com (account_id interpolated into baseUrl). Prefer: transient on SuiteQL is not sent by OfficialApiNode.",
+  "icon": "account_balance",
+  "tags": [
+    "netsuite",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ee94575b-1660-4340-a314-16d991acf74e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for NetSuite. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "record_get",
+          "description": "Overrides config operation. EXACT: record_get | record_create | record_update | record_delete | suiteql. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "NetSuite record internal id for record_get / update / delete. Example: 12345.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "REST record type path segment. Official: customer | invoice | salesorder | contact | … Example: customer.",
+          "children": []
+        },
+        {
+          "shortCode": "record",
+          "label": "record",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "SuiteTalk REST record object merged at the JSON root for record_create (POST /services/rest/record/v1/{type}) and record_update (PATCH …/{type}/{id}). Field names are the record type's REST properties (companyName, email, entityId, …). Named inputs win on conflict. Example: {\"companyName\":\"Acme\",\"email\":\"ops@example.com\"}. https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/article_159239242881.html",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SuiteQL query string for suiteql. Example: SELECT id, companyName FROM customer.",
+          "children": []
+        },
+        {
+          "shortCode": "params",
+          "label": "params",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "SuiteQL params array for suiteql. Official query parameters object/list.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "10678ae8-5aae-4627-b1aa-e47b61308e1a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "8891e0b6-18f8-44fd-952f-62707eb222c5",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: record_get | record_create | record_update | record_delete | suiteql. Default record_get. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "record_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "record_get",
+        "record_create",
+        "record_update",
+        "record_delete",
+        "suiteql"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "127785aa-6020-46fa-bb7b-d56f492beb58",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "NetSuite REST access token (bearer Authorization). OAuth access token minted outside StudioQuack. StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cf345151-caf0-4eab-8e7e-3c861c73eb21",
+      "shortCode": "account_id",
+      "label": "Account Id",
+      "type": "string",
+      "description": "Account id for the REST host {account_id}.suitetalk.api.netsuite.com. Interpolated into baseUrl.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "41cc5101-14f4-48fc-af24-14a728da2dc4",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

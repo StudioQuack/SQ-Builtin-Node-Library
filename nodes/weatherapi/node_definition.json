@@ -1,0 +1,222 @@
+{
+  "_id": "1edaaa3b-4b3a-5ea3-96b0-c84e8d143b8b",
+  "version": "1.0.0",
+  "name": "WeatherAPI",
+  "label": "WeatherAPI",
+  "description": "WeatherAPI official API via OfficialApiNode (api_spec.json). Operations: current, forecast, history, astronomy, timezone, sports. Docs: https://www.weatherapi.com/docs/. WeatherAPI.com terms. Query param key. Commercial redistribution licensed. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "cloud",
+  "tags": [
+    "weather",
+    "weatherapi"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b1009323-1762-5f96-8973-547ceff59984",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One WeatherAPI request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"current\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: current | forecast | history | astronomy | timezone | sports. Default: first listed or instance operation. Example: 'current'.",
+          "children": [],
+          "_id": "e8090de2-9dbc-52c4-8bdf-d5f5548f9d22"
+        },
+        {
+          "shortCode": "alerts",
+          "label": "alerts",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Weather alerts. EXACT: yes | no. forecast.",
+          "children": [],
+          "_id": "f98242b3-ba3f-52a6-97e8-9fe7eb027d67"
+        },
+        {
+          "shortCode": "aqi",
+          "label": "aqi",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Air quality. EXACT: yes | no. current / forecast.",
+          "children": [],
+          "_id": "635bb8b9-4a31-5b36-bea1-cf1df322584a"
+        },
+        {
+          "shortCode": "days",
+          "label": "days",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Forecast days 1-14 (plan-dependent). forecast. Example: 3.",
+          "children": [],
+          "_id": "db6e32c7-79e7-5ccd-a967-a4d2ae4a1e40"
+        },
+        {
+          "shortCode": "dt",
+          "label": "dt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Date yyyy-MM-dd for history / astronomy. Required on history. Example: 2026-01-01.",
+          "children": [],
+          "_id": "033be80e-1a1a-591b-82cd-b71445118c81"
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query: city, lat,lon, US zip, UK postcode, or IP. Required. Example: London or 48.8567,2.3508.",
+          "children": [],
+          "_id": "4cb146bb-93c7-549f-9323-304d9687b982"
+        },
+        {
+          "shortCode": "hour",
+          "label": "hour",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Hour 0-23 for forecast/history. Example: 14. https://www.weatherapi.com/docs/",
+          "children": []
+        },
+        {
+          "shortCode": "lang",
+          "label": "lang",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Condition text language. current/forecast/history. Example: es.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "f9560052-0b0e-5bde-8822-4a717e980c49",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "4792e812-6046-5fca-a931-b2b36c9046a6"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "6fd63ac7-903a-5dbe-8bda-3715d1a58aca"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "c8a751d0-cc37-5187-ac33-42291dfc8dbb"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5f4ea0dc-506e-5a47-ab25-6e2826bd1e90",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: current, forecast, history, astronomy, timezone, sports.",
+      "value": "current",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "current",
+        "forecast",
+        "history",
+        "astronomy",
+        "timezone",
+        "sports"
+      ]
+    },
+    {
+      "_id": "b1a0bbd0-6cf5-5995-88cb-7d1d359d65ad",
+      "shortCode": "key",
+      "label": "Key",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "244ff11c-ac6b-5595-83e3-05f18a397a45",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 20. Keep under the daemon sandbox request budget.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

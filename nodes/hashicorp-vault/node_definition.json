@@ -1,0 +1,331 @@
+{
+  "_id": "55942570-9768-4208-9d68-cfae52b2ae5e",
+  "version": "1.0.0",
+  "name": "HashiCorp Vault",
+  "label": "HashiCorp Vault HTTP API v1",
+  "description": "Vault HTTP API v1 (KV v2 + Transit + token + leases) via OfficialApiNode. Docs: https://developer.hashicorp.com/vault/api-docs. Operations: kv-get, kv-put, kv-delete, kv-list, transit-encrypt, transit-decrypt, token-lookup, renew-lease, listen. Auth secret vault_token is instance config only (never on INPUT, never logged). GET/access operations still call the official GET (or access) HTTP method. Retrieved secret material must not be logged and should stay in StudioQuack secret bindings (bind OUTPUT `data` into a secret; do not print it, persist it in engine variables, or leave it on a logged edge). listen is kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "lock",
+  "tags": [
+    "secrets",
+    "vault"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4bbe18d2-bbe5-419a-800b-9d49054ecd13",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put vault_token here. Path params match api_spec.json placeholders. Example: {\"operation\":\"kv-get\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "kv-get",
+          "description": "Which official API call to run. EXACT values: kv-get | kv-put | kv-delete | kv-list | transit-encrypt | transit-decrypt | token-lookup | renew-lease | listen. Prefer the instance config operation select. listen is ingress: no HTTP — use a BPMN message event. Example: 'kv-get'.",
+          "children": []
+        },
+        {
+          "shortCode": "secretPath",
+          "label": "secretPath",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "KV path relative to the mount (no data/ prefix). Required for kv-*. Nested paths are URL-encoded.",
+          "children": []
+        },
+        {
+          "shortCode": "keyName",
+          "label": "keyName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Transit key name for transit-encrypt / transit-decrypt.",
+          "children": []
+        },
+        {
+          "shortCode": "version",
+          "label": "version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional KV v2 version query for kv-get.",
+          "children": []
+        },
+        {
+          "shortCode": "lease_id",
+          "label": "lease_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Vault secret lease_id for renew-lease (not a token).",
+          "children": []
+        },
+        {
+          "shortCode": "plaintext",
+          "label": "plaintext",
+          "type": "password",
+          "required": false,
+          "value": "",
+          "description": "Transit encrypt payload from a StudioQuack secret binding. Never a logged field.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `data` for operation: kv-put.",
+          "children": []
+        },
+        {
+          "shortCode": "options",
+          "label": "options",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `options` for operation: kv-put.",
+          "children": []
+        },
+        {
+          "shortCode": "exclude_deleted",
+          "label": "exclude_deleted",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `exclude_deleted` for operation: kv-list.",
+          "children": []
+        },
+        {
+          "shortCode": "context",
+          "label": "context",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `context` for operations: transit-encrypt, transit-decrypt.",
+          "children": []
+        },
+        {
+          "shortCode": "key_version",
+          "label": "key_version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `key_version` for operation: transit-encrypt.",
+          "children": []
+        },
+        {
+          "shortCode": "nonce",
+          "label": "nonce",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `nonce` for operations: transit-encrypt, transit-decrypt.",
+          "children": []
+        },
+        {
+          "shortCode": "associated_data",
+          "label": "associated_data",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `associated_data` for operations: transit-encrypt, transit-decrypt.",
+          "children": []
+        },
+        {
+          "shortCode": "ciphertext",
+          "label": "ciphertext",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ciphertext` for operation: transit-decrypt.",
+          "children": []
+        },
+        {
+          "shortCode": "increment",
+          "label": "increment",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `increment` for operation: renew-lease.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "fd505ba8-37e5-4152-96b3-5d1ef5d6a8ce",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Secret bytes in data must not be logged; bind them into StudioQuack secrets. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON from the official API. May contain secret material — never log; bind into StudioQuack secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "1f522967-3838-4ae3-b91e-06f5e6b06fdf",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: kv-get, kv-put, kv-delete, kv-list, transit-encrypt, transit-decrypt, token-lookup, renew-lease, listen. listen is BPMN ingress, not a socket.",
+      "value": "kv-get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "kv-get",
+        "kv-put",
+        "kv-delete",
+        "kv-list",
+        "transit-encrypt",
+        "transit-decrypt",
+        "token-lookup",
+        "renew-lease",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "515c4243-5542-47a6-aade-33b03ea9d0f7",
+      "shortCode": "vault_token",
+      "label": "Vault token",
+      "type": "password",
+      "description": "Vault client token. Sent as X-Vault-Token (no prefix). StudioQuack secret binding. Never logged. Never on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8f972fd5-8480-4d81-9a0c-48f3aafbace4",
+      "shortCode": "vaultHost",
+      "label": "Vault host",
+      "type": "string",
+      "description": "Vault host without scheme, e.g. vault.example.com:8200. TLS only (https://).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b6a878a8-957e-408d-a3ee-38aae9e7ae4c",
+      "shortCode": "namespace",
+      "label": "Namespace",
+      "type": "string",
+      "description": "Optional Vault Enterprise / HCP namespace. Sent as X-Vault-Namespace when non-blank. HCP Dedicated often admin. Blank omits the header (OSS / root).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c933e6a3-31c8-47cf-ad2d-df1b43ea6852",
+      "shortCode": "kvMount",
+      "label": "KV mount",
+      "type": "string",
+      "description": "KV secrets-engine mount (no slashes). Default secret.",
+      "value": "secret",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5d9e3c38-0b22-4b85-a901-209630e3d435",
+      "shortCode": "transitMount",
+      "label": "Transit mount",
+      "type": "string",
+      "description": "Transit engine mount. Default transit.",
+      "value": "transit",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "74401eb2-970a-47e6-a7a1-ff73e41a1471",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon invoke budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

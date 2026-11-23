@@ -1,0 +1,37 @@
+{
+  "baseUrl": "https://",
+  "defaultTimeout": 300,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "aws-sigv4",
+    "configKey": "access_key",
+    "secretKeyConfigKey": "secret_access_key"
+  },
+  "sigv4": {
+    "service": "bedrock",
+    "regionConfigKey": "region"
+  },
+  "operations": {
+    "converse": {
+      "kind": "http",
+      "method": "POST",
+      "path": "bedrock-runtime.{region}.amazonaws.com/model/{model_id}/converse",
+      "required": ["messages"],
+      "bodyFrom": ["messages", "system", "inferenceConfig", "additionalModelRequestFields", "toolConfig", "guardrailConfig"]
+    },
+    "invoke_model": {
+      "kind": "http",
+      "method": "POST",
+      "path": "bedrock-runtime.{region}.amazonaws.com/model/{model_id}/invoke",
+      "required": [],
+      "bodyFrom": ["body", "prompt", "messages", "input", "max_tokens", "temperature"]
+    },
+    "list_foundation_models": {
+      "kind": "http",
+      "method": "GET",
+      "path": "bedrock.{region}.amazonaws.com/foundation-models",
+      "queryFrom": ["byProvider", "byOutputModality", "byInferenceType"],
+      "required": []
+    }
+  }
+}

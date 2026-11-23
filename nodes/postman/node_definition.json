@@ -1,0 +1,214 @@
+{
+  "_id": "0e0e74de-f555-41ad-8b54-19ca797467cd",
+  "version": "1.0.0",
+  "name": "Postman",
+  "label": "Postman API",
+  "description": "Postman API via OfficialApiNode. Docs: https://learning.postman.com/docs/developer/postman-api/authentication. Operations: collection_get, collection_run, environment_get, environment_update, monitor_run, mock_get. Auth secret api_key is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "postman",
+    "collections",
+    "tests"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "7275a425-5380-4d6c-aaa4-f78e03cce215",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "collection_get",
+          "description": "Which official API call to run. EXACT values: collection_get | collection_run | environment_get | environment_update | monitor_run | mock_get. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'collection_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "collection_uid",
+          "label": "collection_uid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Collection uid.",
+          "children": []
+        },
+        {
+          "shortCode": "environment_uid",
+          "label": "environment_uid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Environment uid.",
+          "children": []
+        },
+        {
+          "shortCode": "monitor_uid",
+          "label": "monitor_uid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Monitor uid.",
+          "children": []
+        },
+        {
+          "shortCode": "mock_uid",
+          "label": "mock_uid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mock uid.",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "environment",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Environment envelope escape hatch for environment_update. Purpose fields name/values merge in via bodyMap. Example: {\"values\":[{\"key\":\"baseUrl\",\"value\":\"https://api.example.com\"}]}.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Environment name on environment_update. Nested as environment.name. Example: Staging.",
+          "children": []
+        },
+        {
+          "shortCode": "values",
+          "label": "values",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Environment values on environment_update. Nested as environment.values. Example: [{\"key\":\"token\",\"value\":\"x\",\"enabled\":true,\"type\":\"secret\"}].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a42b6614-2be2-4d64-b03a-05b3e3f1bd6b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ad59779d-21c5-403c-a94e-abd2a266308b",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: collection_get, collection_run, environment_get, environment_update, monitor_run, mock_get. listen is BPMN ingress, not a socket.",
+      "value": "collection_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "collection_get",
+        "collection_run",
+        "environment_get",
+        "environment_update",
+        "monitor_run",
+        "mock_get"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "ca64ae39-2a9f-4e10-9b04-9714d7ddad9d",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Postman API key. Header X-Api-Key.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8065bc9c-737f-40f5-9f95-21ed1e0ad395",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

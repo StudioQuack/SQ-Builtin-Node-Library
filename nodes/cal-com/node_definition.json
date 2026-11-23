@@ -1,0 +1,321 @@
+{
+  "_id": "ba1d542d-81cd-5174-9b7a-14e2e924d307",
+  "version": "1.0.0",
+  "name": "Cal.com",
+  "label": "Cal.com — Cal.com API v2",
+  "description": "Cal.com via the official Cal.com API v2. Base https://api.cal.com/v2. Docs: https://cal.com/docs/api-reference/v2/introduction. Every HTTP call sends header cal-api-version. Spec default is 2024-08-13 (https://cal.com/docs/api-reference/v2/v1-v2-differences); current OpenAPI requires 2026-02-25 on booking create/get/reschedule/cancel, 2026-05-01 on list-bookings, and 2024-06-14 on event-types (op-level extraHeaders). API v1 shut down 2026-04-08. Self-host uses a different host; OfficialApiNode is pinned to api.cal.com. Inbound booking events (created/cancelled/rescheduled) are BPMN message events only — there is no HTTP listen operation on this node. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file (ref-id).",
+  "icon": "event",
+  "tags": [
+    "scheduling"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "2e90520c-4cbb-5c96-9250-25abcff7ddd5",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Cal.com operation. Set operation plus the fields that operation needs. Do not put secrets on this port. For create-booking use eventTypeId OR (eventTypeSlug + username/teamSlug) per Cal.com v2; attendee is an object {name, timeZone, email?, …}, not a JSON string. Webhook-style booking events use BPMN message events only — there is no HTTP listen operation. Example: {\"operation\":\"create-booking\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "create-booking",
+          "description": "Which official call to run. EXACT HTTP values: create-booking | get-booking | list-bookings | reschedule-booking | cancel-booking | list-event-types | get-event-type. Inbound booking webhooks are BPMN message events only (not an operation here). Example: create-booking.",
+          "children": []
+        },
+        {
+          "shortCode": "uid",
+          "label": "uid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Booking uid. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event type id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "eventTypeId",
+          "label": "eventTypeId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Event type id for create-booking. Required unless eventTypeSlug + username (or + teamSlug) is used. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "eventTypeSlug",
+          "label": "eventTypeSlug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event type slug for create-booking (with username or teamSlug) when eventTypeId is omitted. Cal.com v2.",
+          "children": []
+        },
+        {
+          "shortCode": "username",
+          "label": "username",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Host username for create-booking when using eventTypeSlug (personal event). Optional organizationSlug when applicable.",
+          "children": []
+        },
+        {
+          "shortCode": "teamSlug",
+          "label": "teamSlug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Team slug for create-booking when using eventTypeSlug (team event). Optional organizationSlug when applicable.",
+          "children": []
+        },
+        {
+          "shortCode": "organizationSlug",
+          "label": "organizationSlug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Organization slug for create-booking when hosts are inside an org (optional).",
+          "children": []
+        },
+        {
+          "shortCode": "usernames",
+          "label": "usernames",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Dynamic group booking: 2–20 host usernames (Cal.com). Cannot combine with eventTypeId or eventTypeSlug/username.",
+          "children": []
+        },
+        {
+          "shortCode": "guests",
+          "label": "guests",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional guest emails for create-booking (array of strings).",
+          "children": []
+        },
+        {
+          "shortCode": "lengthInMinutes",
+          "label": "lengthInMinutes",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Optional duration for dynamic group bookings (15, 30, 45, 60, or 90).",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 8601 start time (UTC) for create-booking and reschedule-booking.",
+          "children": []
+        },
+        {
+          "shortCode": "attendee",
+          "label": "attendee",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Attendee object for create-booking: name, timeZone (required per API), email, phoneNumber, language. Do not pass a JSON string — use a nested object so the wire body stays an object.",
+          "children": []
+        },
+        {
+          "shortCode": "bookingFieldsResponses",
+          "label": "bookingFieldsResponses",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Custom booking field responses (slug → value) for create-booking.",
+          "children": []
+        },
+        {
+          "shortCode": "leadEnrichmentOptOut",
+          "label": "leadEnrichmentOptOut",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Lead enrichment opt-out for create-booking when the event type uses that workflow.",
+          "children": []
+        },
+        {
+          "shortCode": "metadata",
+          "label": "metadata",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Optional metadata object for create-booking.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `status` for operation: list-bookings.",
+          "children": []
+        },
+        {
+          "shortCode": "take",
+          "label": "take",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `take` for operation: list-bookings.",
+          "children": []
+        },
+        {
+          "shortCode": "skip",
+          "label": "skip",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `skip` for operation: list-bookings.",
+          "children": []
+        },
+        {
+          "shortCode": "cancellationReason",
+          "label": "cancellationReason",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `cancellationReason` for operation: cancel-booking.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "78d8c1b1-48f5-53e3-b79f-f22091964df2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "059dcfb1-bda6-51ab-a62e-21a949d3e97c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: create-booking, get-booking, list-bookings, reschedule-booking, cancel-booking, list-event-types, get-event-type. Booking webhooks use BPMN message events, not a listen operation.",
+      "value": "create-booking",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "create-booking",
+        "get-booking",
+        "list-bookings",
+        "reschedule-booking",
+        "cancel-booking",
+        "list-event-types",
+        "get-event-type"
+      ]
+    },
+    {
+      "_id": "ae08015b-274d-5944-8ff2-40468a56b0f0",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Cal.com API key. Header Authorization: Bearer. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ac4cffc0-b0f3-5cf4-89e6-29c525f486ac",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

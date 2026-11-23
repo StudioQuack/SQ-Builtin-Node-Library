@@ -1,0 +1,307 @@
+{
+  "_id": "a10736f9-2c65-5f2d-82b3-13b9af63bc3e",
+  "version": "1.0.0",
+  "name": "ReCharge",
+  "label": "ReCharge Subscriptions API 2021-11",
+  "description": "Shopify subscriptions. Header X-Recharge-Access-Token. Version 2021-11 (still the latest dated version; also 2021-01). Pin via extraHeader X-Recharge-Version from config api_version. PCI stays with ReCharge/Shopify. Docs: https://developer.rechargepayments.com/2021-11/authentication",
+  "icon": "autorenew",
+  "tags": [
+    "recharge",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d10f8c57-5c87-5b3d-b60d-07517b82cc3b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "customer_get",
+          "description": "Official API verb. EXACT: customer_get | subscription_list | subscription_skip | charge_list | address_update | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id for get/update/delete path {id} when that operation needs it.",
+          "children": []
+        },
+        {
+          "shortCode": "customer_id",
+          "label": "customer_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `customer_id` for operations: subscription_list, charge_list.",
+          "children": []
+        },
+        {
+          "shortCode": "address_id",
+          "label": "address_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path/query-string parameter `address_id` for operations: subscription_list, subscription_skip. Required by: subscription_skip.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `status` for operations: subscription_list, charge_list.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operations: subscription_list, charge_list.",
+          "children": []
+        },
+        {
+          "shortCode": "first_name",
+          "label": "first_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "address_update first name. Example: Ada.",
+          "children": []
+        },
+        {
+          "shortCode": "last_name",
+          "label": "last_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "address_update last name. Example: Lovelace.",
+          "children": []
+        },
+        {
+          "shortCode": "address1",
+          "label": "address1",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "address_update line 1. Example: 1 Market St.",
+          "children": []
+        },
+        {
+          "shortCode": "address2",
+          "label": "address2",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "address_update line 2. Example: Suite 100.",
+          "children": []
+        },
+        {
+          "shortCode": "city",
+          "label": "city",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "address_update city. Example: San Francisco.",
+          "children": []
+        },
+        {
+          "shortCode": "province",
+          "label": "province",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "address_update state/province. Example: CA.",
+          "children": []
+        },
+        {
+          "shortCode": "zip",
+          "label": "zip",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "address_update postal code. Example: 94105.",
+          "children": []
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "address_update country. Example: United States.",
+          "children": []
+        },
+        {
+          "shortCode": "company",
+          "label": "company",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "address_update company.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "address_update phone (PII). Example: +1-202-555-0100.",
+          "children": []
+        },
+        {
+          "shortCode": "date",
+          "label": "date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "subscription_skip charge date YYYY-MM-DD to skip. Example: 2026-11-15.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a7abe075-2b41-59c3-b5c2-362fba189dac",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a6345c29-2dcb-55c4-966f-437b05368a39",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: customer_get | subscription_list | subscription_skip | charge_list | address_update | trigger. trigger does not open a socket.",
+      "value": "customer_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "customer_get",
+        "subscription_list",
+        "subscription_skip",
+        "charge_list",
+        "address_update",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "510af254-1159-5a5f-80fb-33ff89d49741",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type header. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d0aed090-2963-5bf0-9593-736df40917fb",
+      "shortCode": "api_version",
+      "label": "Api Version",
+      "type": "string",
+      "description": "X-Recharge-Version. Pin 2021-11 (official current dated version; 2021-01 still exists). Sent as extraHeader X-Recharge-Version when set.",
+      "value": "2021-11",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "34a49f51-9ff1-5ff2-a58a-d713cec94a97",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

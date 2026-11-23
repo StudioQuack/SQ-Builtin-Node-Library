@@ -1,0 +1,135 @@
+{
+  "baseUrl": "https://{site_host}/ghost/api/admin",
+  "defaultTimeout": 30,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Ghost ",
+    "configKey": "admin_api_key"
+  },
+  "extraHeaders": {
+    "Accept-Version": "v6.0"
+  },
+  "operations": {
+    "post_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/posts/",
+      "required": [
+        "title"
+      ],
+      "queryFrom": [
+        "source"
+      ],
+      "bodyFrom": [
+        "posts",
+        "title",
+        "html",
+        "status",
+        "tags"
+      ],
+      "bodyMap": {
+        "posts": "posts[0]",
+        "title": "posts[0].title",
+        "html": "posts[0].html",
+        "status": "posts[0].status",
+        "tags": "posts[0].tags"
+      }
+    },
+    "post_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/posts/{post_id}/",
+      "required": [
+        "post_id"
+      ],
+      "queryFrom": [
+        "include",
+        "formats"
+      ]
+    },
+    "post_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/posts/",
+      "required": [],
+      "queryFrom": [
+        "limit",
+        "page",
+        "include",
+        "filter",
+        "order"
+      ]
+    },
+    "post_update": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/posts/{post_id}/",
+      "required": [
+        "post_id",
+        "title"
+      ],
+      "queryFrom": [
+        "source"
+      ],
+      "bodyFrom": [
+        "posts",
+        "title",
+        "html",
+        "status",
+        "tags"
+      ],
+      "bodyMap": {
+        "posts": "posts[0]",
+        "title": "posts[0].title",
+        "html": "posts[0].html",
+        "status": "posts[0].status",
+        "tags": "posts[0].tags"
+      }
+    },
+    "post_delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/posts/{post_id}/",
+      "required": [
+        "post_id"
+      ]
+    },
+    "content_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/posts/{post_id}/",
+      "required": [
+        "post_id"
+      ],
+      "queryFrom": [
+        "include",
+        "formats",
+        "content_api_key"
+      ],
+      "baseUrl": "https://{site_host}/ghost/api/content",
+      "queryMap": {
+        "content_api_key": "key"
+      }
+    },
+    "content_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/posts/",
+      "required": [],
+      "queryFrom": [
+        "limit",
+        "page",
+        "include",
+        "filter",
+        "order",
+        "content_api_key"
+      ],
+      "baseUrl": "https://{site_host}/ghost/api/content",
+      "queryMap": {
+        "content_api_key": "key"
+      }
+    }
+  }
+}

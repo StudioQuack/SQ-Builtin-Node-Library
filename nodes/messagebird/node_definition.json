@@ -1,0 +1,220 @@
+{
+  "_id": "0fc83b95-4bfe-5ab4-9df2-917efbaeba20",
+  "version": "1.0.0",
+  "name": "MessageBird",
+  "label": "MessageBird — Bird SMS API",
+  "description": "Bird (formerly MessageBird) via the current regional platform API. Base https://{platform_host} (default us1.platform.bird.com). Docs: https://bird.com/en-us/docs/guides/sms/sending-sms and https://bird.com/en-us/docs/guides/authentication. Auth: Bearer bk_{region}_… key (config key access_key kept). Send is POST /v1/sms/messages with to, from, text, category. Legacy rest.messagebird.com + AccessKey / originator / body / recipients / GET /balance are retired — see README. Sender-ID and category rules vary by country. listen = status/inbound as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "sms",
+  "tags": [
+    "sms"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3f0cd85a-7e63-52db-9145-3f28cc710693",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One MessageBird operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"send-sms\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-sms",
+          "description": "Which official call to run. EXACT values: send-sms | listen. get-balance was removed (no SMS-key balance on platform.bird.com). listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Destinations E.164 for send-sms. Official to. Example: [\"+15551234567\"].",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Originator for send-sms. Official from. Also config default.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SMS body for send-sms. Official text.",
+          "children": []
+        },
+        {
+          "shortCode": "category",
+          "label": "category",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SMS category. Typical: transactional | promotional. Also config.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "fb547b1a-e886-50e1-85ec-03b53ed8ed45",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "97c2ba99-3df3-5324-b20b-af82926c5a5c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-sms, listen. get-balance was removed (no SMS-key wallet read on platform.bird.com). listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-sms",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-sms",
+        "listen"
+      ]
+    },
+    {
+      "_id": "46a1b4c4-2c71-5955-8cdf-c5bfe58181c8",
+      "shortCode": "access_key",
+      "label": "Bird API key",
+      "type": "password",
+      "description": "Current Bird workspace key (bk_us1_… or bk_eu1_…). Header Authorization: Bearer. Config shortCode access_key is unchanged so existing secrets keep working. Legacy AccessKey values for rest.messagebird.com will 401. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "348605fe-9baa-4ba2-86b1-dfc1e401afbf",
+      "shortCode": "from",
+      "label": "from (sender)",
+      "type": "string",
+      "description": "Default sender when input omits from. E.164, short code, or alphanumeric sender ID. Current Bird SMS field (replaces originator).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d9728d7f-b56d-47c3-a040-ef47627cd457",
+      "shortCode": "category",
+      "label": "SMS category",
+      "type": "string",
+      "description": "Default category when input omits category. Required on a free-text send. EXACT examples: transactional | marketing | authentication.",
+      "value": "transactional",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4681871f-70bd-4f71-84a4-5df420cca526",
+      "shortCode": "platform_host",
+      "label": "Platform host",
+      "type": "string",
+      "description": "Regional Bird host without scheme. Must match the key prefix: bk_us1_ → us1.platform.bird.com; bk_eu1_ → eu1.platform.bird.com. Wrong region returns 421.",
+      "value": "us1.platform.bird.com",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ea5dd75b-1a1f-5c5c-ae00-875c2a68c373",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

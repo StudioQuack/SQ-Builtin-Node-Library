@@ -1,0 +1,71 @@
+{
+  "baseUrl": "https://pypi.org",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "token",
+    "userKey": "pypi_basic_user"
+  },
+  "operations": {
+    "project_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/pypi/{name}/json",
+      "required": [
+        "name"
+      ]
+    },
+    "version_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/pypi/{name}/{version}/json",
+      "required": [
+        "name",
+        "version"
+      ]
+    },
+    "files_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/pypi/{name}/json",
+      "required": [
+        "name"
+      ]
+    },
+    "upload": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/legacy/",
+      "bodyFrom": [
+        "name",
+        "version",
+        "file",
+        "filetype",
+        "pyversion",
+        "md5_digest",
+        "sha256_digest",
+        "metadata_version",
+        "summary",
+        "author",
+        "description",
+        "action",
+        "protocol_version"
+      ],
+      "baseUrl": "https://upload.pypi.org",
+      "bodyFormat": "multipart",
+      "contentType": "multipart/form-data",
+      "required": [
+        "name",
+        "version",
+        "file"
+      ],
+      "bodyMap": {
+        "action": ":action",
+        "file": "content"
+      }
+    }
+  }
+}

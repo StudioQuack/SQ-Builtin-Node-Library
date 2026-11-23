@@ -1,0 +1,66 @@
+{
+  "baseUrl": "https://{environment}/api/1.0",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "account_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/accounts"
+    },
+    "counterparty_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/counterparty",
+      "bodyFrom": [
+        "company_name",
+        "individual_name",
+        "bank_country",
+        "currency",
+        "account_no",
+        "sort_code",
+        "iban",
+        "bic",
+        "profile_type"
+      ]
+    },
+    "payment_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/pay",
+      "bodyFrom": [
+        "request_id",
+        "account_id",
+        "receiver",
+        "amount",
+        "currency",
+        "reference"
+      ],
+      "required": [
+        "request_id",
+        "account_id",
+        "receiver",
+        "amount",
+        "currency"
+      ]
+    },
+    "transaction_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/transactions",
+      "queryFrom": [
+        "from",
+        "to",
+        "count",
+        "type"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

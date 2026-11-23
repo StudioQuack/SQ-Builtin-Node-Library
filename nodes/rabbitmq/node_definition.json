@@ -1,0 +1,471 @@
+{
+  "_id": "d3578e5c-4192-46da-9ec9-e9a54d00f116",
+  "version": "1.0.0",
+  "name": "RabbitMQ",
+  "label": "RabbitMQ Management HTTP API",
+  "description": "Official RabbitMQ management HTTP API at http://localhost:15672 (not AMQP 0-9-1, not AMQP 1.0). exchange.send PUT /api/exchanges/{vhost}/{name}/publish; queue.send PUT /api/exchanges/{vhost}/amq.default/publish; queue.get POST /api/queues/{vhost}/{name}/get; trigger.listen is kind ingress. Auth HTTP basic (user + password). Customer owns the broker. Never log password or payloads. Docs: https://www.rabbitmq.com/docs/management · https://www.rabbitmq.com/docs/http-api-reference",
+  "icon": "inbox",
+  "tags": [
+    "queue",
+    "rabbitmq",
+    "http"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5dce3264-62ca-5b75-b60a-afe194297db2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put password here. Example: {\"operation\":\"exchange.send\",\"name\":\"amq.direct\",\"routing_key\":\"orders\",\"payload\":\"hello\",\"payload_encoding\":\"string\",\"properties\":{}}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "exchange.send",
+          "description": "Overrides config operation when non-blank. EXACT: exchange.send | queue.send | queue.get | trigger.listen. trigger.listen is ingress (BPMN message event), not HTTP. Do not put password here. Example: 'exchange.send'.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exchange name for exchange.send; queue name for queue.get. Path {name}.",
+          "children": []
+        },
+        {
+          "shortCode": "routing_key",
+          "label": "routing_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official publish routing_key. queue.send: queue name on the default exchange.",
+          "children": []
+        },
+        {
+          "shortCode": "payload",
+          "label": "payload",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message body. Official field payload.",
+          "children": []
+        },
+        {
+          "shortCode": "payload_encoding",
+          "label": "payload_encoding",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "EXACT: string | base64. Official mandatory.",
+          "children": []
+        },
+        {
+          "shortCode": "properties",
+          "label": "properties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "AMQP properties object. Official mandatory (send {}).",
+          "children": []
+        },
+        {
+          "shortCode": "count",
+          "label": "count",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "queue.get max messages.",
+          "children": []
+        },
+        {
+          "shortCode": "ackmode",
+          "label": "ackmode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "EXACT: ack_requeue_true | reject_requeue_true | ack_requeue_false | reject_requeue_false.",
+          "children": []
+        },
+        {
+          "shortCode": "encoding",
+          "label": "encoding",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "queue.get encoding: auto | base64.",
+          "children": []
+        },
+        {
+          "shortCode": "truncate",
+          "label": "truncate",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Optional truncate bytes on get.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "02897990-f198-5d99-80b6-f09f17e6bb34",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Never includes secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "d324785a-7169-5e9b-8ec6-adebd2bdfd94",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: exchange.send | queue.send | queue.get | trigger.listen.",
+      "value": "exchange.send",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "exchange.send",
+        "queue.send",
+        "queue.get",
+        "trigger.listen"
+      ],
+      "filterRules": [
+        {
+          "when": "exchange.send",
+          "targets": [
+            {
+              "param": "vhost",
+              "visible": true
+            },
+            {
+              "param": "properties",
+              "visible": true
+            },
+            {
+              "param": "payload_encoding",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "payload",
+              "visible": true
+            },
+            {
+              "param": "routing_key",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "queue.send",
+          "targets": [
+            {
+              "param": "vhost",
+              "visible": true
+            },
+            {
+              "param": "properties",
+              "visible": true
+            },
+            {
+              "param": "payload_encoding",
+              "visible": true
+            },
+            {
+              "param": "payload",
+              "visible": true
+            },
+            {
+              "param": "routing_key",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "queue.get",
+          "targets": [
+            {
+              "param": "vhost",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "truncate",
+              "visible": true
+            },
+            {
+              "param": "ackmode",
+              "visible": true
+            },
+            {
+              "param": "count",
+              "visible": true
+            },
+            {
+              "param": "encoding",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "trigger.listen",
+          "targets": [
+            {
+              "param": "vhost",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "bc563f2e-511f-544e-9323-cbccd348969f",
+      "shortCode": "user",
+      "label": "Username",
+      "type": "string",
+      "description": "Management HTTP username (basic auth userKey). Not a secret field; password is separate.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a56116f4-2f99-571a-bacd-55f138d9f8ee",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "Management HTTP password (same user database as the broker). StudioQuack secret. Never on INPUT. Default guest/guest is loopback-only.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c0082c3e-8226-51af-bcc5-dfb289eec2fd",
+      "shortCode": "vhost",
+      "label": "Virtual host",
+      "type": "string",
+      "description": "Virtual host. Path-encoded (`/` → %2F). Default /.",
+      "value": "/",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2d71ae09-91f1-4a5e-a7d1-8f69d8eada64",
+      "shortCode": "properties",
+      "label": "Properties",
+      "type": "object",
+      "description": "AMQP properties object. Official mandatory (send {}).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c91763f0-79c2-4aef-966a-9e8109250c5b",
+      "shortCode": "payload_encoding",
+      "label": "Payload Encoding",
+      "type": "string",
+      "description": "EXACT: string | base64. Official mandatory.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ddfde43d-5084-4fc3-a9e6-5b4a0332974d",
+      "shortCode": "name",
+      "label": "Name",
+      "type": "string",
+      "description": "Exchange name for exchange.send; queue name for queue.get. Path {name}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d84560da-a7c7-498a-ab23-50e773c1039c",
+      "shortCode": "payload",
+      "label": "Payload",
+      "type": "string",
+      "description": "Message body. Official field payload.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d187b0b5-1089-4512-a140-2e76bb61c7c7",
+      "shortCode": "routing_key",
+      "label": "Routing Key",
+      "type": "string",
+      "description": "Official publish routing_key. queue.send: queue name on the default exchange.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "66df7ecb-621a-424a-bab6-4a8ca25a055f",
+      "shortCode": "truncate",
+      "label": "Truncate",
+      "type": "number",
+      "description": "Optional truncate bytes on get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1d98cb20-7954-456e-b0d1-ae2abfc206b0",
+      "shortCode": "ackmode",
+      "label": "Ackmode",
+      "type": "string",
+      "description": "EXACT: ack_requeue_true | reject_requeue_true | ack_requeue_false | reject_requeue_false.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a9966602-96a7-46e3-9bd2-96822fb8f7d1",
+      "shortCode": "count",
+      "label": "Count",
+      "type": "number",
+      "description": "queue.get max messages.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0b2084e3-21e8-4b6e-9614-bfd610cae74c",
+      "shortCode": "encoding",
+      "label": "Encoding",
+      "type": "string",
+      "description": "queue.get encoding: auto | base64.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "928d86c1-3b9d-55b8-8acf-81ea5eea899a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,300 @@
+{
+  "_id": "e06f3eea-af23-4b5b-9a62-157f1fcc2f97",
+  "version": "1.0.0",
+  "name": "Klarna",
+  "label": "Klarna — Klarna Payments + Order Management",
+  "description": "Official Klarna Payments + Order Management. Docs: https://docs.klarna.com. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. BNPL. Consumer-credit disclosures. Klarna JS widget — no PAN. Config region is the official API hostname (api.klarna.com / api-na.klarna.com / api-oc.klarna.com or playground variants) substituted into baseUrl as https://{region}.",
+  "icon": "account_balance",
+  "tags": [
+    "klarna",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5c4158de-a8c4-4da6-94da-ad659bb3e4ac",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Klarna. Secrets never on this port. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "session_create",
+          "description": "Overrides config operation. EXACT: session_create | order_get | order_capture | order_refund | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Klarna order id for order_get / order_capture / order_refund.",
+          "children": []
+        },
+        {
+          "shortCode": "purchase_country",
+          "label": "purchase_country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 3166-1 alpha-2. Official purchase_country for session_create. Example: US.",
+          "children": []
+        },
+        {
+          "shortCode": "purchase_currency",
+          "label": "purchase_currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 4217. Official purchase_currency. Example: USD.",
+          "children": []
+        },
+        {
+          "shortCode": "order_amount",
+          "label": "order_amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Minor units (cents). Official order_amount. Example: 2599.",
+          "children": []
+        },
+        {
+          "shortCode": "order_lines",
+          "label": "order_lines",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Official order_lines [{name, quantity, unit_price, tax_rate, total_amount, type}]. session_create / capture / refund.",
+          "children": []
+        },
+        {
+          "shortCode": "captured_amount",
+          "label": "captured_amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Capture amount minor units for order_capture.",
+          "children": []
+        },
+        {
+          "shortCode": "refunded_amount",
+          "label": "refunded_amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Refund amount minor units for order_refund.",
+          "children": []
+        },
+        {
+          "shortCode": "order_tax_amount",
+          "label": "order_tax_amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Tax minor units. Official order_tax_amount for session_create.",
+          "children": []
+        },
+        {
+          "shortCode": "locale",
+          "label": "locale",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Klarna locale for session_create. Example: en-US.",
+          "children": []
+        },
+        {
+          "shortCode": "merchant_urls",
+          "label": "merchant_urls",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official merchant_urls {confirmation, notification, push} for session_create.",
+          "children": []
+        },
+        {
+          "shortCode": "billing_address",
+          "label": "billing_address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official billing_address for session_create.",
+          "children": []
+        },
+        {
+          "shortCode": "shipping_address",
+          "label": "shipping_address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official shipping_address for session_create.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Capture/refund description.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b1511e30-6f2c-42f6-a8c8-e5fd11c13a75",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ceff4d46-9bba-41c7-b0c1-77ac9de91423",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: session_create | order_get | order_capture | order_refund | trigger. Default session_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "session_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "session_create",
+        "order_get",
+        "order_capture",
+        "order_refund",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "86df513a-127d-42cf-bcbb-1cef374975b9",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "Klarna credential (basic Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "92aeafeb-1805-48d7-b818-c857944ab4e3",
+      "shortCode": "username",
+      "label": "Username",
+      "type": "password",
+      "description": "Basic-auth username field `username`.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "62379e87-150a-4ea1-97ab-a7c54c398590",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "select",
+      "description": "Official Klarna API hostname (live EU/NA/OC or playground). Substituted into baseUrl as https://{region}.",
+      "value": "api.klarna.com",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "api.klarna.com",
+        "api-na.klarna.com",
+        "api-oc.klarna.com",
+        "api.playground.klarna.com",
+        "api-na.playground.klarna.com",
+        "api-oc.playground.klarna.com"
+      ]
+    },
+    {
+      "_id": "d1dc0cde-2f99-4a49-a895-39ede12e18bb",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

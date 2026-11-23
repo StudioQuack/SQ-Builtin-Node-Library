@@ -1,0 +1,2665 @@
+{
+  "_id": "f3740368-1ea0-4b77-a280-ab8a51b8021c",
+  "version": "1.0.0",
+  "name": "Zoho CRM",
+  "label": "Zoho CRM — REST API v8 (Zoho-oauthtoken, DC hosts)",
+  "description": "Official Zoho CRM REST API v8 at https://www.zohoapis.com/crm/v8 (US default). Handler: OfficialApiNode. Auth header Authorization: Zoho-oauthtoken {access_token} (not RFC 6750 Bearer). Pick api_host from the token api_domain hostname (US/EU/IN/AU/CN/JP/CA; SA accounts at accounts.zoho.sa). Records are PII. Customer owns the Zoho CRM org. Minimize; never log access_token or field values. trigger.listen is BPMN message-event ingress. Docs: https://www.zoho.com/crm/developer/docs/api/v8/",
+  "icon": "contacts",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "2de737af-bf09-460d-ad7c-1eaf526fa166",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Create/upsert/update bodies go in data as Zoho {data: [...]} . id for get/update/delete. Do not put access_token here. Example: {\"operation\":\"contact.list\",\"fields\":\"Last_Name,Email\",\"per_page\":\"20\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "account.list",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs: module.create | .upsert | .get | .list | .update | .delete (quote/salesOrder/purchaseOrder have no upsert), plus lead.fields and trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Record id for get/update/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "One Zoho record object escape hatch merged into data[0] on create/upsert/update. Named Last_Name/Email/Company/… win. Custom module fields stay here. Example: {\"Last_Name\":\"Ada\",\"Email\":\"ada@example.com\",\"Custom_Field\":\"x\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated API field names for list/get.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page size (Zoho max 200).",
+          "children": []
+        },
+        {
+          "shortCode": "ids",
+          "label": "ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated record ids filter.",
+          "children": []
+        },
+        {
+          "shortCode": "cvid",
+          "label": "cvid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Custom view id for list.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_by",
+          "label": "sort_by",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List sort field.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_order",
+          "label": "sort_order",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "asc | desc.",
+          "children": []
+        },
+        {
+          "shortCode": "duplicate_check_fields",
+          "label": "duplicate_check_fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "upsert duplicate-check field names as documented.",
+          "children": []
+        },
+        {
+          "shortCode": "module",
+          "label": "module",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "lead.fields: Zoho module API name. Example: Leads.",
+          "children": []
+        },
+        {
+          "shortCode": "trigger",
+          "label": "trigger",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `trigger` for operations: account.create, account.upsert, account.update, contact.create, contact.upsert, contact.update, deal.create, deal.upsert, deal.update, lead.create, lead.upsert, lead.update, product.create, product.upsert, product.update, invoice.create, invoice.upsert, invoice.update, quote.create, quote.update, salesOrder.create, salesOrder.update, purchaseOrder.create, purchaseOrder.update, vendor.create, vendor.upsert, vendor.update.",
+          "children": []
+        },
+        {
+          "shortCode": "Last_Name",
+          "label": "Last_Name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contacts/Leads Last_Name. Wired to data[0].Last_Name. Required on contact/lead create/upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "First_Name",
+          "label": "First_Name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "First_Name. Wired to data[0].First_Name.",
+          "children": []
+        },
+        {
+          "shortCode": "Email",
+          "label": "Email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email. Wired to data[0].Email. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "Phone",
+          "label": "Phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Phone. Wired to data[0].Phone.",
+          "children": []
+        },
+        {
+          "shortCode": "Account_Name",
+          "label": "Account_Name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Accounts Account_Name. Wired to data[0].Account_Name. Required on account create/upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "Description",
+          "label": "Description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Description. Wired to data[0].Description.",
+          "children": []
+        },
+        {
+          "shortCode": "Quoted_Items",
+          "label": "Quoted_Items",
+          "type": "object",
+          "required": false,
+          "value": "[]",
+          "description": "Mandatory Quote line-item subform for quote.create. Array of line items. Example: [{\"Product_Name\":\"P1\",\"Quantity\":1}].",
+          "children": []
+        },
+        {
+          "shortCode": "Invoiced_Items",
+          "label": "Invoiced_Items",
+          "type": "object",
+          "required": false,
+          "value": "[]",
+          "description": "Mandatory Invoice line-item subform for invoice.create.",
+          "children": []
+        },
+        {
+          "shortCode": "Ordered_Items",
+          "label": "Ordered_Items",
+          "type": "object",
+          "required": false,
+          "value": "[]",
+          "description": "Mandatory Sales Order line-item subform for salesOrder.create.",
+          "children": []
+        },
+        {
+          "shortCode": "Purchased_Items",
+          "label": "Purchased_Items",
+          "type": "object",
+          "required": false,
+          "value": "[]",
+          "description": "Mandatory Purchase Order line-item subform for purchaseOrder.create.",
+          "children": []
+        },
+        {
+          "shortCode": "Pipeline",
+          "label": "Pipeline",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deal pipeline name/id for deal.create when pipelines enabled.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e48bbebd-c5c5-498a-8d22-cd3e3c121130",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. May contain PII — never log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "df6d37e4-7717-4746-98be-ee71ae3ff24c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: account.create | account.upsert | account.get | account.list | account.update | account.delete | contact.create | contact.upsert | contact.get | contact.list | contact.update | contact.delete | deal.create | deal.upsert | deal.get | deal.list | deal.update | deal.delete | lead.create | lead.upsert | lead.get | lead.list | lead.update | lead.delete | lead.fields | product.create | product.upsert | product.get | product.list | product.update | product.delete | invoice.create | invoice.upsert | invoice.get | invoice.list | invoice.update | invoice.delete | quote.create | quote.get | quote.list | quote.update | quote.delete | salesOrder.create | salesOrder.get | salesOrder.list | salesOrder.update | salesOrder.delete | purchaseOrder.create | purchaseOrder.get | purchaseOrder.list | purchaseOrder.update | purchaseOrder.delete | vendor.create | vendor.upsert | vendor.get | vendor.list | vendor.update | vendor.delete | trigger.listen. trigger.listen is ingress. Pick api_host for the org DC.",
+      "value": "contact.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "account.create",
+        "account.upsert",
+        "account.get",
+        "account.list",
+        "account.update",
+        "account.delete",
+        "contact.create",
+        "contact.upsert",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "contact.delete",
+        "deal.create",
+        "deal.upsert",
+        "deal.get",
+        "deal.list",
+        "deal.update",
+        "deal.delete",
+        "lead.create",
+        "lead.upsert",
+        "lead.get",
+        "lead.list",
+        "lead.update",
+        "lead.delete",
+        "lead.fields",
+        "product.create",
+        "product.upsert",
+        "product.get",
+        "product.list",
+        "product.update",
+        "product.delete",
+        "invoice.create",
+        "invoice.upsert",
+        "invoice.get",
+        "invoice.list",
+        "invoice.update",
+        "invoice.delete",
+        "quote.create",
+        "quote.get",
+        "quote.list",
+        "quote.update",
+        "quote.delete",
+        "salesOrder.create",
+        "salesOrder.get",
+        "salesOrder.list",
+        "salesOrder.update",
+        "salesOrder.delete",
+        "purchaseOrder.create",
+        "purchaseOrder.get",
+        "purchaseOrder.list",
+        "purchaseOrder.update",
+        "purchaseOrder.delete",
+        "vendor.create",
+        "vendor.upsert",
+        "vendor.get",
+        "vendor.list",
+        "vendor.update",
+        "vendor.delete",
+        "trigger.listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "account.list",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            },
+            {
+              "param": "sort_order",
+              "visible": true
+            },
+            {
+              "param": "fields",
+              "visible": true
+            },
+            {
+              "param": "cvid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "account.get",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "account.create",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "account.upsert",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "account.update",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "account.delete",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.list",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            },
+            {
+              "param": "sort_order",
+              "visible": true
+            },
+            {
+              "param": "fields",
+              "visible": true
+            },
+            {
+              "param": "cvid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.get",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.create",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.upsert",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.update",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.delete",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "deal.list",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            },
+            {
+              "param": "sort_order",
+              "visible": true
+            },
+            {
+              "param": "fields",
+              "visible": true
+            },
+            {
+              "param": "cvid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "deal.get",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "deal.create",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "Pipeline",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "deal.upsert",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "Pipeline",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "deal.update",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "Pipeline",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "deal.delete",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "lead.list",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            },
+            {
+              "param": "sort_order",
+              "visible": true
+            },
+            {
+              "param": "fields",
+              "visible": true
+            },
+            {
+              "param": "cvid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "lead.get",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "lead.create",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "lead.upsert",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "lead.update",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "lead.delete",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "product.list",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            },
+            {
+              "param": "sort_order",
+              "visible": true
+            },
+            {
+              "param": "fields",
+              "visible": true
+            },
+            {
+              "param": "cvid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "product.get",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "product.create",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "product.upsert",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "product.update",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "product.delete",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "invoice.list",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            },
+            {
+              "param": "sort_order",
+              "visible": true
+            },
+            {
+              "param": "fields",
+              "visible": true
+            },
+            {
+              "param": "cvid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "invoice.get",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "invoice.create",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "Invoiced_Items",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "invoice.upsert",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "invoice.update",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "Invoiced_Items",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "invoice.delete",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "quote.list",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            },
+            {
+              "param": "sort_order",
+              "visible": true
+            },
+            {
+              "param": "fields",
+              "visible": true
+            },
+            {
+              "param": "cvid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "quote.get",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "quote.create",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "Quoted_Items",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "quote.update",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "Quoted_Items",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "quote.delete",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "salesOrder.list",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            },
+            {
+              "param": "sort_order",
+              "visible": true
+            },
+            {
+              "param": "fields",
+              "visible": true
+            },
+            {
+              "param": "cvid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "salesOrder.get",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "salesOrder.create",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "Ordered_Items",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "salesOrder.update",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "Ordered_Items",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "salesOrder.delete",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "purchaseOrder.list",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            },
+            {
+              "param": "sort_order",
+              "visible": true
+            },
+            {
+              "param": "fields",
+              "visible": true
+            },
+            {
+              "param": "cvid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "purchaseOrder.get",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "purchaseOrder.create",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "Purchased_Items",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "purchaseOrder.update",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "Purchased_Items",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "purchaseOrder.delete",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "vendor.list",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            },
+            {
+              "param": "sort_order",
+              "visible": true
+            },
+            {
+              "param": "fields",
+              "visible": true
+            },
+            {
+              "param": "cvid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "vendor.get",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "vendor.create",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "vendor.upsert",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "vendor.update",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "Account_Name",
+              "visible": true
+            },
+            {
+              "param": "Email",
+              "visible": true
+            },
+            {
+              "param": "Phone",
+              "visible": true
+            },
+            {
+              "param": "trigger",
+              "visible": true
+            },
+            {
+              "param": "First_Name",
+              "visible": true
+            },
+            {
+              "param": "Description",
+              "visible": true
+            },
+            {
+              "param": "duplicate_check_fields",
+              "visible": true
+            },
+            {
+              "param": "Last_Name",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "vendor.delete",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "lead.fields",
+          "targets": [
+            {
+              "param": "api_host",
+              "visible": true
+            },
+            {
+              "param": "module",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "8abed51a-2b7c-4076-ad6a-fc187482eac7",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Zoho OAuth 2 access token (StudioQuack secret). Sent as Authorization: Zoho-oauthtoken {token}. Refresh outside this node (~1h). Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b2493688-c954-418a-a176-e825617b820d",
+      "shortCode": "api_host",
+      "label": "API host",
+      "type": "string",
+      "description": "Hostname only (no scheme), from the token api_domain. US www.zohoapis.com · EU www.zohoapis.eu · IN www.zohoapis.in · AU www.zohoapis.com.au · CN www.zohoapis.com.cn · JP www.zohoapis.jp · CA www.zohoapis.ca. SA OAuth is accounts.zoho.sa — use that token's api_domain host. Must match the token DC.",
+      "value": "www.zohoapis.com",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6ddac9bd-85ae-434e-9a39-08796f461e94",
+      "shortCode": "page",
+      "label": "Page",
+      "type": "number",
+      "description": "List page.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c5bbac29-b6af-4735-b178-e8cb654b3bcb",
+      "shortCode": "per_page",
+      "label": "Per Page",
+      "type": "number",
+      "description": "List page size (Zoho max 200).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c86b3dc0-ab62-4129-be7b-d301d1498e78",
+      "shortCode": "sort_by",
+      "label": "Sort By",
+      "type": "string",
+      "description": "List sort field.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "06294285-4acb-4661-9278-73ae8a143ed0",
+      "shortCode": "ids",
+      "label": "Ids",
+      "type": "string",
+      "description": "Comma-separated record ids filter.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a26f7e61-1411-4a57-8770-36608cde562e",
+      "shortCode": "sort_order",
+      "label": "Sort Order",
+      "type": "string",
+      "description": "asc | desc.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bbeb5928-d1c1-4ae5-91dc-3e808a9d1a66",
+      "shortCode": "fields",
+      "label": "Fields",
+      "type": "string",
+      "description": "Comma-separated API field names for list/get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fef9ce51-b19b-418c-baef-c88555db3f78",
+      "shortCode": "cvid",
+      "label": "Cvid",
+      "type": "string",
+      "description": "Custom view id for list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "501dc7da-89de-4a8e-b430-ad85b192c08b",
+      "shortCode": "id",
+      "label": "ID",
+      "type": "string",
+      "description": "Record id for get/update/delete.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c8e05fe8-06b9-41fa-8c3d-c4aae8182a74",
+      "shortCode": "Account_Name",
+      "label": "Account Name",
+      "type": "string",
+      "description": "Accounts Account_Name. Wired to data[0].Account_Name. Required on account create/upsert.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "73843294-2e61-4bcd-aa15-080eb021dd0e",
+      "shortCode": "Email",
+      "label": "Email",
+      "type": "string",
+      "description": "Email. Wired to data[0].Email. Example: ada@example.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cb8e0a8b-80b3-4b7f-a56d-19b40eba4a4f",
+      "shortCode": "Phone",
+      "label": "Phone",
+      "type": "string",
+      "description": "Phone. Wired to data[0].Phone.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3f97fb26-5e26-4ab9-8a19-37b2ffbac3f1",
+      "shortCode": "trigger",
+      "label": "Trigger",
+      "type": "string",
+      "description": "Request-body parameter `trigger` for operations: account.create, account.upsert, account.update, contact.create, contact.upsert, contact.update, deal.create, deal.upsert, deal.update, lead.create, lead.upsert, lead.update, product.create, product.upsert, product.update, invoice.create, invoice.upsert, invoice.update, quote.create, quote.update, salesOrder.create, salesOrder.update, purchaseOrder.create, purchaseOrder.update, vendor.create, vendor.upsert, vendor.update.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f39a0e82-75ba-407d-9c7f-feab9553abc7",
+      "shortCode": "First_Name",
+      "label": "First Name",
+      "type": "string",
+      "description": "First_Name. Wired to data[0].First_Name.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "27ab4440-e11a-492c-9cbd-da71e820efca",
+      "shortCode": "Description",
+      "label": "Description",
+      "type": "string",
+      "description": "Description. Wired to data[0].Description.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "25df4635-e529-47ec-9fec-6741e7908103",
+      "shortCode": "duplicate_check_fields",
+      "label": "Duplicate Check Fields",
+      "type": "object",
+      "description": "upsert duplicate-check field names as documented.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "478b4f7c-467e-4ab5-84fc-f2a3e686e4fa",
+      "shortCode": "Last_Name",
+      "label": "Last Name",
+      "type": "string",
+      "description": "Contacts/Leads Last_Name. Wired to data[0].Last_Name. Required on contact/lead create/upsert.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "eb196238-4ce7-4dec-a663-39f9e9caa3e2",
+      "shortCode": "data",
+      "label": "Data",
+      "type": "object",
+      "description": "One Zoho record object escape hatch merged into data[0] on create/upsert/update. Named Last_Name/Email/Company/… win. Custom module fields stay here. Example: {\"Last_Name\":\"Ada\",\"Email\":\"ada@example.com\",\"Custom_Field\":\"x\"}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b42b4d7b-e1ef-4586-86bc-5d70028efe6d",
+      "shortCode": "module",
+      "label": "Module",
+      "type": "string",
+      "description": "lead.fields: Zoho module API name. Example: Leads.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1f1afdd1-6872-4bab-a309-fb3bc6fa50fd",
+      "shortCode": "Quoted_Items",
+      "label": "Quoted Items",
+      "type": "object",
+      "description": "Mandatory Quote line-item subform for quote.create. Array of line items. Example: [{\"Product_Name\":\"P1\",\"Quantity\":1}].",
+      "value": "[]",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "97337a63-938a-44a9-8e22-9550dceb2148",
+      "shortCode": "Invoiced_Items",
+      "label": "Invoiced Items",
+      "type": "object",
+      "description": "Mandatory Invoice line-item subform for invoice.create.",
+      "value": "[]",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "d81a82ac-86e6-47b9-a9e7-37b219fedf02",
+      "shortCode": "Ordered_Items",
+      "label": "Ordered Items",
+      "type": "object",
+      "description": "Mandatory Sales Order line-item subform for salesOrder.create.",
+      "value": "[]",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "30d681e6-b8ce-481b-8d2f-539a8d001bc8",
+      "shortCode": "Purchased_Items",
+      "label": "Purchased Items",
+      "type": "object",
+      "description": "Mandatory Purchase Order line-item subform for purchaseOrder.create.",
+      "value": "[]",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "d48939c8-da98-48fd-b59b-a3ce01e10711",
+      "shortCode": "Pipeline",
+      "label": "Pipeline",
+      "type": "string",
+      "description": "Deal pipeline name/id for deal.create when pipelines enabled.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "c89e1df1-b649-44fd-b98b-1eb282b99edb",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,210 @@
+{
+  "_id": "c8c75923-e2cb-5050-939d-d3920dd9a7f1",
+  "version": "1.0.0",
+  "name": "Open Library",
+  "label": "Open Library",
+  "description": "Open Library official API via OfficialApiNode (api_spec.json). Operations: search, work_get, edition_get, author_get, isbn_get. Docs: https://openlibrary.org/developers/api. Internet Archive / Open Library terms. Courtesy throttle. Identifying User-Agent. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "book",
+  "tags": [
+    "books",
+    "openlibrary"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "eac8c7cf-5a04-5683-b078-c4e50028d403",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Open Library request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"search\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: search | work_get | edition_get | author_get | isbn_get. Default: first listed or instance operation. Example: 'search'.",
+          "children": [],
+          "_id": "233468ea-3cfb-5ae9-9a4d-f74cdef88ceb"
+        },
+        {
+          "shortCode": "author_id",
+          "label": "author_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `author_id` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "1dc2104c-49bc-5289-aa34-4eebc72eb1a8"
+        },
+        {
+          "shortCode": "edition_id",
+          "label": "edition_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `edition_id` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "3b90aadf-96c0-53a4-8a1b-449edf502c54"
+        },
+        {
+          "shortCode": "isbn",
+          "label": "isbn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `isbn` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "e4192254-d438-574a-8635-d67bd566c36e"
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `limit` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "8c18eca8-adc9-5f73-bdc6-867b37b0485c"
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `page` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "c624fa56-6e6d-591f-afd8-689005abfd62"
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `q` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "50cdcd1c-978b-556b-bad3-11d077809689"
+        },
+        {
+          "shortCode": "work_id",
+          "label": "work_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `work_id` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "3f44e758-7a85-5db2-93bd-e5caa9fc6525"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8d5ee1c0-c9a7-5c57-816f-5453265b6eb2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "99657770-40c5-53d5-951c-288e6b6a5a66"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "bbbe2359-75d7-53ea-a5bf-32226528a358"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "b884aaef-5b0b-5953-8efd-5f008cfdb271"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "368b56de-d7ad-5f00-af16-4f7377547024",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: search | work_get | isbn_get | author_get | edition_get. Example: 'search'.",
+      "value": "search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "search",
+        "work_get",
+        "isbn_get",
+        "author_get",
+        "edition_get"
+      ]
+    },
+    {
+      "_id": "025c76bc-2ed6-59d6-b4e1-0957d459fb19",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

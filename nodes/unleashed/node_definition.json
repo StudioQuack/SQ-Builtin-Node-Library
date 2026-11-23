@@ -1,0 +1,197 @@
+{
+  "_id": "fa4c6b7a-22b7-5b7d-86d1-406c82a8c173",
+  "version": "1.0.0",
+  "name": "Unleashed",
+  "label": "Unleashed Software REST — products, orders, stock",
+  "description": "api.unleashedsoftware.com. Official auth is api-auth-id + HMAC-SHA256 of the query string. OfficialApiNode sends api_id as header api-auth-id only — HMAC is not applied. Wholesale inventory. Never log customer PII.",
+  "icon": "inventory_2",
+  "tags": [
+    "unleashed",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f393c29b-735d-5ca1-9a9f-162b0d144e13",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "product_get",
+          "description": "Official API verb. EXACT: product_get | sales_order_get | purchase_order_get | stock_on_hand. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "productGuid",
+          "label": "productGuid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `productGuid` for operation: product_get. Required by: product_get.",
+          "children": []
+        },
+        {
+          "shortCode": "orderGuid",
+          "label": "orderGuid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `orderGuid` for operations: sales_order_get, purchase_order_get. Required by: sales_order_get, purchase_order_get.",
+          "children": []
+        },
+        {
+          "shortCode": "warehouseCode",
+          "label": "warehouseCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `warehouseCode` for operation: stock_on_hand.",
+          "children": []
+        },
+        {
+          "shortCode": "asAtDate",
+          "label": "asAtDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `asAtDate` for operation: stock_on_hand.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "38b0443e-4ab6-514e-951d-e5a4b0863a0a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a04a6499-e2ab-5b25-a89a-5585ba925dc6",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: product_get | sales_order_get | purchase_order_get | stock_on_hand. trigger does not open a socket.",
+      "value": "product_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "product_get",
+        "sales_order_get",
+        "purchase_order_get",
+        "stock_on_hand"
+      ]
+    },
+    {
+      "_id": "c7ea9e9d-7feb-5068-8c32-a2988397f1a4",
+      "shortCode": "api_id",
+      "label": "Api Id",
+      "type": "password",
+      "description": "Unleashed API id. Header api-auth-id. StudioQuack secret. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "efb01afb-be9e-4c32-ad25-1e7a749beb71",
+      "shortCode": "client_type",
+      "label": "Client Type",
+      "type": "string",
+      "description": "Sent as the client-type header Unleashed requires on every request to identify the integration. Free text, lowercase, no spaces or special characters, ideally ~20 characters: <account_name>/<app_name> for in-house integrations or <partner_name>/<app_name> when outsourced. Example: yourcompany/studioquack.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8565e55c-e928-58bd-a181-d3a122cfdb23",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

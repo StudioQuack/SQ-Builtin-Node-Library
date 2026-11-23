@@ -1,0 +1,240 @@
+{
+  "_id": "fb4260f7-7fea-507b-9fad-afefde900852",
+  "version": "1.0.0",
+  "name": "SignNow",
+  "label": "SignNow API — documents and invites",
+  "description": "SignNow API at https://api.signnow.com. Docs: https://docs.signnow.com/. document_upload is multipart file. invite_send uses to/from/subject. Bearer access_token minted outside this node. Handler: OfficialApiNode. Never log access_token.",
+  "icon": "draw",
+  "tags": [
+    "signnow",
+    "esign"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c317e6c5-c554-577e-9fd4-8772f92dbb3e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "document_upload",
+          "description": "Overrides config operation. Accepted: document_upload, invite_send, document_get, document_download, template_create, listen.",
+          "children": []
+        },
+        {
+          "shortCode": "document_id",
+          "label": "document_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document id for invite_send / document_get / document_download / template_create.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "invite_send signers. Official array of {email, role, order, auth_method}. Required. A single email string is also accepted by some accounts.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "invite_send from email (account sender). Example: contracts@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "invite_send email subject.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "document_download query type. collapsed | zip | email.",
+          "children": []
+        },
+        {
+          "shortCode": "document_name",
+          "label": "document_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Template name for template_create. Required with document_id.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Document file for document_upload (POST /document multipart field file). Required. Platform file block.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "invite_send email body.",
+          "children": []
+        },
+        {
+          "shortCode": "cc",
+          "label": "cc",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "invite_send CC emails.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "61d155fd-f033-5ce8-ac3a-1e8461036d42",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4c84daf0-fdf1-5b7d-942c-a84bce76519b",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "document_upload",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "document_upload",
+        "invite_send",
+        "document_get",
+        "document_download",
+        "template_create",
+        "listen"
+      ]
+    },
+    {
+      "_id": "a9bc6a05-8b0b-59c5-9e50-4358ea98faa8",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "OAuth access token minted outside StudioQuack. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ad0e180e-9ccf-595b-9daf-66cdafcda2e0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

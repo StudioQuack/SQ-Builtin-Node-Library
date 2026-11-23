@@ -1,0 +1,229 @@
+{
+  "_id": "250ad605-aeeb-4620-8354-955d59e1681d",
+  "version": "1.0.0",
+  "name": "Lucidchart",
+  "label": "Lucid REST API",
+  "description": "Lucid REST API via OfficialApiNode (nodes/lucidchart/api_spec.json). Official Lucid REST. Lucid-Api-Version is required; OfficialApiNode cannot set extra headers, so the documented path workaround is used (baseUrl https://api.lucid.co/v1). Partner program for marketplace. FedRAMP uses a different published base URL — override is not in OfficialApiNode; document the commercial host here. Official docs: https://developer.lucid.co/reference/headers. OUTPUT is {status, http_status, data} or {error}. Secrets never appear on OUTPUT.",
+  "icon": "schema",
+  "tags": [
+    "lucid",
+    "lucidchart",
+    "diagram"
+  ],
+  "category": "Productivity & Collaboration",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "2ca0bed4-dc0a-42f1-b7ed-6f39a0112cbe",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Lucidchart official API call. Delivered as inputVariables.input. Set operation plus the path/query/body fields that operation lists in api_spec.json. Do not put secrets on this port. Example: {\"operation\":\"document_create\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "document_create",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'document_create', 'document_get', 'document_search', 'document_trash', 'folder_list', 'collaborator_add', 'collaborator_remove', 'embed_get'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'document_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document title for document_create.",
+          "children": []
+        },
+        {
+          "shortCode": "product",
+          "label": "product",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "document_create product. EXACT: lucidchart | lucidscale | lucidspark.",
+          "children": []
+        },
+        {
+          "shortCode": "documentId",
+          "label": "documentId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document id path for get/trash/collaborator/embed.",
+          "children": []
+        },
+        {
+          "shortCode": "parent",
+          "label": "parent",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Folder id query for folder_list.",
+          "children": []
+        },
+        {
+          "shortCode": "role",
+          "label": "role",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Collaborator role. Typical: owner | editor | commenter | viewer.",
+          "children": []
+        },
+        {
+          "shortCode": "collaboratorId",
+          "label": "collaboratorId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Collaborator id path for collaborator_remove.",
+          "children": []
+        },
+        {
+          "shortCode": "keywords",
+          "label": "Keywords",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Search keywords for document_search (POST /documents/search JSON body array). Example: [\"architecture\"].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7350de43-c11d-4006-9214-c46ae851bf1a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or the raw string when not JSON. Example: {}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "bd7f6439-73e5-4519-ba78-f599c0c9105d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: document_create, document_get, document_search, document_trash, folder_list, collaborator_add, collaborator_remove, embed_get. Default: document_create. Example: document_create.",
+      "value": "document_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "document_create",
+        "document_get",
+        "document_search",
+        "document_trash",
+        "folder_list",
+        "collaborator_add",
+        "collaborator_remove",
+        "embed_get"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "a1dab10c-d84c-4411-8871-0130de158112",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Provider credential for auth.type=bearer (configKey access_token). REQUIRED secret — StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8a4da072-1f51-4a9a-85c1-f847d4c61f67",
+      "shortCode": "keywords",
+      "label": "Keywords",
+      "type": "list",
+      "description": "Search keywords for document_search (POST /documents/search JSON body array). Example: [\"architecture\"].",
+      "value": "[]",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "9c727716-fa9b-49fa-bfe4-9c26c08b3c6c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative → 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

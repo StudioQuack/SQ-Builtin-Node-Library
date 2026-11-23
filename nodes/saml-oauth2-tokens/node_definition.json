@@ -1,0 +1,412 @@
+{
+  "_id": "06d7669c-7940-494c-8560-fa9be6aec3f4",
+  "version": "1.0.0",
+  "name": "SAML/OAuth2 Tokens",
+  "label": "OAuth 2.0 HTTP (RFC 6749 / 7662 / 7009) — no local SAML crypto",
+  "description": "OAuth 2.0 authorization-code URL GET, token, introspection, and revocation over HTTPS via OfficialApiNode. RFCs 6749, 6750, 7662, 7009. Auth HTTP Basic client_id + client_secret (password). Hosts without scheme; paths concatenated after host. A path may contain `/`; each segment is encoded and the slashes stay. saml-decode-assertion and saml-validate-assertion are local crypto — not executable on OfficialApiNode (HTTP only). HTTPS only. Never log tokens or client_secret.",
+  "icon": "vpn_key",
+  "tags": [
+    "oauth",
+    "saml",
+    "tokens"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "898bfc7d-97be-4b24-b2e3-a09e7a6a6ea8",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path/query/body keys match api_spec.json.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "oauth-authorize-url",
+          "description": "Overrides config operation when non-blank. EXACT: oauth-authorize-url | oauth-exchange-code | oauth-client-credentials | oauth-refresh | oauth-introspect | oauth-revoke.",
+          "children": []
+        },
+        {
+          "shortCode": "authHost",
+          "label": "authHost",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Authorization server host without scheme (RFC 6749 §3.1).",
+          "children": []
+        },
+        {
+          "shortCode": "authPath",
+          "label": "authPath",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Authorization path, concatenated after authHost. Include the leading slash. Slashes stay; each segment is encoded. Example: '/oauth/authorize'.",
+          "children": []
+        },
+        {
+          "shortCode": "tokenHost",
+          "label": "tokenHost",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Token endpoint host without scheme (RFC 6749 §3.2).",
+          "children": []
+        },
+        {
+          "shortCode": "tokenPath",
+          "label": "tokenPath",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Token path, concatenated after tokenHost. Include the leading slash. Slashes stay; each segment is encoded. Example: '/oauth/token'.",
+          "children": []
+        },
+        {
+          "shortCode": "redirect_uri",
+          "label": "redirect_uri",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "RFC 6749 redirect_uri.",
+          "children": []
+        },
+        {
+          "shortCode": "scope",
+          "label": "scope",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Space-delimited scope.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CSRF binding (RFC 6749 §10.12).",
+          "children": []
+        },
+        {
+          "shortCode": "code",
+          "label": "code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Authorization code for oauth-exchange-code. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "refresh_token",
+          "label": "refresh_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "RFC 6749 §6 refresh_token. Never log. Never on config.",
+          "children": []
+        },
+        {
+          "shortCode": "token",
+          "label": "token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Token for introspect (RFC 7662) or revoke (RFC 7009). Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "introspectionHost",
+          "label": "introspectionHost",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Introspection host without scheme.",
+          "children": []
+        },
+        {
+          "shortCode": "introspectionPath",
+          "label": "introspectionPath",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Introspection path.",
+          "children": []
+        },
+        {
+          "shortCode": "revokeHost",
+          "label": "revokeHost",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Revocation host without scheme.",
+          "children": []
+        },
+        {
+          "shortCode": "revokePath",
+          "label": "revokePath",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Revocation path.",
+          "children": []
+        },
+        {
+          "shortCode": "code_verifier",
+          "label": "code_verifier",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `code_verifier` for operation: oauth-exchange-code.",
+          "children": []
+        },
+        {
+          "shortCode": "token_type_hint",
+          "label": "token_type_hint",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `token_type_hint` for operations: oauth-introspect, oauth-revoke.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "05852f3c-3bf5-435b-b49a-b3f0591666e6",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6a33f956-68cd-4b33-a1b5-17b2358e3f15",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "OAuth HTTP verbs only. SAML decode/validate are not in this select.",
+      "value": "oauth-authorize-url",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "oauth-authorize-url",
+        "oauth-exchange-code",
+        "oauth-client-credentials",
+        "oauth-refresh",
+        "oauth-introspect",
+        "oauth-revoke"
+      ]
+    },
+    {
+      "_id": "17daa6b8-f7c3-4155-93a5-48428ffd1c53",
+      "shortCode": "client_id",
+      "label": "Client ID",
+      "type": "string",
+      "description": "RFC 6749 client_id. HTTP Basic username (userKey). Also copied to query/body when listed.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7eb2201d-10ae-4c09-8d0f-adeda8cbb76c",
+      "shortCode": "client_secret",
+      "label": "Client secret",
+      "type": "password",
+      "description": "Confidential-client secret (RFC 6749 §2.3.1). HTTP Basic password. StudioQuack secret. Never on INPUT or in logs.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6468ae23-6ffd-4564-900c-129213d4ce24",
+      "shortCode": "authHost",
+      "label": "Authorization host",
+      "type": "string",
+      "description": "Host without scheme for oauth-authorize-url.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e7f1d578-fb23-4276-b0c1-08856997b483",
+      "shortCode": "authPath",
+      "label": "Authorization path",
+      "type": "string",
+      "description": "Path concatenated after authHost. Include the leading slash. Slashes stay; each segment is encoded. Example: '/oauth/authorize'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "12fd5d73-fc29-46ce-ba96-a5d1519d7e8d",
+      "shortCode": "tokenHost",
+      "label": "Token host",
+      "type": "string",
+      "description": "Host without scheme for token POST ops.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "48f30c49-615e-4458-9648-d676ed03f73f",
+      "shortCode": "tokenPath",
+      "label": "Token path",
+      "type": "string",
+      "description": "Path concatenated after tokenHost.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3d47d865-fe45-47d5-9a65-97d735bba1b9",
+      "shortCode": "introspectionHost",
+      "label": "Introspection host",
+      "type": "string",
+      "description": "Host without scheme for RFC 7662.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a235e9ee-800c-432a-bfb8-e62f6e71e376",
+      "shortCode": "introspectionPath",
+      "label": "Introspection path",
+      "type": "string",
+      "description": "Path concatenated after introspectionHost.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0d65de74-3d59-4250-b1c4-543134819b3a",
+      "shortCode": "revokeHost",
+      "label": "Revocation host",
+      "type": "string",
+      "description": "Host without scheme for RFC 7009.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "61f4bedf-b7f5-44c7-ae26-0aee1a15aaed",
+      "shortCode": "revokePath",
+      "label": "Revocation path",
+      "type": "string",
+      "description": "Path concatenated after revokeHost.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "30368daa-890a-40c5-b201-cf03348af9d2",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Default 20. Cap 60.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

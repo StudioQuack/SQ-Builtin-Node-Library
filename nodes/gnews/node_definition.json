@@ -1,0 +1,292 @@
+{
+  "_id": "8c41472f-661b-5708-adc5-8f6e1c33b92e",
+  "version": "1.0.0",
+  "name": "GNews",
+  "label": "GNews",
+  "description": "GNews official API via OfficialApiNode (api_spec.json). Operations: search, top_headlines. Docs: https://docs.gnews.io/. GNews.io terms. Auth is apikey query or X-Api-Key header (this node sends X-Api-Key). Article copyright remains with publishers. Snippets/links only. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "news",
+  "tags": [
+    "news",
+    "gnews"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "7c10f84c-040f-54a8-bfe6-f68f6f7c10f9",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One GNews request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"search\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: search | top_headlines. Default: first listed or instance operation. Example: 'search'.",
+          "children": [],
+          "_id": "d27e32fd-6bf4-542e-bf0c-6ffead70b6f6"
+        },
+        {
+          "shortCode": "category",
+          "label": "category",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `category` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "9ff06642-a7b2-5c58-b833-1e2a4911ef23"
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `country` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "7778ac09-c40e-5e24-bc44-c5406e8a9217"
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `from` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "81b78448-e2e7-5fea-8338-0f0c98291af9"
+        },
+        {
+          "shortCode": "in",
+          "label": "in",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `in` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "60c8950a-a86b-552a-b576-f12e7638b854"
+        },
+        {
+          "shortCode": "lang",
+          "label": "lang",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `lang` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "cdac076f-89f3-5352-8690-d17241527f49"
+        },
+        {
+          "shortCode": "max",
+          "label": "max",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Max articles 1–100 (paid) / 1–10 (free). Official max. Example: 10.",
+          "children": [],
+          "_id": "a6bc2d02-63b7-5079-b8b9-ecf9e3a58aed"
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `q` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "3f32845c-4411-5b71-8ad1-9f7f8f825fbf"
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `to` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "094f63f7-6120-594d-b134-d6a8047ae359"
+        },
+        {
+          "shortCode": "nullable",
+          "label": "nullable",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `nullable` for operations: search, top_headlines.",
+          "children": []
+        },
+        {
+          "shortCode": "sortby",
+          "label": "sortby",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sortby` for operation: search.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page` for operations: search, top_headlines.",
+          "children": []
+        },
+        {
+          "shortCode": "truncate",
+          "label": "truncate",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `truncate` for operations: search, top_headlines.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e7a28dea-3416-575a-b7ba-7169788ba785",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "14f6d5e3-25fb-5dd5-b150-ac42b7f465eb"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "8845ad75-fd17-5756-8ddc-e45dbdf53d56"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "a62af49a-d59f-5ee3-a30b-b3ddf6f49c41"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e70fd198-72d4-57d0-aca1-6bf5cb1a9d67",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: search | top_headlines. Example: 'search'.",
+      "value": "search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "search",
+        "top_headlines"
+      ]
+    },
+    {
+      "_id": "70cbaf6d-761c-5a72-aea3-b9052d5ca95d",
+      "shortCode": "api_key",
+      "label": "Token",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b723ea89-438e-53f1-912b-9e0454e16c64",
+      "shortCode": "lang",
+      "label": "Lang",
+      "type": "string",
+      "description": "Default ISO 639-1 language.",
+      "value": "en",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a2a930e7-1a67-5b9f-8c77-7ea6edf7f341",
+      "shortCode": "country",
+      "label": "Country",
+      "type": "string",
+      "description": "Default ISO 3166-1 country.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "91d49769-a530-5631-a7e6-ca37e0775342",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,79 @@
+{
+  "baseUrl": "https://circleci.com/api/v2",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "Circle-Token",
+    "prefix": "",
+    "configKey": "token"
+  },
+  "operations": {
+    "pipeline_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/pipeline/{pipeline_id}",
+      "required": [
+        "pipeline_id"
+      ]
+    },
+    "pipeline_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/project/{project_slug}/pipeline",
+      "required": [
+        "project_slug"
+      ],
+      "queryFrom": [
+        "page-token"
+      ]
+    },
+    "pipeline_trigger": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/project/{project_slug}/pipeline",
+      "required": [
+        "project_slug"
+      ],
+      "bodyFrom": [
+        "branch",
+        "tag",
+        "parameters"
+      ]
+    },
+    "pipeline_run": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/project/{project_slug}/pipeline/run",
+      "required": [
+        "project_slug"
+      ],
+      "bodyFrom": [
+        "definition_id",
+        "config",
+        "checkout",
+        "parameters"
+      ]
+    },
+    "workflow_cancel": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/workflow/{id}/cancel",
+      "required": [
+        "id"
+      ]
+    },
+    "job_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/project/{project_slug}/job/{job_number}",
+      "required": [
+        "project_slug",
+        "job_number"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

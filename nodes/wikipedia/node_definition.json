@@ -1,0 +1,180 @@
+{
+  "_id": "604ef300-e831-4a10-bf4b-0149599e4826",
+  "version": "1.0.0",
+  "name": "Wikipedia",
+  "label": "Wikipedia MediaWiki API",
+  "description": "Official MediaWiki Action API + REST page summary on English Wikipedia (OfficialApiNode is single-host: en.wikipedia.org). search, get_page, get_summary, get_extract. No key. Set a contact User-Agent at the daemon. CC BY-SA attribution required. Do not scrape HTML.",
+  "icon": "menu_book",
+  "tags": [
+    "wikipedia",
+    "news"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "bee640c2-be13-486d-8779-4a461f50b5f9",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-invoke fields for Wikipedia. Do not put secrets here. Example: {\"operation\":\"search\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "search",
+          "description": "Overrides config operation. EXACT: search | get_page | get_summary | get_extract. Example: 'search'.",
+          "children": []
+        },
+        {
+          "shortCode": "srsearch",
+          "label": "srsearch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search REQUIRED. Example: BPMN.",
+          "children": []
+        },
+        {
+          "shortCode": "srlimit",
+          "label": "srlimit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Max hits (API max 500). Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "sroffset",
+          "label": "sroffset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Offset. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "titles",
+          "label": "titles",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "get_page / get_extract REQUIRED. Page title. Example: Business_Process_Model_and_Notation.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "get_summary REQUIRED. Example: Earth.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "12bbf1b1-74ef-4ac1-8f43-5df6ff24b0e6",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data} on 2xx. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT: 'ok'. Absent on failure. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status from the provider. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). OfficialApiNode places the provider payload here. Example: provider object.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ef3877cc-6580-4dfe-8cdb-fc32cf2257d3",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: search | get_page | get_summary | get_extract. Example: 'search'.",
+      "value": "search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "search",
+        "get_page",
+        "get_summary",
+        "get_extract"
+      ]
+    },
+    {
+      "_id": "c9a4f9c3-8c94-4a23-9aaa-9b6eaa231401",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. <=0 falls back to 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

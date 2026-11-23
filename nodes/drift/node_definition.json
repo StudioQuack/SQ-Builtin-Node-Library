@@ -1,0 +1,250 @@
+{
+  "_id": "03e402eb-31d1-4423-b325-5bffae565461",
+  "version": "1.0.0",
+  "name": "Drift",
+  "label": "Drift REST (Salesloft) — contacts and conversations",
+  "description": "Official Drift backend at https://driftapi.com (live 2026-08-20). Contacts are visitors, not seats. trigger.listen is BPMN ingress (app Events URL). Sunset announced Mar 2026 — existing accounts still work. Customer owns the Drift/Salesloft account. Chat PII; minimize. OfficialApiNode.",
+  "icon": "chat",
+  "tags": [
+    "chat"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "756d2ad4-69ea-4808-a647-09ab390f08f8",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. No tokens. Example: {\"operation\":\"contact.get\",\"contactId\":\"123\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.create",
+          "description": "Overrides config operation.",
+          "children": []
+        },
+        {
+          "shortCode": "contactId",
+          "label": "contactId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Drift contact id.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact email (PII); required by contact.create. Sent as attributes.email on contact.create / contact.update. Example: jane@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "conversationId",
+          "label": "conversationId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Conversation id for message.send.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Chat message text for message.send. Official Drift `body` (the message, not a generic blob). Example: Thanks for writing in.",
+          "children": []
+        },
+        {
+          "shortCode": "externalId",
+          "label": "externalId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Your system's id for the contact on contact.create, sent as attributes.externalId. Example: crm-10042.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact display name on contact.create / contact.update, sent as attributes.name. Example: Jane Doe.",
+          "children": []
+        },
+        {
+          "shortCode": "attributes",
+          "label": "attributes",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Drift contact attributes object for contact.create / contact.update (Drift nests every contact field under attributes); email, name and externalId inputs are merged into it. Custom attribute keys come from contact.customAttributes. Example: {\"phone\":\"+14155550100\",\"company\":\"Acme\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: conversation.list.",
+          "children": []
+        },
+        {
+          "shortCode": "page_token",
+          "label": "page_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page_token` for operation: conversation.list.",
+          "children": []
+        },
+        {
+          "shortCode": "statusId",
+          "label": "statusId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `statusId` for operation: conversation.list.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message type for message.send (required by Drift). EXACT: chat | private_note; blank falls back to chat. Example: private_note.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "12a19aca-9f8e-438f-8b8f-0992f57af387",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data. Never includes accessToken. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "648b0db9-2768-4378-87f0-d0e6405886e0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb.",
+      "value": "contact.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "contact.create",
+        "contact.get",
+        "contact.update",
+        "contact.delete",
+        "contact.customAttributes",
+        "conversation.list",
+        "message.send",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "c76ea30a-03fe-4e52-aa6f-d8591af33fd6",
+      "shortCode": "accessToken",
+      "label": "Access token",
+      "type": "password",
+      "description": "Drift Bearer token (OAuth or PAT). Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2f262702-6bea-4237-b0d6-0af8cfc32c67",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request timeout. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

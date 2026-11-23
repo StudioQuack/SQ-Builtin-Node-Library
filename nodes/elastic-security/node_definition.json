@@ -1,0 +1,1189 @@
+{
+  "_id": "a6c7b475-513e-4290-a86b-810b2a56a76a",
+  "version": "1.0.0",
+  "name": "Elastic Security",
+  "label": "Kibana Cases API (Elastic Security) — not Elasticsearch REST",
+  "description": "Official Kibana Cases REST via OfficialApiNode. Docs: https://www.elastic.co/docs/api/doc/kibana/group/endpoint-cases. Cases live on Kibana, not Elasticsearch :9200. kibanaHost is host[:port] without scheme. Auth Authorization: ApiKey {api_key}. get-case-status uses GET /api/cases/_find (retired GET /api/cases/status). listen is BPMN ingress. Case text may be PII/threat intel — do not log.",
+  "icon": "gavel",
+  "tags": [
+    "soar"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3491d83d-812e-4721-a98a-5098475746f0",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path/query/body keys match api_spec.json.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "create-case",
+          "description": "Overrides config operation when non-blank. EXACT: create-case | get-case | list-cases | update-case | delete-case | get-case-status | add-comment | get-comment | list-comments | update-comment | remove-comment | add-tag | remove-tag | create-connector | listen.",
+          "children": []
+        },
+        {
+          "shortCode": "caseId",
+          "label": "caseId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Case id for get/comment ops.",
+          "children": []
+        },
+        {
+          "shortCode": "commentId",
+          "label": "commentId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comment id for get/remove-comment.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-case title. Required. Example: Phishing report.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-case description markdown. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "connector",
+          "label": "connector",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "create-case connector {id, name, type, fields}. Use {\"id\":\"none\",\"name\":\"none\",\"type\":\".none\",\"fields\":null} for no external connector.",
+          "children": []
+        },
+        {
+          "shortCode": "settings",
+          "label": "settings",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "create-case settings {syncAlerts, extractObservables}.",
+          "children": []
+        },
+        {
+          "shortCode": "cases",
+          "label": "cases",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "update-case / add-tag / remove-tag PATCH body { cases: [...] } with id+version.",
+          "children": []
+        },
+        {
+          "shortCode": "ids",
+          "label": "ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "delete-case query ids (JSON array as documented).",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-connector path id (1–36).",
+          "children": []
+        },
+        {
+          "shortCode": "owner",
+          "label": "owner",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cases owner: securitySolution | observability | cases.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Query-string/request-body parameter `tags` for operations: create-case, list-cases.",
+          "children": []
+        },
+        {
+          "shortCode": "severity",
+          "label": "severity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string/request-body parameter `severity` for operations: create-case, list-cases.",
+          "children": []
+        },
+        {
+          "shortCode": "assignees",
+          "label": "assignees",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `assignees` for operation: create-case.",
+          "children": []
+        },
+        {
+          "shortCode": "category",
+          "label": "category",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `category` for operation: create-case.",
+          "children": []
+        },
+        {
+          "shortCode": "customFields",
+          "label": "customFields",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `customFields` for operation: create-case.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page` for operations: list-cases, list-comments.",
+          "children": []
+        },
+        {
+          "shortCode": "perPage",
+          "label": "perPage",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `perPage` for operations: list-cases, get-case-status, list-comments.",
+          "children": []
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `search` for operation: list-cases.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `status` for operation: list-cases.",
+          "children": []
+        },
+        {
+          "shortCode": "sortField",
+          "label": "sortField",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sortField` for operation: list-cases.",
+          "children": []
+        },
+        {
+          "shortCode": "sortOrder",
+          "label": "sortOrder",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sortOrder` for operations: list-cases, list-comments.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `type` for operations: add-comment, update-comment.",
+          "children": []
+        },
+        {
+          "shortCode": "comment",
+          "label": "comment",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `comment` for operations: add-comment, update-comment.",
+          "children": []
+        },
+        {
+          "shortCode": "alertId",
+          "label": "alertId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `alertId` for operation: add-comment.",
+          "children": []
+        },
+        {
+          "shortCode": "index",
+          "label": "index",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `index` for operation: add-comment.",
+          "children": []
+        },
+        {
+          "shortCode": "rule",
+          "label": "rule",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `rule` for operation: add-comment.",
+          "children": []
+        },
+        {
+          "shortCode": "version",
+          "label": "version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `version` for operation: update-comment.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `name` for operation: create-connector. Required by: create-connector.",
+          "children": []
+        },
+        {
+          "shortCode": "connector_type_id",
+          "label": "connector_type_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `connector_type_id` for operation: create-connector. Required by: create-connector.",
+          "children": []
+        },
+        {
+          "shortCode": "config",
+          "label": "config",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `config` for operation: create-connector.",
+          "children": []
+        },
+        {
+          "shortCode": "secrets",
+          "label": "secrets",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `secrets` for operation: create-connector.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "549247d8-1f87-4805-b632-3f48e62c8040",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "fb59e1c5-607c-45a9-9005-932aa0b68f8d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb. listen is BPMN ingress. get-case-status is _find counts, not retired /status.",
+      "value": "list-cases",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "create-case",
+        "get-case",
+        "list-cases",
+        "update-case",
+        "delete-case",
+        "get-case-status",
+        "add-comment",
+        "get-comment",
+        "list-comments",
+        "update-comment",
+        "remove-comment",
+        "add-tag",
+        "remove-tag",
+        "create-connector",
+        "listen"
+      ],
+      "filterRules": [
+        {
+          "when": "create-case",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "assignees",
+              "visible": true
+            },
+            {
+              "param": "category",
+              "visible": true
+            },
+            {
+              "param": "settings",
+              "visible": true
+            },
+            {
+              "param": "description",
+              "visible": true
+            },
+            {
+              "param": "title",
+              "visible": true
+            },
+            {
+              "param": "customFields",
+              "visible": true
+            },
+            {
+              "param": "connector",
+              "visible": true
+            },
+            {
+              "param": "owner",
+              "visible": true
+            },
+            {
+              "param": "severity",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-case",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "caseId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-cases",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "owner",
+              "visible": true
+            },
+            {
+              "param": "severity",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "sortField",
+              "visible": true
+            },
+            {
+              "param": "status",
+              "visible": true
+            },
+            {
+              "param": "perPage",
+              "visible": true
+            },
+            {
+              "param": "sortOrder",
+              "visible": true
+            },
+            {
+              "param": "search",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "update-case",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "cases",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "delete-case",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-case-status",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "owner",
+              "visible": true
+            },
+            {
+              "param": "perPage",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "add-comment",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "owner",
+              "visible": true
+            },
+            {
+              "param": "caseId",
+              "visible": true
+            },
+            {
+              "param": "alertId",
+              "visible": true
+            },
+            {
+              "param": "comment",
+              "visible": true
+            },
+            {
+              "param": "index",
+              "visible": true
+            },
+            {
+              "param": "rule",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-comment",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "caseId",
+              "visible": true
+            },
+            {
+              "param": "commentId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-comments",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "caseId",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "perPage",
+              "visible": true
+            },
+            {
+              "param": "sortOrder",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "update-comment",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "owner",
+              "visible": true
+            },
+            {
+              "param": "caseId",
+              "visible": true
+            },
+            {
+              "param": "comment",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "version",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "remove-comment",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "caseId",
+              "visible": true
+            },
+            {
+              "param": "commentId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "add-tag",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "cases",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "remove-tag",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "cases",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "create-connector",
+          "targets": [
+            {
+              "param": "kibanaHost",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "secrets",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "connector_type_id",
+              "visible": true
+            },
+            {
+              "param": "config",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "db36410a-624e-42c3-9ad8-1c0e2430ecf0",
+      "shortCode": "kibanaHost",
+      "label": "Kibana host",
+      "type": "string",
+      "description": "Kibana host without scheme (not Elasticsearch). Example: kibana.example.com or kibana.example.com:5601. For a non-default space, include /s/{spaceId} after the host. OfficialApiNode URL-encodes path placeholders (`:` and `/` in the host value).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fef1d554-5106-4e8e-94af-b0369a389378",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Kibana/Elastic API key. Authorization: ApiKey {value}. StudioQuack secret. Never on INPUT or in logs.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1bf1cc37-199c-41c1-8723-62192ea5a6c4",
+      "shortCode": "tags",
+      "label": "Tags",
+      "type": "list",
+      "description": "Query-string/request-body parameter `tags` for operations: create-case, list-cases.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bbe4abe9-4cf5-4cfe-9768-f294c0b902bb",
+      "shortCode": "assignees",
+      "label": "Assignees",
+      "type": "list",
+      "description": "Request-body parameter `assignees` for operation: create-case.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "031523ff-0326-401d-8754-21dc58730af0",
+      "shortCode": "category",
+      "label": "Category",
+      "type": "string",
+      "description": "Request-body parameter `category` for operation: create-case.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b98cb6f5-e3a8-491d-9803-e63455690cab",
+      "shortCode": "settings",
+      "label": "Settings",
+      "type": "object",
+      "description": "create-case settings {syncAlerts, extractObservables}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "aeada565-039d-4485-9622-4fdbdec7d2fa",
+      "shortCode": "description",
+      "label": "Description",
+      "type": "string",
+      "description": "create-case description markdown. Required.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "22c5681a-2650-4189-a42c-a836011195af",
+      "shortCode": "title",
+      "label": "Title",
+      "type": "string",
+      "description": "create-case title. Required. Example: Phishing report.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6b6a1462-71d1-4171-9734-54006d8085bd",
+      "shortCode": "customFields",
+      "label": "Customfields",
+      "type": "object",
+      "description": "Request-body parameter `customFields` for operation: create-case.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "aa96e536-be8b-4df1-afac-9cf5fca73ff1",
+      "shortCode": "connector",
+      "label": "Connector",
+      "type": "object",
+      "description": "create-case connector {id, name, type, fields}. Use {\"id\":\"none\",\"name\":\"none\",\"type\":\".none\",\"fields\":null} for no external connector.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a2d168c6-bbd2-4f9b-bdf5-7eae344009a4",
+      "shortCode": "owner",
+      "label": "Owner",
+      "type": "string",
+      "description": "Cases owner: securitySolution | observability | cases.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7d8c2d08-921c-49ca-8b21-2f47202e913a",
+      "shortCode": "severity",
+      "label": "Severity",
+      "type": "string",
+      "description": "Query-string/request-body parameter `severity` for operations: create-case, list-cases.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1d458741-87c0-4fae-ae2c-fcbb0a49eb3b",
+      "shortCode": "caseId",
+      "label": "Caseid",
+      "type": "string",
+      "description": "Case id for get/comment ops.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c2081fcc-61bb-43b8-b24a-85da93780f74",
+      "shortCode": "page",
+      "label": "Page",
+      "type": "number",
+      "description": "Query-string parameter `page` for operations: list-cases, list-comments.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "86874cd4-6d2a-467f-ab3c-2f8ef92cd606",
+      "shortCode": "sortField",
+      "label": "Sortfield",
+      "type": "string",
+      "description": "Query-string parameter `sortField` for operation: list-cases.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8ff56212-0c72-4923-91cf-b0b2319a16c3",
+      "shortCode": "status",
+      "label": "Status",
+      "type": "string",
+      "description": "Query-string parameter `status` for operation: list-cases.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "16b50eca-bd0c-40ba-95b1-b65b2ecba9d7",
+      "shortCode": "perPage",
+      "label": "Perpage",
+      "type": "number",
+      "description": "Query-string parameter `perPage` for operations: list-cases, get-case-status, list-comments.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f52506a3-7193-431c-aeb6-bc7cc74474a6",
+      "shortCode": "sortOrder",
+      "label": "Sortorder",
+      "type": "string",
+      "description": "Query-string parameter `sortOrder` for operations: list-cases, list-comments.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6c8cf62b-55a8-4328-8f08-4871f94dee6b",
+      "shortCode": "search",
+      "label": "Search",
+      "type": "string",
+      "description": "Query-string parameter `search` for operation: list-cases.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0995d9b5-6f4f-4c4e-940f-b360bd982e82",
+      "shortCode": "cases",
+      "label": "Cases",
+      "type": "object",
+      "description": "update-case / add-tag / remove-tag PATCH body { cases: [...] } with id+version.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "90b9d528-873b-4a9f-84b7-adc094fefc9b",
+      "shortCode": "ids",
+      "label": "Ids",
+      "type": "string",
+      "description": "delete-case query ids (JSON array as documented).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0728e22e-0ae5-4cf5-95f4-d55263c1cecb",
+      "shortCode": "alertId",
+      "label": "Alertid",
+      "type": "string",
+      "description": "Request-body parameter `alertId` for operation: add-comment.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "04cf66ac-3ac9-43fd-9259-fc5c4b79a8a1",
+      "shortCode": "comment",
+      "label": "Comment",
+      "type": "string",
+      "description": "Request-body parameter `comment` for operations: add-comment, update-comment.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a32ab2e9-bffb-4f3c-83a7-6b739c197568",
+      "shortCode": "index",
+      "label": "Index",
+      "type": "string",
+      "description": "Request-body parameter `index` for operation: add-comment.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "aa4c68e9-8f22-43d1-b1af-bd124fde661c",
+      "shortCode": "rule",
+      "label": "Rule",
+      "type": "object",
+      "description": "Request-body parameter `rule` for operation: add-comment.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8766f93d-7792-4676-97dd-8e8c4b8b6e75",
+      "shortCode": "type",
+      "label": "Type",
+      "type": "string",
+      "description": "Request-body parameter `type` for operations: add-comment, update-comment.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "aff53d23-ab34-415a-b91c-e2515f0dc30f",
+      "shortCode": "commentId",
+      "label": "Commentid",
+      "type": "string",
+      "description": "Comment id for get/remove-comment.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "acb9963e-2857-43dc-bf2d-27b0ca53ddf6",
+      "shortCode": "version",
+      "label": "Version",
+      "type": "string",
+      "description": "Request-body parameter `version` for operation: update-comment.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "26344376-ed63-402e-a258-37feba748c61",
+      "shortCode": "id",
+      "label": "ID",
+      "type": "string",
+      "description": "create-connector path id (1–36).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "260c7b5b-e5b4-496e-8bc1-f91ca7fa08db",
+      "shortCode": "secrets",
+      "label": "Secrets",
+      "type": "object",
+      "description": "Request-body parameter `secrets` for operation: create-connector.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5044016f-a03c-46c8-b336-4824e3f739f3",
+      "shortCode": "name",
+      "label": "Name",
+      "type": "string",
+      "description": "Request-body parameter `name` for operation: create-connector. Required by: create-connector.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b0632105-a23a-45c0-86b0-d9d707bbd569",
+      "shortCode": "connector_type_id",
+      "label": "Connector Type ID",
+      "type": "string",
+      "description": "Request-body parameter `connector_type_id` for operation: create-connector. Required by: create-connector.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0498e3a2-4036-4105-9a26-e4bbfe44b559",
+      "shortCode": "config",
+      "label": "Config",
+      "type": "object",
+      "description": "Request-body parameter `config` for operation: create-connector.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3e562e51-fad9-4cf1-8d71-511539d706a0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

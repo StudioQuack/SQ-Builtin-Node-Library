@@ -1,0 +1,250 @@
+{
+  "_id": "b9463a1f-00db-42c6-adf6-d0e7e6ba3ad2",
+  "version": "1.0.0",
+  "name": "Runway",
+  "label": "Runway",
+  "description": "Official Runway Dev Tasks API at https://api.dev.runwayml.com. generate_video = POST /v1/text_to_video. image_to_video = POST /v1/image_to_video. Poll get_task = GET /v1/tasks/{id}. Handler: OfficialApiNode. Auth: StudioQuack secret api_key as Bearer. Header X-Runway-Version: 2024-11-06. Docs: https://docs.dev.runwayml.com/api/. Never log api_key.",
+  "icon": "movie",
+  "tags": [
+    "runway",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a90ddca8-ecf3-4f02-9054-671bbf09a3fb",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "generate_video: model + promptText (+ ratio/duration as required by that model). image_to_video: model + promptImage (HTTPS URL or type file resolved to URL). get_task: id. Do not put api_key here. Example: {\"model\":\"gen4.5\",\"promptText\":\"clouds flying by\",\"ratio\":\"1280:720\",\"duration\":5}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "contentModeration",
+          "label": "contentModeration",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official contentModeration object for generate_video / image_to_video, e.g. {\"publicFigureThreshold\":\"auto\"}. Omit for defaults.",
+          "children": []
+        },
+        {
+          "shortCode": "outputFormat",
+          "label": "outputFormat",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Output container for generate_video / image_to_video. EXACT: mp4 | webm | gif | prores (text_to_video + proresProfile).",
+          "children": []
+        },
+        {
+          "shortCode": "proresProfile",
+          "label": "proresProfile",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ProRes profile when outputFormat=prores on generate_video. Official values such as 422HQ.",
+          "children": []
+        },
+        {
+          "shortCode": "promptText",
+          "label": "promptText",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Text prompt. Required for generate_video (gen4.5 max 1000 UTF-16 units). Optional extra prompt on image_to_video. Example: clouds flying over a coastline.",
+          "children": []
+        },
+        {
+          "shortCode": "promptImage",
+          "label": "promptImage",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Start-frame image for image_to_video. Platform file block or HTTPS URL string. Never inline multi-MB base64.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task id from create for get_task (GET /v1/tasks/{id}). Status PENDING|THROTTLED|RUNNING|SUCCEEDED|FAILED|CANCELLED.",
+          "children": []
+        },
+        {
+          "shortCode": "ratio",
+          "label": "ratio",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Frame ratio for generate_video / image_to_video. Model-specific, e.g. 1280:720 | 16:9 | 9:16.",
+          "children": []
+        },
+        {
+          "shortCode": "duration",
+          "label": "duration",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Clip length in seconds for generate_video / image_to_video. Integer as required by the model (gen4.5: 2–10). Example: 5.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Integer seed for generate_video / image_to_video. Same seed + prompt reproduces the clip. Example: 42.",
+          "children": []
+        },
+        {
+          "shortCode": "audio",
+          "label": "audio",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "When true, generate_video / image_to_video request native audio. Official boolean, not a file. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "negativePrompt",
+          "label": "negativePrompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Things to avoid in generate_video / image_to_video. Example: blurry, text overlay.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "2b17efd3-2209-4462-94e9-0b5eb8f9fd14",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Create returns {id}. get_task returns status and output[] URLs on SUCCEEDED. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx (task may still be PENDING).",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (id, status, output, failure, failureCode).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "9a07d84e-a4fc-441f-8714-30f842232b39",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "EXACT: generate_video | image_to_video | get_task. Create does not return the video — poll get_task. Do not poll tighter than every 5s.",
+      "value": "generate_video",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "generate_video",
+        "image_to_video",
+        "get_task"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "382d6a9b-b1b8-4797-9de0-cbd913114838",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Runway developer secret (RUNWAYML_API_SECRET). Sent as Authorization: Bearer. StudioQuack secret. Never logged. Portal: https://dev.runwayml.com",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1c972ee5-a7a0-4d6b-9236-ab1c4ab890a9",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Default model id for create. Live list: https://docs.dev.runwayml.com/guides/models.md. Text or image to video: gen4.5, seedance2, seedance2_5, seedance2_fast, seedance2_mini, veo3.1, veo3.1_fast, grok_imagine_1_5, hailuo3, happyhorse_1_0, gemini_omni_flash. Image-only: gen4_turbo. Put model on INPUT so it is sent in the JSON body. Do not invent retired ids (gen3a_turbo). aleph2 is video-to-video (not this node's ops).",
+      "value": "gen4.5",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6c5d0f73-b5bc-4698-b641-bc74c6455b01",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-HTTP-call timeout (create or get_task). Default 60. Floor 1. Do not wait for the video in one call — poll get_task.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

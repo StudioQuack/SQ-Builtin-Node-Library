@@ -1,0 +1,78 @@
+{
+  "baseUrl": "https://api.brex.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "configKey": "api_token"
+  },
+  "operations": {
+    "transaction_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/transactions/card/primary",
+      "queryFrom": [
+        "limit",
+        "cursor"
+      ]
+    },
+    "vendor_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/vendors",
+      "bodyFrom": [
+        "company_name",
+        "email",
+        "phone",
+        "payment_accounts"
+      ],
+      "required": [
+        "company_name"
+      ]
+    },
+    "transfer_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/transfers",
+      "bodyFrom": [
+        "amount",
+        "description",
+        "external_memo",
+        "originating_account",
+        "external_bank_account_id",
+        "approval_type"
+      ],
+      "bodyMap": {
+        "external_bank_account_id": "counterparty.payment_instrument_id"
+      },
+      "required": [
+        "amount",
+        "description",
+        "external_memo"
+      ]
+    },
+    "card_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/cards",
+      "queryFrom": [
+        "limit"
+      ]
+    },
+    "expense_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/expenses",
+      "queryFrom": [
+        "limit",
+        "cursor"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  },
+  "extraHeaders": {
+    "Idempotency-Key": "{idempotency_key}"
+  }
+}

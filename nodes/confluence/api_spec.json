@@ -1,0 +1,171 @@
+{
+    "baseUrl": "https://api.atlassian.com/ex/confluence",
+    "defaultTimeout": 25,
+    "timeoutConfigKey": "timeout_seconds",
+    "auth": {
+        "type": "basic",
+        "header": "Authorization",
+        "prefix": "",
+        "configKey": "api_token",
+        "userKey": "email"
+    },
+    "operations": {
+        "page_create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/{cloud_id}/wiki/api/v2/pages",
+            "required": [
+                "cloud_id",
+                "spaceId",
+                "title"
+            ],
+            "bodyFrom": [
+                "body",
+                "spaceId",
+                "status",
+                "title",
+                "parentId",
+                "representation",
+                "value"
+            ],
+            "bodyMap": {
+                "representation": "body.representation",
+                "value": "body.value"
+            }
+        },
+        "page_get": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/{cloud_id}/wiki/api/v2/pages/{id}",
+            "required": [
+                "cloud_id",
+                "id"
+            ],
+            "queryFrom": [
+                "body-format"
+            ]
+        },
+        "page_update": {
+            "kind": "http",
+            "method": "PUT",
+            "path": "/{cloud_id}/wiki/api/v2/pages/{id}",
+            "required": [
+                "cloud_id",
+                "id",
+                "title"
+            ],
+            "bodyFrom": [
+                "version",
+                "body",
+                "id",
+                "status",
+                "title",
+                "representation",
+                "value",
+                "version_number",
+                "version_message"
+            ],
+            "bodyMap": {
+                "representation": "body.representation",
+                "value": "body.value",
+                "version_number": "version.number",
+                "version_message": "version.message"
+            }
+        },
+        "page_delete": {
+            "kind": "http",
+            "method": "DELETE",
+            "path": "/{cloud_id}/wiki/api/v2/pages/{id}",
+            "required": [
+                "cloud_id",
+                "id"
+            ]
+        },
+        "blog_create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/{cloud_id}/wiki/api/v2/blogposts",
+            "required": [
+                "cloud_id",
+                "spaceId",
+                "title"
+            ],
+            "bodyFrom": [
+                "body",
+                "spaceId",
+                "status",
+                "title",
+                "representation",
+                "value"
+            ],
+            "bodyMap": {
+                "representation": "body.representation",
+                "value": "body.value"
+            }
+        },
+        "blog_get": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/{cloud_id}/wiki/api/v2/blogposts/{id}",
+            "required": [
+                "cloud_id",
+                "id"
+            ],
+            "queryFrom": [
+                "body-format"
+            ]
+        },
+        "blog_delete": {
+            "kind": "http",
+            "method": "DELETE",
+            "path": "/{cloud_id}/wiki/api/v2/blogposts/{id}",
+            "required": [
+                "cloud_id",
+                "id"
+            ]
+        },
+        "space_get": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/{cloud_id}/wiki/api/v2/spaces/{id}",
+            "required": [
+                "cloud_id",
+                "id"
+            ]
+        },
+        "search": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/{cloud_id}/wiki/api/v2/pages",
+            "required": [
+                "cloud_id"
+            ],
+            "queryFrom": [
+                "title",
+                "space-id",
+                "limit",
+                "status",
+                "body-format"
+            ]
+        },
+        "attach_file": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/{cloud_id}/wiki/rest/api/content/{id}/child/attachment",
+            "required": [
+                "cloud_id",
+                "id"
+            ],
+            "bodyFrom": [
+                "file"
+            ],
+            "bodyFormat": "multipart",
+            "extraHeaders": {
+                "X-Atlassian-Token": "nocheck"
+            }
+        },
+        "listen": {
+            "kind": "ingress"
+        }
+    }
+}

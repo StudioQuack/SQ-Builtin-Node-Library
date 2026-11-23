@@ -1,0 +1,605 @@
+{
+  "_id": "23ec0ba7-40b5-41c3-8d6d-d0a28cf2316b",
+  "version": "1.0.0",
+  "name": "Together AI",
+  "label": "Together AI",
+  "description": "Official Together Inference API (chat, completions, embeddings, image_gen, list models) on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). Auth is StudioQuack secret api_key sent as Authorization Bearer. Vision/image inputs use type file (platform ref-id). Docs: https://docs.together.ai/docs/inference/openai-compatibility. Terms: https://www.together.ai/terms-of-service. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "together",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "508fc573-8c63-4387-92dc-3b2cc264a7cc",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, prompt?, input?, file?}. Vision/image use type file (platform ref-id). Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "chat",
+          "description": "Which Together call to run. EXACT: chat | completions | embeddings | image_gen | list_models. Overrides config operation. Example: chat. https://docs.together.ai/reference/chat-completions",
+          "children": []
+        },
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Chat Completions messages. Vision: image_url HTTPS or data URI from type file. Example: [{\"role\":\"user\",\"content\":\"Hello\"}]. Together ids are namespaced (org/name).",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional chat tools. Omit or [] sends no tools.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "completions prompt or image_gen prompt when messages is omitted.",
+          "children": []
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "embeddings input (string or string[]).",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for vision chat or image_gen reference. Never inline bytes in graph JSON.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_tokens` for operations: chat, completions.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `stop` for operations: chat, completions.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_p` for operations: chat, completions.",
+          "children": []
+        },
+        {
+          "shortCode": "top_k",
+          "label": "top_k",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_k` for operations: chat, completions.",
+          "children": []
+        },
+        {
+          "shortCode": "repetition_penalty",
+          "label": "repetition_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `repetition_penalty` for operations: chat, completions.",
+          "children": []
+        },
+        {
+          "shortCode": "n",
+          "label": "n",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `n` for operations: chat, completions, image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "presence_penalty",
+          "label": "presence_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `presence_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "frequency_penalty",
+          "label": "frequency_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `frequency_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "min_p",
+          "label": "min_p",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `min_p` for operations: chat, completions.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `seed` for operations: chat, completions, image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operations: chat, image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "tool_choice",
+          "label": "tool_choice",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tool_choice` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "reasoning_effort",
+          "label": "reasoning_effort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `reasoning_effort` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "safety_model",
+          "label": "safety_model",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `safety_model` for operations: chat, completions.",
+          "children": []
+        },
+        {
+          "shortCode": "echo",
+          "label": "echo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `echo` for operation: completions.",
+          "children": []
+        },
+        {
+          "shortCode": "steps",
+          "label": "steps",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `steps` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "height",
+          "label": "height",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `height` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "width",
+          "label": "width",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `width` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "negative_prompt",
+          "label": "negative_prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `negative_prompt` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "guidance_scale",
+          "label": "guidance_scale",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `guidance_scale` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "output_format",
+          "label": "output_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `output_format` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "image_url",
+          "label": "image_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `image_url` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "disable_safety_checker",
+          "label": "disable_safety_checker",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `disable_safety_checker` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: list_models.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `after` for operation: list_models.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e60c131c-d92a-499e-89d6-66aa9813c08f",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Together JSON (chat, completions, embeddings, images, or models list).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a5809b28-3a8a-46b3-ac6a-8825bd337486",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Together verb. EXACT values: chat | completions | embeddings | image_gen | list_models. Default chat = POST /v1/chat/completions.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "completions",
+        "embeddings",
+        "image_gen",
+        "list_models"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "ab5c958c-dcf0-4cc4-ac6b-756a3d8defe9",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Together project API key. Sent as Authorization Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3ceb8aa5-f9dc-45ce-b35d-2d765fc4ddff",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Together namespaced model id (org/name). Default meta-llama/Llama-3.3-70B-Instruct-Turbo (still in the serverless catalog). Current also: Qwen/Qwen3.8-2.4T-A95B, Qwen/Qwen3.7-Max, Qwen/Qwen3.6-Plus, MiniMaxAI/MiniMax-M3, moonshotai/Kimi-K3. Flat OpenAI ids 404. Verify via list_models. Docs: https://docs.together.ai/docs/serverless/models .",
+      "value": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        "Qwen/Qwen3.8-2.4T-A95B",
+        "Qwen/Qwen3.7-Max",
+        "Qwen/Qwen3.6-Plus",
+        "Qwen/Qwen3.5-9B",
+        "MiniMaxAI/MiniMax-M3",
+        "moonshotai/Kimi-K3",
+        "moonshotai/Kimi-K2.7-Code",
+        "deepseek-ai/DeepSeek-V4-Pro"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "aaf7f183-a1b5-4584-82be-0d46e2220ae5",
+      "shortCode": "temperature",
+      "label": "Temperature",
+      "type": "number",
+      "description": "Chat/completions temperature when present on INPUT. Empty → omitted.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "847a68fa-b8d7-4589-8838-0aa1f3d65dba",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2e949056-dbeb-447f-af9d-8406bc73353d",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether Together AI requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

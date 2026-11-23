@@ -1,0 +1,200 @@
+{
+    "baseUrl": "https://adsapi.snapchat.com/v1",
+    "defaultTimeout": 30,
+    "timeoutConfigKey": "timeout_seconds",
+    "auth": {
+        "type": "bearer",
+        "header": "Authorization",
+        "prefix": "Bearer ",
+        "configKey": "access_token"
+    },
+    "operations": {
+        "organization.list": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/me/organizations",
+            "queryFrom": [
+                "with_ad_accounts"
+            ],
+            "required": []
+        },
+        "campaign.create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/adaccounts/{ad_account_id}/campaigns",
+            "required": [
+                "ad_account_id",
+                "name"
+            ],
+            "bodyFrom": [
+                "campaigns",
+                "name",
+                "status",
+                "objective",
+                "start_time",
+                "daily_budget_micro"
+            ],
+            "bodyMap": {
+                "campaigns": "campaigns[0]",
+                "name": "campaigns[0].name",
+                "status": "campaigns[0].status",
+                "objective": "campaigns[0].objective",
+                "start_time": "campaigns[0].start_time",
+                "daily_budget_micro": "campaigns[0].daily_budget_micro"
+            }
+        },
+        "campaign.list": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/adaccounts/{ad_account_id}/campaigns",
+            "queryFrom": [
+                "limit",
+                "cursor"
+            ],
+            "required": [
+                "ad_account_id"
+            ]
+        },
+        "adsquad.create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/adaccounts/{ad_account_id}/adsquads",
+            "required": [
+                "ad_account_id",
+                "name",
+                "campaign_id"
+            ],
+            "bodyFrom": [
+                "adsquads",
+                "name",
+                "status",
+                "campaign_id",
+                "type",
+                "bid_micro",
+                "daily_budget_micro"
+            ],
+            "bodyMap": {
+                "adsquads": "adsquads[0]",
+                "name": "adsquads[0].name",
+                "status": "adsquads[0].status",
+                "campaign_id": "adsquads[0].campaign_id",
+                "type": "adsquads[0].type",
+                "bid_micro": "adsquads[0].bid_micro",
+                "daily_budget_micro": "adsquads[0].daily_budget_micro"
+            }
+        },
+        "adsquad.list": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/adaccounts/{ad_account_id}/adsquads",
+            "queryFrom": [
+                "limit",
+                "cursor"
+            ],
+            "required": [
+                "ad_account_id"
+            ]
+        },
+        "ad.create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/adaccounts/{ad_account_id}/ads",
+            "required": [
+                "ad_account_id",
+                "name",
+                "ad_squad_id",
+                "creative_id"
+            ],
+            "bodyFrom": [
+                "ads",
+                "name",
+                "status",
+                "ad_squad_id",
+                "creative_id",
+                "type"
+            ],
+            "bodyMap": {
+                "ads": "ads[0]",
+                "name": "ads[0].name",
+                "status": "ads[0].status",
+                "ad_squad_id": "ads[0].ad_squad_id",
+                "creative_id": "ads[0].creative_id",
+                "type": "ads[0].type"
+            }
+        },
+        "ad.list": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/adaccounts/{ad_account_id}/ads",
+            "queryFrom": [
+                "limit",
+                "cursor"
+            ],
+            "required": [
+                "ad_account_id"
+            ]
+        },
+        "creative.create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/adaccounts/{ad_account_id}/creatives",
+            "required": [
+                "ad_account_id",
+                "name",
+                "type"
+            ],
+            "bodyFrom": [
+                "creatives",
+                "name",
+                "type",
+                "brand_name",
+                "headline",
+                "call_to_action",
+                "top_snap_media_id",
+                "shareable"
+            ],
+            "bodyMap": {
+                "creatives": "creatives[0]",
+                "name": "creatives[0].name",
+                "type": "creatives[0].type",
+                "brand_name": "creatives[0].brand_name",
+                "headline": "creatives[0].headline",
+                "call_to_action": "creatives[0].call_to_action",
+                "top_snap_media_id": "creatives[0].top_snap_media_id",
+                "shareable": "creatives[0].shareable"
+            }
+        },
+        "stats.get": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/{entity_type}/{entity_id}/stats",
+            "queryFrom": [
+                "granularity",
+                "start_time",
+                "end_time",
+                "fields"
+            ],
+            "required": [
+                "entity_type",
+                "entity_id"
+            ]
+        },
+        "conversion.upload": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/v3/{pixel_id}/events",
+            "required": [
+                "pixel_id",
+                "data"
+            ],
+            "bodyFrom": [
+                "data",
+                "test_event_code"
+            ],
+            "baseUrl": "https://tr.snapchat.com",
+            "queryFrom": [
+                "access_token"
+            ]
+        }
+    }
+}

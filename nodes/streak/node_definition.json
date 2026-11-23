@@ -1,0 +1,351 @@
+{
+  "_id": "74e8488b-83d8-4be0-97a3-10656331f9f2",
+  "version": "1.0.0",
+  "name": "Streak",
+  "label": "Streak REST v1 — pipelines, boxes, contacts",
+  "description": "Official Streak REST v1 at https://api.streak.com/api/v1. Boxes = deals. Handler: OfficialApiNode. Auth: HTTP Basic with api_key. trigger.listen is ingress (pipeline webhooks) — use a BPMN message event. Customer owns the Gmail/Streak account. Minimize emails and comments. api_key is never logged or returned.",
+  "icon": "view_kanban",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "74315016-d61b-40d7-a33a-88b279197eb2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets (api_key) here. Example: {\"operation\":\"box.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "pipeline.list",
+          "description": "Overrides config operation when non-blank. EXACT: 'pipeline.list' | 'pipeline.get' | 'box.create' | 'box.get' | 'box.list' | 'box.update' | 'box.delete' | 'contact.create' | 'contact.get' | 'contact.update' | 'field.update' | 'task.create' | 'comment.create' | 'file.get' | 'trigger.listen'.",
+          "children": []
+        },
+        {
+          "shortCode": "pipeline_key",
+          "label": "pipeline_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pipeline key. Required for pipeline.get, box.create, box.list.",
+          "children": []
+        },
+        {
+          "shortCode": "box_key",
+          "label": "box_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Box (deal) key. Required for box.get/update/delete, field.update, task.create, comment.create, file.get.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Box name (create/update).",
+          "children": []
+        },
+        {
+          "shortCode": "stage_key",
+          "label": "stage_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Stage key for create/update/list filter.",
+          "children": []
+        },
+        {
+          "shortCode": "assigned_to",
+          "label": "assigned_to",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "box.create assignees as official [{email}]. PII.",
+          "children": []
+        },
+        {
+          "shortCode": "notes",
+          "label": "notes",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "box.update notes (PII).",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Custom field key → value on a box or contact.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "box.list page (0-indexed).",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "box.list page size.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_by",
+          "label": "sort_by",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "box.list sort: creationTimestamp | lastUpdatedTimestamp.",
+          "children": []
+        },
+        {
+          "shortCode": "key",
+          "label": "key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact key for contact.get / contact.update.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.create email (PII).",
+          "children": []
+        },
+        {
+          "shortCode": "given_name",
+          "label": "given_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact given name.",
+          "children": []
+        },
+        {
+          "shortCode": "family_name",
+          "label": "family_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact family name.",
+          "children": []
+        },
+        {
+          "shortCode": "field_key",
+          "label": "field_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "field.update custom field key.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "field.update value.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "task.create text.",
+          "children": []
+        },
+        {
+          "shortCode": "due_date",
+          "label": "due_date",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "task.create due date (epoch ms).",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "comment.create message (PII). Do not log.",
+          "children": []
+        },
+        {
+          "shortCode": "team_key",
+          "label": "team_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Streak team key for contact.create (POST /api/v2/teams/{team_key}/contacts). Example: agxzfm1...",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0376da82-c908-4719-a08c-59b5b3d25fee",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. PII may be present — do not log bodies.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "dc322737-ed44-4bfa-8c95-9f7d04769eeb",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: pipeline.list | pipeline.get | box.create | box.get | box.list | box.update | box.delete | contact.create | contact.get | contact.update | field.update | task.create | comment.create | file.get | trigger.listen.",
+      "value": "box.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "pipeline.list",
+        "pipeline.get",
+        "box.create",
+        "box.get",
+        "box.list",
+        "box.update",
+        "box.delete",
+        "contact.create",
+        "contact.get",
+        "contact.update",
+        "field.update",
+        "task.create",
+        "comment.create",
+        "file.get",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "047b04d9-5525-493e-b023-cbaba3e2e9ae",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Streak user API key (StudioQuack secret). Official Basic username with empty password. This node uses HTTP Basic. Same privileges as the Gmail user who created the key. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f72b8e31-1517-4901-8705-6e1841294ae5",
+      "shortCode": "team_key",
+      "label": "Team Key",
+      "type": "string",
+      "description": "Streak team key for contact.create (POST /api/v2/teams/{team_key}/contacts). Example: agxzfm1...",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "717306ec-b87a-400b-93f5-22dd813ba978",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 uses api_spec default. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

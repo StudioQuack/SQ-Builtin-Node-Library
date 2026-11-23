@@ -1,0 +1,290 @@
+{
+  "_id": "6563db61-8bd4-565d-ac0e-52cc5914a742",
+  "version": "1.0.0",
+  "name": "WhatsApp",
+  "label": "WhatsApp — WhatsApp Business Cloud API (Meta Graph v26.0)",
+  "description": "WhatsApp via the official WhatsApp Business Cloud API (Meta Graph v26.0). Base https://graph.facebook.com/v26.0. Docs: https://developers.facebook.com/docs/whatsapp/cloud-api/overview/. Canonical Cloud API node; social-media.md is discovery only — same folder nodes/whatsapp. DO NOT BUILD unofficial WhatsApp Web / Baileys / session scrape. 24h customer-care window vs templates. Twilio WhatsApp is the twilio node. listen = Meta webhooks as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "chat",
+  "tags": [
+    "chat",
+    "sms"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4ca85921-32be-5598-a289-53fee3df37bc",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One WhatsApp operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"send-message\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-message",
+          "description": "Which official call to run. EXACT values: send-message | send-template | upload-media | download-media | delete-media | send-and-wait | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "WhatsApp recipient (E.164 without +). Required on send-template; used on send-message. Example: 15551234567.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-message: message type, EXACT text | image | audio | document | video | location | interactive (e.g. text). send-template: sends template when blank. upload-media: MIME type of the file (e.g. image/jpeg).",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Text body object {body} or a string the engine sends as text.body depending on type=text. send-message. Example: {\"body\":\"Hello\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "template",
+          "label": "template",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Template object {name, language:{code}, components?} for send-template. Escape hatch: template_name and language are merged into it. Example: {\"name\":\"hello_world\",\"language\":{\"code\":\"en_US\"},\"components\":[]}.",
+          "children": []
+        },
+        {
+          "shortCode": "template_name",
+          "label": "template_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Approved template name for send-template, sent as template.name. Example: hello_world.",
+          "children": []
+        },
+        {
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Template language/locale code for send-template, sent as template.language.code (required by the Cloud API; must match an approved translation). Example: en_US.",
+          "children": []
+        },
+        {
+          "shortCode": "media_id",
+          "label": "media_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Graph media id for download-media / delete-media. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "image",
+          "label": "image",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `image` for operation: send-message.",
+          "children": []
+        },
+        {
+          "shortCode": "audio",
+          "label": "audio",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `audio` for operation: send-message.",
+          "children": []
+        },
+        {
+          "shortCode": "document",
+          "label": "document",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `document` for operation: send-message.",
+          "children": []
+        },
+        {
+          "shortCode": "video",
+          "label": "video",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `video` for operation: send-message.",
+          "children": []
+        },
+        {
+          "shortCode": "location",
+          "label": "location",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `location` for operation: send-message.",
+          "children": []
+        },
+        {
+          "shortCode": "interactive",
+          "label": "interactive",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `interactive` for operation: send-message.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Media file for upload-media (multipart field file). Platform file block. Official Cloud API POST /{phone_number_id}/media. Example: an image/jpeg.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8891e078-94c2-58f4-a955-d2f2585f226a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "335c8d7e-4f82-58a5-a7df-62229aba7725",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-message, send-template, upload-media, download-media, delete-media, send-and-wait, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-message",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-message",
+        "send-template",
+        "upload-media",
+        "download-media",
+        "delete-media",
+        "send-and-wait",
+        "listen"
+      ]
+    },
+    {
+      "_id": "c3d2ea8e-eecb-5efb-8dcf-2e279ea069f2",
+      "shortCode": "access_token",
+      "label": "Meta access token",
+      "type": "password",
+      "description": "Meta system-user (or user) access token for WhatsApp Cloud API. Header Authorization: Bearer. StudioQuack secret. App secret stays on the ingress verifier, not this HTTP call. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "59c1689f-4623-5d6f-a83b-15f2c6e4f919",
+      "shortCode": "phone_number_id",
+      "label": "phone_number_id",
+      "type": "string",
+      "description": "WhatsApp Business phone-number id (Graph path). Required for send/upload.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3d2f5f8c-98af-5a57-a3c0-e2396b85e9d5",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

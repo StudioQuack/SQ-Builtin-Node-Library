@@ -1,0 +1,617 @@
+{
+  "_id": "b95801f7-39d9-4d58-857e-d26774a3ab46",
+  "version": "1.0.0",
+  "name": "Insightly",
+  "label": "Insightly — REST v3.1 CRM",
+  "description": "Official Insightly REST v3.1 at https://api.{pod}.insightly.com/v3.1/. Handler: OfficialApiNode. HTTP Basic with the API key as username (pod from User Settings). JSON only. trigger.listen is ingress (webhook URL in Insightly System Settings). Customer owns the instance. Contacts/leads are PII. Never log api_key.",
+  "icon": "contacts",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "39cb567f-1123-4ac0-8651-ad9308efa25d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Insightly v3.1 fields using official names (FIRST_NAME, ORGANISATION_NAME, …). Create/update send only the wired body fields (not the whole input). Do not put api_key here. Example: {\"operation\":\"contact.create\",\"FIRST_NAME\":\"Ada\",\"LAST_NAME\":\"Lovelace\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.create",
+          "description": "Overrides config. EXACT catalog verb including trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Record integer id for get/update/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "pod",
+          "label": "pod",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Overrides config pod (^[a-z0-9]+$). Host label only, e.g. na1.",
+          "children": []
+        },
+        {
+          "shortCode": "top",
+          "label": "top",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page size 1–500 (Insightly max 500).",
+          "children": []
+        },
+        {
+          "shortCode": "skip",
+          "label": "skip",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List offset.",
+          "children": []
+        },
+        {
+          "shortCode": "count_total",
+          "label": "count_total",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request X-Total-Count when documented.",
+          "children": []
+        },
+        {
+          "shortCode": "field_name",
+          "label": "field_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional list filter field (Search).",
+          "children": []
+        },
+        {
+          "shortCode": "field_value",
+          "label": "field_value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "With field_name.",
+          "children": []
+        },
+        {
+          "shortCode": "updated_after_utc",
+          "label": "updated_after_utc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO-8601 yyyy-mm-ddThh:mm:ssZ.",
+          "children": []
+        },
+        {
+          "shortCode": "FIRST_NAME",
+          "label": "First name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly FIRST_NAME. contact.create/update, lead.create/update. Example: Ada. PII.",
+          "children": []
+        },
+        {
+          "shortCode": "LAST_NAME",
+          "label": "Last name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly LAST_NAME. Required on lead.create. contact/lead create/update. Example: Lovelace. PII.",
+          "children": []
+        },
+        {
+          "shortCode": "EMAIL_ADDRESS",
+          "label": "Email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly EMAIL_ADDRESS. contact/lead create/update. Example: ada@example.com. PII.",
+          "children": []
+        },
+        {
+          "shortCode": "PHONE",
+          "label": "Phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly PHONE. contact/organisation/lead create/update. Example: +1-555-0100. PII.",
+          "children": []
+        },
+        {
+          "shortCode": "TITLE",
+          "label": "Title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job title (contact/lead) or record title (task/note/event). Example: Engineer.",
+          "children": []
+        },
+        {
+          "shortCode": "ORGANISATION_ID",
+          "label": "Organisation id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Insightly ORGANISATION_ID integer. contact/opportunity create/update. Example: 123456.",
+          "children": []
+        },
+        {
+          "shortCode": "ORGANISATION_NAME",
+          "label": "Organisation name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly ORGANISATION_NAME. organisation.create/update and lead.create/update. Example: Acme.",
+          "children": []
+        },
+        {
+          "shortCode": "BACKGROUND",
+          "label": "Background",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly BACKGROUND notes. contact/organisation/lead create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "IMAGE_URL",
+          "label": "Image URL",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly IMAGE_URL for a contact photo. contact.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "WEBSITE",
+          "label": "Website",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly WEBSITE. organisation.create/update. Example: https://acme.com.",
+          "children": []
+        },
+        {
+          "shortCode": "ADDRESS_BILLING_STREET",
+          "label": "Billing street",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly ADDRESS_BILLING_STREET. organisation.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "ADDRESS_BILLING_CITY",
+          "label": "Billing city",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly ADDRESS_BILLING_CITY. organisation.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "ADDRESS_BILLING_STATE",
+          "label": "Billing state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly ADDRESS_BILLING_STATE. organisation.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "ADDRESS_BILLING_POSTCODE",
+          "label": "Billing postcode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly ADDRESS_BILLING_POSTCODE. organisation.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "ADDRESS_BILLING_COUNTRY",
+          "label": "Billing country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly ADDRESS_BILLING_COUNTRY. organisation.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "LEAD_STATUS_ID",
+          "label": "Lead status id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Insightly LEAD_STATUS_ID. lead.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "LEAD_SOURCE_ID",
+          "label": "Lead source id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Insightly LEAD_SOURCE_ID. lead.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "OPPORTUNITY_NAME",
+          "label": "Opportunity name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly OPPORTUNITY_NAME. Required on opportunity.create. Example: Q4 deal.",
+          "children": []
+        },
+        {
+          "shortCode": "OPPORTUNITY_STATE",
+          "label": "Opportunity state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly OPPORTUNITY_STATE. EXACT: Open | Suspended | Abandoned | Lost | Won. Required on opportunity.create.",
+          "children": []
+        },
+        {
+          "shortCode": "OPPORTUNITY_DETAILS",
+          "label": "Opportunity details",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly OPPORTUNITY_DETAILS. opportunity.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "BID_AMOUNT",
+          "label": "Bid amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Insightly BID_AMOUNT. opportunity.create/update. Example: 15000.",
+          "children": []
+        },
+        {
+          "shortCode": "BID_CURRENCY",
+          "label": "Bid currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly BID_CURRENCY ISO code. opportunity.create/update. Example: USD.",
+          "children": []
+        },
+        {
+          "shortCode": "PROBABILITY",
+          "label": "Probability",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Insightly PROBABILITY 0–100. opportunity.create/update. Example: 40.",
+          "children": []
+        },
+        {
+          "shortCode": "FORECAST_CLOSE_DATE",
+          "label": "Forecast close",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly FORECAST_CLOSE_DATE (UTC date). opportunity.create/update. Example: 2026-12-01.",
+          "children": []
+        },
+        {
+          "shortCode": "PROJECT_NAME",
+          "label": "Project name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly PROJECT_NAME. Required on project.create.",
+          "children": []
+        },
+        {
+          "shortCode": "STATUS",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly STATUS. project.create (Not Started|In Progress|Deferred|Cancelled|Completed) or task.create (NOT STARTED|IN PROGRESS|COMPLETED|WAITING|DEFERRED).",
+          "children": []
+        },
+        {
+          "shortCode": "PROJECT_DETAILS",
+          "label": "Project details",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly PROJECT_DETAILS. project.create.",
+          "children": []
+        },
+        {
+          "shortCode": "OPPORTUNITY_ID",
+          "label": "Opportunity id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Insightly OPPORTUNITY_ID. project.create.",
+          "children": []
+        },
+        {
+          "shortCode": "DUE_DATE",
+          "label": "Due date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly DUE_DATE (UTC). task.create. Example: 2026-12-01 17:00:00.",
+          "children": []
+        },
+        {
+          "shortCode": "DETAILS",
+          "label": "Details",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly DETAILS. task.create / event.create.",
+          "children": []
+        },
+        {
+          "shortCode": "COMPLETED",
+          "label": "Completed",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Insightly COMPLETED. task.create.",
+          "children": []
+        },
+        {
+          "shortCode": "PRIORITY",
+          "label": "Priority",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Insightly PRIORITY 1 (low) – 3 (high). task.create. Example: 2.",
+          "children": []
+        },
+        {
+          "shortCode": "PUBLICLY_VISIBLE",
+          "label": "Publicly visible",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Insightly PUBLICLY_VISIBLE. task.create.",
+          "children": []
+        },
+        {
+          "shortCode": "BODY",
+          "label": "Note body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly BODY. Required on note.create.",
+          "children": []
+        },
+        {
+          "shortCode": "OWNER_USER_ID",
+          "label": "Owner user id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Insightly OWNER_USER_ID. note.create.",
+          "children": []
+        },
+        {
+          "shortCode": "LOCATION",
+          "label": "Location",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly LOCATION. event.create. Example: 10 Main St.",
+          "children": []
+        },
+        {
+          "shortCode": "START_DATE_UTC",
+          "label": "Start (UTC)",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly START_DATE_UTC. Required on event.create. Example: 2026-12-01 15:00:00.",
+          "children": []
+        },
+        {
+          "shortCode": "END_DATE_UTC",
+          "label": "End (UTC)",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insightly END_DATE_UTC. Required on event.create. Example: 2026-12-01 16:00:00.",
+          "children": []
+        },
+        {
+          "shortCode": "ALL_DAY",
+          "label": "All day",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Insightly ALL_DAY. event.create.",
+          "children": []
+        },
+        {
+          "shortCode": "CUSTOMFIELDS",
+          "label": "Custom fields",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Insightly CUSTOMFIELDS array [{CUSTOM_FIELD_ID, FIELD_VALUE}]. Escape hatch for custom fields on create/update.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3c7d6781-305d-4533-9d95-31ac492bc218",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (record or list). trigger.listen: BPMN message event. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "62af78c9-c7ec-4719-8ce4-ccae5ab847f1",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank.",
+      "value": "contact.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "contact.create",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "contact.delete",
+        "organisation.create",
+        "organisation.get",
+        "organisation.list",
+        "organisation.update",
+        "organisation.delete",
+        "lead.create",
+        "lead.get",
+        "lead.list",
+        "lead.update",
+        "lead.delete",
+        "opportunity.create",
+        "opportunity.get",
+        "opportunity.list",
+        "opportunity.update",
+        "opportunity.delete",
+        "project.create",
+        "project.get",
+        "task.create",
+        "task.get",
+        "task.list",
+        "note.create",
+        "event.create",
+        "customField.list",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "93f07fd8-a28d-4de9-97c0-76d691255881",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Insightly user API key. Official contract: HTTP Basic username = key, password empty (Base64 of key:). OfficialApiNode Basic encodes {api_key}:{api_key} because empty password is not representable. Never log. User Settings → API.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "eaa71433-697f-4b1d-8371-37360eb43217",
+      "shortCode": "pod",
+      "label": "Pod",
+      "type": "string",
+      "description": "Regional pod host label only (e.g. na1). Interpolated into https://api.{pod}.insightly.com/v3.1/. Shown under User Settings next to the API key.",
+      "value": "na1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a468cfee-b784-4292-89c5-1ca2fb420cdc",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

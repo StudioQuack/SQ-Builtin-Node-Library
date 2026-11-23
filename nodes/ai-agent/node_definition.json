@@ -1,0 +1,1045 @@
+{
+  "_id": "a72d6175-f0d5-48d7-94b4-cb50fa9acaf7",
+  "bpmnType": "",
+  "version": "2",
+  "name": "AI Agent",
+  "label": "AI Agent",
+  "description": "Multimodal agent orchestrator (templateId 5c8b0d45-1d10-4f2e-844c-2318af96b2f1). Accepts text plus image/audio/video/document attachments on INPUT main_input, calls the connected LLM on FUNCTION model, fans out to connected tools / sub-agents / data sources, emits the final answer plus generated media on OUTPUT main_output, and publishes live reasoning and tool-dispatch events on FUNCTION thoughts. The model request is {messages, tools} plus optional inputFiles; the model may return outputFiles. The handler prefers helper executeStream for that call and falls back to atomic execute when executeStream is missing or returns a non-stream result; provider envelopes (result / response / llm_output / output / data / value, and one-element lists) are unwrapped to the canonical assistant payload. Preserves v1 dynamics: edge-time tool name + description, alias-resolved tool/sub-agent dispatch, in-memory ↔ remote memory fallback, pre-RAG over data sources, wrapper response merge, and the Anthropic-strict every-tool_use-has-a-tool_result invariant. conversation_id is generated internally and is never exposed on main_input or main_output. A missing model connection fails the run with RuntimeError. Example main_input: {\"prompt\":\"Where is order 42?\",\"files\":[{\"kind\":\"image\",\"mime_type\":\"image/jpeg\",\"source\":\"base64\",\"data\":\"/9j/…\",\"name\":\"label.jpg\"}]}. Data protection: prompts, attachments, and conversation context leave this host to the configured model provider (GDPR/data-processing notice). Secrets belong only in configurationParameters and are never logged.",
+  "icon": "psychology",
+  "tags": [
+    "agent",
+    "llm",
+    "orchestration",
+    "tools",
+    "multimodal"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "c525bb64-f52e-4829-8bf0-f1fe33aa6b42",
+  "documentationDocuments": [],
+  "ports": [
+    {
+      "_id": "fbcfe272-b18f-40f4-adf9-e7bd1fb56c10",
+      "name": "model",
+      "type": "FUNCTION",
+      "value": "model",
+      "description": "Connect exactly one v2 LLM provider (OpenAI Models, Local LLM, or another node that speaks the same contract). REQUIRED at runtime even though required=false in the designer: zero connections raise 'Missing required LLM connection on `model` FUNCTION port.' maxConnections=1. The agent sends node_request {messages: <canonical history>, tools: <tool catalog including delegate_to_agent when sub_agents exist>, inputFiles?: <ContentBlocks from main_input.files + main_input.voices>} so the provider can emitPartial thinking/answer deltas. Non-empty files+voices are sent as top-level inputFiles (omitted when empty). The provider may return outputFiles; the agent merges those with result.output_files. Invoke path: helper executeStream(portValue='model', …) first; if executeStream is not available on the helper, throws, or returns a non-stream/empty body, the agent falls back to atomic execute(portValue='model', …) and waits for one envelope. Response unwrap (recursive, depth≤10): one-element lists are peeled; dict envelopes are opened in order result, response, llm_output, output, data, value; a dict with role=='assistant' or keys tool_calls|thinking|thoughts|output_files|finish_reason|error is the payload. Empty transport ([], null, '', [{}]) is a terminal provider-return-path error (not retried — side effects such as image generation already happened). Example request: {\"messages\":[{\"role\":\"system\",\"content\":\"You are a packer.\"},{\"role\":\"user\",\"content\":\"Where is order 42?\"}],\"tools\":[{\"name\":\"lookup_order\",\"description\":\"Fetch an order.\",\"request\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}}}}],\"stream\":true}.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 1,
+      "schema": [],
+      "inputSchema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Conversation history the provider must complete. Purpose: built by the agent from system (role+instructions+STRICT_TOOL_CALL_RULES), optional pre-RAG context, prior memory, and the current user turn. Accepted value: list of {role, content, tool_calls?, thinking?, thoughts?, tool_call_id?, name?}. content is a string or a list of typed blocks (text/image/audio/video/document/tool_use/tool_result). MULTIMODAL FILES travel here: main_input.files are hoisted into the latest user message as {type:'image'|'audio'|'video'|'document', …} blocks. Omit is illegal at runtime (the agent always sends at least system+user). Example: [{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"Read this PDF.\"},{\"type\":\"document\",\"mime_type\":\"application/pdf\",\"source\":\"base64\",\"data\":\"JVBERi0…\",\"name\":\"spec.pdf\"}]}].",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Tool catalog the provider should advertise this round. Purpose: built from DuckTape mappings on the tools and data FUNCTION ports plus a synthetic delegate_to_agent when sub_agent is connected. Accepted value: list of {name, description, request:<JSON Schema>}. Empty list is valid (no tools). The provider translates to its native shape (OpenAI function-tool, Anthropic input_schema, etc.). Example: [{\"name\":\"delegate_to_agent\",\"description\":\"Hand a task to a connected sub-agent.\",\"request\":{\"type\":\"object\",\"properties\":{\"agent_id\":{\"type\":\"string\"},\"prompt\":{\"type\":\"string\"}},\"required\":[\"agent_id\",\"prompt\"]}}].",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "[]",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "[\"image\", \"document\", \"audio\", \"video\"]",
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "string",
+              "required": false,
+              "value": "base64",
+              "description": "[\"base64\", \"url\"]",
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "outputSchema": [
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Canonical assistant payload after envelope unwrap. Purpose: drives the tool loop and the final main_output. Accepted shape: {role:'assistant', content:[<ContentBlock>], tool_calls?:[{id, name, args, type:'tool_call'}], thoughts?:[{type, text, signature?}], thinking?: <legacy mirror>, output_files?:[<ContentBlock>], finish_reason?, usage?, error?}. The agent also accepts this object at the top level (no result wrapper) and inside result/response/llm_output/output/data/value. Empty content with no tool_calls/output_files/thoughts is retried up to 2 times unless finish_reason is a terminal failure (error, content_filter, refusal, safety, blocked). Example: {\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"Packed.\"}],\"finish_reason\":\"stop\"}.",
+          "children": [
+            {
+              "shortCode": "role",
+              "label": "role",
+              "type": "string",
+              "required": false,
+              "value": "assistant",
+              "description": "Always 'assistant' on a completed turn.",
+              "children": []
+            },
+            {
+              "shortCode": "content",
+              "label": "content",
+              "type": "list",
+              "required": false,
+              "value": "[]",
+              "description": "Typed content blocks: {type:'text', text} plus media/tool blocks. The final answer text is the concatenation of text blocks.",
+              "children": []
+            },
+            {
+              "shortCode": "tool_calls",
+              "label": "tool_calls",
+              "type": "list",
+              "required": false,
+              "value": "[]",
+              "description": "Tool calls the model requested: {id, name, arguments}. Present only when the model calls tools.",
+              "children": []
+            },
+            {
+              "shortCode": "thoughts",
+              "label": "thoughts",
+              "type": "list",
+              "required": false,
+              "value": "[]",
+              "description": "Reasoning trace entries {text} when the model exposes chain-of-thought.",
+              "children": []
+            },
+            {
+              "shortCode": "thinking",
+              "label": "thinking",
+              "type": "list",
+              "required": false,
+              "value": "[]",
+              "description": "Thinking blocks {type:'thinking', thinking} mirroring thoughts for UI rendering.",
+              "children": []
+            },
+            {
+              "shortCode": "output_files",
+              "label": "output_files",
+              "type": "file",
+              "required": false,
+              "value": "[]",
+              "description": "Generated files {type, mime_type, source, data, name} (e.g. audio out).",
+              "children": [
+                {
+                  "shortCode": "kind",
+                  "label": "kind",
+                  "type": "string",
+                  "required": false,
+                  "value": "",
+                  "description": "[\"image\", \"document\", \"audio\", \"video\"]",
+                  "children": []
+                },
+                {
+                  "shortCode": "mime_type",
+                  "label": "mime_type",
+                  "type": "string",
+                  "required": false,
+                  "value": "",
+                  "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+                  "children": []
+                },
+                {
+                  "shortCode": "source",
+                  "label": "source",
+                  "type": "string",
+                  "required": false,
+                  "value": "base64",
+                  "description": "[\"base64\", \"url\"]",
+                  "children": []
+                },
+                {
+                  "shortCode": "data",
+                  "label": "data",
+                  "type": "string",
+                  "required": false,
+                  "value": "",
+                  "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+                  "children": []
+                },
+                {
+                  "shortCode": "name",
+                  "label": "name",
+                  "type": "string",
+                  "required": false,
+                  "value": "",
+                  "description": "Original filename, surfaced as the upload name",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "shortCode": "finish_reason",
+              "label": "finish_reason",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Provider finish reason (stop, tool_calls, length, ...).",
+              "children": []
+            },
+            {
+              "shortCode": "usage",
+              "label": "usage",
+              "type": "object",
+              "required": false,
+              "value": "{}",
+              "description": "Token usage {prompt_tokens, completion_tokens, total_tokens, reasoning_tokens?} when the provider reports it.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "streaming",
+          "label": "streaming",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Live stream channel, present when the request sets stream/streaming true. While `result` assembles, the node emits deltas as {channel, delta} frames: channel 'thinking' carries reasoning/thinking deltas, channel 'answer' carries content deltas. A function-port caller (e.g. AI Agent model port) listens to this channel to render the stream live; the final assembled payload always arrives in `result`.",
+          "children": [
+            {
+              "shortCode": "channel",
+              "label": "channel",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Delta channel. EXACT values: thinking | answer.",
+              "children": [],
+              "_id": "475ec1a0-d27e-4535-b644-002c95fa60d2"
+            },
+            {
+              "shortCode": "delta",
+              "label": "delta",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Incremental text piece for the channel. Append in arrival order.",
+              "children": [],
+              "_id": "e8a28181-8fe2-4ef8-a2b6-d84010b4d51d"
+            }
+          ],
+          "_id": "45e7e934-e583-4233-85e2-cf7ecb97e1b9"
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "[]",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "[\"image\", \"document\", \"audio\", \"video\"]",
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "string",
+              "required": false,
+              "value": "base64",
+              "description": "[\"base64\", \"url\"]",
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "64baacbc-394e-4c2d-afb6-9d09a3a657a6",
+      "name": "memory",
+      "type": "FUNCTION",
+      "value": "memory",
+      "description": "Optional remote short-term memory (maxConnections=1). Purpose: persist turns across runs on a GENERIC cache node (Redis Cache, or any node whose INPUT speaks SET/GET/DEL/RPUSH/LRANGE). The agent itself adapts chat history onto that schema: append is RPUSH of a JSON message at key sq:memory:<internal-uuid>; read is LRANGE 0 -1. conversation_id is never sent on the wire and never taken from main_input. Unconnected → in-process cache. Remote failures log a warning and fall back to in-memory. Responses unwrap from value / data.value / history / matches lists (JSON strings are parsed). Example append: {\"operation\":\"RPUSH\",\"key\":\"sq:memory:b3c1e2a0-…\",\"value\":{\"role\":\"user\",\"content\":\"Where is order 42?\"}}.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 1,
+      "schema": [],
+      "inputSchema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Generic cache verb the agent emits. Purpose: the connected cache node branches on this through its normal INPUT.operation (or an alias the mapper projects onto: command/op). EXACT values this agent sends: 'RPUSH' (append one serialized turn) | 'LRANGE' (read the conversation list). The mapper remaps to a peer-declared synonym when the peer schema lists LPUSH/lpush (for append) or lrange (for read). Never 'add_message' or 'get_history'. Omit is not used. Example append: 'RPUSH'. Example read: 'LRANGE'.",
+          "children": []
+        },
+        {
+          "shortCode": "key",
+          "label": "key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cache key for this agent's short-term history. Purpose: isolate this invoke from every other agent (including sub-agents). Accepted value: 'sq:memory:' plus the internal uuid4 generated per invoke. Never read from main_input or written to main_output. Empty conversation id still uses the prefix (key 'sq:memory:'). Example: 'sq:memory:9f1c6d2e-4a11-4b22-8c33-77aa00bbcc11'.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Serialized turn stored when operation='RPUSH'. Purpose: append one canonical message. Accepted shape: {role, content, tool_calls?, …} after normalizeMessageForStorage. Omitted on LRANGE. The peer may persist this as JSON. Example: {\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"Order 42 is in bin A.\"}]}.",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Inclusive list index for operation='LRANGE'. Purpose: window the remote list; the agent always sends 0 (full history — windowing/compaction stay in the agent). Accepted values: integers. Default 0. Negative indexes follow Redis (from the tail). Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "number",
+          "required": false,
+          "value": "-1",
+          "description": "Inclusive list end for operation='LRANGE'. Purpose: the agent always sends -1 (through the last element). Accepted values: integers. -1 means the last element on Redis-style lists. Example: -1.",
+          "children": []
+        },
+        {
+          "shortCode": "ttl_seconds",
+          "label": "ttl_seconds",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Optional key TTL in seconds. Purpose: forwarded only when the peer schema declares ttl_seconds/ttl AND this value is a positive integer. Accepted values: integers ≥ 1 to expire; 0 / omit / negative → no TTL field is sent (peer default). This agent currently omits TTL (0). Example: 86400.",
+          "children": []
+        }
+      ],
+      "outputSchema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Peer success flag. Purpose: 'ok' means the cache op completed. EXACT accepted values the agent treats as success: 'ok'. Missing/other values still unwrap value/data when present. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "LRANGE result: list of canonical message dicts or JSON strings of the same shape (oldest first when the peer is RPUSH). Purpose: the agent normalizes each element into history. Empty/missing → []. Also accepted envelopes: data.value, data.history, history, result.history. Example: [{\"role\":\"user\",\"content\":\"hi\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "error",
+          "label": "error",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Failure message from the cache node. Purpose: a non-empty error is treated as a remote failure and the agent falls back to in-memory. Never contains secrets. Empty/omit on success. Example: 'connection timed out'.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "_id": "057056e6-7ce3-4993-b9e2-17cd299d4611",
+      "name": "data",
+      "type": "FUNCTION",
+      "value": "data",
+      "description": "Optional data sources for pre-RAG retrieval (maxConnections=0 means unbounded). Purpose: before the first LLM call, the agent executes every connected GENERIC vector-DB / search node (PGVector, Pinecone, Chroma, Qdrant, or any compatible INPUT schema) with a similarity-query payload and injects retrieved documents into history. The LLM still sees a tool with {query}; the agent maps that onto the peer's declared fields (operation/QUERY, query, embedding?, topK, filter). Each connection is also exposed as a tool named from the connection-edge DuckTape 'name'. Unconnected → skip pre-RAG. Example call: {\"operation\":\"QUERY\",\"query\":\"order 42 warehouse location\",\"topK\":5,\"filter\":{}}.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [],
+      "inputSchema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "QUERY",
+          "description": "Generic vector-DB verb the agent emits. Purpose: mapped onto the peer INPUT.operation (or command/op). EXACT value this agent sends: 'QUERY' (similarity search). The mapper remaps to a peer-declared synonym when the peer schema lists vector.query | collection.query | collection.search | entities.search | query | search. Never a custom 'addMessage' / node-specific RAG command. Omit is not used by this agent. Example: 'QUERY'. Example after remap onto Pinecone: 'vector.query'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Free-text retrieval query. Purpose: filled by the agent with the merged user prompt during pre-RAG, or with the model's tool args when the LLM calls the data source as a tool (the LLM-facing catalog still exposes {query:string}). Accepted value: any string. Empty query still invokes the node; the source decides what that means. Example: 'invoice 8831 line items'.",
+          "children": []
+        },
+        {
+          "shortCode": "embedding",
+          "label": "embedding",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Query vector for similarity search. Purpose: forwarded when the model or an upstream embedder supplied embedding/vector/query_embeddings; omitted when empty so text-only peers can embed themselves. Accepted value: number[] (finite floats). A nested [[...]] from Chroma-style query_embeddings is flattened to one vector. Do not log. Example: [0.12, -0.04, 0.88].",
+          "children": []
+        },
+        {
+          "shortCode": "topK",
+          "label": "topK",
+          "type": "number",
+          "required": false,
+          "value": "5",
+          "description": "Neighbor count for the similarity query. Purpose: default 5 when the model/pre-RAG omit it. Accepted values: integers ≥ 1. Non-positive / blank / non-numeric → 5. Mapped onto peer fields topK | top_k | n_results | limit | k. Example: 5. Example for a narrow lookup: 3.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Optional metadata filter passed through to the vector store. Purpose: restrict neighbors (tenant, collection, tag). Accepted value: JSON object. Empty {} is sent when the peer declares filter/where/metadata_filter. Mapped onto filter | where | metadata_filter. Example: {\"source\":\"orders\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "data_tool",
+          "description": "Data-source tool name shown to the LLM. Purpose: read from the connection edge (DuckTape sourcePath=name), not from this default. Required (together with description) for the connection to appear in the tool catalog. NOT sent on the wire to the peer (avoids colliding with Pinecone index name). Accepted value: non-empty identifier. Default 'data_tool' is only a schema placeholder. Example: 'orders_kb'.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "When-to-call text shown to the LLM. Purpose: read from the connection edge. Empty description drops the connection from the tool catalog (has_config && name && description must all be true). NOT sent on the wire to the peer. Example: 'Search internal order records by order id or customer name.'.",
+          "children": []
+        }
+      ],
+      "outputSchema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Peer success flag. Purpose: 'ok' means retrieval completed. EXACT accepted success value: 'ok'. Missing/other values still unwrap matches/documents when present. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "matches",
+          "label": "matches",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Retrieved neighbors. Purpose: injected as Retrieved Context when non-empty. Accepted value: list of objects or strings ({id?, document|text|title?, score?, metadata?}). Also accepted envelopes: documents, value, data.matches, data.value, result, response. Empty → that source contributes nothing. Example: [{\"id\":\"42\",\"document\":\"Order 42 is in bin A-12\",\"score\":0.91}].",
+          "children": []
+        },
+        {
+          "shortCode": "error",
+          "label": "error",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Failure message from the data node. Purpose: a failed source contributes no documents (pre-RAG continues). Never contains secrets. Empty/omit on success. Example: 'collection not found'.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "_id": "ed3c70bd-51b8-4b7c-a07c-3d3c1e9814c6",
+      "name": "tools",
+      "type": "FUNCTION",
+      "value": "tools",
+      "description": "Generic tool hub (unbounded connections). Purpose: each connection carries DuckTape mapping; the agent reads the user-written name + description on the connection edge and builds JSON Schema properties from mappings whose sourcePath is 'request' (targetPath = the target node's input field). Resolver order for a model-emitted tool name: exact > alias_exact > alias_contains > alias_tokens. The wrapper request/response shape is preserved across the call (_merge_wrapper_dict). Duplicate (name, args) pairs in one run return a cached-style tool_result instead of re-invoking. Anthropic-strict: every tool_use gets a tool_result even on error. Example dispatch payload: {\"request\":{\"order_id\":\"42\"},\"name\":\"lookup_order\",\"description\":\"Fetch an order by id.\"}.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [],
+      "inputSchema": [
+        {
+          "shortCode": "request",
+          "label": "request",
+          "type": "wrapper",
+          "required": false,
+          "value": "",
+          "description": "DuckTape wrapper holding the tool's actual parameters. Purpose: children come from the edge mapping (sourcePath=request → targetPath=<field>). The agent fills those fields from the model's tool_call args. Omit/empty → tool is invoked with an empty request object. Example child mapping: request.order_id → lookup_order.order_id with value '42'.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tool display name. Purpose: read by the agent from the connection edge (DuckTape sourcePath=name). This is the name the LLM must emit. Empty name drops the connection from the catalog. Example: 'lookup_order'.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tool description exposed to the LLM. Purpose: read from the connection edge. Empty description drops the connection from the catalog. Example: 'Return the warehouse bin for an order id.'.",
+          "children": []
+        }
+      ],
+      "outputSchema": [
+        {
+          "shortCode": "response",
+          "label": "response",
+          "type": "wrapper",
+          "required": false,
+          "value": "",
+          "description": "DuckTape wrapper holding the tool's return values (children from the edge mapping). Purpose: merged into the tool_result content the agent appends to history. The handler also accepts a bare object/list/string after unwrap. Example: {\"bin\":\"A-12\",\"status\":\"packed\"}.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "_id": "bed984c5-f6ef-404f-9508-132ff0cf7625",
+      "name": "sub_agent",
+      "type": "FUNCTION",
+      "value": "sub_agent",
+      "description": "Sub-agent collaboration hub. Purpose: the master exposes a synthetic tool delegate_to_agent whose agent_id.enum is the connected node ids. Sub-agent connection-detail configurationParameters (role / instructions / prompt) win over master-supplied overrides. v2 forwards files attachments. conversation_id is NEVER passed — every agent creates its own internal memory id; if the master needs the sub-agent to know prior context, it must embed that context in prompt (or files). Unconnected → no delegate_to_agent tool. Ambiguous/missing agent_id returns a tool_result error listing available ids. Example payload: {\"role\":\"Researcher\",\"instructions\":\"Cite sources.\",\"prompt\":\"Summarize the attached PDF for the packer.\",\"files\":[{\"kind\":\"document\",\"mime_type\":\"application/pdf\",\"source\":\"base64\",\"data\":\"JVBERi0…\",\"name\":\"spec.pdf\"}]}.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [],
+      "inputSchema": [
+        {
+          "shortCode": "role",
+          "label": "role",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional role override sent to the sub-agent's main_input. Purpose: sub-agent's own config role wins when set; otherwise this value; otherwise the sub-agent default. Accepted value: non-empty string. Empty → omitted from the payload. Example: 'Warehouse researcher'.",
+          "children": []
+        },
+        {
+          "shortCode": "instructions",
+          "label": "instructions",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional instructions override. Purpose: sub-agent's own config instructions win when set. Empty → omitted. Example: 'Only use the attached spec. If unknown, say so.'.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task content. Purpose: master connection-detail prompt (if any) is concatenated with the model-supplied prompt/input/task/text/content (newline-separated). This is the only way to pass prior conversation — do not send conversation_id. Empty after merge → payload may omit prompt and the sub-agent runs on its own config prompt only. Example: 'Find bin for order 42. Prior turn: customer asked for ETA.'.",
+          "children": []
+        },
+        {
+          "shortCode": "files",
+          "label": "files",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional multimodal attachments forwarded from the master. Purpose: copied from delegate_to_agent args.files when it is a non-empty list. Accepted value: list of {kind:'image'|'audio'|'video'|'document', mime_type, source:'base64'|'url'|'file_id', data, name?}. Omit/[] → not sent. Example: [{\"kind\":\"image\",\"mime_type\":\"image/png\",\"source\":\"base64\",\"data\":\"iVBOR…\",\"name\":\"label.png\"}]. Prefer source:'file_id' (platform file reference) over inline base64 for large payloads.",
+          "children": []
+        }
+      ],
+      "outputSchema": [
+        {
+          "shortCode": "final_answer",
+          "label": "final_answer",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sub-agent's final-answer text (the same field the sub-agent emits on its own main_output). Purpose: unwrapped from list envelopes and placed in the master's tool_result content. Empty string if the sub-agent returned no text. Example: 'Order 42 is in bin A-12.'.",
+          "children": []
+        },
+        {
+          "shortCode": "output_files",
+          "label": "output_files",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional generated media from the sub-agent (image/audio/video/document content blocks). Purpose: forwarded into the master's history/tool_result when present. Omit/[] when none. Example: [{\"type\":\"image\",\"mime_type\":\"image/png\",\"source\":\"base64\",\"data\":\"iVBOR…\"}]. Generated media is emitted as platform file references (file_id) whenever possible.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "_id": "403e918f-1e1a-4296-9731-5039fcee609e",
+      "name": "main_input",
+      "type": "INPUT",
+      "value": "main_input",
+      "description": "Agent input (unbounded connections merged). Purpose: getInputValuesByPortValue('main_input') — each list item is a string (treated as prompt) or an object {role?, instructions?, prompt?, files?}. Priority: prompt ALWAYS merges config prompt + every connection (newline-joined); role → config wins, else joined connection roles, else 'You are a helpful AI assistant.'; instructions → config wins, else joined connection instructions, else ''; files → concatenated across connections. Empty incoming with empty config prompt still runs (user turn may be blank; the LLM receives role+instructions only). Example: {\"prompt\":\"Where is order 42?\",\"files\":[{\"kind\":\"image\",\"mime_type\":\"image/jpeg\",\"source\":\"base64\",\"data\":\"/9j/…\",\"name\":\"label.jpg\"}]}.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "role",
+          "label": "role",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional role override for this invocation. Purpose: used only when configurationParameter role is blank/whitespace. Multiple connections are newline-joined. Accepted value: non-empty string. Example: 'You are a warehouse copilot.'.",
+          "children": []
+        },
+        {
+          "shortCode": "instructions",
+          "label": "instructions",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional instructions override. Purpose: used only when configurationParameter instructions is blank. Multiple connections are newline-joined. STRICT_TOOL_CALL_RULES are still appended by the agent. Example: 'Never invent bin locations. Call lookup_order.'.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User prompt / task content. Purpose: always concatenated with configurationParameter prompt (config first) and every other connected prompt, newline-joined. A bare string input is treated as this field. Conversation mode: the Duckbot start msg port delivers the whole thread here as a JSON array string of {role, content} messages — the agent expands it into role-tagged history (last entry = current turn). Empty → no user text (files-only turns are still valid). Example: 'Pack order 42 and say which bin.'.",
+          "children": []
+        },
+        {
+          "shortCode": "files",
+          "label": "files",
+          "type": "file",
+          "required": false,
+          "value": "[]",
+          "description": "Optional multimodal attachments hoisted into the latest user message as content blocks. Purpose: _coerce_files_list accepts a list, a single dict, or a JSON/Python-literal string. Each item: {kind:'image'|'audio'|'video'|'document' (default document), mime_type (or mimeType, default application/octet-stream), source:'base64'|'url'|'file_id', data, name?}. Base64 data may include a data:<mime>;base64, prefix. Omit/[] → text-only. Example: [{\"kind\":\"document\",\"mime_type\":\"application/pdf\",\"source\":\"base64\",\"data\":\"JVBERi0…\",\"name\":\"bol.pdf\"}]. Prefer source:'file_id' (platform file reference) over inline base64 for large payloads.",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "[\"image\", \"document\", \"audio\", \"video\"]",
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "string",
+              "required": false,
+              "value": "base64",
+              "description": "[\"base64\", \"url\"]",
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "voices",
+          "label": "voices",
+          "type": "file",
+          "required": false,
+          "value": "[]",
+          "description": "voice clips for the model (same ContentBlock shape as files)",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "[\"image\", \"document\", \"audio\", \"video\"]",
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "string",
+              "required": false,
+              "value": "base64",
+              "description": "[\"base64\", \"url\"]",
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5dccc868-f8ed-4189-8fe2-12079c6f3fea",
+      "name": "main_output",
+      "type": "OUTPUT",
+      "value": "main_output",
+      "description": "Agent's final answer. Purpose: returnResult ResultItem('main_output', {final_answer, output_files, voices}). final_answer is the text extracted from the last assistant payload's content blocks; output_files is that payload's output_files list (or []); voices is the audio subset of output_files (kind/type audio or mime_type audio/*, still kept in output_files; empty list when none). Thoughts are NOT on this port — they were already published live on FUNCTION thoughts. conversation_id is intentionally absent. On uncaught exception the handler still emits main_output with an error string in final_answer. Example: {\"final_answer\":\"Order 42 is in bin A-12.\",\"output_files\":[],\"voices\":[]}.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "schema": [
+        {
+          "shortCode": "final_answer",
+          "label": "final_answer",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Plain-text final answer extracted from the last assistant content (text blocks concatenated). Purpose: the only text downstream nodes should show as the agent reply. Empty string if the model returned only tool calls that never resolved to text (should be rare after the loop). On handler failure: the exception message. Example: 'Packed onto pallet 7.'.",
+          "children": []
+        },
+        {
+          "shortCode": "output_files",
+          "label": "output_files",
+          "type": "file",
+          "required": false,
+          "value": "[]",
+          "description": "Generated media copied from the last assistant payload's output_files (image/audio/video/document content blocks produced by the model, e.g. dall-e via OpenAI Models). Purpose: pass bytes/refs downstream without putting them in final_answer. Missing/non-list → []. Example: [{\"type\":\"image\",\"mime_type\":\"image/png\",\"source\":\"base64\",\"data\":\"iVBOR…\",\"name\":\"bin-map.png\"}]. Generated media is emitted as platform file references (file_id) whenever possible.",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "[\"image\", \"document\", \"audio\", \"video\"]",
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "string",
+              "required": false,
+              "value": "base64",
+              "description": "[\"base64\", \"url\"]",
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "voices",
+          "label": "voices",
+          "type": "file",
+          "required": false,
+          "value": "[]",
+          "description": "Audio subset of output_files for the Duckbot voices port (kind/type audio or mime_type audio/*). Same ContentBlock shape as files. Blocks remain in output_files; downstream dedupes. Empty list when none.",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "[\"image\", \"document\", \"audio\", \"video\"]",
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "string",
+              "required": false,
+              "value": "base64",
+              "description": "[\"base64\", \"url\"]",
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ac5021d5-d155-4a8c-923d-962d0ac9f863",
+      "name": "thoughts",
+      "type": "FUNCTION",
+      "value": "thoughts",
+      "description": "Live reasoning stream of the agent. Purpose: publishes the agent's thinking text as it runs — live deltas via emitPartial(port='thoughts', channel='thinking') that the daemon routes along this port's edges (through any edge JOLT) to whatever node is wired here (Duckbot end renders it as the thinking bubble; a thinking-store node would persist it), plus one assembled execute per thinking block carrying a single {thoughts: text} payload. Tool-dispatch notices are published the same way as human-readable text. If nothing is connected, events are silently dropped (observability never fails the agent). Unwired thoughts port = no live thinking (the graph decides, never a bypass). Example assembled payload: {\"thoughts\":\"I should look up order 42.\"}.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "schema": [],
+      "inputSchema": [
+        {
+          "shortCode": "thoughts",
+          "label": "thoughts",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "The agent's live reasoning text. Purpose: the ONLY value published on this port — one emit per thinking block (and per tool-dispatch notice, as human-readable text) while the agent runs, plus live deltas via emitPartial(port='thoughts', channel='thinking'). Downstream nodes (e.g. a Duckbot end msg input or a thinking store) consume this text directly; there is no event envelope, no iteration index, no signature, no tool_calls structure on the wire. Empty when the model produced no reasoning. Example: 'I should look up order 42 before answering.'.",
+          "children": []
+        }
+      ],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "591433a4-0cbe-409b-b5f7-5317b95468f0",
+      "shortCode": "role",
+      "label": "Name",
+      "type": "string",
+      "description": "Default agent name/role injected as the core system message. Purpose: wins over any role on main_input when this value is a non-empty string (after strip). Empty/whitespace → use merged main_input roles, else 'You are a helpful AI assistant.'. Accepted value: free text. Example: 'Agent Maygent'. Example override-disabled (blank so the port wins): ''.",
+      "value": "Agent Maygent",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "34b1a7fe-f72d-4ebc-8de8-76fea068a918",
+      "shortCode": "instructions",
+      "label": "Instructions",
+      "type": "longtext",
+      "description": "Default agent instructions appended after role in the core system message (STRICT_TOOL_CALL_RULES are still added by the handler). Purpose: wins over main_input.instructions when this is non-empty. Empty → use merged port instructions. Accepted value: free text, including markdown. Example: 'You pack warehouse orders. Call lookup_order before answering. Never invent a bin.'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "d2eed619-87cd-4f96-8132-e9d68cf5fdae",
+      "shortCode": "prompt",
+      "label": "Prompt",
+      "type": "longtext",
+      "description": "Static prompt prefix concatenated with every prompt arriving on main_input (config first, then port values, newline-joined). Purpose: standing task text that should apply to every run of this instance. Empty → only port prompts are used. Not a substitute for instructions. Example: 'Customer timezone: America/New_York.'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "64514c36-84d0-4bff-9aca-be12c5bab0d9",
+      "shortCode": "maxIterations",
+      "label": "Max Iterations",
+      "type": "number",
+      "description": "Maximum tool-call loop iterations after the first LLM round. Purpose: int(str(value) or 10) — caps how many times the agent will dispatch tools and call the model again. Accepted values: integers ≥ 0. Default: 10. 0 means the first model response is final even if it contains tool_calls (those calls are not executed). Non-numeric strings raise at int() and fail the node. Example: 10. Example for a shallow router: 2.",
+      "value": "10",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "ef4c2843-9f2c-4d5e-bd66-4ef3755f5419",
+      "shortCode": "contextWindow",
+      "label": "Context Window (tokens)",
+      "type": "number",
+      "description": "Maximum tokens the agent will send to the LLM in one round (local estimate: chars/4). Purpose: when the history estimate exceeds this number, the agent compacts in two steps: (A) collapse every non-system, non-summary message into ONE new system-role 'Summarized((…))' block after existing summaries — only the first core system message (role + instructions + STRICT_TOOL_CALL_RULES) is preserved verbatim; (B) if still over, re-summarize all summary blocks into ONE meta-summary so history is [core system] + [one Summarized((…))]. Each summary block carries Summarized((…)) plus _summarized=true and _summary_kind=summarized_chat_history. A 'summary' event is published on thoughts when compaction happens. Accepted values: integers. Default: 200000. 0, blank, or non-numeric → treated as 200000 except 0 after a successful int parse disables summarization (oversized requests then fail at the provider). Set 0 only if you accept provider context_length_exceeded errors. Example: 200000. Example disable: 0.",
+      "value": "200000",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    }
+  ],
+  "cuser": "c525bb64-f52e-4829-8bf0-f1fe33aa6b42",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "stateful": false,
+    "bespokeFiles": [],
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "c525bb64-f52e-4829-8bf0-f1fe33aa6b42",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,269 @@
+{
+  "_id": "7f77cf2d-fef5-58e6-aebb-40f6deaa05d7",
+  "version": "1.0.0",
+  "name": "Sendcloud",
+  "label": "Sendcloud API v3 — shipments, labels, shipping options",
+  "description": "EU fulfillment via Sendcloud API v3 at https://panel.sendcloud.sc/api/v3. Docs: https://sendcloud.dev/api/v3/shipments/create-and-announce-a-shipment-synchronously. parcel_create requires ship_with, to_address, from_address, parcels. Basic auth public_key:secret_key. Handler: OfficialApiNode. Never log keys or addresses.",
+  "icon": "local_shipping",
+  "tags": [
+    "sendcloud",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "322540a5-7ea4-50a9-b96b-03b9be68c53d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "parcel_create",
+          "description": "Official API v3 verb. EXACT: parcel_create (POST /shipments/announce) | label_create (GET /parcels/{id}/documents/label) | shipping_method_list (POST /shipping-options) | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Parcel id for label_create path /parcels/{id}/documents/label.",
+          "children": []
+        },
+        {
+          "shortCode": "ship_with",
+          "label": "ship_with",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "How to ship. Required on parcel_create. Official: {\"type\":\"shipping_option_code\",\"properties\":{\"shipping_option_code\":\"postnl:standard\",\"contract_id\":517}}.",
+          "children": []
+        },
+        {
+          "shortCode": "to_address",
+          "label": "to_address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Recipient address for parcel_create (required) and shipping_method_list. Official Sendcloud address: name, company_name, address_line_1, house_number, city, postal_code, country_code, email, phone_number.",
+          "children": []
+        },
+        {
+          "shortCode": "from_address",
+          "label": "from_address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Sender address for parcel_create (required) and shipping_method_list. Full address or {\"sender_address_id\":123}.",
+          "children": []
+        },
+        {
+          "shortCode": "parcels",
+          "label": "parcels",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Parcels array (1–15) for parcel_create (required) and shipping_method_list. Each: weight {value,unit}, optional dimensions and parcel_items.",
+          "children": []
+        },
+        {
+          "shortCode": "brand_id",
+          "label": "brand_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Brand id for parcel_create. When omitted, brand of from_address.sender_address_id is used.",
+          "children": []
+        },
+        {
+          "shortCode": "order_number",
+          "label": "order_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Shop/order number on parcel_create. Example: ORD-1042.",
+          "children": []
+        },
+        {
+          "shortCode": "total_order_price",
+          "label": "total_order_price",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official price object on parcel_create: {\"value\":\"12.65\",\"currency\":\"EUR\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "external_reference_id",
+          "label": "external_reference_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Your external shipment id on parcel_create.",
+          "children": []
+        },
+        {
+          "shortCode": "customs_information",
+          "label": "customs_information",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Customs block on parcel_create for non-EU: invoice_number, export_reason, invoice_date, goods_description.",
+          "children": []
+        },
+        {
+          "shortCode": "functionalities",
+          "label": "functionalities",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "shipping_method_list filter, e.g. {\"signature\":true}. Omit to list activated options.",
+          "children": []
+        },
+        {
+          "shortCode": "accept",
+          "label": "accept",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "label_create Accept header. application/pdf (default) | application/zpl | image/png.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "18ae063d-2ffa-58c4-91d3-5be7c2ec32de",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "85ffa003-5313-5797-ab0e-b6945de9edf4",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode v3. EXACT: parcel_create | label_create | shipping_method_list | trigger. trigger does not open a socket.",
+      "value": "parcel_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "parcel_create",
+        "label_create",
+        "shipping_method_list",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "c9ce49a2-7df1-5f80-a9ba-1d9af30d1756",
+      "shortCode": "secret_key",
+      "label": "Secret Key",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type basic. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "82f70f59-7973-599b-bd02-9df53a4ef5cc",
+      "shortCode": "public_key",
+      "label": "Public Key",
+      "type": "password",
+      "description": "Auth username / companion key (public_key).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cba8e57b-4809-5be5-aa43-650cd752c799",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

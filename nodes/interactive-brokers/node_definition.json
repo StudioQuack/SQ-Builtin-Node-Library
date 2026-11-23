@@ -1,0 +1,218 @@
+{
+  "_id": "563d66de-5b7c-4d1b-8625-ef4e352693cc",
+  "version": "1.0.0",
+  "name": "Interactive Brokers",
+  "label": "Interactive Brokers — IBKR Web API / Client Portal API",
+  "description": "Official IBKR Web API / Client Portal API. Docs: https://www.interactivebrokers.com/campus/ibkr-api-page/webapi-doc/. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. Regulated brokerage. Official Client Portal Gateway or Web API OAuth 2 only. DO NOT BUILD unofficial gateways or TWS socket as this HTTP node. Market-data licenses apply. Not investment advice. Customer needs IBKR API agreement.",
+  "icon": "account_balance",
+  "tags": [
+    "interactive",
+    "brokers",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "19de980d-03fd-4d52-b603-1ec0790a266e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Interactive Brokers. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "account_summary",
+          "description": "Overrides config operation. EXACT: account_summary | place_order | cancel_order | positions | market_data | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "base_url",
+          "label": "Base Url",
+          "type": "string",
+          "required": false,
+          "value": "https://localhost:5000/v1/api",
+          "description": "Client Portal Gateway or api.ibkr.com host origin including path prefix. Example: https://localhost:5000/v1/api.",
+          "children": []
+        },
+        {
+          "shortCode": "accountId",
+          "label": "accountId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `accountId` for operations: place_order, cancel_order, positions. Required by: place_order, cancel_order, positions.",
+          "children": []
+        },
+        {
+          "shortCode": "orders",
+          "label": "orders",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "place_order body.orders — list of {conid, orderType, side, tif, quantity, price?}. EXACT orderType: MKT | LMT | STP | STP_LIMIT | MIDPRICE. side: BUY | SELL. tif: DAY | GTC | IOC | OPG. The engine cannot flatten a single order (orders is an array). Example: [{\"conid\":265598,\"orderType\":\"MKT\",\"side\":\"BUY\",\"tif\":\"DAY\",\"quantity\":1}].",
+          "children": []
+        },
+        {
+          "shortCode": "orderId",
+          "label": "orderId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `orderId` for operation: cancel_order. Required by: cancel_order.",
+          "children": []
+        },
+        {
+          "shortCode": "conids",
+          "label": "conids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `conids` for operation: market_data.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "market_data query fields — comma-separated IBKR field ids (e.g. 31,84,86). Example: 31,84.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "54242d2f-d581-4110-8a32-777e0c147823",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "eb1fe5a4-d06b-4169-bb8b-80548b460eb7",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: account_summary | place_order | cancel_order | positions | market_data | trigger. Default account_summary. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "account_summary",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "account_summary",
+        "place_order",
+        "cancel_order",
+        "positions",
+        "market_data",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "8ec4c422-1036-4b34-87a9-1bb7b7184f84",
+      "shortCode": "accountId",
+      "label": "Default account",
+      "type": "string",
+      "description": "Default IBKR accountId when INPUT is empty (place_order / cancel_order / positions).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "44997433-f26a-4a94-a5fd-d3e8e20a9ce4",
+      "shortCode": "base_url",
+      "label": "Base Url",
+      "type": "string",
+      "description": "Client Portal Gateway or api.ibkr.com host origin including path prefix. Example: https://localhost:5000/v1/api.",
+      "value": "https://localhost:5000/v1/api",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "34a9415f-3093-4844-98b6-5c4abe460186",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

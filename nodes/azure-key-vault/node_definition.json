@@ -1,0 +1,663 @@
+{
+  "_id": "f0c020f7-9521-4710-81f6-fdf65b875d7b",
+  "version": "1.0.0",
+  "name": "Azure Key Vault",
+  "label": "Azure Key Vault data-plane REST",
+  "description": "Azure Key Vault data-plane REST (api-version 7.6 default; 7.4 still accepted) via OfficialApiNode. Docs: https://learn.microsoft.com/en-us/rest/api/keyvault/secrets/get-secret/get-secret?view=rest-keyvault-secrets-7.6. Operations: get-secret, set-secret, delete-secret, list-secrets, get-key, encrypt, decrypt, get-certificate, listen. Auth secret access_token is instance config only (never on INPUT, never logged). GET/access operations still call the official GET (or access) HTTP method. Retrieved secret material must not be logged and should stay in StudioQuack secret bindings (bind OUTPUT `data` into a secret; do not print it, persist it in engine variables, or leave it on a logged edge). listen is kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "lock",
+  "tags": [
+    "secrets",
+    "azure"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "00b658a2-96ad-4e07-be8c-07edbb3ea171",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_token here. Path params match api_spec.json placeholders. Example: {\"operation\":\"get-secret\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "get-secret",
+          "description": "Which official API call to run. EXACT values: get-secret | set-secret | delete-secret | list-secrets | get-key | encrypt | decrypt | get-certificate | listen. Prefer the instance config operation select. listen is ingress: no HTTP — use a BPMN message event. Example: 'get-secret'.",
+          "children": []
+        },
+        {
+          "shortCode": "secretName",
+          "label": "secretName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Secret name for get/set/delete-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "keyName",
+          "label": "keyName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Key name for get-key / encrypt / decrypt.",
+          "children": []
+        },
+        {
+          "shortCode": "certificateName",
+          "label": "certificateName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Certificate name for get-certificate.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "password",
+          "required": false,
+          "value": "",
+          "description": "set-secret / encrypt plaintext from a StudioQuack secret binding. Decrypt uses ciphertext string.",
+          "children": []
+        },
+        {
+          "shortCode": "alg",
+          "label": "alg",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "JsonWebKeyEncryptionAlgorithm, prefer RSA-OAEP-256.",
+          "children": []
+        },
+        {
+          "shortCode": "contentType",
+          "label": "contentType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `contentType` for operation: set-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `tags` for operation: set-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "attributes",
+          "label": "attributes",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `attributes` for operation: set-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "maxresults",
+          "label": "maxresults",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Query-string parameter `maxresults` for operation: list-secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "iv",
+          "label": "iv",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `iv` for operations: encrypt, decrypt.",
+          "children": []
+        },
+        {
+          "shortCode": "aad",
+          "label": "aad",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `aad` for operations: encrypt, decrypt.",
+          "children": []
+        },
+        {
+          "shortCode": "tag",
+          "label": "tag",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tag` for operation: decrypt.",
+          "children": []
+        },
+        {
+          "shortCode": "keyVersion",
+          "label": "Key Version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Key version path segment for encrypt/decrypt (required by Key Vault). Example: 'a1b2c3d4' or omit for latest if API allows.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6086f69d-d423-496e-9c53-c6a6390b2e1e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Secret bytes in data must not be logged; bind them into StudioQuack secrets. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON from the official API. May contain secret material — never log; bind into StudioQuack secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "9d9656b4-0aa6-4323-b74b-bc0177cfd14f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: get-secret, set-secret, delete-secret, list-secrets, get-key, encrypt, decrypt, get-certificate, listen. listen is BPMN ingress, not a socket.",
+      "value": "get-secret",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "get-secret",
+        "set-secret",
+        "delete-secret",
+        "list-secrets",
+        "get-key",
+        "encrypt",
+        "decrypt",
+        "get-certificate",
+        "listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "get-secret",
+          "targets": [
+            {
+              "param": "vaultHost",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            },
+            {
+              "param": "secretName",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "set-secret",
+          "targets": [
+            {
+              "param": "vaultHost",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            },
+            {
+              "param": "secretName",
+              "visible": true
+            },
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "contentType",
+              "visible": true
+            },
+            {
+              "param": "attributes",
+              "visible": true
+            },
+            {
+              "param": "value",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "delete-secret",
+          "targets": [
+            {
+              "param": "vaultHost",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            },
+            {
+              "param": "secretName",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-secrets",
+          "targets": [
+            {
+              "param": "vaultHost",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            },
+            {
+              "param": "maxresults",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-key",
+          "targets": [
+            {
+              "param": "vaultHost",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            },
+            {
+              "param": "keyName",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "encrypt",
+          "targets": [
+            {
+              "param": "vaultHost",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            },
+            {
+              "param": "value",
+              "visible": true
+            },
+            {
+              "param": "keyName",
+              "visible": true
+            },
+            {
+              "param": "alg",
+              "visible": true
+            },
+            {
+              "param": "aad",
+              "visible": true
+            },
+            {
+              "param": "iv",
+              "visible": true
+            },
+            {
+              "param": "keyVersion",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "decrypt",
+          "targets": [
+            {
+              "param": "vaultHost",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            },
+            {
+              "param": "value",
+              "visible": true
+            },
+            {
+              "param": "keyName",
+              "visible": true
+            },
+            {
+              "param": "alg",
+              "visible": true
+            },
+            {
+              "param": "aad",
+              "visible": true
+            },
+            {
+              "param": "iv",
+              "visible": true
+            },
+            {
+              "param": "tag",
+              "visible": true
+            },
+            {
+              "param": "keyVersion",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-certificate",
+          "targets": [
+            {
+              "param": "vaultHost",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            },
+            {
+              "param": "certificateName",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "d415427c-5ee9-4f56-bf36-dd5b200b31c4",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Entra access token for https://vault.azure.net/.default. Sent as Authorization: Bearer. StudioQuack secret. Never logged. OfficialApiNode does not perform client-credentials or IMDS.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e6fb3570-bc2f-449b-bce1-704b26c060a9",
+      "shortCode": "vaultHost",
+      "label": "Vault host",
+      "type": "string",
+      "description": "Vault host without scheme, e.g. myvault.vault.azure.net.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e2ba5f3d-7a7b-4420-9545-88f988afaf3d",
+      "shortCode": "api-version",
+      "label": "API version",
+      "type": "string",
+      "description": "Key Vault REST api-version query. Default 7.6 (latest stable dotted version). 7.4 still works. Date-based versions such as 2025-07-01 are also documented on Learn.",
+      "value": "7.6",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a176112f-ff37-4365-880f-fc023d617b84",
+      "shortCode": "secretName",
+      "label": "Secretname",
+      "type": "string",
+      "description": "Secret name for get/set/delete-secret.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f464f14c-e851-4838-abeb-20d041452e8c",
+      "shortCode": "tags",
+      "label": "Tags",
+      "type": "object",
+      "description": "Request-body parameter `tags` for operation: set-secret.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3dac67f8-0673-488d-9994-09c292b26f1a",
+      "shortCode": "contentType",
+      "label": "Contenttype",
+      "type": "string",
+      "description": "Request-body parameter `contentType` for operation: set-secret.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3f95120c-db8a-47ad-a416-135c122b2d5d",
+      "shortCode": "attributes",
+      "label": "Attributes",
+      "type": "object",
+      "description": "Request-body parameter `attributes` for operation: set-secret.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "84843f7e-ab1c-43b5-b230-439113c43e5c",
+      "shortCode": "value",
+      "label": "Value",
+      "type": "password",
+      "description": "set-secret / encrypt plaintext from a StudioQuack secret binding. Decrypt uses ciphertext string.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2ed529cb-e5c2-4919-8ae8-b98a5eab2edd",
+      "shortCode": "maxresults",
+      "label": "Maxresults",
+      "type": "number",
+      "description": "Query-string parameter `maxresults` for operation: list-secrets.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b5414486-5074-416e-b737-b54934966548",
+      "shortCode": "keyName",
+      "label": "Keyname",
+      "type": "string",
+      "description": "Key name for get-key / encrypt / decrypt.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "330139e7-8bc7-4844-b9d4-970716de0b66",
+      "shortCode": "alg",
+      "label": "Alg",
+      "type": "string",
+      "description": "JsonWebKeyEncryptionAlgorithm, prefer RSA-OAEP-256.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7c4bfd73-11dd-4601-99e8-75c295db4675",
+      "shortCode": "aad",
+      "label": "Aad",
+      "type": "string",
+      "description": "Request-body parameter `aad` for operations: encrypt, decrypt.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "56b0a3fc-3d69-4d1a-99ff-0967d9ae3f50",
+      "shortCode": "iv",
+      "label": "Iv",
+      "type": "string",
+      "description": "Request-body parameter `iv` for operations: encrypt, decrypt.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4209c5ac-a0f2-4b12-8075-0199da4c74b3",
+      "shortCode": "tag",
+      "label": "Tag",
+      "type": "string",
+      "description": "Request-body parameter `tag` for operation: decrypt.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bb783fac-c5b5-4475-93fe-fb28577cdbba",
+      "shortCode": "certificateName",
+      "label": "Certificatename",
+      "type": "string",
+      "description": "Certificate name for get-certificate.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f6d2e0a1-25f7-41a8-b453-1fa76c54306a",
+      "shortCode": "keyVersion",
+      "label": "Key Version",
+      "type": "string",
+      "description": "Key version path segment for encrypt/decrypt (required by Key Vault). Example: 'a1b2c3d4' or omit for latest if API allows.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "59e9708a-1d6d-407d-9b26-a9f7ba4cd0b9",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon invoke budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

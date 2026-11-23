@@ -1,0 +1,666 @@
+{
+  "_id": "d6b44637-85c9-46c0-a965-d5eef0111c48",
+  "version": "1.0.0",
+  "name": "Pardot",
+  "label": "Salesforce Account Engagement REST v5 — prospects, lists, emails",
+  "description": "Official Salesforce Account Engagement (Pardot) REST v5 at https://pi.pardot.com/api/v5. Handler: OfficialApiNode. SEPARATE from the StudioQuack salesforce node (no Account/Contact/Opportunity SOQL). Auth: Bearer access_token (pardot_api scope). Provider also requires header Pardot-Business-Unit-Id — OfficialApiNode cannot attach extra headers (error 89 risk); see README. Sandbox host pi.demo.pardot.com is not swapped from env. trigger.listen is BPMN ingress (no first-class AE inbound webhook product). Customer owns the AE business unit. Never log token, email, or HTML body.",
+  "icon": "campaign",
+  "tags": [
+    "email",
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "63213a48-0917-4414-9c3f-393b7db2d254",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example keys match api_spec.json required/queryFrom/bodyFrom.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "prospect.create",
+          "description": "Overrides config operation when non-blank. EXACT: prospect.create | prospect.upsert | prospect.get | prospect.update | prospect.delete | list.membership.add | list.membership.remove | campaign.list | email.send | visitor.get | form.get | trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Account Engagement integer id (not email) for get/update/delete/visitor/form.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect email (PII). Required on prospect.create and prospect.upsert. Optional on prospect.update. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "first_name",
+          "label": "first_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alias of firstName (bodyMap). prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "last_name",
+          "label": "last_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alias of lastName (bodyMap). prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "GET query: comma-delimited v5 field names to return (default id). Create/upsert/update escape hatch for custom fields (API names ending in __c) or extra root properties. Prefer named INPUT keys. Example query: id,email,firstName. Used by prospect.create/upsert/get/update, visitor.get, form.get, campaign.list.",
+          "children": []
+        },
+        {
+          "shortCode": "company",
+          "label": "company",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect company. prospect.create/upsert/update. Example: Acme.",
+          "children": []
+        },
+        {
+          "shortCode": "jobTitle",
+          "label": "jobTitle",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect job title (v5 jobTitle). prospect.create/upsert/update. Example: CTO.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect phone (PII). prospect.create/upsert/update. Example: +1-202-555-0100.",
+          "children": []
+        },
+        {
+          "shortCode": "website",
+          "label": "website",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect website URL. prospect.create/upsert/update. Example: https://example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "city",
+          "label": "city",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect city. prospect.create/upsert/update. Example: Austin.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect US state. prospect.create/upsert/update. Example: TX.",
+          "children": []
+        },
+        {
+          "shortCode": "zip",
+          "label": "zip",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect postal code. prospect.create/upsert/update. Example: 78701.",
+          "children": []
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect country. prospect.create/upsert/update. Example: United States.",
+          "children": []
+        },
+        {
+          "shortCode": "source",
+          "label": "source",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect source. prospect.create/upsert/update. Example: webinar.",
+          "children": []
+        },
+        {
+          "shortCode": "score",
+          "label": "score",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Prospect score. prospect.create/upsert/update. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "addressOne",
+          "label": "addressOne",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Address line 1. prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "addressTwo",
+          "label": "addressTwo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Address line 2. prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "annualRevenue",
+          "label": "annualRevenue",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Annual revenue (string in v5). prospect.create/upsert/update. Example: 1000000.",
+          "children": []
+        },
+        {
+          "shortCode": "comments",
+          "label": "comments",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comments about the prospect. prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "department",
+          "label": "department",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect department. prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "employees",
+          "label": "employees",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Number of employees (string). prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "fax",
+          "label": "fax",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Fax number. prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "industry",
+          "label": "industry",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect industry. prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "isDoNotCall",
+          "label": "isDoNotCall",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Do-not-call flag. prospect.create/upsert/update. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "isDoNotEmail",
+          "label": "isDoNotEmail",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Do-not-email flag. prospect.create/upsert/update. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "isReviewed",
+          "label": "isReviewed",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Reviewed flag. prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "isStarred",
+          "label": "isStarred",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Starred flag. prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "notes",
+          "label": "notes",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Notes about the prospect. prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "optedOut",
+          "label": "optedOut",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Opted out of marketing. prospect.create/upsert/update. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "prospectAccountId",
+          "label": "prospectAccountId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Prospect account id (no CRM connector). prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "salesforceId",
+          "label": "salesforceId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Salesforce id of the prospect (unique). prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "salesforceOwnerId",
+          "label": "salesforceOwnerId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Salesforce owner user id. Mutually exclusive with userId. Assign ability required.",
+          "children": []
+        },
+        {
+          "shortCode": "salutation",
+          "label": "salutation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Formal prefix. prospect.create/upsert/update. Example: Dr.",
+          "children": []
+        },
+        {
+          "shortCode": "territory",
+          "label": "territory",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prospect territory. prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "userId",
+          "label": "userId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Assigned AE user id. Mutually exclusive with salesforceOwnerId. Assign ability required.",
+          "children": []
+        },
+        {
+          "shortCode": "yearsInBusiness",
+          "label": "yearsInBusiness",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Years in business (string). prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "profileId",
+          "label": "profileId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Account Engagement profile id. prospect.create/upsert/update.",
+          "children": []
+        },
+        {
+          "shortCode": "textMessage",
+          "label": "textMessage",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Plain-text email body for email.send (v5 textMessage). Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "list_id",
+          "label": "list_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Static list id for membership.add.",
+          "children": []
+        },
+        {
+          "shortCode": "prospect_id",
+          "label": "prospect_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Prospect id for membership.add / email.send.",
+          "children": []
+        },
+        {
+          "shortCode": "membership_id",
+          "label": "membership_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List membership id for remove.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Alias of campaignId (bodyMap). Also required on email.send.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email name in AE.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email subject.",
+          "children": []
+        },
+        {
+          "shortCode": "html_message",
+          "label": "html_message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alias of htmlMessage (bodyMap) for email.send.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "campaign.list page size.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "campaign.list offset.",
+          "children": []
+        },
+        {
+          "shortCode": "secondaryDeletedSearch",
+          "label": "secondaryDeletedSearch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "prospect.upsert: when true, also search deleted prospects. Boolean as string true|false. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "secondary_deleted_search",
+          "label": "secondary_deleted_search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `secondary_deleted_search` for operation: prospect.upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "senderOptions",
+          "label": "senderOptions",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Sender options for email.send (v4 from_email+from_name or from_user_id; optional in v5). Example: {\"from_email\":\"a@b.com\",\"from_name\":\"Sales\"}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6c2f7315-55d3-4d15-86e7-2c4cad41b651",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Size-capped. Never log secrets or raw PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "09181090-acc9-487f-8b0d-5121c0d9a7c9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: prospect.create | prospect.upsert | prospect.get | prospect.update | prospect.delete | list.membership.add | list.membership.remove | campaign.list | email.send | visitor.get | form.get | trigger.listen.",
+      "value": "prospect.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "prospect.create",
+        "prospect.upsert",
+        "prospect.get",
+        "prospect.update",
+        "prospect.delete",
+        "list.membership.add",
+        "list.membership.remove",
+        "campaign.list",
+        "email.send",
+        "visitor.get",
+        "form.get",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "da937a1d-0b2f-483b-a608-d2b2abb98df5",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Salesforce access token with pardot_api (StudioQuack secret). OAuth access token minted outside StudioQuack. Authorization: Bearer. Never on INPUT. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ce2825e9-b672-4ebc-829c-611f4593f452",
+      "shortCode": "business_unit_id",
+      "label": "Business unit id",
+      "type": "string",
+      "description": "Pardot-Business-Unit-Id (Setup → Business Unit Setup). Sent on every call as that header. Required by AE (error 89 if missing).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0cc698dc-ea12-40c4-b983-dacd4c0b7d37",
+      "shortCode": "pardot_version",
+      "label": "Pardot version",
+      "type": "select",
+      "description": "5 (default). Paths are /api/v5. v4 fallback is not dual-stacked in OfficialApiNode.",
+      "value": "5",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "5",
+        "4"
+      ]
+    },
+    {
+      "_id": "c24ce3e1-7374-459e-be6f-7fe837bf112f",
+      "shortCode": "env",
+      "label": "Environment",
+      "type": "select",
+      "description": "prod → pi.pardot.com (this spec). sandbox → pi.demo.pardot.com is not interpolated by OfficialApiNode.",
+      "value": "prod",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "prod",
+        "sandbox"
+      ]
+    },
+    {
+      "_id": "4fef60b1-f08a-45d0-82d5-ce74d253e371",
+      "shortCode": "senderOptions",
+      "label": "Senderoptions",
+      "type": "object",
+      "description": "Sender options for email.send (v4 from_email+from_name or from_user_id; optional in v5). Example: {\"from_email\":\"a@b.com\",\"from_name\":\"Sales\"}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "6c1d38dd-acd0-43f8-acee-d9dbdbd48ffb",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

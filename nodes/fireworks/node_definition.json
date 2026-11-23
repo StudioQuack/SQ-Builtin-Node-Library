@@ -1,0 +1,548 @@
+{
+  "_id": "bec7e8c8-0aad-42ba-a77a-5c41e28eccfb",
+  "version": "1.0.0",
+  "name": "Fireworks",
+  "label": "Fireworks",
+  "description": "Official Fireworks AI Inference REST (OpenAI-compatible) on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). operation selects chat (POST /inference/v1/chat/completions), completions, embeddings, or image_gen (FLUX workflow text_to_image). Auth is StudioQuack secret api_key sent as Bearer. File/image payloads use type file (platform ref-id). Docs: https://docs.fireworks.ai/. Terms: https://fireworks.ai/terms-of-service. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "fireworks",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ca903c5d-3872-47fe-b127-8252c5f5427a",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, stream?, model?, prompt?, input?, file?}. Image sources use type file (platform ref-id), never inline bytes. Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Conversation for operation=chat. List of {role, content}. content is string or typed blocks (text / image_url). Image sources use type file (platform ref-id). Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional OpenAI-shaped tool definitions for chat. Omit or [] sends no tools.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Raw prompt for operation=completions or image_gen. Completions: caller owns the chat template. Image: FLUX text prompt.",
+          "children": []
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Embeddings input: string or string[] (max 2048 items). Empty string is invalid.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for VL chat or FLUX Kontext input_image. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "tool_choice",
+          "label": "tool_choice",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tool_choice` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `top_p` for operations: chat, completions.",
+          "children": []
+        },
+        {
+          "shortCode": "top_k",
+          "label": "top_k",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `top_k` for operations: chat, completions.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `max_tokens` for operations: chat, completions.",
+          "children": []
+        },
+        {
+          "shortCode": "frequency_penalty",
+          "label": "frequency_penalty",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `frequency_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "presence_penalty",
+          "label": "presence_penalty",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `presence_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `stop` for operations: chat, completions.",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "user",
+          "label": "user",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `user` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "dimensions",
+          "label": "dimensions",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `dimensions` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "normalize",
+          "label": "normalize",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `normalize` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt_template",
+          "label": "prompt_template",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `prompt_template` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `seed` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "aspect_ratio",
+          "label": "aspect_ratio",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `aspect_ratio` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "output_format",
+          "label": "output_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `output_format` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "input_image",
+          "label": "input_image",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `input_image` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt_upsampling",
+          "label": "prompt_upsampling",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `prompt_upsampling` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "safety_tolerance",
+          "label": "safety_tolerance",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `safety_tolerance` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which call. EXACT: chat | completions | embeddings | image_gen. Blank uses config.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "91691ba2-1940-4f03-ac39-1fa13e59f1f2",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Fireworks JSON (chat/completion, embeddings, or image workflow body).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "97e48579-15c2-421a-95ef-c46d899143b9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Fireworks verb. EXACT values: chat | completions | embeddings | image_gen. Default chat = POST /inference/v1/chat/completions.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "completions",
+        "embeddings",
+        "image_gen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "7192a62c-209f-445c-9f60-417c0570872c",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Fireworks API key. Sent as Authorization: Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bdace19b-1341-4b40-919b-9a1965ad2cf7",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Chat/completions: accounts/fireworks/models/<id> (default accounts/fireworks/models/deepseek-v3p1, still the official querying-text-models example). Embeddings: e.g. nomic-ai/nomic-embed-text-v1.5. Image workflow slug: flux-1-schnell-fp8 (path {model}). Catalog is large — pick from https://fireworks.ai/models . Docs: https://docs.fireworks.ai/guides/querying-text-models .",
+      "value": "accounts/fireworks/models/deepseek-v3p1",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "accounts/fireworks/models/deepseek-v3p1",
+        "nomic-ai/nomic-embed-text-v1.5",
+        "flux-1-schnell-fp8"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "f0d4bc1b-4026-4319-8541-ec80d54f9e43",
+      "shortCode": "base_url",
+      "label": "Base URL",
+      "type": "string",
+      "description": "Inference origin (HTTPS). Substituted as api_spec baseUrl. Default https://api.fireworks.ai/inference/v1.",
+      "value": "https://api.fireworks.ai/inference/v1",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3be98bb2-ff8e-4209-821a-f2c76f848bc2",
+      "shortCode": "temperature",
+      "label": "Temperature",
+      "type": "number",
+      "description": "Chat/completions temperature 0–2. Empty → omitted.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "54bf6c85-838b-4314-b27e-b4284b3b7b09",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1. Include FLUX/Kontext budget.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e2c96932-1b41-49b6-8433-0c47f3337fd9",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether Fireworks requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

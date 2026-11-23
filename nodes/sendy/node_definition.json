@@ -1,0 +1,423 @@
+{
+  "_id": "6b7eb20d-9648-4495-b0a6-a20dc8fa8241",
+  "version": "1.0.0",
+  "name": "Sendy",
+  "label": "Sendy install API — subscribers and campaigns",
+  "description": "Official Sendy per-install HTTP POST API (7.1.4). Placeholder base https://sendy.example.com — set api_spec baseUrl / install_url to the customer origin (HTTPS, no trailing slash). Handler: OfficialApiNode. Customer hosts Sendy and Amazon SES. Minimize: send only the subscriber address and list id. api_key is never logged or returned.",
+  "icon": "campaign",
+  "tags": [
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4b569d7a-9a8c-4f63-a16c-a0f16d246b5d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets (api_key) here. Example: {\"operation\":\"subscriber.add\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "subscriber.add",
+          "description": "Overrides config operation when non-blank. EXACT: 'subscriber.add' | 'subscriber.unsubscribe' | 'subscriber.delete' | 'subscriber.status' | 'subscriber.count' | 'campaign.create'.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subscriber email (PII). Required for subscriber.* except count.",
+          "children": []
+        },
+        {
+          "shortCode": "list",
+          "label": "list",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List id POST field for add/unsubscribe.",
+          "children": []
+        },
+        {
+          "shortCode": "list_id",
+          "label": "list_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List id for delete/status/count.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subscriber name.",
+          "children": []
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 2-letter country.",
+          "children": []
+        },
+        {
+          "shortCode": "ipaddress",
+          "label": "ipaddress",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Signup IP. Do not invent IPs.",
+          "children": []
+        },
+        {
+          "shortCode": "referrer",
+          "label": "referrer",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Signup URL.",
+          "children": []
+        },
+        {
+          "shortCode": "gdpr",
+          "label": "gdpr",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Official gdpr=true for EU signup.",
+          "children": []
+        },
+        {
+          "shortCode": "silent",
+          "label": "silent",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Bypass double opt-in (silent=true) — operator responsibility.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_fields",
+          "label": "custom_fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "subscriber.add extra fields object. Sent as JSON text on the form; prefer Sendy's named custom field keys as documented by your list.",
+          "children": []
+        },
+        {
+          "shortCode": "boolean",
+          "label": "boolean",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official Sendy form field named boolean. Set to true so subscribe/unsubscribe return a boolean string instead of a sentence.",
+          "children": []
+        },
+        {
+          "shortCode": "from_name",
+          "label": "from_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "campaign.create from name.",
+          "children": []
+        },
+        {
+          "shortCode": "from_email",
+          "label": "from_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "campaign.create from email (SES-verified on the Sendy host).",
+          "children": []
+        },
+        {
+          "shortCode": "reply_to",
+          "label": "reply_to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "campaign.create reply-to.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "campaign.create title.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "campaign.create subject.",
+          "children": []
+        },
+        {
+          "shortCode": "html_text",
+          "label": "html_text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "campaign.create HTML body. Do not log.",
+          "children": []
+        },
+        {
+          "shortCode": "plain_text",
+          "label": "plain_text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "campaign.create plain text.",
+          "children": []
+        },
+        {
+          "shortCode": "list_ids",
+          "label": "list_ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated list ids when send_campaign=1.",
+          "children": []
+        },
+        {
+          "shortCode": "segment_ids",
+          "label": "segment_ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alternative to list_ids.",
+          "children": []
+        },
+        {
+          "shortCode": "exclude_list_ids",
+          "label": "exclude_list_ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lists to exclude.",
+          "children": []
+        },
+        {
+          "shortCode": "exclude_segments_ids",
+          "label": "exclude_segments_ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official spelling for excluded segments.",
+          "children": []
+        },
+        {
+          "shortCode": "brand_id",
+          "label": "brand_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required when send_campaign is 0 (draft).",
+          "children": []
+        },
+        {
+          "shortCode": "query_string",
+          "label": "query_string",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Analytics tags.",
+          "children": []
+        },
+        {
+          "shortCode": "track_opens",
+          "label": "track_opens",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "0 / 1 / 2 (anonymous).",
+          "children": []
+        },
+        {
+          "shortCode": "track_clicks",
+          "label": "track_clicks",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "0 / 1 / 2.",
+          "children": []
+        },
+        {
+          "shortCode": "send_campaign",
+          "label": "send_campaign",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "1 send now; default 0 draft.",
+          "children": []
+        },
+        {
+          "shortCode": "schedule_date_time",
+          "label": "schedule_date_time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "e.g. June 15, 2021 6:05pm; minutes in 5 increments.",
+          "children": []
+        },
+        {
+          "shortCode": "schedule_timezone",
+          "label": "schedule_timezone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PHP timezone id.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9862d8bd-1e42-4f88-824c-32ceec2f9dae",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. PII may be present — do not log bodies.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "f51ffe3d-6a8a-4d51-b1b7-4b010c8d7e52",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: subscriber.add | subscriber.unsubscribe | subscriber.delete | subscriber.status | subscriber.count | campaign.create.",
+      "value": "subscriber.add",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "subscriber.add",
+        "subscriber.unsubscribe",
+        "subscriber.delete",
+        "subscriber.status",
+        "subscriber.count",
+        "campaign.create"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "6a5d98dc-602e-4ed6-8d29-db4386d564be",
+      "shortCode": "install_url",
+      "label": "Install URL",
+      "type": "string",
+      "description": "Origin of the customer Sendy install, interpolated as api_spec baseUrl. No trailing slash. HTTPS required in production. Example: https://sendy.example.com",
+      "value": "https://sendy.example.com",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "40828881-0d77-4a16-9e68-a3b103ced966",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Sendy Settings → API key (StudioQuack secret). Official auth is POST body api_key (https://sendy.co/api). Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4099cc04-3e61-4732-9b38-bb390d7bb148",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 uses api_spec default. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,280 @@
+{
+  "_id": "54a161d7-f395-4df2-8724-443bdc43ff05",
+  "version": "1.0.0",
+  "name": "Google Business Profile",
+  "label": "Google Business Profile — locations, reviews, local posts",
+  "description": "Official Google Business Profile APIs. Handler: OfficialApiNode. Reviews and localPosts stay on https://mybusiness.googleapis.com/v4. location_get uses per-op baseUrl https://mybusinessbusinessinformation.googleapis.com path /v1/locations/{location_id} with readMask (https://developers.google.com/my-business/reference/businessinformation/rest/v1/locations/get). OAuth bearer access_token (scope https://www.googleapis.com/auth/business.manage). GBP APIs are access-gated: unapproved Cloud projects have zero default quota. Never log access_token.",
+  "icon": "storefront",
+  "tags": [
+    "google",
+    "business",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "88499702-bb55-4d18-ad2c-39d142f78bf4",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. location_get / review_list need account_id + location_id. review_reply also needs review_id + comment. post_create needs summary + topicType (languageCode optional). Do not put access_token here. Example: {\"operation\":\"location_get\",\"account_id\":\"123\",\"location_id\":\"456\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "location_get",
+          "description": "Overrides config operation when non-blank. EXACT: location_get | review_list | review_reply | post_create | trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "account_id",
+          "label": "account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GBP account id path segment (accounts/{account_id}/…). Falls back to config account_id. Example: '123456789'.",
+          "children": []
+        },
+        {
+          "shortCode": "location_id",
+          "label": "location_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Location id path segment. Required for HTTP ops. Example: '987654321'.",
+          "children": []
+        },
+        {
+          "shortCode": "readMask",
+          "label": "readMask",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required FieldMask for location_get (Business Information API v1). Comma-separated fields, e.g. 'name,title,storefrontAddress'. https://developers.google.com/my-business/reference/businessinformation/rest/v1/locations/get",
+          "children": []
+        },
+        {
+          "shortCode": "review_id",
+          "label": "review_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Review id for review_reply (PUT …/reviews/{review_id}/reply). Example: 'AbCdEf'.",
+          "children": []
+        },
+        {
+          "shortCode": "comment",
+          "label": "comment",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Owner reply text for review_reply. Required. Example: 'Thank you for visiting.'.",
+          "children": []
+        },
+        {
+          "shortCode": "languageCode",
+          "label": "languageCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "BCP-47 language for post_create (LocalPost.languageCode). Example: 'en-US'.",
+          "children": []
+        },
+        {
+          "shortCode": "summary",
+          "label": "summary",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Local-post body for post_create. Required. Example: 'Open late this Friday.'.",
+          "children": []
+        },
+        {
+          "shortCode": "topicType",
+          "label": "topicType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "LocalPost topicType for post_create. EXACT Google enums: STANDARD | EVENT | OFFER | ALERT. This node only sends languageCode, summary, topicType — EVENT/OFFER extra objects are not in bodyFrom. Prefer STANDARD.",
+          "children": []
+        },
+        {
+          "shortCode": "pageSize",
+          "label": "Page size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "review_list pageSize. Max 50. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "pageToken",
+          "label": "Page token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "review_list pageToken from the previous page.",
+          "children": []
+        },
+        {
+          "shortCode": "orderBy",
+          "label": "Order by",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "review_list orderBy. EXACT: updateTime desc | updateTime | rating desc | rating.",
+          "children": []
+        },
+        {
+          "shortCode": "callToAction",
+          "label": "Call to action",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "LocalPost.callToAction {actionType, url}. post_create. actionType: BOOK|ORDER|SHOP|LEARN_MORE|SIGN_UP|CALL.",
+          "children": []
+        },
+        {
+          "shortCode": "media",
+          "label": "Media",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "LocalPost.media [{mediaFormat, sourceUrl}]. post_create. mediaFormat: PHOTO | VIDEO.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "907a3964-0aea-4ced-9ece-94c2e4fb8a5a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). trigger returns the BPMN message-event instruction — it does not open a socket. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (Location, reviews list, ReviewReply, or LocalPost).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2428ea39-403e-4b95-aa0d-33054b07418f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: location_get | review_list | review_reply | post_create | trigger.",
+      "value": "location_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "location_get",
+        "review_list",
+        "review_reply",
+        "post_create",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "9e1ed1b3-8703-4ba8-9c57-d9b56f54b1c3",
+      "shortCode": "access_token",
+      "label": "OAuth access token",
+      "type": "password",
+      "description": "Google OAuth 2 access token (StudioQuack secret). Sent as Authorization: Bearer. Scope https://www.googleapis.com/auth/business.manage. Never log or place on INPUT. This engine does not refresh tokens.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "51b4054e-60b2-4509-b0c4-909a8b90e0ef",
+      "shortCode": "account_id",
+      "label": "Account ID",
+      "type": "string",
+      "description": "Default GBP account id used when input.account_id is blank (path accounts/{account_id}/…). Example: '123456789'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "98fff770-e913-4f28-9217-c119c171708b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

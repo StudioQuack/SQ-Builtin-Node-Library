@@ -1,0 +1,529 @@
+{
+  "_id": "5fa127c0-dceb-4397-8432-2cfe24beeb19",
+  "version": "1.0.0",
+  "name": "YouTube Search",
+  "label": "YouTube Data API v3 - Video & Channel Intelligence",
+  "description": "Read-only YouTube Data API v3 node. Actions: search (GET /search), video_details (GET /videos), channel_info (GET /channels), trending (GET /videos?chart=mostPopular). Requires a Google Cloud API key with YouTube Data API v3 enabled, stored in configuration api_key (password) and sent only as query parameter key= — never as a header and never on an INPUT edge. Since 2026-06-01, default quota is 100 search.list calls/day (own bucket, 1 unit per call), 100 videos.insert calls/day, and 10,000 units/day for all other methods (videos.list and channels.list cost 1 unit each). Quotas reset midnight Pacific. Docs: https://developers.google.com/youtube/v3/determine_quota_cost. Pagination: pass output.next_page_token back as input.pageToken. This node cannot post comments (OAuth 2.0 user consent needs a separate write node). Timeout default 20 seconds. Use is subject to the YouTube API Services Terms of Service: https://developers.google.com/youtube/terms/api-services-terms-of-service.",
+  "icon": "play_circle",
+  "tags": [
+    "youtube",
+    "google",
+    "video",
+    "rest"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "db2f6fb4-7705-47e8-b377-599f92d49f49",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One invoke object for a single YouTube Data API v3 call. Delivered as inputVariables.input (or currentNode.inputList targetPortValue=input). Purpose: choose action and supply that action's fields. Accepted: a JSON object. Omit/null/non-object is treated as {} and then fails the action's required-field check (search needs query or q, and so on). Do not put api_key here. Example: {\"action\":\"search\",\"query\":\"workflow engine comparison\",\"maxResults\":10,\"order\":\"relevance\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "action",
+          "label": "action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: select which YouTube Data API v3 method to call. EXACT accepted values (case-sensitive): 'search' (GET /search?part=snippet; default when this field is omitted or blank), 'video_details' (GET /videos?part=snippet,statistics,contentDetails), 'channel_info' (GET /channels?part=snippet,statistics,brandingSettings), 'trending' (GET /videos?part=snippet,statistics,contentDetails&chart=mostPopular). Any other string fails with output.error \"Unknown action: {action}. Use 'search', 'video_details', 'channel_info', or 'trending'.\". Whitespace-only is treated as omitted → search. Example: 'search'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: full-text search string sent as YouTube parameter q= when action='search'. REQUIRED for search unless alias 'q' is non-blank (query wins if both are set). Accepted: any non-empty Unicode string (YouTube search syntax such as intitle: is forwarded as-is). Omit/blank on search, with q also blank, fails with output.error 'query is required for search action.'. Ignored for video_details, channel_info, and trending. Example: 'workflow automation'.",
+          "children": []
+        },
+        {
+          "shortCode": "order",
+          "label": "order",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: search.list sort order (action='search' only). EXACT YouTube values: 'relevance' (default when omitted or blank), 'date', 'rating', 'viewCount', 'title'. Other strings are forwarded and typically yield HTTP 400 on output.error. Ignored for non-search actions. Example: 'date'.",
+          "children": []
+        },
+        {
+          "shortCode": "maxResults",
+          "label": "maxResults",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Purpose: page size for action='search' and action='trending' (YouTube maxResults). Accepted: integer. Default 25 when omitted or not numeric. Upper cap 50 (min(n, 50)); no lower cap (0 is forwarded). Ignored for video_details and channel_info. Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "publishedAfter",
+          "label": "publishedAfter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: search.list publishedAfter filter (inclusive lower bound on video publish time). Accepted: RFC 3339 / ISO 8601 timestamp as YouTube requires, e.g. '2026-01-01T00:00:00Z'. Omit/blank = no lower bound (parameter not sent). Invalid timestamps are forwarded and typically yield HTTP 400. Ignored for non-search actions. Example: '2026-01-01T00:00:00Z'.",
+          "children": []
+        },
+        {
+          "shortCode": "video_ids",
+          "label": "video_ids",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Purpose: video id list for action='video_details'. Accepted: JSON array of strings, a comma-separated string, or (if empty) the scalar video_id field. First 50 ids are sent as videos.list id=. If video_ids is empty/omitted and video_id is also blank, fails with output.error 'video_ids or video_id is required for video_details action.'. Extra ids beyond 50 are dropped, not errored. Ignored for other actions. Example: [\"dQw4w9WgXcQ\"].",
+          "children": []
+        },
+        {
+          "shortCode": "channel_id",
+          "label": "channel_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: YouTube channel id (UC…) for action='channel_info' (REQUIRED) and as a search-scope fallback when action='search' and channelId is blank. Accepted: a channel id string. Blank on channel_info raises INVALID_INPUT; an unknown id raises HTTP_404 'Channel not found: {id}'. Example: 'UC_x5XG1OV2P6uZZ5FSM9Ttw'.",
+          "children": []
+        },
+        {
+          "shortCode": "regionCode",
+          "label": "regionCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: ISO 3166-1 alpha-2 region. For action='trending' this is required by YouTube and defaults to 'US' when omitted or blank. For action='search' it is optional (sent only when non-blank). Accepted: YouTube-supported two-letter codes (US, GB, DE, BR, IN, …). Invalid codes are forwarded and typically yield HTTP 400. Ignored for video_details and channel_info. Example: 'US'.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: search.list type filter (action='search' only). EXACT accepted values YouTube documents: 'video' (default when omitted or blank), 'channel', 'playlist'. Other strings are forwarded (HTTP 400 likely). When type='channel', video_id on each row may be empty and url is ''. Ignored for other actions. Example: 'video'.",
+          "children": []
+        },
+        {
+          "shortCode": "video_id",
+          "label": "video_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: single-id fallback for action='video_details' when video_ids is empty. Accepted: a YouTube video id (typically 11 characters). Ignored when video_ids already has at least one id. Omit/blank with empty video_ids → 'video_ids or video_id is required for video_details action.'. Example: 'dQw4w9WgXcQ'.",
+          "children": []
+        },
+        {
+          "shortCode": "pageToken",
+          "label": "pageToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: YouTube search.list pageToken for the next (or previous) page. Accepted: the opaque token from a previous output.next_page_token. Omit/blank = first page (parameter not sent). Invalid tokens are forwarded and typically yield HTTP 400. Only used for action='search'. Example: 'CAUQAA'.",
+          "children": []
+        },
+        {
+          "shortCode": "publishedBefore",
+          "label": "publishedBefore",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: search.list publishedBefore filter (exclusive upper bound). Accepted: RFC 3339 / ISO 8601, e.g. '2026-08-01T00:00:00Z'. Omit/blank = no upper bound. Invalid values forwarded (HTTP 400 likely). Search only. Example: '2026-08-01T00:00:00Z'.",
+          "children": []
+        },
+        {
+          "shortCode": "relevanceLanguage",
+          "label": "relevanceLanguage",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: search.list relevanceLanguage (boost results in this language; not a hard filter). Accepted: ISO 639-1 two-letter codes YouTube understands. Default 'en' when omitted or blank (always sent). Invalid codes are forwarded. Search only. Example: 'en'.",
+          "children": []
+        },
+        {
+          "shortCode": "videoDuration",
+          "label": "videoDuration",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: search.list videoDuration filter (YouTube only honors this when type='video'). EXACT accepted values: 'any' (or omit/blank — parameter not sent), 'short' (under ~4 minutes), 'medium' (~4–20 minutes), 'long' (over ~20 minutes). Other strings are forwarded (HTTP 400 likely). Search only. Example: 'short'.",
+          "children": []
+        },
+        {
+          "shortCode": "categoryId",
+          "label": "categoryId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: trending videoCategoryId (YouTube videos.list chart=mostPopular). As of Jul 2025 mostPopular is music/movies/gaming-oriented; pass a category for a specific chart. Accepted: YouTube category id string. Common: '10' Music, '1' Film, '20' Gaming. Omit/blank = no category filter (parameter not sent). Invalid ids are forwarded. Trending only. Example: '10'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "34a6f7a1-1410-4857-81a7-e444a0496ec2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Always present. Example success: {\"status\":\"ok\",\"action\":\"search\",\"query\":\"workflow\",\"videos_returned\":10,\"total_results\":1000000,\"next_page_token\":\"CAUQAA\",\"videos\":[...]}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Purpose: success marker. EXACT value on a completed YouTube call: 'ok'. Also 'ok' when channel_info finds no channel (see data.error). Absent when the handler failed before/during HTTP (missing api_key, unknown action, HTTP 4xx/5xx) — those replies have only error. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "videos_returned",
+          "label": "Videos Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Purpose: length of videos[] on this page (not the catalog total). Integer ≥ 0. Present for search, video_details, and trending. Absent for channel_info and for error-only replies. Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "videos",
+          "label": "Videos",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Purpose: normalized video rows for search, video_details, and trending. Empty array if YouTube returned no items. Absent for channel_info and for error-only replies. Description text is capped at 500 characters. view_count/like_count/comment_count are 64-bit numbers (YouTube strings can exceed 32-bit int). Example: [{\"video_id\":\"dQw4w9WgXcQ\",\"title\":\"…\",\"url\":\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\"}].",
+          "children": [
+            {
+              "shortCode": "video_id",
+              "label": "video_id",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: YouTube video id. Search: id.videoId (empty when type=channel/playlist). Details/trending: item.id. Example: 'dQw4w9WgXcQ'.",
+              "children": []
+            },
+            {
+              "shortCode": "title",
+              "label": "title",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: snippet.title. Empty string when YouTube omitted it. Example: 'Never Gonna Give You Up'.",
+              "children": []
+            },
+            {
+              "shortCode": "description",
+              "label": "description",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: snippet.description truncated to 500 characters (Python [:500]). Example: 'The official video…'.",
+              "children": []
+            },
+            {
+              "shortCode": "channel_title",
+              "label": "channel_title",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: snippet.channelTitle. Example: 'Rick Astley'.",
+              "children": []
+            },
+            {
+              "shortCode": "channel_id",
+              "label": "channel_id",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: search uses id.channelId or snippet.channelId; video_details uses snippet.channelId. Absent on trending rows (Python parity). Example: 'UC…'.",
+              "children": []
+            },
+            {
+              "shortCode": "published_at",
+              "label": "published_at",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: snippet.publishedAt (RFC 3339). Example: '2009-10-25T06:57:33Z'.",
+              "children": []
+            },
+            {
+              "shortCode": "thumbnail",
+              "label": "thumbnail",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: snippet.thumbnails.high.url. Present on search rows only. Empty string if high thumbnail missing. Example: 'https://i.ytimg.com/vi/…/hqdefault.jpg'.",
+              "children": []
+            },
+            {
+              "shortCode": "url",
+              "label": "url",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: watch URL. Search: 'https://www.youtube.com/watch?v={video_id}' or '' when video_id is empty. Details/trending: always concatenated even if id is empty. Example: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'.",
+              "children": []
+            },
+            {
+              "shortCode": "tags",
+              "label": "tags",
+              "type": "array",
+              "required": false,
+              "value": "",
+              "description": "Purpose: snippet.tags capped at 20 (video_details only). Empty array when YouTube omitted tags. Example: [\"music\",\"pop\"].",
+              "children": []
+            },
+            {
+              "shortCode": "category_id",
+              "label": "category_id",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: snippet.categoryId (video_details only). Example: '10'.",
+              "children": []
+            },
+            {
+              "shortCode": "view_count",
+              "label": "view_count",
+              "type": "number",
+              "required": false,
+              "value": "",
+              "description": "Purpose: statistics.viewCount as a 64-bit integer (video_details and trending). Missing/unparsable → 0. Example: 1500000000.",
+              "children": []
+            },
+            {
+              "shortCode": "like_count",
+              "label": "like_count",
+              "type": "number",
+              "required": false,
+              "value": "",
+              "description": "Purpose: statistics.likeCount as 64-bit (video_details and trending). Hidden likes → 0. Example: 14000000.",
+              "children": []
+            },
+            {
+              "shortCode": "comment_count",
+              "label": "comment_count",
+              "type": "number",
+              "required": false,
+              "value": "",
+              "description": "Purpose: statistics.commentCount as 64-bit (video_details and trending). Disabled comments → 0. Example: 2000000.",
+              "children": []
+            },
+            {
+              "shortCode": "duration",
+              "label": "duration",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: contentDetails.duration ISO 8601 (video_details and trending). Example: 'PT3M33S'.",
+              "children": []
+            },
+            {
+              "shortCode": "definition",
+              "label": "definition",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: contentDetails.definition (video_details only). Typical YouTube values: 'hd', 'sd'. Example: 'hd'.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "action",
+          "label": "Action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: echo of the action that ran. EXACT values: 'search' | 'video_details' | 'channel_info' | 'trending'. Absent on error-only replies. Example: 'search'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "Query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: echo of the search string actually sent as q= (action='search' only). Absent on other actions and on error-only replies. Example: 'workflow automation'.",
+          "children": []
+        },
+        {
+          "shortCode": "total_results",
+          "label": "Total Results",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Purpose: pageInfo.totalResults from search.list (YouTube's estimate, not an exact count). Search only. Missing pageInfo → 0. Example: 1000000.",
+          "children": []
+        },
+        {
+          "shortCode": "next_page_token",
+          "label": "Next Page Token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: YouTube nextPageToken to pass back as input.pageToken. Search only. JSON null when YouTube omitted it (last page). Example: 'CAUQAA'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Channel Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Purpose: channel_info payload. On a hit: channel_id, title, description (capped 500), custom_url, published_at, country, subscriber_count, video_count, view_count (counts are 64-bit). An unknown id raises HTTP_404 instead. Absent for other actions. Example: {\"channel_id\":\"UC_x5XG1OV2P6uZZ5FSM9Ttw\",\"title\":\"Google for Developers\"}.",
+          "children": [
+            {
+              "shortCode": "channel_id",
+              "label": "channel_id",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: channels.list item.id. Example: 'UC_x5XG1OV2P6uZZ5FSM9Ttw'.",
+              "children": []
+            },
+            {
+              "shortCode": "title",
+              "label": "title",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: snippet.title. Example: 'Google for Developers'.",
+              "children": []
+            },
+            {
+              "shortCode": "description",
+              "label": "description",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: snippet.description capped at 500 characters. Example: 'Subscribe to join…'.",
+              "children": []
+            },
+            {
+              "shortCode": "custom_url",
+              "label": "custom_url",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: snippet.customUrl (handle). Empty when unset. Example: '@GoogleDevelopers'.",
+              "children": []
+            },
+            {
+              "shortCode": "published_at",
+              "label": "published_at",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: snippet.publishedAt. Example: '2007-08-23T00:00:00Z'.",
+              "children": []
+            },
+            {
+              "shortCode": "country",
+              "label": "country",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Purpose: snippet.country. Empty when hidden. Example: 'US'.",
+              "children": []
+            },
+            {
+              "shortCode": "subscriber_count",
+              "label": "subscriber_count",
+              "type": "number",
+              "required": false,
+              "value": "",
+              "description": "Purpose: statistics.subscriberCount as 64-bit. Hidden subscribers → 0. Example: 2300000.",
+              "children": []
+            },
+            {
+              "shortCode": "video_count",
+              "label": "video_count",
+              "type": "number",
+              "required": false,
+              "value": "",
+              "description": "Purpose: statistics.videoCount as 64-bit. Example: 5800.",
+              "children": []
+            },
+            {
+              "shortCode": "view_count",
+              "label": "view_count",
+              "type": "number",
+              "required": false,
+              "value": "",
+              "description": "Purpose: statistics.viewCount as 64-bit. Example: 230000000.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "region",
+          "label": "Region",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: echoed regionCode used for trending (default 'US'). Trending only. Example: 'US'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "1501c215-4180-4f6f-8ef8-6b5858310de9",
+      "shortCode": "api_key",
+      "label": "YouTube API Key",
+      "type": "password",
+      "description": "Purpose: Google Cloud API key sent as query parameter key= on every YouTube Data API v3 request (never an Authorization header, never logged, never placed on an INPUT edge). REQUIRED. Empty/missing fails with output.error 'api_key is required. Get one from Google Cloud Console with YouTube Data API v3 enabled.'. Accepted: a Google Cloud API key with YouTube Data API v3 enabled; restrict the key to that API and to your daemon egress IPs. Not a client secret, OAuth refresh token, or YouTube cookie. Default quota since 2026-06-01: 100 search.list calls/day (own bucket) plus 10,000 units/day for other methods (https://developers.google.com/youtube/v3/determine_quota_cost). Example shape (do not commit a real key): 'AIzaSy…'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7df0f54d-da76-44b6-8ccf-c7316eefdf1c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Purpose: per-call HTTP timeout (connect+read) for YouTube. Accepted: positive integers. Omit, 0, negative, or non-numeric → 20. Values above the daemon sandbox request budget are still capped by that budget. Example: 20. Slow-link example: 45.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-03-19T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-03-19T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

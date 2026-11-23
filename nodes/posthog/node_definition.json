@@ -1,0 +1,353 @@
+{
+  "_id": "53210cd8-057e-4e8e-85af-630dd1f4a7f6",
+  "version": "1.0.0",
+  "name": "PostHog",
+  "label": "PostHog — capture, flags, persons, insights",
+  "description": "Official PostHog Capture (POST /i/v0/e/) + Flags (/flags?v=2) + private REST persons/insights. Default ingest https://us.i.posthog.com (EU: https://eu.i.posthog.com). Handler: OfficialApiNode. Customer owns the PostHog project. Minimize: send only distinct_id and event fields needed. api_key is never logged or returned.",
+  "icon": "analytics",
+  "tags": [
+    "analytics",
+    "cdp"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f95b8a20-d7e1-44f5-86c4-e82cf4d72b79",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets (api_key, personal_api_key) here. Example: {\"operation\":\"event.capture\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "event.capture",
+          "description": "Overrides config operation when non-blank. EXACT: 'event.capture' | 'identify.create' | 'alias.create' | 'track.page' | 'track.screen' | 'person.get' | 'insight.get' | 'featureFlag.isEnabled'.",
+          "children": []
+        },
+        {
+          "shortCode": "event",
+          "label": "event",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event name for event.capture. For identify.create use $identify; alias.create $create_alias; track.page $pageview; track.screen $screen.",
+          "children": []
+        },
+        {
+          "shortCode": "distinct_id",
+          "label": "distinct_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Person distinct id (max 200 chars). Required for capture/flags. Do not log emails stored as distinct_id.",
+          "children": []
+        },
+        {
+          "shortCode": "properties",
+          "label": "properties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Event properties. Do not put the project token here.",
+          "children": []
+        },
+        {
+          "shortCode": "timestamp",
+          "label": "timestamp",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 8601 event time.",
+          "children": []
+        },
+        {
+          "shortCode": "process_person_profile",
+          "label": "process_person_profile",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Maps to $process_person_profile (anonymous = false).",
+          "children": []
+        },
+        {
+          "shortCode": "events",
+          "label": "events",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Batch payload for capture; each item {event, distinct_id, properties?, timestamp?}. Whole body must be < 20 MB.",
+          "children": []
+        },
+        {
+          "shortCode": "set",
+          "label": "set",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "identify.create person properties (official properties.$set).",
+          "children": []
+        },
+        {
+          "shortCode": "alias",
+          "label": "alias",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "alias.create canonical distinct_id.",
+          "children": []
+        },
+        {
+          "shortCode": "current_url",
+          "label": "current_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "track.page $current_url.",
+          "children": []
+        },
+        {
+          "shortCode": "session_id",
+          "label": "session_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "track.page $session_id.",
+          "children": []
+        },
+        {
+          "shortCode": "screen_name",
+          "label": "screen_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "track.screen $screen_name. Required for track.screen.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "person.get query email=. PII — minimize.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "person.get page size.",
+          "children": []
+        },
+        {
+          "shortCode": "insight_id",
+          "label": "insight_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "insight.get path id. Required for insight.get.",
+          "children": []
+        },
+        {
+          "shortCode": "flag_key",
+          "label": "flag_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "featureFlag.isEnabled: if set, interpret that flag; else full flags map.",
+          "children": []
+        },
+        {
+          "shortCode": "groups",
+          "label": "groups",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "featureFlag.isEnabled group-flag evaluation.",
+          "children": []
+        },
+        {
+          "shortCode": "person_properties",
+          "label": "person_properties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "featureFlag.isEnabled person property overrides.",
+          "children": []
+        },
+        {
+          "shortCode": "project_id",
+          "label": "project_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Overrides config project_id for private REST paths.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6919c172-aefe-405b-a0e2-6373199b5eee",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. PII may be present — do not log bodies.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "acebe4e8-2a02-4f67-83d7-a06dd34bf104",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: event.capture | identify.create | alias.create | track.page | track.screen | person.get | insight.get | featureFlag.isEnabled.",
+      "value": "event.capture",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "event.capture",
+        "identify.create",
+        "alias.create",
+        "track.page",
+        "track.screen",
+        "person.get",
+        "insight.get",
+        "featureFlag.isEnabled"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "b08ddb7c-d02d-494c-a159-1d8c7a72b051",
+      "shortCode": "host",
+      "label": "Host",
+      "type": "string",
+      "description": "Instance origin interpolated as OfficialApiNode baseUrl. US ingest https://us.i.posthog.com; EU ingest https://eu.i.posthog.com; app hosts https://us.posthog.com / https://eu.posthog.com for person.get / insight.get; self-host the operator URL (no trailing slash).",
+      "value": "https://us.i.posthog.com",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "084c39c2-0ff2-4f8a-9d81-b1cc1e57631f",
+      "shortCode": "api_key",
+      "label": "Project API key",
+      "type": "password",
+      "description": "PostHog project token (StudioQuack secret). Sent as query api_key. Official capture also accepts JSON body api_key. Never log or place on INPUT. Project settings on the PostHog app host.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "445d7d0b-cde2-4557-9cfe-17da2e98575a",
+      "shortCode": "personal_api_key",
+      "label": "Personal API key",
+      "type": "password",
+      "description": "Personal API key for private REST (person.get / insight.get). Sent as Authorization: Bearer on those operations. Never on INPUT.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cbfcd2a4-4d7a-40cf-a74d-12f28299bc10",
+      "shortCode": "project_id",
+      "label": "Project id",
+      "type": "string",
+      "description": "Numeric project id for person.get / insight.get path /api/projects/{project_id}/….",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8ff651ed-0c91-4652-adcb-59f91048aecc",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 uses api_spec default. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

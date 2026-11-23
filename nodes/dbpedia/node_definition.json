@@ -1,0 +1,198 @@
+{
+  "_id": "4c51a024-5424-5b11-8ef9-668ac97189af",
+  "version": "1.0.0",
+  "name": "DBpedia",
+  "label": "DBpedia",
+  "description": "DBpedia official API via OfficialApiNode (api_spec.json). Operations: sparql_query, lookup, spotlight_annotate. Docs: https://www.dbpedia.org/. Public DBpedia endpoints. Courtesy limits. Spotlight annotates third-party text. Distinct hosts; paths are host+path. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "database",
+  "tags": [
+    "knowledge",
+    "dbpedia"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5b3ab91d-201d-5e0e-9991-79ca58654b39",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One DBpedia request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"sparql_query\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: sparql_query | lookup | spotlight_annotate. Default: first listed or instance operation. Example: 'sparql_query'.",
+          "children": [],
+          "_id": "8ee773fd-1b53-511d-b8f7-4465536ff137"
+        },
+        {
+          "shortCode": "confidence",
+          "label": "confidence",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `confidence` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "96c88c47-994a-50b3-a88f-14424fe72ad7"
+        },
+        {
+          "shortCode": "format",
+          "label": "format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `format` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "6f0793ea-2f1c-51a0-8ed4-6e8ba846f587"
+        },
+        {
+          "shortCode": "maxResults",
+          "label": "maxResults",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `maxResults` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "c102a961-b42b-59f3-9204-ab0d6b9ea845"
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `query` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "f219bc7d-3648-595a-a66c-f37f7e6ab038"
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `text` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "55f597bf-a1b7-5297-9a5a-1d19a704a99e"
+        },
+        {
+          "shortCode": "timeout",
+          "label": "timeout",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `timeout` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "f2dd3e4a-5487-5168-b727-616577fd295a"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5b102489-c60b-5902-beef-871b5c45f0e4",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "3bdee4e5-a3e3-5ef7-bdac-62c960912a03"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "a86acc0d-92a2-5883-b62d-f09218485bdf"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "3f120b3c-4163-5da4-84b6-2c56bb0c8bbd"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0a771dfe-e3e9-57ba-8788-f6b0f6c67c36",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: sparql_query, lookup, spotlight_annotate.",
+      "value": "sparql_query",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "sparql_query",
+        "lookup",
+        "spotlight_annotate"
+      ]
+    },
+    {
+      "_id": "1a232b97-7326-52c2-a0be-5d47b3e84814",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 45. Keep under the daemon sandbox request budget.",
+      "value": "45",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

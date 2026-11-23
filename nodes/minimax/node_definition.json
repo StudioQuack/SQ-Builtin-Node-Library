@@ -1,0 +1,620 @@
+{
+  "_id": "0829b787-7da6-4fce-8344-8cdf71d1d500",
+  "version": "1.0.0",
+  "name": "MiniMax",
+  "label": "MiniMax",
+  "description": "Official MiniMax Open Platform APIs on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). operation selects chat (POST /v1/chat/completions), generate_image (POST /v1/image_generation), tts (POST /v1/t2a_v2), or generate_video (POST /v2/video_generation). Auth is StudioQuack secret api_key sent as Bearer. File/image/video payloads use type file (platform ref-id). Docs: https://platform.minimax.io/docs/api-reference/api-overview. Terms: https://www.minimax.io/terms-of-service-v2.html. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "minimax",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5c35a893-1806-46fb-afe1-559089798b02",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, stream?, model?, prompt?, text?, content?, file?}. Image/video/audio use type file (platform ref-id). Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "select",
+          "required": false,
+          "value": "chat",
+          "description": "Overrides instance config operation when set on llm_input or agent tool input. EXACT: chat | generate_image | tts | generate_video. Prompt/text/content fields infer the verb when omitted.",
+          "options": [
+            "chat",
+            "generate_image",
+            "tts",
+            "generate_video"
+          ],
+          "children": []
+        },
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Conversation for operation=chat. MiniMax-M3 supports image_url and video_url parts. Media use type file. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Text prompt for generate_image (max 1500 characters on image-01).",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Speech text for operation=tts (HTTP T2A, up to 10,000 characters).",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for VL chat, subject_reference image, or H3 video content parts. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tools` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "tool_choice",
+          "label": "tool_choice",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tool_choice` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "temperature",
+          "label": "temperature",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `temperature` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_p` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "max_completion_tokens",
+          "label": "max_completion_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_completion_tokens` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_tokens` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "thinking",
+          "label": "thinking",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `thinking` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "reasoning_split",
+          "label": "reasoning_split",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `reasoning_split` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "aspect_ratio",
+          "label": "aspect_ratio",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `aspect_ratio` for operation: generate_image.",
+          "children": []
+        },
+        {
+          "shortCode": "width",
+          "label": "width",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `width` for operation: generate_image.",
+          "children": []
+        },
+        {
+          "shortCode": "height",
+          "label": "height",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `height` for operation: generate_image.",
+          "children": []
+        },
+        {
+          "shortCode": "n",
+          "label": "n",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `n` for operation: generate_image.",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operation: generate_image.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `seed` for operation: generate_image.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt_optimizer",
+          "label": "prompt_optimizer",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `prompt_optimizer` for operation: generate_image.",
+          "children": []
+        },
+        {
+          "shortCode": "subject_reference",
+          "label": "subject_reference",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `subject_reference` for operation: generate_image.",
+          "children": []
+        },
+        {
+          "shortCode": "voice_setting",
+          "label": "voice_setting",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `voice_setting` for operation: tts.",
+          "children": []
+        },
+        {
+          "shortCode": "audio_setting",
+          "label": "audio_setting",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `audio_setting` for operation: tts.",
+          "children": []
+        },
+        {
+          "shortCode": "pronunciation_dict",
+          "label": "pronunciation_dict",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `pronunciation_dict` for operation: tts.",
+          "children": []
+        },
+        {
+          "shortCode": "language_boost",
+          "label": "language_boost",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `language_boost` for operation: tts.",
+          "children": []
+        },
+        {
+          "shortCode": "output_format",
+          "label": "output_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `output_format` for operation: tts.",
+          "children": []
+        },
+        {
+          "shortCode": "voice_modify",
+          "label": "voice_modify",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `voice_modify` for operation: tts.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `content` for operation: generate_video.",
+          "children": []
+        },
+        {
+          "shortCode": "resolution",
+          "label": "resolution",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `resolution` for operation: generate_video.",
+          "children": []
+        },
+        {
+          "shortCode": "duration",
+          "label": "duration",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `duration` for operation: generate_video.",
+          "children": []
+        },
+        {
+          "shortCode": "ratio",
+          "label": "ratio",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ratio` for operation: generate_video.",
+          "children": []
+        },
+        {
+          "shortCode": "task_id",
+          "label": "task_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Async video task id from generate_video. Used to poll GET /v1/query/video_generation. Example: 1234567890abcdef.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "aba19aaf-a221-44af-9bfd-1f06c33ceaae",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Video is async (task_id). Image URL output expires (docs: 24 hours). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed MiniMax JSON (chat, image, T2A audio, or video task).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "49a3793f-8c64-4ba2-94f9-c423920d037c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official MiniMax verb. EXACT values: chat | generate_image | tts | generate_video. Default chat = POST /v1/chat/completions.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "generate_image",
+        "tts",
+        "generate_video"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "38b9ceea-e9cb-4604-b6eb-58a948ddbc04",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "MiniMax pay-as-you-go API key (not the Token Plan subscription key). Sent as Authorization: Bearer. StudioQuack secret binding only. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "256e0779-9181-4478-b959-e6340cff5a9f",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Chat default MiniMax-M3 (current M-series). Also MiniMax-M2.7 / MiniMax-M2.7-highspeed, MiniMax-M2.5, MiniMax-M2.1, MiniMax-M2. Image: image-01. TTS: e.g. speech-2.8-hd. Video: MiniMax-H3 (v2). Verify live platform list. Docs: https://platform.minimax.io/docs/api-reference/api-overview .",
+      "value": "MiniMax-M3",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "MiniMax-M3",
+        "MiniMax-M2.7",
+        "MiniMax-M2.7-highspeed",
+        "MiniMax-M2.5",
+        "MiniMax-M2.5-highspeed",
+        "MiniMax-M2.1",
+        "MiniMax-M2",
+        "image-01",
+        "speech-2.8-hd",
+        "MiniMax-H3"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "1f57a3aa-f49e-495a-85da-e8fc32eb3d57",
+      "shortCode": "task_id",
+      "label": "Task Id",
+      "type": "string",
+      "description": "Async video task id from generate_video for polling GET /v1/query/video_generation. Example: 1234567890abcdef.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "1512b34a-565f-464c-8c15-0515c39d17b9",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e50bb59c-66ac-4788-a6c4-6f23faf77a9d",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether MiniMax requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,241 @@
+{
+  "_id": "24c9f997-ff8f-42a1-a65c-c9a8e7f59362",
+  "version": "1.0.0",
+  "name": "Kick",
+  "label": "Kick Public API v1 (+ v2 livestream list)",
+  "description": "Official Kick Public API via OfficialApiNode. Base https://api.kick.com. Paths /public/v1/users, /public/v1/channels, /public/v1/users/livestreams, /public/v2/livestreams, /public/v1/chat. GET /public/v1/livestreams is deprecated (Kick OpenAPI). Bearer access_token. trigger is EventSub-style ingress (BPMN message event). Never return stream keys. Official API only — do not scrape kick.com. Docs: https://docs.kick.com · https://api.kick.com/swagger/doc.yaml",
+  "icon": "videocam",
+  "tags": [
+    "kick",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "7fc06165-6903-41bc-846f-edf358bcff8a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_token here. Do not accept stream keys. Example: {\"operation\":\"channel_get\",\"slug\":\"example\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "user_get",
+          "description": "Overrides config operation when non-blank. EXACT: user_get | channel_get | livestream_get (deprecated GET /public/v1/livestreams) | livestream_user | livestream_list | chat_send | trigger. trigger is ingress, not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User id query for user_get. Official id.",
+          "children": []
+        },
+        {
+          "shortCode": "slug",
+          "label": "slug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Channel slug query for channel_get.",
+          "children": []
+        },
+        {
+          "shortCode": "broadcaster_user_id",
+          "label": "broadcaster_user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Broadcaster user id for channel_get / livestream_get / chat_send.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User id for livestream_user.",
+          "children": []
+        },
+        {
+          "shortCode": "category_id",
+          "label": "category_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Category filter for livestream_list.",
+          "children": []
+        },
+        {
+          "shortCode": "language_code",
+          "label": "language_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Language filter for livestream_list. Example: en.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for livestream_list.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cursor for livestream_list.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Chat message text for chat_send. Official content.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "chat_send type. Typical: user | bot.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ab8847d8-6953-4782-ba32-3739b9bdf3c5",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Never return stream.key or ingest URL even if the token has streamkey:read. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c62f503d-c437-492b-9fd1-5d10d21a279a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. trigger does not open a socket. livestream_get is Kick-deprecated; prefer livestream_user or livestream_list.",
+      "value": "channel_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "user_get",
+        "channel_get",
+        "livestream_get",
+        "livestream_user",
+        "livestream_list",
+        "chat_send",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "d6cb862b-6ca8-4ab7-93d8-555df432b2f5",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Kick OAuth 2.1 access token. Sent as Authorization: Bearer. Never log or place on INPUT. Empty → no HTTP.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8ac3ed7f-6776-44c5-abd0-24ce46612891",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

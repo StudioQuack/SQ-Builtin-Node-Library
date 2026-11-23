@@ -1,0 +1,296 @@
+{
+  "_id": "4fad78d8-b58e-5c00-9884-6dcc3de400f8",
+  "version": "1.0.0",
+  "name": "RingCentral",
+  "label": "RingCentral — RingEX REST API + Team Messaging",
+  "description": "RingCentral via the official RingEX REST API v1.0 plus Team Messaging. Base https://platform.ringcentral.com/restapi/v1.0. Docs: https://developers.ringcentral.com/api-reference and https://developers.ringcentral.com/guide/team-messaging/posting. OAuth JWT or 3-legged. Sandbox host is platform.devtest.ringcentral.com. SMS 10DLC. create-meeting was removed — the Programmable Meetings API is discontinued (https://developers.ringcentral.com/meetings-api). create-post uses POST /team-messaging/v1/chats/{chatId}/posts (not legacy /glip/...). listen = webhooks as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "phone",
+  "tags": [
+    "voice",
+    "sms"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1961ab55-680b-56b9-8090-0a153d185811",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One RingCentral operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"send-sms\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-sms",
+          "description": "Which official call to run. EXACT values: send-sms | send-fax | ringout | create-post | create-contact | update-contact | find-contact | listen. create-meeting was removed (Programmable Meetings API discontinued). listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SMS or Team Messaging post body. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "chatId",
+          "label": "chatId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Team Messaging chat id for create-post (POST /team-messaging/v1/chats/{chatId}/posts). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "contactId",
+          "label": "contactId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Address-book contact id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "phoneNumber",
+          "label": "phoneNumber",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lookup number for find-contact. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `from` for operations: send-sms, ringout.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `to` for operations: send-sms, send-fax, ringout.",
+          "children": []
+        },
+        {
+          "shortCode": "coverIndex",
+          "label": "coverIndex",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `coverIndex` for operation: send-fax.",
+          "children": []
+        },
+        {
+          "shortCode": "playPrompt",
+          "label": "playPrompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `playPrompt` for operation: ringout.",
+          "children": []
+        },
+        {
+          "shortCode": "firstName",
+          "label": "firstName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `firstName` for operations: create-contact, update-contact.",
+          "children": []
+        },
+        {
+          "shortCode": "lastName",
+          "label": "lastName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `lastName` for operations: create-contact, update-contact.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `email` for operations: create-contact, update-contact.",
+          "children": []
+        },
+        {
+          "shortCode": "coverPageText",
+          "label": "coverPageText",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-fax cover page text.",
+          "children": []
+        },
+        {
+          "shortCode": "homePhone",
+          "label": "homePhone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-contact / update-contact home phone.",
+          "children": []
+        },
+        {
+          "shortCode": "mobilePhone",
+          "label": "mobilePhone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-contact / update-contact mobile phone.",
+          "children": []
+        },
+        {
+          "shortCode": "company",
+          "label": "company",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-contact / update-contact company.",
+          "children": []
+        },
+        {
+          "shortCode": "startsWith",
+          "label": "startsWith",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `startsWith` for operation: find-contact.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ac5a946e-a72e-5c80-a54a-b92195ac74bb",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "f2b97fde-a46a-5d36-aec9-ef3ddc83c070",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-sms, send-fax, ringout, create-post, create-contact, update-contact, find-contact, listen. create-meeting was removed (Programmable Meetings API discontinued). listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-sms",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-sms",
+        "send-fax",
+        "ringout",
+        "create-post",
+        "create-contact",
+        "update-contact",
+        "find-contact",
+        "listen"
+      ]
+    },
+    {
+      "_id": "4965de08-8a9e-5c20-bcae-961d98e62d56",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "RingCentral OAuth access token. Header Authorization: Bearer. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d9656509-d783-5e66-8150-474cd4c46cb2",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,287 @@
+{
+  "_id": "74f22a41-a189-4f3b-b9bd-51dbda2bec61",
+  "version": "1.0.0",
+  "name": "AWS Rekognition",
+  "label": "Amazon Rekognition — labels, faces, text",
+  "description": "Official Amazon Rekognition Image JSON 1.1 API. POST https://rekognition.{region}.amazonaws.com/ signed with AWS SigV4 (service rekognition). Content-Type application/x-amz-json-1.1 and X-Amz-Target RekognitionService.{Action} are set per operation. operation: detect_labels, detect_faces, detect_text, compare_faces. Prefer Image / SourceImage / TargetImage S3Object; never inline bytes in graph JSON. Face/biometric ops require a customer DPIA; no covert surveillance. Docs: https://docs.aws.amazon.com/rekognition/latest/APIReference/Welcome.html. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "visibility",
+  "tags": [
+    "aws",
+    "rekognition",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "733b7ab3-c276-423f-a890-b97cf25d235f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation Rekognition JSON. Prefer Image / SourceImage / TargetImage as official {S3Object:{Bucket,Name}} objects. Never put AWS keys here. Example: {\"Image\":{\"S3Object\":{\"Bucket\":\"my-bucket\",\"Name\":\"photo.jpg\"}}}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "detect_labels",
+          "description": "Overrides config operation. EXACT: detect_labels | detect_faces | detect_text | compare_faces.",
+          "children": []
+        },
+        {
+          "shortCode": "Image",
+          "label": "Image",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official Image object: {Bytes} (base64, not stored in graph) or {S3Object:{Bucket,Name,Version?}}. Use S3Object when the object is already in the customer AWS account.",
+          "children": []
+        },
+        {
+          "shortCode": "SourceImage",
+          "label": "SourceImage",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official CompareFaces SourceImage ({Bytes} or {S3Object}).",
+          "children": []
+        },
+        {
+          "shortCode": "TargetImage",
+          "label": "TargetImage",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official CompareFaces TargetImage ({Bytes} or {S3Object}).",
+          "children": []
+        },
+        {
+          "shortCode": "MaxLabels",
+          "label": "MaxLabels",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "DetectLabels MaxLabels (0–1000). Omit to use the API default.",
+          "children": []
+        },
+        {
+          "shortCode": "MinConfidence",
+          "label": "MinConfidence",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "DetectLabels MinConfidence 0–100. API default 55 if omitted.",
+          "children": []
+        },
+        {
+          "shortCode": "Attributes",
+          "label": "Attributes",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "DetectFaces Attributes. EXACT tokens: DEFAULT | ALL | AGE_RANGE | BEARD | EMOTIONS | EYE_DIRECTION | EYEGLASSES | EYES_OPEN | GENDER | MOUTH_OPEN | MUSTACHE | FACE_OCCLUDED | SMILE | SUNGLASSES.",
+          "children": []
+        },
+        {
+          "shortCode": "SimilarityThreshold",
+          "label": "SimilarityThreshold",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "CompareFaces SimilarityThreshold 0–100. Faces below this score are unmatched.",
+          "children": []
+        },
+        {
+          "shortCode": "Features",
+          "label": "Features",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `Features` for operation: detect_labels.",
+          "children": []
+        },
+        {
+          "shortCode": "Settings",
+          "label": "Settings",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Settings` for operation: detect_labels.",
+          "children": []
+        },
+        {
+          "shortCode": "Filters",
+          "label": "Filters",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Filters` for operation: detect_text.",
+          "children": []
+        },
+        {
+          "shortCode": "QualityFilter",
+          "label": "QualityFilter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `QualityFilter` for operation: compare_faces.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5c4f9fbc-df84-4886-82b7-2a5235eed03f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (Rekognition JSON). Face geometry/landmarks are biometric data — minimize retention downstream. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (Labels, FaceDetails, TextDetections, FaceMatches).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0e9d5932-9482-4741-8187-aade1ae8de7d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default Rekognition action. EXACT: detect_labels | detect_faces | detect_text | compare_faces. Maps to X-Amz-Target RekognitionService.{Action}.",
+      "value": "detect_labels",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "detect_labels",
+        "detect_faces",
+        "detect_text",
+        "compare_faces"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "4b60bf25-7842-4b48-8cee-ae1f22f35515",
+      "shortCode": "access_key_id",
+      "label": "AWS access key ID",
+      "type": "password",
+      "description": "IAM access key ID used as the SigV4 credential. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a5ad669e-3c5d-40dd-a9a8-3c39c11b26e2",
+      "shortCode": "secret_access_key",
+      "label": "AWS secret access key",
+      "type": "password",
+      "description": "IAM secret access key used to sign SigV4. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c238e83d-cb67-4709-9902-6c929c106fc0",
+      "shortCode": "session_token",
+      "label": "AWS session token",
+      "type": "password",
+      "description": "Optional STS session token. When set, OfficialApiNode adds x-amz-security-token. Empty for long-lived keys. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7cfe52ca-b66f-4976-be90-ad4aa98c37fd",
+      "shortCode": "region",
+      "label": "AWS region",
+      "type": "string",
+      "description": "Region in rekognition.{region}.amazonaws.com. Example: us-east-1.",
+      "value": "us-east-1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a60b4198-258c-405f-bbfa-f50f81bf0be5",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 60. Floor 1.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

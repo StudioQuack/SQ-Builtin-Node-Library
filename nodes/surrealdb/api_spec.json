@@ -1,0 +1,67 @@
+{
+  "baseUrl": "{surreal_url}",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "userKey": "username",
+    "configKey": "password"
+  },
+  "extraHeaders": {
+    "Surreal-NS": "{namespace}",
+    "Surreal-DB": "{database}"
+  },
+  "operations": {
+    "record.select": {
+      "method": "GET",
+      "path": "/key/{table}/{id}",
+      "required": [
+        "table",
+        "id"
+      ],
+      "kind": "http"
+    },
+    "record.create": {
+      "method": "POST",
+      "path": "/key/{table}",
+      "required": [
+        "table",
+        "record"
+      ],
+      "kind": "http",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "record"
+      ],
+      "bodyMap": {
+        "record": "$"
+      }
+    },
+    "record.update": {
+      "method": "PUT",
+      "path": "/key/{table}/{id}",
+      "required": [
+        "table",
+        "id",
+        "record"
+      ],
+      "kind": "http",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "record"
+      ],
+      "bodyMap": {
+        "record": "$"
+      }
+    },
+    "record.delete": {
+      "method": "DELETE",
+      "path": "/key/{table}/{id}",
+      "required": [
+        "table",
+        "id"
+      ],
+      "kind": "http"
+    }
+  }
+}

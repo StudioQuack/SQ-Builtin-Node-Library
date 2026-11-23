@@ -1,0 +1,251 @@
+{
+  "_id": "9f129900-8248-4964-83a0-b91b3b779a76",
+  "version": "1.0.0",
+  "name": "Google Translate",
+  "label": "Google Translate",
+  "description": "Official Cloud Translation API v3 (Advanced) on INPUT input → OUTPUT output. operation: translate, detect, languages. Auth is StudioQuack secret access_token sent as Authorization Bearer (v3 does not accept API keys). Path /v3/projects/{project}:translateText. Docs: https://cloud.google.com/translate/docs/reference/rest/v3/projects/translateText. Terms: https://cloud.google.com/terms. Never log access_token.",
+  "icon": "g_translate",
+  "tags": [
+    "google",
+    "translate",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3e73511b-9dd6-4150-98a3-17e72312511f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. translate requires contents + targetLanguageCode. detect uses content. project overrides config. Regional parent: set project to '{id}/locations/{location}'. Do not put access_token here. Example: {\"contents\":[\"Hello\"],\"targetLanguageCode\":\"es\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "project",
+          "label": "project",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GCP project id or number for path {project}. Overrides config. For a region use '{project}/locations/{location}'.",
+          "children": []
+        },
+        {
+          "shortCode": "contents",
+          "label": "contents",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "translate body contents[] of UTF-8 strings. Required for translate. Keep under 30 000 codepoints per request.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "detect body content (source text).",
+          "children": []
+        },
+        {
+          "shortCode": "targetLanguageCode",
+          "label": "targetLanguageCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "translate target ISO-639 code, e.g. es, zh-CN, sr-Latn.",
+          "children": []
+        },
+        {
+          "shortCode": "sourceLanguageCode",
+          "label": "sourceLanguageCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional source ISO-639. Omit to auto-detect.",
+          "children": []
+        },
+        {
+          "shortCode": "mimeType",
+          "label": "mimeType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "text/plain or text/html. Default per API is text/html if omitted.",
+          "children": []
+        },
+        {
+          "shortCode": "model",
+          "label": "model",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional model resource name, e.g. projects/{id}/locations/global/models/general/nmt.",
+          "children": []
+        },
+        {
+          "shortCode": "displayLanguageCode",
+          "label": "displayLanguageCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "languages query: ISO code for language names in the response.",
+          "children": []
+        },
+        {
+          "shortCode": "glossaryConfig",
+          "label": "glossaryConfig",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `glossaryConfig` for operation: translate.",
+          "children": []
+        },
+        {
+          "shortCode": "labels",
+          "label": "labels",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `labels` for operation: translate.",
+          "children": []
+        },
+        {
+          "shortCode": "transliterationConfig",
+          "label": "Transliteration",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "TranslateTextRequest.transliterationConfig {enableTransliteration}. translate.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b76a95f6-980c-4456-aec9-b443e597a586",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (TranslateTextResponse / DetectLanguageResponse / languages). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Cloud Translation JSON.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "1a3d4e76-5940-4c2c-a0bb-dfe7f57f416a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official v3 verb. EXACT: translate | detect | languages. Default translate = POST /v3/projects/{project}:translateText.",
+      "value": "translate",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "translate",
+        "detect",
+        "languages"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "6e3d0c9f-2ad2-4c19-9def-f3804fb9a508",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "OAuth 2.0 access token (scope cloud-translation or cloud-platform). Sent as Authorization: Bearer. v3 does not accept API keys. StudioQuack secret only. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "189e0bc2-4f19-45b7-8349-a8aec3847027",
+      "shortCode": "project",
+      "label": "GCP Project",
+      "type": "string",
+      "description": "Default path {project} (project id or number). Override per invoke on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c04a8ad6-8584-4d5a-9bac-c328bf9b4f1c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 30. Floor 1.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

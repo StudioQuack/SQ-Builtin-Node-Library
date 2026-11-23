@@ -1,0 +1,295 @@
+{
+  "_id": "2efdffe2-f9fe-58a9-bd84-1d65d1d091fc",
+  "version": "1.0.0",
+  "name": "Dropbox",
+  "label": "Dropbox API v2 — files and folders",
+  "description": "Dropbox API v2 — files and folders. Official API https://www.dropbox.com/developers/documentation/http/documentation. One node; pick operation. Handler: OfficialApiNode + api_spec.json. Content upload/download officially uses content.dropboxapi.com with Dropbox-API-Arg. OfficialApiNode posts JSON to api.dropboxapi.com; large files need upload_session on the content host. Production apps need Dropbox approval. Scoped vs full Dropbox.",
+  "icon": "folder",
+  "tags": [
+    "dropbox",
+    "files"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "51343015-f543-5e20-b05b-be8faaf3c673",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "copy_file",
+          "description": "Overrides config operation. Accepted: copy_file, delete_file, download, move_file, upload, copy_folder, create_folder, delete_folder, list_folder, move_folder, search, listen.",
+          "children": []
+        },
+        {
+          "shortCode": "path",
+          "label": "path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Provider path (Dropbox/Nextcloud) or object key prefix.",
+          "children": []
+        },
+        {
+          "shortCode": "from_path",
+          "label": "from_path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Source path for copy/move.",
+          "children": []
+        },
+        {
+          "shortCode": "to_path",
+          "label": "to_path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Destination path for copy/move.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search query or Drive q=.",
+          "children": []
+        },
+        {
+          "shortCode": "autorename",
+          "label": "autorename",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "autorename for copy/move/create_folder/upload-arg. JSON body ops only (upload header is path-only).",
+          "children": []
+        },
+        {
+          "shortCode": "recursive",
+          "label": "recursive",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `recursive` for operation: list_folder.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `limit` for operation: list_folder.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Bytes for upload. Sent as the raw body to content.dropboxapi.com/2/files/upload. Path goes in Dropbox-API-Arg.",
+          "children": []
+        },
+        {
+          "shortCode": "options",
+          "label": "options",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "search_v2 options {max_results, file_extensions, file_categories, path}. Official SearchV2Arg.options.",
+          "children": []
+        },
+        {
+          "shortCode": "include_media_info",
+          "label": "include_media_info",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "list_folder include_media_info.",
+          "children": []
+        },
+        {
+          "shortCode": "include_deleted",
+          "label": "include_deleted",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "list_folder include_deleted.",
+          "children": []
+        },
+        {
+          "shortCode": "include_non_downloadable_files",
+          "label": "include_non_downloadable_files",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "list_folder include_non_downloadable_files.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "Cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination cursor for list_folder continue / longpoll. Example: from list_folder response.cursor.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "f029e19c-69f5-5868-8fc3-977479a704f2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "be256074-f7fe-578b-8e11-f611ba91284b",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "copy_file",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "copy_file",
+        "delete_file",
+        "download",
+        "move_file",
+        "upload",
+        "copy_folder",
+        "create_folder",
+        "delete_folder",
+        "list_folder",
+        "move_folder",
+        "search",
+        "listen"
+      ]
+    },
+    {
+      "_id": "c15b9d76-e1d8-5684-b990-969521bbbf69",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Dropbox OAuth 2 access token minted outside StudioQuack (Bearer). StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "62b3d056-787c-48cc-8eeb-dddb456e16b2",
+      "shortCode": "cursor",
+      "label": "Cursor",
+      "type": "string",
+      "description": "Pagination cursor for list_folder continue / longpoll.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "0e550624-5dfd-5fc4-8122-5d259761f051",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

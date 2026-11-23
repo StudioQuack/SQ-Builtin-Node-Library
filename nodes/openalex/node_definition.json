@@ -1,0 +1,203 @@
+{
+  "_id": "58e4aa32-8830-4a65-b5df-849823282972",
+  "version": "1.0.0",
+  "name": "OpenAlex Search",
+  "label": "OpenAlex - Open Scholarly Catalog",
+  "description": "Searches the OpenAlex scholarly catalog at https://api.openalex.org for works and authors, or fetches one work by identifier. Purpose: paper/author discovery, citation counts, open-access URLs, and reconstructed abstracts inside a StudioQuack workflow. EXACT accepted input.action values (case-sensitive): 'search_works' (default; GET /works), 'get_work' (GET /works/{id}), 'search_authors' (GET /authors). Official docs (https://developers.openalex.org/api-reference/authentication, updated 2026-08-19): send a free api_key as api_key= or Authorization Bearer; casual keyless queries still work, a free key raises the daily budget 10×. The mailto polite pool was retired in February 2026 — OpenAlex ignores mailto= (https://developers.openalex.org/guides/deprecations); this handler sends api_key= when configured and never sends mailto. The email config param is kept for backward compatibility but is ignored. Concepts is deprecated — filter with topics/keywords. per_page is capped at 100. Default HTTP timeout is 25 seconds. Example input: {\"action\":\"search_works\",\"query\":\"large language models\",\"per_page\":25,\"page\":1}.",
+  "icon": "library_books",
+  "tags": [
+    "openalex",
+    "scholarly",
+    "papers",
+    "research"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "60d627ea-a5a6-4642-90b2-f1be42ccec67",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "JSON object delivered as inputVariables.input (or currentNode.inputList with targetPortValue=input). Purpose: choose the OpenAlex operation and its search/id arguments. Required by action: search_works and search_authors need query (or alias q); get_work needs work_id. Optional: filter, sort, per_page, page. Unknown action fails with output.error listing the three names. Example: {\"action\":\"search_works\",\"query\":\"CRISPR gene editing\",\"filter\":\"publication_year:2024,open_access.is_oa:true\",\"sort\":\"cited_by_count:desc\",\"per_page\":50,\"page\":1}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "action",
+          "label": "Action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which OpenAlex operation to run. EXACT accepted values (case-sensitive): 'search_works' | 'get_work' | 'search_authors'. Omitted, null, or blank → 'search_works'. Any other string returns output.error \"Unknown action: … Use 'search_works', 'get_work', or 'search_authors'.\". search_works full-text-searches works (titles/abstracts). get_work returns one work by OpenAlex ID, DOI URL, or PMID. search_authors searches authors. Example: 'search_works'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "Query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Full-text search string sent as OpenAlex query param `search`. Purpose: required for search_works and search_authors; ignored for get_work. Alias: `q` is used when `query` is omitted or blank (same as Python `query or q`). Accepted: any non-empty UTF-8 string; OpenAlex matches titles and abstracts. Empty/missing on search_works → error 'query is required for search_works action.'; on search_authors → 'query is required for search_authors action.'. Example: 'transformer attention is all you need'.",
+          "children": []
+        },
+        {
+          "shortCode": "work_id",
+          "label": "Work ID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Identifier of a single work for action=get_work. Purpose: path segment of GET /works/{work_id} (URL-encoded by the handler). EXACT accepted forms OpenAlex documents: OpenAlex work id ('W2741809807'), OpenAlex URL ('https://openalex.org/W2741809807'), DOI URL ('https://doi.org/10.1038/s41586-021-03819-2'), or PMID ('pmid:21994122'). Required when action is get_work; ignored otherwise. Missing/blank → error 'work_id is required. Use OpenAlex ID, DOI URL, or PMID.'. Example: 'W2741809807'.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "Filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OpenAlex `filter` query param. Purpose: narrow search_works and search_authors (not sent for get_work). Accepted: OpenAlex filter-expression language; multiple clauses comma-separated. Common tokens: publication_year:YYYY, type:journal-article|book-chapter|proceedings-article|..., open_access.is_oa:true|false, cited_by_count:>N, authorships.institutions.country_code:US. Blank/omitted → the param is omitted. Example: 'publication_year:2024,type:journal-article,open_access.is_oa:true'.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "Sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OpenAlex `sort` query param for search_works only (search_authors does not send sort). Purpose: order work hits. EXACT common values: 'relevance_score:desc' (default when omitted/blank), 'cited_by_count:desc', 'cited_by_count:asc', 'publication_date:desc', 'publication_date:asc', 'publication_year:desc'. Format is field:direction. Example: 'cited_by_count:desc'.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "Per Page",
+          "type": "number",
+          "required": false,
+          "value": "50",
+          "description": "Page size for search_works and search_authors. Purpose: OpenAlex `per_page` query param. Accepted: JSON number or numeric string. Default: 50 when omitted/blank. The handler sends min(per_page, 100); OpenAlex rejects values above 100. Pair with page for offset pagination (this node does not send a cursor). Ignored by get_work. Example: 25.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "Page",
+          "type": "number",
+          "required": false,
+          "value": "1",
+          "description": "1-based page index for search_works and search_authors. Purpose: OpenAlex `page` query param together with per_page. Accepted: JSON number or numeric string. Default: 1 when omitted/blank. OpenAlex offset pagination is limited (deep pages past ~10k hits should use cursor in a later revision — this node only sends page). Ignored by get_work. Example: 2.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3ad35c7c-4331-44ee-90ac-ec69e4b04d38",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Single OUTPUT port `output` (the only reply key). Purpose: success payload or failure object. Success always includes status='ok' and action. search_works adds query, total_results, works_returned, page, works[]. get_work adds work (raw OpenAlex work JSON). search_authors adds query, total_results, authors_returned, authors[]. Never contains api_key. Example success: {\"status\":\"ok\",\"action\":\"search_works\",\"query\":\"CRISPR\",\"total_results\":12000,\"works_returned\":50,\"page\":1,\"works\":[]}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Success marker. EXACT accepted value on the happy path: 'ok'. Absent when the handler failed (failures use the error field instead of status). Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "works_returned",
+          "label": "Works Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Count of shaped work objects in this response (works.length), not the catalog total. Present for search_works. Accepted: integer 0–100. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "total_results",
+          "label": "Total Results",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "OpenAlex meta.count — total matching entities in the catalog, not this page. Present for search_works and search_authors. Accepted: non-negative integer (may exceed 10k). Example: 184320.",
+          "children": []
+        },
+        {
+          "shortCode": "works",
+          "label": "Works",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Array of shaped work objects for search_works (not raw OpenAlex entities). Each object keys: openalex_id (string URL), doi (https://doi.org/ prefix stripped), title, authors[] (display names), institutions[] (unique, first 10), publication_date, publication_year (number or null), source (primary_location.source.display_name), type, cited_by_count, is_oa, oa_url, topics[] (first 5 display_name), keywords[] (first 10 display_name), abstract (reconstructed from abstract_inverted_index, max 2000 chars), referenced_works_count. Example item: {\"openalex_id\":\"https://openalex.org/W2741809807\",\"doi\":\"10.1038/nature12373\",\"title\":\"A paper\",\"authors\":[\"Ada Lovelace\"],\"cited_by_count\":100}.",
+          "children": []
+        },
+        {
+          "shortCode": "authors",
+          "label": "Authors",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Array of shaped author objects for search_authors. Each object keys: openalex_id, display_name, works_count, cited_by_count, h_index (from summary_stats.h_index), affiliations[] (first 5 institution.display_name), topics[] (first 5 display_name). Absent on search_works and get_work. Example item: {\"openalex_id\":\"https://openalex.org/A5023888391\",\"display_name\":\"Geoffrey Hinton\",\"works_count\":200,\"cited_by_count\":400000,\"h_index\":150,\"affiliations\":[\"University of Toronto\"],\"topics\":[\"Artificial intelligence\"]}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "7b74cf33-e313-4960-bfbe-1e229ddcb0ac",
+      "shortCode": "api_key",
+      "label": "API Key (Optional)",
+      "type": "password",
+      "description": "OpenAlex API key from https://openalex.org/settings/api. Purpose: authenticate list/search calls (recommended for any real scale; official docs last updated 2026-08-19). Type: password. EXACT accepted: a non-blank API key string, sent as the `api_key` query param. Blank/omitted: the request is unauthenticated (casual keyless budget). The deprecated email config param is ignored and is never sent as mailto=. Prefer a free api_key. Never logged or returned on output. Example: 'oa-xxxxxxxx' (placeholder — paste the real key on the instance).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f743b5ec-221d-465c-a695-53f2a42b6d89",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP request timeout in seconds for each OpenAlex GET (request timeout on the shared no-cookie client). Purpose: bound a hung api.openalex.org call. Accepted: positive number or numeric string. Default: 25. 0, negative, or blank fall back to 25. Example: 40. Keep at or below the daemon sandbox request budget so the node fails first with 'OpenAlex API Error: …' rather than the whole job being killed.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-03-19T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-03-19T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

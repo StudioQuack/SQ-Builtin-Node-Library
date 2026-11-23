@@ -1,0 +1,103 @@
+{
+  "baseUrl": "https://api.miro.com/v2",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "board_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/boards",
+      "bodyFrom": [
+        "name",
+        "description",
+        "policy"
+      ]
+    },
+    "board_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/boards/{board_id}",
+      "required": [
+        "board_id"
+      ]
+    },
+    "board_update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/boards/{board_id}",
+      "required": [
+        "board_id"
+      ],
+      "bodyFrom": [
+        "name",
+        "description"
+      ]
+    },
+    "board_copy": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/boards",
+      "required": [
+        "copy_from"
+      ],
+      "queryFrom": [
+        "copy_from"
+      ],
+      "bodyFrom": [
+        "name"
+      ]
+    },
+    "board_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/boards",
+      "queryFrom": [
+        "limit",
+        "offset"
+      ]
+    },
+    "item_create_shape": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/boards/{board_id}/shapes",
+      "required": [
+        "board_id"
+      ],
+      "bodyFrom": [
+        "data",
+        "position",
+        "geometry"
+      ]
+    },
+    "item_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/boards/{board_id}/items/{item_id}",
+      "required": [
+        "board_id",
+        "item_id"
+      ]
+    },
+    "item_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/boards/{board_id}/items",
+      "required": [
+        "board_id"
+      ],
+      "queryFrom": [
+        "limit",
+        "cursor"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

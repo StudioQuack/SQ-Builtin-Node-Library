@@ -1,0 +1,674 @@
+{
+  "_id": "4f682e07-d874-4d10-abb3-0174ca65ec19",
+  "version": "2.0.0",
+  "name": "OpenAI Models",
+  "label": "OpenAI Models",
+  "description": "Multimodal OpenAI LLM provider on the canonical v2 agent model-port contract (INPUT llm_input → OUTPUT llm_output). The handler reads {messages, tools, inputFiles?, stream?} from llm_input, merges instance configurationParameters, and calls OpenAI Chat Completions — or Images / TTS / STT when the selected model is in those families. Request-level inputFiles fold onto the last user message; generated files also surface as llm_output.outputFiles. Supports text plus image (vision) plus audio (input and output) plus PDF document blocks on chat models; image generation (gpt-image-2 current, gpt-image-1.5/gpt-image-1/gpt-image-1-mini; dall-e-3/dall-e-2 retired from the API on 2026-05-12 — kept for existing graphs); TTS (tts-1, tts-1-hd, gpt-4o-mini-tts); STT (whisper-1, gpt-4o-transcribe*). Reasoning models (o1*/o3*/o4*/gpt-5* with 'reasoning' in the id) are called on the Responses API (POST /v1/responses) with reasoning:{effort, summary:'auto'} + include:['reasoning.encrypted_content'] — Chat Completions never streams their reasoning, so this is what makes thinking deltas appear at all; a model the Responses endpoint refuses falls back to Chat Completions once (answer still streams, reasoning summaries stay unavailable there). Non-reasoning chat models stay on Chat Completions; sampling knobs are stripped and reasoning_effort/verbosity injected either way. Default model gpt-5.6-sol (gpt-5.6 alias also routes to Sol). When stream is true (default), the handler emits helper emitPartial(\"thinking\", delta) for reasoning/thinking token deltas and emitPartial(\"answer\", delta) for content deltas; thoughts also land on llm_output.result.thoughts and the legacy .thinking mirror; finish_reason, usage, and tool_calls are assembled after the stream ends. API key is a bound StudioQuack secret — never a literal in the graph JSON, never logged. templateId: 1c8b0d45-1d10-4f2e-844c-2318af96b354. Purpose: the handler reads this field to drive OpenAI Models. Example: \"sample\". Data protection: prompts and context leave this host to OpenAI (https://openai.com/policies/row-terms-of-use). GDPR/data-processing notice: do not send personal data without a lawful basis and a provider DPA. Secrets belong only in configurationParameters and are never logged. Docs: https://developers.openai.com/api/docs/models .",
+  "icon": "psychology",
+  "tags": [
+    "openai",
+    "llm",
+    "gpt",
+    "chat",
+    "multimodal"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "c525bb64-f52e-4829-8bf0-f1fe33aa6b42",
+  "ports": [
+    {
+      "_id": "2b0ef5f6-90e6-4dae-a066-e66e1b167a60",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "Canonical v2 LLM request — same wire format as Local LLM and the AI Agent model FUNCTION port so any of those nodes can connect unchanged. The handler reads getInputValuesByPortValue('llm_input'); if that list is empty it scans all inputs for an object whose value contains messages (v1 fallback). REQUIRED: missing/empty raises PROVIDER_ERROR 'No input received on \\'llm_input\\' port.'. Object shape: {messages, tools?, inputFiles?, stream?, streaming?, options?}. Per-call stream/streaming (top-level or options.stream) overrides the instance config pair. response_format and modalities are NOT in this payload — they are instance configurationParameters. Example: {\"messages\":[{\"role\":\"user\",\"content\":\"What is 2+2?\"}],\"tools\":[]}. Purpose: the handler reads this field to drive llm_input. Accepted: type INPUT; omit to use default \"llm_input\".",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Conversation the OpenAI API must complete. Purpose: converted to OpenAI chat messages (multimodal files stay inside content blocks). Accepted value: list of {role, content, tool_calls?, thinking?, thoughts?, tool_call_id?, name?}. role: system | user | assistant | tool. content: string OR list of typed blocks {type:'text', text} | {type:'image'|'audio'|'video'|'document', mime_type, source:'base64'|'url'|'file_id', data, name?} | {type:'tool_use', id, name, input} | {type:'tool_result', tool_use_id, content}. Base64 data may include a data:<mime>;base64, prefix (stripped before send). Omit or [] is valid for STT/TTS/image families that derive the prompt from concatenated text. Non-list values are treated as []. Example: [{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"Describe this.\"},{\"type\":\"image\",\"mime_type\":\"image/png\",\"source\":\"base64\",\"data\":\"iVBOR...\"}]}].",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Tool definitions translated to OpenAI function-tools ({type:'function', function:{name, description, parameters}}). Purpose: enable tool_calls on chat models. Accepted value: list of {name, description, request:<JSON Schema>}. request.properties types are normalised (list→array, dict→object, int→integer, bool→boolean). Omit or [] → no tools on the API call. Ignored for image/TTS/STT model families. Example: [{\"name\":\"get_weather\",\"description\":\"Current weather for a city.\",\"request\":{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"}},\"required\":[\"city\"]}}].",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model.",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "File kind. EXACT accepted values: image | document | audio | video.",
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png.",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "string",
+              "required": false,
+              "value": "base64",
+              "description": "Where data comes from. EXACT accepted values: base64 | url. Default: base64.",
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Base64-encoded payload (when source=base64) or absolute URL (when source=url).",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name.",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8291a161-1601-4105-8f4d-3fc00c017ed2",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "Canonical v2 LLM response envelope {result: <assistant payload>, outputFiles?: [...]} on success. Always one ResultItem on this port. outputFiles mirrors result.output_files when that list is non-empty and is omitted when empty. During streaming, thinking/answer deltas were already published via helper emitPartial; this object is the assembled end state. Example: {\"result\":{\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"4\"}],\"finish_reason\":\"stop\",\"usage\":{\"prompt_tokens\":12,\"completion_tokens\":1,\"total_tokens\":13}}}. Purpose: the handler reads this field to drive llm_output. Accepted: type OUTPUT; omit to use default \"llm_output\". result is {role, content[], tool_calls?, thoughts?, thinking?, output_files?, finish_reason?, usage?}. Failures raise PROVIDER_ERROR (OpenAiChat.errorResponse / LlmAssistant.errorResponse). Secrets are redacted.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Assistant payload on success: {role:'assistant', content:[{type:'text', text:string}], tool_calls?:[{id, name, args, type:'tool_call'}], thoughts?:[{type:'thinking'|'reasoning_summary', text:string, signature?:string}], thinking?:[{type:'thinking', thinking:string}] (legacy mirror of thoughts for v1 agents), output_files?:[{type:'image'|'audio'|'document', mime_type, source:'base64', data, name?}] (image-gen / TTS / chat-audio), finish_reason?: 'stop'|'length'|'tool_calls'|'content_filter'|'error'|OpenAI-specific, usage?:{prompt_tokens, completion_tokens, total_tokens, reasoning_tokens?}}. thoughts is filled from streamed reasoning summaries and/or usage.reasoning_tokens (e.g. {type:'reasoning_summary', text:'[Reasoning tokens used: 64]'}). When streaming, the same thinking text was also sent live as emitPartial(\"thinking\", delta) and content as emitPartial(\"answer\", delta); tool_calls/finish_reason/usage are only complete here at the end. Failures raise PROVIDER_ERROR (OpenAiChat.errorResponse) instead of an error envelope on this field. Never contains the raw api_key. Example success: {\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"The order is packed.\"}],\"thoughts\":[{\"type\":\"thinking\",\"text\":\"Checking warehouse status…\"}],\"thinking\":[{\"type\":\"thinking\",\"thinking\":\"Checking warehouse status…\"}],\"finish_reason\":\"stop\",\"usage\":{\"prompt_tokens\":80,\"completion_tokens\":12,\"total_tokens\":92}}. Purpose: the handler reads this field to drive result. Accepted: type object; omit to use default \"\".",
+          "children": [
+            {
+              "shortCode": "role",
+              "label": "role",
+              "type": "string",
+              "required": false,
+              "value": "assistant",
+              "description": "Always 'assistant' on a completed turn.",
+              "children": []
+            },
+            {
+              "shortCode": "content",
+              "label": "content",
+              "type": "list",
+              "required": false,
+              "value": "[]",
+              "description": "Typed content blocks: {type:'text', text} plus media/tool blocks. The final answer text is the concatenation of text blocks.",
+              "children": []
+            },
+            {
+              "shortCode": "tool_calls",
+              "label": "tool_calls",
+              "type": "list",
+              "required": false,
+              "value": "[]",
+              "description": "Tool calls the model requested: {id, name, arguments}. Present only when the model calls tools.",
+              "children": []
+            },
+            {
+              "shortCode": "thoughts",
+              "label": "thoughts",
+              "type": "list",
+              "required": false,
+              "value": "[]",
+              "description": "Reasoning trace entries {text} when the model exposes chain-of-thought.",
+              "children": []
+            },
+            {
+              "shortCode": "thinking",
+              "label": "thinking",
+              "type": "list",
+              "required": false,
+              "value": "[]",
+              "description": "Thinking blocks {type:'thinking', thinking} mirroring thoughts for UI rendering.",
+              "children": []
+            },
+            {
+              "shortCode": "output_files",
+              "label": "output_files",
+              "type": "file",
+              "required": false,
+              "value": "",
+              "description": "Generated files {kind, mime_type, source, data, name} (e.g. audio out).",
+              "children": [
+                {
+                  "shortCode": "kind",
+                  "label": "kind",
+                  "type": "string",
+                  "required": false,
+                  "value": "",
+                  "description": "File kind. EXACT accepted values: image | document | audio | video.",
+                  "children": []
+                },
+                {
+                  "shortCode": "mime_type",
+                  "label": "mime_type",
+                  "type": "string",
+                  "required": false,
+                  "value": "",
+                  "description": "RFC 1521 media type, e.g. application/pdf, image/png.",
+                  "children": []
+                },
+                {
+                  "shortCode": "source",
+                  "label": "source",
+                  "type": "string",
+                  "required": false,
+                  "value": "base64",
+                  "description": "Where data comes from. EXACT accepted values: base64 | url. Default: base64.",
+                  "children": []
+                },
+                {
+                  "shortCode": "data",
+                  "label": "data",
+                  "type": "string",
+                  "required": false,
+                  "value": "",
+                  "description": "Base64-encoded payload (when source=base64) or absolute URL (when source=url).",
+                  "children": []
+                },
+                {
+                  "shortCode": "name",
+                  "label": "name",
+                  "type": "string",
+                  "required": false,
+                  "value": "",
+                  "description": "Original filename, surfaced as the upload name.",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "shortCode": "finish_reason",
+              "label": "finish_reason",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Provider finish reason (stop, tool_calls, length, ...).",
+              "children": []
+            },
+            {
+              "shortCode": "usage",
+              "label": "usage",
+              "type": "object",
+              "required": false,
+              "value": "{}",
+              "description": "Token usage {prompt_tokens, completion_tokens, total_tokens, reasoning_tokens?} when the provider reports it.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio.",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "File kind. EXACT accepted values: image | document | audio | video.",
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png.",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "string",
+              "required": false,
+              "value": "base64",
+              "description": "Where data comes from. EXACT accepted values: base64 | url. Default: base64.",
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Base64-encoded payload (when source=base64) or absolute URL (when source=url).",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "streaming",
+          "label": "streaming",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Live stream channel, present when the request sets stream/streaming true. While `result` assembles, the node emits deltas as {channel, delta} frames: channel 'thinking' carries reasoning/thinking deltas, channel 'answer' carries content deltas. A function-port caller (e.g. AI Agent model port) listens to this channel to render the stream live; the final assembled payload always arrives in `result`.",
+          "children": [
+            {
+              "shortCode": "channel",
+              "label": "channel",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Delta channel. EXACT values: thinking | answer.",
+              "children": [],
+              "_id": "7e7a54ae-755f-4507-b40a-9feb5b017cb4"
+            },
+            {
+              "shortCode": "delta",
+              "label": "delta",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Incremental text piece for the channel. Append in arrival order.",
+              "children": [],
+              "_id": "25be4402-bd74-46f7-a016-c41459eb8517"
+            }
+          ],
+          "_id": "41856366-3f5b-47b8-b85c-824c9b06414d"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "11bdaba5-9380-4649-8314-e723b6d49520",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "select",
+      "description": "OpenAI model identifier sent as chat.completions/images/audio model=. Purpose: selects the API family and parameter whitelist. EXACT accepted values are the options[] list (gpt-5.6-sol, gpt-5.6-terra, gpt-5.6-luna, gpt-5.6, gpt-5.5, gpt-5.5-pro, gpt-5.5-mini, gpt-5.5-realtime, gpt-5.4, gpt-5.4-mini, gpt-5.4-nano, gpt-5.2, gpt-5.2-pro, gpt-5.1, gpt-5, gpt-5-pro, gpt-4.1, gpt-4.1-mini, gpt-4o, gpt-4o-mini, gpt-4o-audio-preview, gpt-4o-realtime-preview, gpt-4-turbo, gpt-4, o3, o3-pro, o3-mini, o4-mini, gpt-image-2, gpt-image-1.5, gpt-image-1, gpt-image-1-mini, dall-e-3, dall-e-2, whisper-1, gpt-4o-transcribe, gpt-4o-mini-transcribe, tts-1, tts-1-hd, gpt-4o-mini-tts). Chat/reasoning family: gpt-5.6-sol / gpt-5.6-terra / gpt-5.6-luna (current frontier; gpt-5.6 alias → Sol), previous gpt-5.5*/gpt-5.4*/gpt-5.2*/gpt-5.1/gpt-5*, gpt-4.1*, gpt-4o*, gpt-4*, o3*, o4*. Image generation: gpt-image-2 (current), gpt-image-1.5, gpt-image-1, gpt-image-1-mini; dall-e-3/dall-e-2 retired 2026-05-12 (kept so existing graphs still select). TTS: tts-1* / *-tts → output_files via audio.speech.create. STT: whisper-1 / *transcribe* → text via audio.transcriptions. Reasoning detection: id starts with o1/o3/o4/o- or contains 'reasoning' or starts with gpt-5 — sampling (temperature, top_p, penalties, logprobs, stop) is stripped; reasoning_effort + verbosity are injected. gpt-5* and computer-use* also strip stop. Empty/missing → PROVIDER_ERROR 'Missing model configuration.'. Default: 'gpt-5.6-sol'. Docs: https://developers.openai.com/api/docs/models . Example: 'gpt-5.6-terra'.",
+      "value": "gpt-5.6-sol",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "gpt-5.6-sol",
+        "gpt-5.6-terra",
+        "gpt-5.6-luna",
+        "gpt-5.6",
+        "gpt-5.5",
+        "gpt-5.5-pro",
+        "gpt-5.5-mini",
+        "gpt-5.5-realtime",
+        "gpt-5.4",
+        "gpt-5.4-mini",
+        "gpt-5.4-nano",
+        "gpt-5.2",
+        "gpt-5.2-pro",
+        "gpt-5.1",
+        "gpt-5",
+        "gpt-5-pro",
+        "gpt-4.1",
+        "gpt-4.1-mini",
+        "gpt-4o",
+        "gpt-4o-mini",
+        "gpt-4o-audio-preview",
+        "gpt-4o-realtime-preview",
+        "gpt-4-turbo",
+        "gpt-4",
+        "o3",
+        "o3-pro",
+        "o3-mini",
+        "o4-mini",
+        "gpt-image-2",
+        "gpt-image-1.5",
+        "gpt-image-1",
+        "gpt-image-1-mini",
+        "dall-e-3",
+        "dall-e-2",
+        "whisper-1",
+        "gpt-4o-transcribe",
+        "gpt-4o-mini-transcribe",
+        "tts-1",
+        "tts-1-hd",
+        "gpt-4o-mini-tts"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "4f0cc78e-cf8a-4ba6-9b2e-e10ec62b2dad",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "OpenAI API key resolved just-in-time from a StudioQuack secret binding (never a committed literal). Purpose: authenticates the OpenAI SDK client. Accepted values: secret reference / password field; non-empty string after resolution. Empty/missing → PROVIDER_ERROR 'Missing api_key configuration.'. Obtain at platform.openai.com → Settings → API Keys; set billing limits first. NEVER log this value; it is added to the daemon redaction set. Example binding: $secretRef of an org secret named 'openai-prod'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5ba37f6f-177d-4f95-bbe0-3e9f3c9c8a0c",
+      "shortCode": "temperature",
+      "label": "Temperature",
+      "type": "number",
+      "description": "Sampling temperature sent as temperature. Purpose: randomness of chat completions. Accepted values: number 0.0–2.0. Default: 1.0. Non-numeric is skipped. STRIPPED (not sent) for reasoning models (o1/o3/o4/o- prefixes or 'reasoning' in the id). Ignored for image/TTS/STT families. Example: 0.2.",
+      "value": "1.0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9b0cc772-a209-4280-8170-2c0f3c51805a",
+      "shortCode": "top_p",
+      "label": "Top P",
+      "type": "number",
+      "description": "Nucleus sampling sent as top_p. Purpose: keep the smallest token set with cumulative probability ≥ top_p. Accepted values: number 0.0–1.0. Default: 1.0. STRIPPED for reasoning models. Example: 0.9.",
+      "value": "1.0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "90f9c664-b215-4e73-8d1e-c8e8bc5291f1",
+      "shortCode": "max_completion_tokens",
+      "label": "Max Completion Tokens",
+      "type": "number",
+      "description": "Hard cap on completion tokens (max_completion_tokens). Purpose: bound cost/latency. Replaces the deprecated max_tokens, which this node never sends. Accepted values: positive integers. Empty → omitted (OpenAI default). Example: 2048.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d4aea085-3814-41c9-b3c8-06901c548abc",
+      "shortCode": "frequency_penalty",
+      "label": "Frequency Penalty",
+      "type": "number",
+      "description": "Frequency penalty sent as frequency_penalty. Purpose: penalize repeated tokens by count. Accepted values: -2.0–2.0. Empty → omitted. STRIPPED for reasoning models. Example: 0.0.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "763bcfa7-49a4-4349-acbc-c1e5dd021e0a",
+      "shortCode": "presence_penalty",
+      "label": "Presence Penalty",
+      "type": "number",
+      "description": "Presence penalty sent as presence_penalty. Purpose: penalize tokens once they have appeared. Accepted values: -2.0–2.0. Empty → omitted. STRIPPED for reasoning models. Example: 0.0.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f4d105f0-85cf-4fd4-beb7-459c8102b31a",
+      "shortCode": "stop",
+      "label": "Stop Sequences",
+      "type": "string",
+      "description": "Stop sequences sent as stop. Purpose: halt generation when a sequence is emitted. Accepted values: comma-separated strings (split, trimmed, max 4) or a single string. STRIPPED for reasoning models and for ids starting with gpt-5 or computer-use. Empty → omitted. Example: 'END,\\nUser:'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "30ed17e3-131e-484d-9124-343e3ccf2f90",
+      "shortCode": "n",
+      "label": "Completions Count",
+      "type": "number",
+      "description": "Number of completions (n). Purpose: request multiple samples. Accepted values: positive integers. Default: 1. The handler still returns only the first choice on llm_output. For gpt-image-1, n is 1–10. Example: 1.",
+      "value": "1",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f49e8aaf-9b28-407d-b641-08665c03f760",
+      "shortCode": "reasoning_effort",
+      "label": "Reasoning Effort",
+      "type": "select",
+      "description": "Reasoning effort sent only for reasoning models (o1*/o3*/o4*/o- / ids containing 'reasoning', including gpt-5*). Purpose: trade hidden reasoning tokens vs. latency. EXACT accepted values: 'none' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh' | 'max'. GPT-5.6 supports none/low/medium/high/xhigh/max (default medium); 'minimal' is accepted for earlier gpt-5* families. Ignored on non-reasoning chat/image/TTS/STT models. Docs: https://developers.openai.com/api/docs/guides/reasoning . Example: 'high'.",
+      "value": "medium",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "none",
+        "minimal",
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "f29d6c8f-9c6c-4da7-8a3e-924da05f121a",
+      "shortCode": "verbosity",
+      "label": "Verbosity",
+      "type": "string",
+      "description": "Reasoning verbosity sent only for reasoning models. Purpose: how much reasoning to surface. Accepted values: 'low' | 'medium' | 'high'. Empty → omitted. Example: 'low'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5ffff6b1-3320-4475-887f-e1398d1838d1",
+      "shortCode": "response_format",
+      "label": "Response Format",
+      "type": "string",
+      "description": "Chat Completions response_format (instance-level; the agent does not override per call). Purpose: force JSON or a schema. Accepted values: JSON object string (e.g. {\"type\":\"json_object\"} or a json_schema object); literal 'json' → {type:'json_object'}; literal 'text' → {type:'text'}. Default: 'text'. Invalid JSON that is not json/text is skipped. Not accepted on gpt-image-1 (always b64_json). Example: {\"type\":\"json_object\"}.",
+      "value": "text",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "175554da-b250-479b-a6ac-7ccf8cd83be7",
+      "shortCode": "modalities",
+      "label": "Output Modalities",
+      "type": "string",
+      "description": "Chat output modalities (instance-level). Purpose: request text and/or audio output on gpt-4o-audio-* models. Accepted values: comma-separated or JSON array; tokens filtered to 'text' and 'audio' (case-insensitive). Default: 'text'. Empty after filter → omitted. Presence of 'audio' (or a set audio config) forces streaming so audio deltas can be collected. Example: 'text,audio'.",
+      "value": "text",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "11d66641-bc9e-483c-b16d-11ca99ba69b2",
+      "shortCode": "audio",
+      "label": "Audio Output Config",
+      "type": "string",
+      "description": "JSON object for audio output when modalities includes audio. Purpose: voice and container. Accepted value: JSON object, e.g. {\"voice\":\"alloy\",\"format\":\"wav\"}. Default: that object. Invalid JSON → omitted. Example: {\"voice\":\"alloy\",\"format\":\"wav\"}.",
+      "value": "{\"voice\":\"alloy\",\"format\":\"wav\"}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a6f89909-7264-44e5-b097-482550b560d5",
+      "shortCode": "parallel_tool_calls",
+      "label": "Parallel Tool Calls",
+      "type": "boolean",
+      "description": "Allow multiple tool calls in one assistant turn. Purpose: sent as parallel_tool_calls=true only when this is true AND tools are present. Accepted values: boolean or true|1|yes. Default stored value 'false' means omit the field (OpenAI default). Example: true.",
+      "value": "false",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a7c89ebf-42ee-4322-b4e9-9ad82d044f0e",
+      "shortCode": "prompt_cache_key",
+      "label": "Prompt Cache Key",
+      "type": "string",
+      "description": "Stable string key used to bucket OpenAI prompt-prefix caches (prompt_cache_key). Purpose: reuse a long system prompt across calls. Accepted values: non-empty string. Empty → omitted. Example: 'support-agent-sys-v2'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "955e648f-12af-4c3d-b8b6-714626d94d3f",
+      "shortCode": "seed",
+      "label": "Seed",
+      "type": "number",
+      "description": "Best-effort determinism seed (seed). Purpose: reproduce a sample. Accepted values: integers. Empty/non-numeric → omitted. OpenAI does not guarantee bit-identical output. Example: 7.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7044c9c3-1c5b-43de-898e-fd4583fa6258",
+      "shortCode": "service_tier",
+      "label": "Service Tier",
+      "type": "select",
+      "description": "OpenAI service_tier. Purpose: select latency/capacity class. EXACT accepted values: 'auto' | 'default' | 'flex' | 'priority' | 'fast'. Fast mode (renamed from Priority on 2026-07-30) is requested with 'fast' or 'priority' (GPT-5.6 and earlier responses still report 'priority'). Default: 'auto'. Empty string is not sent. Docs: https://developers.openai.com/api/docs/guides/fast-mode . Example: 'fast'.",
+      "value": "auto",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "auto",
+        "default",
+        "flex",
+        "priority",
+        "fast"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "3714351c-94e2-4a37-875e-81dcc6f3b620",
+      "shortCode": "safety_identifier",
+      "label": "Safety Identifier",
+      "type": "string",
+      "description": "Optional identifier used by OpenAI safety classifiers to disambiguate end users (safety_identifier). Purpose: forwarded as a string. Accepted values: non-empty string. Empty → omitted. Do not put secrets or full PHI; use an opaque id. Example: 'enduser-42'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "76d2d2ba-ae4e-4ce3-b35c-eac98bb2b1bb",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether this provider requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Input-port stream/streaming overrides this config. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cuser": "c525bb64-f52e-4829-8bf0-f1fe33aa6b42",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "stateful": false,
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "c525bb64-f52e-4829-8bf0-f1fe33aa6b42",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,842 @@
+{
+  "_id": "15f0f286-2bc9-5bd5-a5a1-aed5e1701252",
+  "version": "1.0.0",
+  "name": "DHL",
+  "label": "DHL MyDHL + Unified Tracking",
+  "description": "MyDHL REST express.api.dhl.com/mydhlapi for shipment_create and rate_get (Basic api_key:api_secret; the Express account number goes in the accounts body). tracking_get uses DHL Unified Tracking GET https://api-eu.dhl.com/track/shipments with DHL-API-Key from tracking_api_key (op-level Authorization extraHeader replaces MyDHL Basic on that call). Docs: https://developer.dhl.com/api-reference/shipment-tracking. Shipment create is account-gated.",
+  "icon": "local_shipping",
+  "tags": [
+    "dhl",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "56fc9a1c-2543-52b5-81ad-82c0832b4ac4",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "tracking_get",
+          "description": "Official API verb. EXACT: tracking_get | shipment_create | rate_get. Blank uses configurationParameters.operation. tracking_get is Unified Tracking (not MyDHL). trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "trackingNumber",
+          "label": "trackingNumber",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DHL Unified Tracking query trackingNumber (required for tracking_get). Replaces the former MyDHL path param shipmentTrackingNumber.",
+          "children": []
+        },
+        {
+          "shortCode": "service",
+          "label": "service",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Unified Tracking query service (express, ecommerce, parcel-de, freight, …). Recommended by DHL; omit only when unknown.",
+          "children": []
+        },
+        {
+          "shortCode": "originCountryCode",
+          "label": "originCountryCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `originCountryCode` for operation: tracking_get.",
+          "children": []
+        },
+        {
+          "shortCode": "requesterCountryCode",
+          "label": "requesterCountryCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `requesterCountryCode` for operation: tracking_get.",
+          "children": []
+        },
+        {
+          "shortCode": "recipientPostalCode",
+          "label": "recipientPostalCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Unified Tracking query recipientPostalCode for tracking_get.",
+          "children": []
+        },
+        {
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Unified Tracking language (ISO 639-1) for tracking_get. Example: en.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Unified Tracking pagination offset for tracking_get.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Unified Tracking page size for tracking_get.",
+          "children": []
+        },
+        {
+          "shortCode": "plannedShippingDateAndTime",
+          "label": "plannedShippingDateAndTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "MyDHL planned ship datetime for shipment_create and rate_get. Example: 2026-10-14T12:00:00 GMT+00:00.",
+          "children": []
+        },
+        {
+          "shortCode": "productCode",
+          "label": "productCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "MyDHL product code (e.g. P, U, N) for shipment_create and rate_get.",
+          "children": []
+        },
+        {
+          "shortCode": "localProductCode",
+          "label": "localProductCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional MyDHL local product code.",
+          "children": []
+        },
+        {
+          "shortCode": "accounts",
+          "label": "accounts",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "MyDHL accounts: [{typeCode:shipper, number}]. Required on shipment_create and rate_get.",
+          "children": []
+        },
+        {
+          "shortCode": "customerDetails",
+          "label": "customerDetails",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "MyDHL customerDetails with shipperDetails and receiverDetails (postalAddress + contactInformation). Required on shipment_create and rate_get.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "MyDHL shipment content: packages[], isCustomsDeclarable, description, incoterm, unitOfMeasurement. Required on shipment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "pickup",
+          "label": "pickup",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "MyDHL pickup block, e.g. {\"isRequested\":false}. shipment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "valueAddedServices",
+          "label": "valueAddedServices",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "MyDHL VAS codes for shipment_create / rate_get.",
+          "children": []
+        },
+        {
+          "shortCode": "outputImageProperties",
+          "label": "outputImageProperties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "MyDHL label image options for shipment_create (printerDPI, encodingFormat, imageOptions).",
+          "children": []
+        },
+        {
+          "shortCode": "customerReferences",
+          "label": "customerReferences",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "MyDHL customerReferences for shipment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "getRateEstimates",
+          "label": "getRateEstimates",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "When true, shipment_create also returns rate estimates.",
+          "children": []
+        },
+        {
+          "shortCode": "estimatedDeliveryDate",
+          "label": "estimatedDeliveryDate",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "MyDHL estimatedDeliveryDate request block for shipment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "unitOfMeasurement",
+          "label": "unitOfMeasurement",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "rate_get unit: metric | imperial.",
+          "children": []
+        },
+        {
+          "shortCode": "packages",
+          "label": "packages",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "rate_get packages [{weight, dimensions}]. Official packages array.",
+          "children": []
+        },
+        {
+          "shortCode": "isCustomsDeclarable",
+          "label": "isCustomsDeclarable",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "rate_get customs flag.",
+          "children": []
+        },
+        {
+          "shortCode": "nextBusinessDay",
+          "label": "nextBusinessDay",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "rate_get nextBusinessDay.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7968b98f-6a77-5bab-b2fd-def8287de253",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a397618c-3801-5f68-851d-8bf194d6fc89",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: tracking_get | shipment_create | rate_get. trigger does not open a socket.",
+      "value": "tracking_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "tracking_get",
+        "shipment_create",
+        "rate_get"
+      ],
+      "filterRules": [
+        {
+          "when": "tracking_get",
+          "targets": [
+            {
+              "param": "tracking_api_key",
+              "visible": true
+            },
+            {
+              "param": "recipientPostalCode",
+              "visible": true
+            },
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "offset",
+              "visible": true
+            },
+            {
+              "param": "requesterCountryCode",
+              "visible": true
+            },
+            {
+              "param": "language",
+              "visible": true
+            },
+            {
+              "param": "originCountryCode",
+              "visible": true
+            },
+            {
+              "param": "service",
+              "visible": true
+            },
+            {
+              "param": "trackingNumber",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "shipment_create",
+          "targets": [
+            {
+              "param": "valueAddedServices",
+              "visible": true
+            },
+            {
+              "param": "getRateEstimates",
+              "visible": true
+            },
+            {
+              "param": "plannedShippingDateAndTime",
+              "visible": true
+            },
+            {
+              "param": "customerDetails",
+              "visible": true
+            },
+            {
+              "param": "productCode",
+              "visible": true
+            },
+            {
+              "param": "outputImageProperties",
+              "visible": true
+            },
+            {
+              "param": "content",
+              "visible": true
+            },
+            {
+              "param": "customerReferences",
+              "visible": true
+            },
+            {
+              "param": "estimatedDeliveryDate",
+              "visible": true
+            },
+            {
+              "param": "accounts",
+              "visible": true
+            },
+            {
+              "param": "pickup",
+              "visible": true
+            },
+            {
+              "param": "localProductCode",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "rate_get",
+          "targets": [
+            {
+              "param": "valueAddedServices",
+              "visible": true
+            },
+            {
+              "param": "plannedShippingDateAndTime",
+              "visible": true
+            },
+            {
+              "param": "customerDetails",
+              "visible": true
+            },
+            {
+              "param": "productCode",
+              "visible": true
+            },
+            {
+              "param": "accounts",
+              "visible": true
+            },
+            {
+              "param": "localProductCode",
+              "visible": true
+            },
+            {
+              "param": "isCustomsDeclarable",
+              "visible": true
+            },
+            {
+              "param": "packages",
+              "visible": true
+            },
+            {
+              "param": "unitOfMeasurement",
+              "visible": true
+            },
+            {
+              "param": "nextBusinessDay",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "28fa4c4f-f3c9-5257-bad8-872200684400",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "MyDHL API key issued on the DHL Developer Portal app (shipment_create / rate_get). Sent as the Basic auth username (api_key:api_secret). Example: demo-key-placeholder. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5b3c47f3-4377-42ce-8836-035cabe216e5",
+      "shortCode": "api_secret",
+      "label": "Api Secret",
+      "type": "password",
+      "description": "MyDHL API secret paired with api_key on the DHL Developer Portal app. Sent as the Basic auth password (api_key:api_secret) for shipment_create / rate_get. Example: demo-secret-placeholder. The DHL Express account number is NOT an auth value; pass it in the accounts body list ([{\"typeCode\":\"shipper\",\"number\":\"123456789\"}]). Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6b2182a8-0c14-4d4a-8ca3-7e1a8e73dc31",
+      "shortCode": "tracking_api_key",
+      "label": "Tracking Api Key",
+      "type": "password",
+      "description": "DHL Developer Portal consumer key for Unified Tracking. Sent as DHL-API-Key (and as op-level Authorization override so MyDHL Basic is not used on tracking_get). Never log.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "78e2ece1-8a63-41ca-9838-5a06348a711b",
+      "shortCode": "recipientPostalCode",
+      "label": "Recipientpostalcode",
+      "type": "string",
+      "description": "Unified Tracking query recipientPostalCode for tracking_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3c81eb13-66db-40dc-861a-407c95566e32",
+      "shortCode": "limit",
+      "label": "Limit",
+      "type": "number",
+      "description": "Unified Tracking page size for tracking_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "31583cd1-345d-44bc-949b-214ac7f55c68",
+      "shortCode": "offset",
+      "label": "Offset",
+      "type": "number",
+      "description": "Unified Tracking pagination offset for tracking_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f0c3fc28-c89d-4b39-8e47-5691ad91d49e",
+      "shortCode": "requesterCountryCode",
+      "label": "Requestercountrycode",
+      "type": "string",
+      "description": "Query-string parameter `requesterCountryCode` for operation: tracking_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9be08069-7c07-437f-b944-4bcfa00ddae2",
+      "shortCode": "language",
+      "label": "Language",
+      "type": "string",
+      "description": "Unified Tracking language (ISO 639-1) for tracking_get. Example: en.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "84727ce9-2925-4044-b440-faff22468497",
+      "shortCode": "originCountryCode",
+      "label": "Origincountrycode",
+      "type": "string",
+      "description": "Query-string parameter `originCountryCode` for operation: tracking_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7c9d3454-a2c7-4d73-968c-31874605caee",
+      "shortCode": "service",
+      "label": "Service",
+      "type": "string",
+      "description": "Unified Tracking query service (express, ecommerce, parcel-de, freight, …). Recommended by DHL; omit only when unknown.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "46267901-8968-4409-8dd7-839910e3b69d",
+      "shortCode": "trackingNumber",
+      "label": "Trackingnumber",
+      "type": "string",
+      "description": "DHL Unified Tracking query trackingNumber (required for tracking_get). Replaces the former MyDHL path param shipmentTrackingNumber.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a8064a1f-2ba1-4bfd-9b47-1444ffce2529",
+      "shortCode": "valueAddedServices",
+      "label": "Valueaddedservices",
+      "type": "list",
+      "description": "MyDHL VAS codes for shipment_create / rate_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1cd28482-09d6-43c5-93ad-745e6e101040",
+      "shortCode": "getRateEstimates",
+      "label": "Getrateestimates",
+      "type": "boolean",
+      "description": "When true, shipment_create also returns rate estimates.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "70e7c950-950d-4a10-8d1c-73a88c797d07",
+      "shortCode": "plannedShippingDateAndTime",
+      "label": "Plannedshippingdateandtime",
+      "type": "string",
+      "description": "MyDHL planned ship datetime for shipment_create and rate_get. Example: 2026-10-14T12:00:00 GMT+00:00.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "356461b5-703b-4424-a3e4-fa195126f8d3",
+      "shortCode": "customerDetails",
+      "label": "Customerdetails",
+      "type": "object",
+      "description": "MyDHL customerDetails with shipperDetails and receiverDetails (postalAddress + contactInformation). Required on shipment_create and rate_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fcf9c5b1-c036-4dd6-9ea8-288237752fe8",
+      "shortCode": "productCode",
+      "label": "Productcode",
+      "type": "string",
+      "description": "MyDHL product code (e.g. P, U, N) for shipment_create and rate_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "82405670-da1f-403c-aa92-1883afd2c842",
+      "shortCode": "outputImageProperties",
+      "label": "Outputimageproperties",
+      "type": "object",
+      "description": "MyDHL label image options for shipment_create (printerDPI, encodingFormat, imageOptions).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d3dfeb6e-4ea6-47a3-8138-4f3bf585829a",
+      "shortCode": "content",
+      "label": "Content",
+      "type": "object",
+      "description": "MyDHL shipment content: packages[], isCustomsDeclarable, description, incoterm, unitOfMeasurement. Required on shipment_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2eff7689-f71d-46e7-a5dd-6f02a00ae055",
+      "shortCode": "customerReferences",
+      "label": "Customerreferences",
+      "type": "list",
+      "description": "MyDHL customerReferences for shipment_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6c95aceb-a098-483d-b1d9-4e2800b1b889",
+      "shortCode": "estimatedDeliveryDate",
+      "label": "Estimateddeliverydate",
+      "type": "object",
+      "description": "MyDHL estimatedDeliveryDate request block for shipment_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5b1cde86-24b6-4506-affe-e8327d716bb0",
+      "shortCode": "accounts",
+      "label": "Accounts",
+      "type": "list",
+      "description": "MyDHL accounts: [{typeCode:shipper, number}]. Required on shipment_create and rate_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8fd17c6a-0e59-4e7a-8377-fe2fade59067",
+      "shortCode": "pickup",
+      "label": "Pickup",
+      "type": "object",
+      "description": "MyDHL pickup block, e.g. {\"isRequested\":false}. shipment_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fd597c50-7122-444a-87e9-4a602a12e0a9",
+      "shortCode": "localProductCode",
+      "label": "Localproductcode",
+      "type": "string",
+      "description": "Optional MyDHL local product code.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5f5693ad-c255-4291-9ea8-c6aee97009c4",
+      "shortCode": "isCustomsDeclarable",
+      "label": "Iscustomsdeclarable",
+      "type": "boolean",
+      "description": "rate_get customs flag.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "227030bf-b2f3-4434-a653-032e9cf3b463",
+      "shortCode": "packages",
+      "label": "Packages",
+      "type": "list",
+      "description": "rate_get packages [{weight, dimensions}]. Official packages array.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "20e720b1-b94b-4be3-88f7-38dc6d97f47f",
+      "shortCode": "unitOfMeasurement",
+      "label": "Unitofmeasurement",
+      "type": "string",
+      "description": "rate_get unit: metric | imperial.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0f516183-5165-4260-8ead-63d09946d98c",
+      "shortCode": "nextBusinessDay",
+      "label": "Nextbusinessday",
+      "type": "boolean",
+      "description": "rate_get nextBusinessDay.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3598efe1-6666-51a5-adbe-52b8b0299407",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

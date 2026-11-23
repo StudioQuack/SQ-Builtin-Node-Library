@@ -1,0 +1,402 @@
+{
+  "_id": "efdfe68d-d27b-598a-8628-e147821bcffd",
+  "version": "1.0.0",
+  "name": "Microsoft Outlook",
+  "label": "Microsoft Outlook — Microsoft Graph v1.0 mail/calendar/contacts",
+  "description": "Microsoft Outlook via the official Microsoft Graph v1.0 mail/calendar/contacts. Base https://graph.microsoft.com/v1.0. Docs: https://learn.microsoft.com/en-us/graph/api/user-sendmail?view=graph-rest-1.0 and https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview. Graph v1.0 only (no beta). All paths use /me (delegated — a signed-in user). App-only / client-credentials MUST call /users/{id|userPrincipalName}/... instead of /me (/me returns 400 'only valid with delegated authentication'). This node does not swap the path. Mailbox data is personal data. Admin consent for app-only Mail.Send. send-and-wait and listen are BPMN message events, not Graph RPCs. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data}. Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "mail",
+  "tags": [
+    "email",
+    "microsoft"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "fdc8871f-c291-5d9d-a318-da1ca944e74c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Microsoft Outlook operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"send-message\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-message",
+          "description": "Which official call to run. EXACT values: send-message | reply-message | get-message | list-messages | update-message | delete-message | move-message | create-draft | send-draft | get-draft | update-draft | delete-draft | add-attachment | get-attachment | list-attachments | download-attachment | create-folder | get-folder | list-folders | update-folder | delete-folder | create-calendar | get-calendar | list-calendars | update-calendar | delete-calendar | create-contact | get-contact | list-contacts | update-contact | delete-contact | send-and-wait | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Graph resource id (message, folder, calendar, contact). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "attachment_id",
+          "label": "attachment_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Attachment id for get/download-attachment. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "destinationId",
+          "label": "destinationId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Destination mailFolder id for move-message. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "displayName",
+          "label": "displayName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Folder display name. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Calendar name or attachment name. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message subject for send-message (sent as message.subject), create-draft, update-draft, update-message. Example: Meet for lunch?",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Full Graph Message object for send-message / reply-message. Escape hatch: on send-message the subject, body, toRecipients, ccRecipients and bccRecipients fields are merged into it. Example: {\"subject\":\"Hi\",\"body\":{\"contentType\":\"Text\",\"content\":\"Hello\"},\"toRecipients\":[{\"emailAddress\":{\"address\":\"ada@example.com\"}}]}.",
+          "children": []
+        },
+        {
+          "shortCode": "saveToSentItems",
+          "label": "saveToSentItems",
+          "type": "boolean",
+          "required": false,
+          "value": "true",
+          "description": "send-message only. Save a copy in Sent Items. Official default true. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "comment",
+          "label": "comment",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reply comment (plain text) for reply-message. Graph comment field. Example: Thanks — agreed.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Graph itemBody {contentType, content} (contentType EXACT: Text | HTML) for send-message (sent as message.body), update-message, create-draft, update-draft. Example: {\"contentType\":\"HTML\",\"content\":\"<p>Hi</p>\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "isRead",
+          "label": "isRead",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "update-message only. Mark the message read/unread. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "categories",
+          "label": "categories",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "update-message category strings. Example: [\"Blue category\"].",
+          "children": []
+        },
+        {
+          "shortCode": "toRecipients",
+          "label": "toRecipients",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Graph Recipient list for send-message (sent as message.toRecipients; at least one recipient needed), create-draft, update-draft. Example: [{\"emailAddress\":{\"address\":\"ada@example.com\"}}].",
+          "children": []
+        },
+        {
+          "shortCode": "ccRecipients",
+          "label": "ccRecipients",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Cc Recipient list for send-message, create-draft, update-draft. Same shape as toRecipients.",
+          "children": []
+        },
+        {
+          "shortCode": "bccRecipients",
+          "label": "bccRecipients",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Bcc Recipient list for send-message, create-draft, update-draft. Same shape as toRecipients.",
+          "children": []
+        },
+        {
+          "shortCode": "contentType",
+          "label": "contentType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "add-attachment MIME type, and optional Graph itemBody.contentType when included inside message/body. EXACT for mail: Text | HTML. Example: HTML.",
+          "children": []
+        },
+        {
+          "shortCode": "contentBytes",
+          "label": "contentBytes",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `contentBytes` for operation: add-attachment.",
+          "children": []
+        },
+        {
+          "shortCode": "@odata.type",
+          "label": "@odata.type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `@odata.type` for operation: add-attachment.",
+          "children": []
+        },
+        {
+          "shortCode": "givenName",
+          "label": "givenName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `givenName` for operations: create-contact, update-contact.",
+          "children": []
+        },
+        {
+          "shortCode": "surname",
+          "label": "surname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `surname` for operations: create-contact, update-contact.",
+          "children": []
+        },
+        {
+          "shortCode": "emailAddresses",
+          "label": "emailAddresses",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `emailAddresses` for operations: create-contact, update-contact.",
+          "children": []
+        },
+        {
+          "shortCode": "$top",
+          "label": "$top",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `$top` for operation: list-messages.",
+          "children": []
+        },
+        {
+          "shortCode": "$filter",
+          "label": "$filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `$filter` for operation: list-messages.",
+          "children": []
+        },
+        {
+          "shortCode": "$select",
+          "label": "$select",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `$select` for operation: list-messages.",
+          "children": []
+        },
+        {
+          "shortCode": "$skip",
+          "label": "$skip",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `$skip` for operation: list-messages.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "22541bdd-ce07-5237-9f37-7f7e3bc61777",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "880ad9d7-0439-548b-93e9-9904881079ff",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-message, reply-message, get-message, list-messages, update-message, delete-message, move-message, create-draft, send-draft, get-draft, update-draft, delete-draft, add-attachment, get-attachment, list-attachments, download-attachment, create-folder, get-folder, list-folders, update-folder, delete-folder, create-calendar, get-calendar, list-calendars, update-calendar, delete-calendar, create-contact, get-contact, list-contacts, update-contact, delete-contact, send-and-wait, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-message",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-message",
+        "reply-message",
+        "get-message",
+        "list-messages",
+        "update-message",
+        "delete-message",
+        "move-message",
+        "create-draft",
+        "send-draft",
+        "get-draft",
+        "update-draft",
+        "delete-draft",
+        "add-attachment",
+        "get-attachment",
+        "list-attachments",
+        "download-attachment",
+        "create-folder",
+        "get-folder",
+        "list-folders",
+        "update-folder",
+        "delete-folder",
+        "create-calendar",
+        "get-calendar",
+        "list-calendars",
+        "update-calendar",
+        "delete-calendar",
+        "create-contact",
+        "get-contact",
+        "list-contacts",
+        "update-contact",
+        "delete-contact",
+        "send-and-wait",
+        "listen"
+      ]
+    },
+    {
+      "_id": "858ffb11-0043-5ff9-b457-a20bac445593",
+      "shortCode": "access_token",
+      "label": "Graph access token",
+      "type": "password",
+      "description": "Microsoft Graph delegated or app-only access token. Header Authorization: Bearer. Scopes Mail.ReadWrite Mail.Send Calendars.ReadWrite Contacts.ReadWrite as needed. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8e836e1f-59b2-51b5-b196-d969d1bfcf27",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,364 @@
+{
+  "_id": "525f9568-5976-40c6-b7e4-141415e7a75e",
+  "version": "1.0.0",
+  "name": "Pinecone",
+  "label": "Pinecone — indexes and vectors (REST 2026-04)",
+  "description": "Official Pinecone REST 2026-04. Control plane https://api.pinecone.io (index.list/create/delete). Data-plane vector.* use https://{host} (index host from describe_index). Auth: Api-Key from secret api_key. Every request sends X-Pinecone-Api-Version: 2026-04. Docs: https://docs.pinecone.io/reference/api/introduction.",
+  "icon": "storage",
+  "tags": [
+    "vector",
+    "storage",
+    "pinecone"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "64764694-fe52-5fb6-89f1-25fefc784239",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put api_key here. Example: {\"operation\":\"index.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "index.list",
+          "description": "Overrides config operation when non-blank. EXACT: index.list | index.create | index.delete | vector.upsert | vector.query | vector.fetch | vector.delete | vector.update. trigger.listen is ingress (BPMN message event), not HTTP. Do not put api_key here. Example: 'index.list'.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Index name for index.create and index.delete. Path {name} on delete.",
+          "children": []
+        },
+        {
+          "shortCode": "host",
+          "label": "host",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Index data-plane host for vector.* (from describe_index.host, no scheme). Example: my-index-abc.svc.aped-4627-b74a.pinecone.io. Required on vector ops when config host is empty.",
+          "children": []
+        },
+        {
+          "shortCode": "dimension",
+          "label": "dimension",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Dense vector dimension for index.create. Official CreateIndexRequest: required when vector_type is dense (default); omit for sparse. Range 1–20000. Docs: https://docs.pinecone.io/reference/api/2026-04/control-plane/create_index",
+          "children": []
+        },
+        {
+          "shortCode": "metric",
+          "label": "metric",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Similarity metric for index.create. EXACT: cosine | euclidean | dotproduct. Dense defaults to cosine. Sparse requires dotproduct.",
+          "children": []
+        },
+        {
+          "shortCode": "spec",
+          "label": "spec",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official spec object. Required. Exactly one of serverless.{cloud,region}, pod, or byoc. Docs: https://docs.pinecone.io/reference/api/2026-04/control-plane/create_index",
+          "children": []
+        },
+        {
+          "shortCode": "vector_type",
+          "label": "vector_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "index.create vector_type. EXACT: dense | sparse. Default dense. Sparse: omit dimension; metric must be dotproduct.",
+          "children": []
+        },
+        {
+          "shortCode": "vectors",
+          "label": "vectors",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "vector.upsert records: {id, values, metadata?}[]. Official max 1000 records or 2 MB per request. Do not log values. Docs: https://docs.pinecone.io/reference/api/database-limits",
+          "children": []
+        },
+        {
+          "shortCode": "vector",
+          "label": "vector",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Query embedding number[] for vector.query (or use id).",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Existing vector id for query-by-id or vector.update.",
+          "children": []
+        },
+        {
+          "shortCode": "ids",
+          "label": "ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "vector.fetch query param. Official API repeats ids=; OfficialApiNode sends one ids= value — pass a comma-separated list.",
+          "children": []
+        },
+        {
+          "shortCode": "namespace",
+          "label": "namespace",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional namespace (default empty).",
+          "children": []
+        },
+        {
+          "shortCode": "topK",
+          "label": "topK",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Neighbors for vector.query (official JSON topK).",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Metadata filter for query/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "values",
+          "label": "values",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Replacement dense vector for vector.update.",
+          "children": []
+        },
+        {
+          "shortCode": "setMetadata",
+          "label": "setMetadata",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Metadata fields to set on vector.update.",
+          "children": []
+        },
+        {
+          "shortCode": "deletion_protection",
+          "label": "deletion_protection",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `deletion_protection` for operation: index.create.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tags` for operation: index.create.",
+          "children": []
+        },
+        {
+          "shortCode": "includeValues",
+          "label": "includeValues",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `includeValues` for operation: vector.query.",
+          "children": []
+        },
+        {
+          "shortCode": "includeMetadata",
+          "label": "includeMetadata",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `includeMetadata` for operation: vector.query.",
+          "children": []
+        },
+        {
+          "shortCode": "sparseVector",
+          "label": "sparseVector",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `sparseVector` for operation: vector.query.",
+          "children": []
+        },
+        {
+          "shortCode": "deleteAll",
+          "label": "deleteAll",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `deleteAll` for operation: vector.delete.",
+          "children": []
+        },
+        {
+          "shortCode": "sparseValues",
+          "label": "sparseValues",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `sparseValues` for operation: vector.update.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "2ccfeebc-be57-506b-a709-340bc3a3ac35",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Never includes secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0876880c-f1db-5e73-a9f8-e7cafd209e97",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: index.list | index.create | index.delete | vector.upsert | vector.query | vector.fetch | vector.delete | vector.update.",
+      "value": "index.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "index.list",
+        "index.create",
+        "index.delete",
+        "vector.upsert",
+        "vector.query",
+        "vector.fetch",
+        "vector.delete",
+        "vector.update"
+      ]
+    },
+    {
+      "_id": "9ebaef51-e269-5c44-b163-d13b55fef026",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Pinecone project API key. Sent as header Api-Key. StudioQuack secret. Never on INPUT. Console: https://app.pinecone.io/",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a1e2c3d4-b5f6-4789-8abc-def012345678",
+      "shortCode": "host",
+      "label": "Index host",
+      "type": "string",
+      "description": "Default Pinecone index host for vector.* (describe_index.host). INPUT host wins. Example: my-index-abc.svc.aped-4627-b74a.pinecone.io.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5759b018-6936-50e3-a3ab-3d0f35e46348",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

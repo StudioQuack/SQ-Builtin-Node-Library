@@ -1,0 +1,124 @@
+{
+  "baseUrl": "https://{environment}",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "payment_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/payments",
+      "required": [
+        "source_id",
+        "idempotency_key",
+        "amount_money"
+      ],
+      "bodyFrom": [
+        "source_id",
+        "idempotency_key",
+        "amount_money",
+        "location_id",
+        "autocomplete",
+        "customer_id",
+        "reference_id",
+        "note"
+      ],
+      "contentType": "application/json"
+    },
+    "payment_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/payments/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "refund_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/refunds",
+      "required": [
+        "idempotency_key",
+        "amount_money"
+      ],
+      "bodyFrom": [
+        "idempotency_key",
+        "payment_id",
+        "amount_money",
+        "reason"
+      ],
+      "contentType": "application/json"
+    },
+    "order_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/orders",
+      "bodyFrom": [
+        "order",
+        "idempotency_key"
+      ],
+      "required": [
+        "order"
+      ],
+      "contentType": "application/json"
+    },
+    "order_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/orders/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "customer_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/customers",
+      "bodyFrom": [
+        "given_name",
+        "family_name",
+        "email_address",
+        "phone_number",
+        "company_name",
+        "note",
+        "reference_id"
+      ],
+      "contentType": "application/json"
+    },
+    "customer_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/customers/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "invoice_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/invoices",
+      "bodyFrom": [
+        "invoice",
+        "idempotency_key"
+      ],
+      "required": [
+        "invoice"
+      ],
+      "contentType": "application/json"
+    },
+    "catalog_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/catalog/list",
+      "queryFrom": [
+        "types"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

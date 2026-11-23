@@ -1,0 +1,358 @@
+{
+  "baseUrl": "https://graph.microsoft.com/v1.0",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "send-message": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/me/sendMail",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "message",
+        "saveToSentItems",
+        "subject",
+        "body",
+        "toRecipients",
+        "ccRecipients",
+        "bccRecipients"
+      ],
+      "bodyMap": {
+        "subject": "message.subject",
+        "body": "message.body",
+        "toRecipients": "message.toRecipients",
+        "ccRecipients": "message.ccRecipients",
+        "bccRecipients": "message.bccRecipients"
+      }
+    },
+    "reply-message": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/me/messages/{id}/reply",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "comment",
+        "message"
+      ]
+    },
+    "get-message": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/me/messages/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "list-messages": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/me/messages",
+      "contentType": "application/json",
+      "queryFrom": [
+        "$top",
+        "$filter",
+        "$select",
+        "$skip"
+      ]
+    },
+    "update-message": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/me/messages/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "subject",
+        "body",
+        "isRead",
+        "categories"
+      ]
+    },
+    "delete-message": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/me/messages/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "move-message": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/me/messages/{id}/move",
+      "contentType": "application/json",
+      "required": [
+        "id",
+        "destinationId"
+      ],
+      "bodyFrom": [
+        "destinationId"
+      ]
+    },
+    "create-draft": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/me/messages",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "subject",
+        "body",
+        "toRecipients",
+        "ccRecipients",
+        "bccRecipients"
+      ]
+    },
+    "send-draft": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/me/messages/{id}/send",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "get-draft": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/me/messages/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "update-draft": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/me/messages/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "subject",
+        "body",
+        "toRecipients",
+        "ccRecipients",
+        "bccRecipients"
+      ]
+    },
+    "delete-draft": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/me/messages/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "add-attachment": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/me/messages/{id}/attachments",
+      "contentType": "application/json",
+      "required": [
+        "id",
+        "name"
+      ],
+      "bodyFrom": [
+        "name",
+        "contentType",
+        "contentBytes",
+        "@odata.type"
+      ]
+    },
+    "get-attachment": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/me/messages/{id}/attachments/{attachment_id}",
+      "contentType": "application/json",
+      "required": [
+        "id",
+        "attachment_id"
+      ]
+    },
+    "list-attachments": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/me/messages/{id}/attachments",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "download-attachment": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/me/messages/{id}/attachments/{attachment_id}/$value",
+      "contentType": "application/json",
+      "required": [
+        "id",
+        "attachment_id"
+      ]
+    },
+    "create-folder": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/me/mailFolders",
+      "contentType": "application/json",
+      "required": [
+        "displayName"
+      ],
+      "bodyFrom": [
+        "displayName"
+      ]
+    },
+    "get-folder": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/me/mailFolders/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "list-folders": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/me/mailFolders",
+      "contentType": "application/json"
+    },
+    "update-folder": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/me/mailFolders/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "displayName"
+      ]
+    },
+    "delete-folder": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/me/mailFolders/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "create-calendar": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/me/calendars",
+      "contentType": "application/json",
+      "required": [
+        "name"
+      ],
+      "bodyFrom": [
+        "name"
+      ]
+    },
+    "get-calendar": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/me/calendars/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "list-calendars": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/me/calendars",
+      "contentType": "application/json"
+    },
+    "update-calendar": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/me/calendars/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "name"
+      ]
+    },
+    "delete-calendar": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/me/calendars/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "create-contact": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/me/contacts",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "givenName",
+        "surname",
+        "emailAddresses"
+      ]
+    },
+    "get-contact": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/me/contacts/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "list-contacts": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/me/contacts",
+      "contentType": "application/json"
+    },
+    "update-contact": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/me/contacts/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "givenName",
+        "surname",
+        "emailAddresses"
+      ]
+    },
+    "delete-contact": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/me/contacts/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "send-and-wait": {
+      "kind": "ingress"
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

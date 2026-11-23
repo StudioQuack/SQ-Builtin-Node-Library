@@ -1,0 +1,322 @@
+{
+  "_id": "aa6766ed-4cb7-488e-9061-ddf73937f49a",
+  "version": "1.0.0",
+  "name": "LDAP",
+  "label": "LDAP / LDAPS directory",
+  "description": "Search, compare, create, update, delete, rename on a customer LDAP directory via the JDK JNDI provider. LDAPS or StartTLS required; plain ldap:// only with allow_plain_ldap. Bind password is password-typed and never logged. Filter values and DN components built from input are escaped.",
+  "icon": "",
+  "tags": [
+    "ldap",
+    "directory"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "6c44e68e-374d-402a-aa21-7ed8d34f72b2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One LDAP operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'search'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: operator-authored RFC 4515 filter for search when not building from filter_attribute+filter_value. Example: '(uid=ada)'.",
+          "children": []
+        },
+        {
+          "shortCode": "filter_attribute",
+          "label": "filter_attribute",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: attribute type used to build an equality filter. Combined with filter_value; the value is escaped (RFC 4515). Example: 'uid'.",
+          "children": []
+        },
+        {
+          "shortCode": "filter_value",
+          "label": "filter_value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: assertion value for a built equality filter. Escaped per RFC 4515 (* ( ) \\ and NUL). Example: 'ada'.",
+          "children": []
+        },
+        {
+          "shortCode": "dn",
+          "label": "dn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: operator-authored target DN for search base, compare, create, update, delete, rename. Prefer rdn_type+rdn_value when the value comes from input. Example: 'uid=ada,dc=example,dc=org'.",
+          "children": []
+        },
+        {
+          "shortCode": "rdn_type",
+          "label": "rdn_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: RDN attribute type when assembling a DN from input. Value is escaped (RFC 4514). Example: 'uid'.",
+          "children": []
+        },
+        {
+          "shortCode": "rdn_value",
+          "label": "rdn_value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: RDN attribute value when assembling a DN from input. Escaped per RFC 4514. Example: 'ada'.",
+          "children": []
+        },
+        {
+          "shortCode": "parent_dn",
+          "label": "parent_dn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: parent DN appended after a built RDN. Falls back to config base_dn. Example: 'ou=people,dc=example,dc=org'.",
+          "children": []
+        },
+        {
+          "shortCode": "new_dn",
+          "label": "new_dn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: destination DN for rename. Example: 'uid=ada-l,ou=people,dc=example,dc=org'.",
+          "children": []
+        },
+        {
+          "shortCode": "attributes",
+          "label": "attributes",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Purpose: attribute map for create (Add) and update (Modify REPLACE). Values are strings or string lists. Example: {\"objectClass\":[\"inetOrgPerson\"],\"cn\":\"Ada\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "attribute",
+          "label": "attribute",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: attribute type for compare. Example: 'employeeNumber'.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: assertion value for compare. Escaped per RFC 4515. Example: '42'.",
+          "children": []
+        },
+        {
+          "shortCode": "scope",
+          "label": "scope",
+          "type": "string",
+          "required": false,
+          "value": "sub",
+          "description": "Purpose: search scope. EXACT accepted values: base | object | one | onelevel | sub (default). Example: 'sub'.",
+          "children": []
+        },
+        {
+          "shortCode": "return_attributes",
+          "label": "return_attributes",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Purpose: attribute types to return on search. Empty means the server default. Example: [\"cn\",\"mail\"].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "86c5e018-7ea4-4892-964b-0d59d72a96ed",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Search returns entries/count/truncated; compare returns matched; create/update/delete/rename return dn. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload. search: {entries, count, truncated}. compare: {matched, dn}. create/update/delete: {dn}. rename: {dn, new_dn}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2a78ec91-4a9c-4b7a-a313-f61ce6d32143",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: search | compare | create | update | delete | rename. Required. Example: 'search'.",
+      "value": "search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "search",
+        "compare",
+        "create",
+        "update",
+        "delete",
+        "rename"
+      ]
+    },
+    {
+      "_id": "d1f69212-57c1-4453-a57d-609faffd76dd",
+      "shortCode": "url",
+      "label": "Url",
+      "type": "string",
+      "description": "ldap:// or ldaps:// URL (RFC 4516). Required. Use ldaps:// or ldap:// with start_tls. Example: 'ldaps://dir.example.org:636'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ee74df9e-6827-457c-8b69-f5d7b76e211d",
+      "shortCode": "bind_dn",
+      "label": "Bind Dn",
+      "type": "string",
+      "description": "Bind DN. Required. Example: 'cn=workflow,dc=example,dc=org'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "68455a57-c37f-4284-af13-c1f737d68e6a",
+      "shortCode": "bind_password",
+      "label": "Bind Password",
+      "type": "password",
+      "description": "Bind password. Secret. Must stay type password; never logged or echoed.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d735c27c-c961-46ae-8e21-2971954e7d84",
+      "shortCode": "start_tls",
+      "label": "Start Tls",
+      "type": "select",
+      "description": "Upgrade ldap:// with StartTLS before bind. Default true. Ignored for ldaps://.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "c8e4a1f2-3b5d-4e6f-8a9b-1c2d3e4f5a6b",
+      "shortCode": "allow_plain_ldap",
+      "label": "Allow Plain Ldap",
+      "type": "select",
+      "description": "Permit cleartext ldap:// without StartTLS. Default false. Lab only.",
+      "value": "false",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "1d0c5387-3e45-4344-8b33-25dd48b7006b",
+      "shortCode": "base_dn",
+      "label": "Base Dn",
+      "type": "string",
+      "description": "Default search base and parent DN when input omits dn / parent_dn.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7662a1a4-074b-4fb0-850a-b65d1bac6c9c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / search timeLimit in seconds. Positive integer. Blank/0/negative → 25. Capped at 60.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

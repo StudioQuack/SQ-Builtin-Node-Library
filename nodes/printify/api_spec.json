@@ -1,0 +1,82 @@
+{
+  "baseUrl": "https://api.printify.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "configKey": "api_token"
+  },
+  "operations": {
+    "shop_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/shops.json"
+    },
+    "product_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/shops/{shop_id}/products.json",
+      "bodyFrom": [
+        "title",
+        "description",
+        "blueprint_id",
+        "print_provider_id",
+        "variants",
+        "print_areas",
+        "tags"
+      ],
+      "required": [
+        "title",
+        "blueprint_id",
+        "print_provider_id",
+        "variants"
+      ]
+    },
+    "product_publish": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/shops/{shop_id}/products/{product_id}/publish.json",
+      "required": [
+        "product_id"
+      ],
+      "bodyFrom": [
+        "title",
+        "description",
+        "images",
+        "variants",
+        "tags",
+        "keyFeatures",
+        "shipping_template"
+      ]
+    },
+    "order_submit": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/shops/{shop_id}/orders.json",
+      "bodyFrom": [
+        "external_id",
+        "label",
+        "line_items",
+        "shipping_method",
+        "send_shipping_notification",
+        "address_to"
+      ],
+      "required": [
+        "line_items",
+        "shipping_method",
+        "address_to"
+      ]
+    },
+    "order_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/shops/{shop_id}/orders/{order_id}.json",
+      "required": [
+        "order_id"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

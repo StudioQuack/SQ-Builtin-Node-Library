@@ -1,0 +1,333 @@
+{
+  "_id": "55cfdb89-db5b-46f0-b288-6a1fb2a8d1dc",
+  "version": "1.0.0",
+  "name": "Sentry",
+  "label": "Sentry REST API",
+  "description": "Sentry Web API via OfficialApiNode. Docs: https://docs.sentry.io/api/. Operations: event_get, event_list, issue_get, issue_list, issue_update, issue_delete, project_create, project_get, project_update, release_create, release_get, org_get, team_get, listen. Auth secret auth_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "sentry",
+    "errors",
+    "apm"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f7a98f80-f6db-488f-a051-8dfa2f775097",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "event_get",
+          "description": "Which official API call to run. EXACT values: event_get | event_list | issue_get | issue_list | issue_update | issue_delete | project_create | project_get | project_update | release_create | release_get | org_get | team_get | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'event_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "project",
+          "label": "project",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project slug.",
+          "children": []
+        },
+        {
+          "shortCode": "issue_id",
+          "label": "issue_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sentry issue id.",
+          "children": []
+        },
+        {
+          "shortCode": "event_id",
+          "label": "event_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event id.",
+          "children": []
+        },
+        {
+          "shortCode": "version",
+          "label": "version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Release version string.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `cursor` for operations: event_list, issue_list.",
+          "children": []
+        },
+        {
+          "shortCode": "full",
+          "label": "full",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `full` for operation: event_list.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `query` for operation: issue_list.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `status` for operation: issue_update.",
+          "children": []
+        },
+        {
+          "shortCode": "assignedTo",
+          "label": "assignedTo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `assignedTo` for operation: issue_update.",
+          "children": []
+        },
+        {
+          "shortCode": "team",
+          "label": "team",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `team` for operations: project_create, team_get. Required by: project_create, team_get.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `name` for operations: project_create, project_update.",
+          "children": []
+        },
+        {
+          "shortCode": "slug",
+          "label": "slug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `slug` for operations: project_create, project_update.",
+          "children": []
+        },
+        {
+          "shortCode": "platform",
+          "label": "platform",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `platform` for operation: project_update.",
+          "children": []
+        },
+        {
+          "shortCode": "projects",
+          "label": "projects",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `projects` for operation: release_create.",
+          "children": []
+        },
+        {
+          "shortCode": "team_slug",
+          "label": "team_slug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Team slug path param for project_create and team_get. Example: my-team.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "65212204-e2f8-4ee5-ad7b-a2cc086f207d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4f19add0-4a29-4867-a7b7-ef85245e5ce1",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: event_get, event_list, issue_get, issue_list, issue_update, issue_delete, project_create, project_get, project_update, release_create, release_get, org_get, team_get, listen. listen is BPMN ingress only — do not invoke from agent tools or expect HTTP; use a message start/catch event instead.",
+      "value": "event_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "event_get",
+        "event_list",
+        "issue_get",
+        "issue_list",
+        "issue_update",
+        "issue_delete",
+        "project_create",
+        "project_get",
+        "project_update",
+        "release_create",
+        "release_get",
+        "org_get",
+        "team_get",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "819197f5-f48c-4c49-9a58-1d71c75f3569",
+      "shortCode": "auth_token",
+      "label": "Auth Token",
+      "type": "password",
+      "description": "Sentry auth token (org token or user token). Authorization: Bearer. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c8f90757-281e-4af7-9ddb-4dc3ab43be73",
+      "shortCode": "org",
+      "label": "Org",
+      "type": "string",
+      "description": "Organization slug.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7e4a9b12-3c8d-4f5e-9a1b-2d6e8f0a4b5c",
+      "shortCode": "team",
+      "label": "Team",
+      "type": "string",
+      "description": "Team slug for project_create and team_get path {team}. Optional here when set on INPUT per call; required on the wire when those operations run.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c28e6c4c-2626-4140-bc3d-c8161b64bab2",
+      "shortCode": "team_slug",
+      "label": "Team Slug",
+      "type": "string",
+      "description": "Team slug path param for project_create and team_get. Example: my-team.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f0323aea-16c8-49c7-8fe2-e57614383a2c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

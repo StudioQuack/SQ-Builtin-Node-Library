@@ -1,0 +1,108 @@
+{
+  "baseUrl": "https://connect.mailerlite.com/api",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_token"
+  },
+  "operations": {
+    "subscriber.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/subscribers",
+      "required": [
+        "email"
+      ],
+      "bodyFrom": [
+        "email",
+        "fields",
+        "groups",
+        "status",
+        "resubscribe",
+        "opted_in_at",
+        "optin_ip"
+      ]
+    },
+    "subscriber.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/subscribers/{subscriber_id_or_email}",
+      "required": [
+        "subscriber_id_or_email"
+      ]
+    },
+    "subscriber.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/subscribers",
+      "queryFrom": [
+        "filter[status]",
+        "limit",
+        "cursor",
+        "include"
+      ],
+      "required": []
+    },
+    "subscriber.update": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/subscribers/{subscriber_id}",
+      "required": [
+        "subscriber_id"
+      ],
+      "bodyFrom": [
+        "fields",
+        "groups",
+        "status"
+      ]
+    },
+    "subscriber.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/subscribers/{subscriber_id}",
+      "required": [
+        "subscriber_id"
+      ]
+    },
+    "group.add": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/subscribers/{subscriber_id}/groups/{group_id}",
+      "required": [
+        "subscriber_id",
+        "group_id"
+      ],
+      "bodyFrom": [
+        "__omit"
+      ]
+    },
+    "group.remove": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/subscribers/{subscriber_id}/groups/{group_id}",
+      "required": [
+        "subscriber_id",
+        "group_id"
+      ]
+    },
+    "campaign.send": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/campaigns/{campaign_id}/schedule",
+      "required": [
+        "campaign_id",
+        "delivery"
+      ],
+      "bodyFrom": [
+        "delivery",
+        "schedule"
+      ]
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

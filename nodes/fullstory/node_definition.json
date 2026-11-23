@@ -1,0 +1,210 @@
+{
+  "_id": "2117d061-6234-4e08-9a49-963143d0bd96",
+  "version": "1.0.0",
+  "name": "FullStory",
+  "label": "Fullstory Server API V2 — users (session replay default-deny)",
+  "description": "Official Fullstory Server API V2 at https://api.fullstory.com/v2. Handler: OfficialApiNode. Auth: Authorization: Basic {apiKey}. Session replay URLs and event streams are highly sensitive (DPA). segment.list is omitted (V1-only). Select session.search / event.search only when the customer DPA allows. Customer owns the Fullstory org. apiKey is never logged or returned. Never log session URLs, emails, uid, or event bodies.",
+  "icon": "visibility",
+  "tags": [
+    "analytics"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a065c9c4-30e4-4d86-8318-031935cb93a5",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put apiKey here. Minimize: send only the id/email/uid needed. Example: {\"operation\":\"user.get\",\"id\":\"…\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "user.get",
+          "description": "Overrides config operation when non-blank. EXACT: 'user.get' | 'user.search' | 'session.search' | 'event.search'. segment.list is not offered.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Fullstory-generated user id for user.get.",
+          "children": []
+        },
+        {
+          "shortCode": "sessionId",
+          "label": "sessionId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Provider session id for event.search (userId:sessionId form; path-encoded).",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "user.search / session.search email filter. Official email.",
+          "children": []
+        },
+        {
+          "shortCode": "uid",
+          "label": "uid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer user id for user.search / session.search.",
+          "children": []
+        },
+        {
+          "shortCode": "session_uid",
+          "label": "session_uid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mutually exclusive with uid/email on session.search.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size. session.search default 20; single page only.",
+          "children": []
+        },
+        {
+          "shortCode": "paginationToken",
+          "label": "paginationToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Next page token for user.search when the 200 body includes one.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ddfa5e0b-74a9-4102-9dfa-c2f218414d14",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Do not persist replay URLs. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Highly sensitive for session.search / event.search — do not log.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "9e32c267-5a1a-4964-b47c-a281b62aa1f4",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: user.get | user.search | session.search | event.search. session.search / event.search return replay URLs / event JSON — operator DPA must allow.",
+      "value": "user.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "user.get",
+        "user.search",
+        "session.search",
+        "event.search"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "b17bb0df-0108-4949-b7ef-9015cdaeddb7",
+      "shortCode": "apiKey",
+      "label": "API key",
+      "type": "password",
+      "description": "Fullstory Server API key (StudioQuack secret). Sent as Authorization: Basic {apiKey} per V2 Users. Never log or place on INPUT. Admin/Architect required for many reads.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "413e598e-b165-498e-95c3-2f6b04cf8679",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Use 60 for event.search. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

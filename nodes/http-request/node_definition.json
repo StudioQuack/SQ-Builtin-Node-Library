@@ -1,0 +1,178 @@
+{
+  "_id": "30f59c3b-afa1-463a-9a60-9cda6ccae790",
+  "version": "1",
+  "name": "HTTP Request",
+  "label": "HTTP Request",
+  "description": "Generic HTTP client (JDK HttpClient). Sends an allowlisted method + absolute http(s) URL with optional headers and a JSON or text body, then returns port output as a map {result, http_status} on 2xx. Use Web Browser when you need stripped page text and robots.txt; use this when you need a specific method, custom headers, or a request body. Methods other than GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS are rejected (Python forwarded arbitrary verbs). TLS-verify-off is lab-only. Egress is governed by the daemon's network posture (SSRF guard); this node never bypasses engine network rules.",
+  "icon": "",
+  "tags": [
+    "http",
+    "rest",
+    "api",
+    "request"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ddb67f8c-6e7e-4e31-b9a3-9247a1002d7f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "HTTP call. Required: url (non-empty absolute http or https URL). Optional: method (default GET; allowlist GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS), headers (object merged on top of defaultHeaders), body (object → JSON body; string → raw text body), body_text (string → raw body). body_text wins over body-as-string. If both JSON and text bodies resolve, Java sends only the JSON body. Port output is a map {result, http_status} on 2xx.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "_id": "b4804551-a2c6-4056-a48e-e8e54d681604",
+          "shortCode": "method",
+          "label": "method",
+          "type": "string",
+          "required": false,
+          "value": "GET",
+          "description": "Purpose: HTTP verb sent by the Java handler (stored upper-case after trim). Default: 'GET' when omitted, null, or blank. EXACT accepted values (case-insensitive): 'GET' (read, typically no body), 'POST' (create or submit JSON/form), 'PUT' (replace a resource), 'PATCH' (partial update), 'DELETE' (remove a resource), 'HEAD' (headers only), 'OPTIONS' (CORS/preflight or allowed-methods probe). Any other verb (TRACE, CONNECT, PROPFIND, custom tokens, …) is rejected with result 'HTTP Request Error: method not allowed: {METHOD}' and is not sent — Java does not forward arbitrary verbs (Python requests.request did). Example: 'GET'. Example write: 'POST'. Example rejected: 'TRACE'.",
+          "children": []
+        },
+        {
+          "_id": "42a6b526-6f8c-4be3-ac4b-aa087696e7ad",
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Purpose: absolute request URL passed to JDK HttpClient. REQUIRED. Empty, missing, or whitespace-only fails with result='URL is missing' (no request is sent). EXACT accepted schemes: 'http' and 'https' only (java.net.http has no other adapters). Include path, query string, and port as needed. Missing or non-http(s) scheme returns result 'HTTP Request Error: unsupported URL scheme: {scheme|(none)}' without throwing. Malformed URIs return 'HTTP Request Error: {message}'. Examples: 'https://httpbin.org/get', 'https://api.example.com/v1/items?limit=10', 'http://127.0.0.1:8080/health'. Rejected examples: 'ftp://files.example.com/a', 'example.com/path' (no scheme). Do not pass a search query; this is not a crawler.",
+          "children": []
+        },
+        {
+          "_id": "5537f804-443f-4d4d-a160-6680f09d4d0e",
+          "shortCode": "headers",
+          "label": "headers",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Purpose: per-call HTTP headers merged on TOP of configuration defaultHeaders (call keys win on conflict). Accepted values: a JSON object of string→string, a JSON object string, or omit/{}. Invalid JSON is treated as {}. After merge, if no User-Agent is present (case-insensitive), Chrome/120 on Windows NT 10.0 is set AND, only then, if Accept is missing it is set to 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8' AND if Accept-Language is missing it is set to 'en-US,en;q=0.9' (Python added Accept/Accept-Language only when it also added the UA). Authorization values are sent but never logged. Example: {\"Accept\":\"application/json\",\"Authorization\":\"Bearer TOKEN\",\"X-Request-Id\":\"abc-123\"}. Example to override UA: {\"User-Agent\":\"MyAgent/1.0\"}. Omit or {} when defaults are enough.",
+          "children": []
+        },
+        {
+          "_id": "c701c47f-0b2b-41af-b646-74a3c1048ceb",
+          "shortCode": "body",
+          "label": "body",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Purpose: request body. Accepted values: a JSON object/dict, a string, another non-null scalar/array, or omit. A JSON object/dict is serialized with Json.write and sent as UTF-8 (Content-Type application/json is added when missing). A string is sent as UTF-8 raw bytes unless body_text is a string. Any other non-null non-dict type is str()'d and sent as UTF-8 text. If both a JSON body and a text body resolve, Java sends only the JSON body (HttpClient has one publisher). Example JSON object: {\"query\":\"bpmn\",\"max_results\":5}. Example PATCH: {\"status\":\"published\"}. Example string: 'plain text payload'. Omit for GET/HEAD when no payload is needed.",
+          "children": []
+        },
+        {
+          "_id": "00028cbb-b191-481b-80bb-5250a15c4e1f",
+          "shortCode": "body_text",
+          "label": "body_text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: raw request body as a UTF-8 string. Accepted values: any Java/JSON string (including empty). Applied only when the value is a string; numbers/objects on this field are ignored. Sent only when body is not a JSON object/dict. Content-Type is NOT auto-set — set it in headers (e.g. 'application/x-www-form-urlencoded', 'text/plain', 'application/xml'). Difference vs body: never serialized as JSON. Example form: 'grant_type=client_credentials&scope=read'. Example XML: '<note>hello</note>'. Example plaintext: 'ping'. Omit for GET/HEAD.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b705f0fb-c67f-4d38-a544-9af3a5d5f75e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Formatted HTTP response map on port output for 2xx: result (preview text) and http_status (numeric). Credential header values are redacted from error messages. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "_id": "928cd314-f747-4047-8037-8da1a55c47d2",
+          "shortCode": "result",
+          "label": "result",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: human-readable response preview on output.result for 2xx. SUCCESS shape EXACTLY: 'HTTP {METHOD} {url}\\nStatus: {status}\\nContent-Type: {content_type}\\n\\nBody:\\n{body_preview}'. {METHOD} is the allowlisted upper-case verb; {url} is the input URL; {status} is the numeric status; {content_type} is the Content-Type header lower-cased (empty if missing). Body: if the bytes parse as a JSON object or array they are re-serialized with Json.write (compact); otherwise raw text. Preview longer than 200000 characters is cut and suffixed with '... [truncated]'. The handler also caps the HTTP read at 200000 bytes (DoS bound). Example: 'HTTP GET https://httpbin.org/get\\nStatus: 200\\nContent-Type: application/json\\n\\nBody:\\n{\"url\":\"https://httpbin.org/get\"}'. No stack traces in this value.",
+          "children": []
+        },
+        {
+          "_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567892",
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Numeric HTTP status from the Status: line in result when the call returned 2xx.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2893ab42-b55b-44e0-9f8c-bbbe8ff81854",
+      "shortCode": "timeoutSecondsDefault",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Purpose: connect + request timeout in seconds for every call (both HttpClient connectTimeout and request timeout). Default: 20 when omitted, blank, or not numeric — Java toInt never throws (Python int() on a bad value could raise and fail the node). Accepted values: any number or numeric string; non-numeric → 20. Values below 1 are clamped to 1 by the HTTP helper. Example: 20. Example for a slow API: 45. Example invalid 'abc' → 20.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "e85a80ef-a2f7-42af-9738-a87f29b244e0",
+      "shortCode": "verifyTLSDefault",
+      "label": "Verify TLS",
+      "type": "select",
+      "description": "Purpose: whether to verify the server TLS certificate. Default: true (verify). EXACT disable rule: only the string 'false' (any case, surrounding whitespace ignored) disables verification — matching Python str(verify_cfg).lower() != 'false' via WebNodeSupport.verifyTls. 'true', '1', 'yes', '0', empty, and any other token all VERIFY. Options: 'false' | 'true'. Example: true. Set 'false' only for lab hosts with self-signed certs — disabling verification is not for production and is lab-only.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "07f7257f-e332-47c4-83db-47ab50950d4f",
+      "shortCode": "defaultHeaders",
+      "label": "Default Headers",
+      "type": "string",
+      "description": "Purpose: headers applied to every call, then overridden by input.headers (call wins). Accepted values: a JSON object string, an already-decoded object/map, or empty. Invalid JSON is treated as {}. Example: '{\"Accept\":\"application/json\",\"X-Client\":\"studioquack\"}'. Example with auth (prefer a secret manager in production): '{\"Authorization\":\"Bearer TOKEN\"}'. Do not put secrets in this field if the instance config is shared. Merged keys keep the casing given; User-Agent / Accept / Accept-Language presence is checked case-insensitively after the merge. Authorization values are never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-12T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-12T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

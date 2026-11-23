@@ -1,0 +1,78 @@
+{
+  "baseUrl": "https://api.travis-ci.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "Authorization",
+    "prefix": "token ",
+    "configKey": "api_token"
+  },
+  "extraHeaders": {
+    "Travis-API-Version": "3"
+  },
+  "operations": {
+    "build_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/build/{build_id}",
+      "required": [
+        "build_id"
+      ]
+    },
+    "build_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/repo/{slug}/builds",
+      "required": [
+        "slug"
+      ],
+      "queryFrom": [
+        "limit",
+        "offset",
+        "state",
+        "event_type",
+        "branch",
+        "sort_by"
+      ]
+    },
+    "build_cancel": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/build/{build_id}/cancel",
+      "required": [
+        "build_id"
+      ]
+    },
+    "build_restart": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/build/{build_id}/restart",
+      "required": [
+        "build_id"
+      ]
+    },
+    "build_trigger": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/repo/{slug}/requests",
+      "required": [
+        "slug"
+      ],
+      "bodyFrom": [
+        "branch",
+        "sha",
+        "message",
+        "config",
+        "merge_mode"
+      ],
+      "bodyMap": {
+        "branch": "request.branch",
+        "sha": "request.sha",
+        "message": "request.message",
+        "config": "request.config",
+        "merge_mode": "request.merge_mode"
+      }
+    }
+  }
+}

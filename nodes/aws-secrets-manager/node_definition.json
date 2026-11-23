@@ -1,0 +1,371 @@
+{
+  "_id": "e2148c5a-66ad-47a1-ac1e-ecb9321d7058",
+  "version": "1.0.0",
+  "name": "AWS Secrets Manager",
+  "label": "AWS Secrets Manager JSON API",
+  "description": "AWS Secrets Manager API 2017-10-17 via OfficialApiNode, signed with AWS SigV4 (service secretsmanager). Docs: https://docs.aws.amazon.com/secretsmanager/latest/apireference/Welcome.html. Operations: get-secret (GetSecretValue), put-secret (CreateSecret), update-secret, delete-secret, list-secrets, rotate-secret, describe-secret, listen. Auth secrets access_key_id, secret_access_key, optional session_token are instance config only (never on INPUT, never logged). Retrieved SecretString/SecretBinary must not be logged and should stay in StudioQuack secret bindings. listen is kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "lock",
+  "tags": [
+    "secrets",
+    "aws"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "31fd3ab4-1b19-4a4a-977a-7628cc7f73eb",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_key_id, secret_access_key, or session_token here. Path params match api_spec.json placeholders. Example: {\"operation\":\"get-secret\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "get-secret",
+          "description": "Which official API call to run. EXACT values: get-secret | put-secret | update-secret | delete-secret | list-secrets | rotate-secret | describe-secret | listen. Prefer the instance config operation select. listen is ingress: no HTTP — use a BPMN message event. Example: 'get-secret'.",
+          "children": []
+        },
+        {
+          "shortCode": "SecretId",
+          "label": "SecretId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Secret name or ARN. Required for get/update/delete/rotate/describe.",
+          "children": []
+        },
+        {
+          "shortCode": "SecretString",
+          "label": "SecretString",
+          "type": "password",
+          "required": false,
+          "value": "",
+          "description": "Secret value from a StudioQuack secret binding. Never a logged field.",
+          "children": []
+        },
+        {
+          "shortCode": "VersionId",
+          "label": "VersionId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional version UUID for get-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "VersionStage",
+          "label": "VersionStage",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional staging label, e.g. AWSCURRENT.",
+          "children": []
+        },
+        {
+          "shortCode": "SecretBinary",
+          "label": "SecretBinary",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `SecretBinary` for operations: put-secret, update-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "Description",
+          "label": "Description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Description` for operations: put-secret, update-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "KmsKeyId",
+          "label": "KmsKeyId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `KmsKeyId` for operations: put-secret, update-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "ClientRequestToken",
+          "label": "ClientRequestToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ClientRequestToken` for operations: put-secret, update-secret, rotate-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "Tags",
+          "label": "Tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `Tags` for operation: put-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "RecoveryWindowInDays",
+          "label": "RecoveryWindowInDays",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `RecoveryWindowInDays` for operation: delete-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "ForceDeleteWithoutRecovery",
+          "label": "ForceDeleteWithoutRecovery",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ForceDeleteWithoutRecovery` for operation: delete-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "MaxResults",
+          "label": "MaxResults",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `MaxResults` for operation: list-secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "NextToken",
+          "label": "NextToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `NextToken` for operation: list-secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "Filters",
+          "label": "Filters",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Filters` for operation: list-secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "IncludePlannedDeletion",
+          "label": "IncludePlannedDeletion",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `IncludePlannedDeletion` for operation: list-secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "SortBy",
+          "label": "SortBy",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `SortBy` for operation: list-secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "SortOrder",
+          "label": "SortOrder",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `SortOrder` for operation: list-secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "RotationLambdaARN",
+          "label": "RotationLambdaARN",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `RotationLambdaARN` for operation: rotate-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "RotationRules",
+          "label": "RotationRules",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `RotationRules` for operation: rotate-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "RotateImmediately",
+          "label": "RotateImmediately",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `RotateImmediately` for operation: rotate-secret.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8dc2c86f-4e73-4605-a3a8-2484ba9711e3",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Secret bytes in data must not be logged; bind them into StudioQuack secrets. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON from the official API. May contain secret material — never log; bind into StudioQuack secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4d6313c2-a825-43c7-9cad-d9eefc3a75ae",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: get-secret, put-secret, update-secret, delete-secret, list-secrets, rotate-secret, describe-secret, listen. listen is BPMN ingress, not a socket.",
+      "value": "get-secret",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "get-secret",
+        "put-secret",
+        "update-secret",
+        "delete-secret",
+        "list-secrets",
+        "rotate-secret",
+        "describe-secret",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "c26298ff-bc45-4b02-8075-54864aaa1363",
+      "shortCode": "access_key_id",
+      "label": "AWS access key ID",
+      "type": "password",
+      "description": "IAM access key ID used as the SigV4 credential. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f901f01d-7d86-4819-854d-210c4fa89f87",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "AWS Region for secretsmanager.{region}.amazonaws.com (e.g. us-east-1).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "419a1a11-1bd2-452e-868b-339c8dbb9460",
+      "shortCode": "secret_access_key",
+      "label": "AWS secret access key",
+      "type": "password",
+      "description": "IAM secret access key used to sign SigV4. StudioQuack secret binding. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "86ae70aa-6cc0-4f30-9e52-40b373ea298d",
+      "shortCode": "session_token",
+      "label": "AWS session token",
+      "type": "password",
+      "description": "Optional STS session token. When set, OfficialApiNode adds x-amz-security-token. Empty for long-lived keys. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d9f22f14-aa58-468d-a8a7-859835e36302",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon invoke budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

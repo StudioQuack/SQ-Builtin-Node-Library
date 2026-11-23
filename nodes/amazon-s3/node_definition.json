@@ -1,0 +1,394 @@
+{
+  "_id": "1a0bc52b-9451-5508-b05f-1d1c16d16c9a",
+  "version": "1.0.0",
+  "name": "Amazon S3",
+  "label": "Amazon S3 REST API (2006-03-01)",
+  "description": "Amazon S3 REST API (2006-03-01). Official API https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html. Path-style URLs https://s3.{region}.amazonaws.com/{bucket}/{key} signed with AWS SigV4 (service s3). One node; pick operation. Upload/download use type file (platform file ref-id). Handler: OfficialApiNode + api_spec.json. Folders are prefix+delimiter conventions. listen maps to PutBucketNotificationConfiguration plus BPMN message events — S3 cannot long-poll. IAM least-privilege; customer owns bucket policy. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "cloud",
+  "tags": [
+    "aws",
+    "s3",
+    "object-storage"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ddb468f4-e01b-564d-93fb-00aba362761b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port. File bytes are type file.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "bucket_create",
+          "description": "Overrides config operation. Accepted: bucket_create, bucket_delete, bucket_list, bucket_search, file_copy, file_delete, file_download, file_list, file_upload, folder_create, folder_delete, folder_list, listen.",
+          "children": []
+        },
+        {
+          "shortCode": "from_path",
+          "label": "from_path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "x-amz-copy-source for file_copy: /sourceBucket/sourceKey (URL-encoded). Required for file_copy. Example: /invoices-prod/old.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "bucket",
+          "label": "bucket",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "S3 bucket name (path /{bucket}). Used by every object/bucket op except bucket_list. Example: invoices-prod.",
+          "children": []
+        },
+        {
+          "shortCode": "key",
+          "label": "key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Object key (path /{bucket}/{key}) for file_upload/download/delete/copy and folder_*. Example: reports/2026.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Object bytes for file_upload (PUT /{bucket}/{key}). Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes. Required for file_upload.",
+          "children": []
+        },
+        {
+          "shortCode": "list-type",
+          "label": "list-type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ListObjectsV2 query list-type. Send 2. Used by bucket_search, file_list, folder_list. Example: 2.",
+          "children": []
+        },
+        {
+          "shortCode": "prefix",
+          "label": "prefix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Key prefix filter for bucket_search, file_list, folder_list. Example: reports/.",
+          "children": []
+        },
+        {
+          "shortCode": "start-after",
+          "label": "start-after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ListObjectsV2 start-after key for bucket_search. Example: reports/2025.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "max-keys",
+          "label": "max-keys",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Max keys to return (1–1000) for bucket_search and file_list. Example: 100.",
+          "children": []
+        },
+        {
+          "shortCode": "versionId",
+          "label": "versionId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Object versionId query for file_delete. Example: 3/L4kqtJl40Nr8X8gdRQBpUMLUo.",
+          "children": []
+        },
+        {
+          "shortCode": "delimiter",
+          "label": "delimiter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Delimiter for file_list / folder_list (usually /). Example: /.",
+          "children": []
+        },
+        {
+          "shortCode": "continuation-token",
+          "label": "continuation-token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ListObjectsV2 continuation-token from a previous file_list response.",
+          "children": []
+        },
+        {
+          "shortCode": "acl",
+          "label": "acl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "x-amz-acl on file_upload. EXACT: private | public-read | public-read-write | authenticated-read | aws-exec-read | bucket-owner-read | bucket-owner-full-control. Example: private.",
+          "children": []
+        },
+        {
+          "shortCode": "storage_class",
+          "label": "storage_class",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "x-amz-storage-class on file_upload. EXACT: STANDARD | REDUCED_REDUNDANCY | STANDARD_IA | ONEZONE_IA | INTELLIGENT_TIERING | GLACIER | DEEP_ARCHIVE | GLACIER_IR. Example: STANDARD.",
+          "children": []
+        },
+        {
+          "shortCode": "server_side_encryption",
+          "label": "server_side_encryption",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "x-amz-server-side-encryption on file_upload. EXACT: AES256 | aws:kms | aws:kms:dsse. Example: AES256.",
+          "children": []
+        },
+        {
+          "shortCode": "tagging",
+          "label": "tagging",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "x-amz-tagging on file_upload: URL-encoded key=value pairs. Example: project=alpha&env=prod.",
+          "children": []
+        },
+        {
+          "shortCode": "cache_control",
+          "label": "cache_control",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cache-Control header on file_upload. Example: max-age=3600.",
+          "children": []
+        },
+        {
+          "shortCode": "content_disposition",
+          "label": "content_disposition",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Content-Disposition header on file_upload. Example: attachment; filename=\"report.pdf\".",
+          "children": []
+        },
+        {
+          "shortCode": "content_encoding",
+          "label": "content_encoding",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Content-Encoding header on file_upload. Example: gzip.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "50b99a4c-6d87-5c90-a657-50c2b5b837f0",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "7810d2d4-2ba7-5800-9725-ec69c5b1457a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "bucket_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "bucket_create",
+        "bucket_delete",
+        "bucket_list",
+        "bucket_search",
+        "file_copy",
+        "file_delete",
+        "file_download",
+        "file_list",
+        "file_upload",
+        "folder_create",
+        "folder_delete",
+        "folder_list",
+        "listen"
+      ]
+    },
+    {
+      "_id": "25e7b5d7-a834-55e3-83c7-27038630851c",
+      "shortCode": "secret_access_key",
+      "label": "Secret Access Key",
+      "type": "password",
+      "description": "AWS secret access key used to sign SigV4. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4a5f6d9f-e040-5d5a-ace0-2e05582cfafe",
+      "shortCode": "session_token",
+      "label": "Session Token",
+      "type": "password",
+      "description": "Optional STS session token (x-amz-security-token). Empty for long-lived keys. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "82ac4e0a-830d-530f-a21c-38bf89bf0d79",
+      "shortCode": "access_key_id",
+      "label": "Access Key Id",
+      "type": "password",
+      "description": "AWS access key ID used as the SigV4 credential. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fbb0de30-94df-5330-a215-bb222dbcbeaa",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "Signing and path-style endpoint region (us-east-1, …). Host is s3.{region}.amazonaws.com.",
+      "value": "us-east-1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fea8639c-e7bd-5867-bbca-d5148361000f",
+      "shortCode": "file",
+      "label": "File",
+      "type": "file",
+      "description": "Default upload/convert/sign source. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3cedba7d-8e5b-5de4-8300-7ae7dc4a9012",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "797429bc-458c-4838-a9f4-c9ef0c5a6434",
+      "shortCode": "bucket",
+      "label": "bucket",
+      "type": "string",
+      "description": "Default S3 bucket when INPUT bucket is empty. Example: invoices-prod.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

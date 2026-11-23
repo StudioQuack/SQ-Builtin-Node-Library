@@ -1,0 +1,511 @@
+{
+  "_id": "f82f3440-6861-4949-abdf-73cd74865346",
+  "version": "1.0.0",
+  "name": "Close",
+  "label": "Close REST API v1 — leads, contacts, opportunities, activities",
+  "description": "Official Close REST API v1 at https://api.close.com/api/v1. Handler: OfficialApiNode. API key as HTTP Basic (key = username). Trailing slashes required. Call recordings and activity bodies are PII — do not log. trigger.listen is BPMN ingress. Customer owns the Close account. api_key is never logged or returned.",
+  "icon": "contacts",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4e83834c-61e6-414b-961c-c90d7b82b18b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example: {\"operation\":\"lead.get\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "lead.create",
+          "description": "Overrides config operation when non-blank. EXACT: lead.create | lead.get | lead.list | lead.update | lead.delete | contact.create | contact.get | contact.list | contact.update | opportunity.create | opportunity.get | opportunity.list | opportunity.update | call.create | call.get | email.create | sms.create | task.create | task.get | activity.list | customActivity.create | customObject.create | customObject.update | membership.add | membership.remove | trigger.listen. trigger.listen is ingress (BPMN message event, no socket).",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id (lead_…, cont_…, oppo_…, task_…, membership). Required for get/update/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Display name: lead/company or contact name, and the required custom object instance name on customObject.create. Example: Acme Corp.",
+          "children": []
+        },
+        {
+          "shortCode": "lead_id",
+          "label": "lead_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Parent lead id for contact/opportunity/activity/task create.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "lead.list search/filter string.",
+          "children": []
+        },
+        {
+          "shortCode": "_skip",
+          "label": "_skip",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List offset. Prefer date windows over deep skip.",
+          "children": []
+        },
+        {
+          "shortCode": "_limit",
+          "label": "_limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size (respect per-resource max).",
+          "children": []
+        },
+        {
+          "shortCode": "_fields",
+          "label": "_fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated projection. Prefer this to cut PII.",
+          "children": []
+        },
+        {
+          "shortCode": "emails",
+          "label": "emails",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Contact emails [{email, type}]. Minimize.",
+          "children": []
+        },
+        {
+          "shortCode": "phones",
+          "label": "phones",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Contact phones [{phone, type}]. Minimize.",
+          "children": []
+        },
+        {
+          "shortCode": "status_id",
+          "label": "status_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lead or opportunity status id.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Opportunity amount (minor units per Close).",
+          "children": []
+        },
+        {
+          "shortCode": "direction",
+          "label": "direction",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "call.create: inbound | outbound.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required by email.create and sms.create. EXACT: inbox | draft | scheduled | outbox | sent | error; outbox sends immediately. Example: outbox.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SMS or task text (PII). Do not log.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_activity_type_id",
+          "label": "custom_activity_type_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customActivity.create type id.",
+          "children": []
+        },
+        {
+          "shortCode": "role_id",
+          "label": "role_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required by membership.add. EXACT: superuser | user | restricteduser, or a custom role id. Manage Organization permission required. Example: user.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `url` for operations: lead.create, lead.update.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `description` for operations: lead.create, lead.update.",
+          "children": []
+        },
+        {
+          "shortCode": "contacts",
+          "label": "contacts",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `contacts` for operation: lead.create.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `title` for operations: contact.create, contact.update.",
+          "children": []
+        },
+        {
+          "shortCode": "value_period",
+          "label": "value_period",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `value_period` for operations: opportunity.create, opportunity.update.",
+          "children": []
+        },
+        {
+          "shortCode": "note",
+          "label": "note",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `note` for operations: opportunity.create, opportunity.update, call.create.",
+          "children": []
+        },
+        {
+          "shortCode": "duration",
+          "label": "duration",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `duration` for operation: call.create.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `phone` for operation: call.create.",
+          "children": []
+        },
+        {
+          "shortCode": "contact_id",
+          "label": "contact_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `contact_id` for operation: email.create.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email subject for email.create (needed when sending; omit only with template_id). Example: Following up on our call.",
+          "children": []
+        },
+        {
+          "shortCode": "body_html",
+          "label": "body_html",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTML body for email.create; send body_html and/or body_text, or omit both to render template_id. Example: <p>Hi Jane,</p>.",
+          "children": []
+        },
+        {
+          "shortCode": "body_text",
+          "label": "body_text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Plain-text body for email.create; send body_text and/or body_html (or rely on template_id). Example: Hi Jane, thanks for your time today.",
+          "children": []
+        },
+        {
+          "shortCode": "sender",
+          "label": "sender",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sender for email.create in the form \"Name\" <address>; required by Close for status inbox, scheduled, outbox or error. Example: \"John Smith\" <john@example.com>.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Recipient email addresses for email.create (needed to send an outbox/scheduled email). Example: [\"jane@example.com\"].",
+          "children": []
+        },
+        {
+          "shortCode": "local_phone",
+          "label": "local_phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sending phone number (E.164) for sms.create; must be an internal Close phone number. Required to send unless caller_id_mode is auto. Example: +14155550100.",
+          "children": []
+        },
+        {
+          "shortCode": "remote_phone",
+          "label": "remote_phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipient phone number (E.164) for sms.create; needed to send an SMS. Example: +14155550123.",
+          "children": []
+        },
+        {
+          "shortCode": "date",
+          "label": "date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `date` for operation: task.create.",
+          "children": []
+        },
+        {
+          "shortCode": "assigned_to",
+          "label": "assigned_to",
+          "type": "array",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `assigned_to` for operation: task.create.",
+          "children": []
+        },
+        {
+          "shortCode": "_type",
+          "label": "_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `_type` for operation: activity.list.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_fields",
+          "label": "custom_fields",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `custom_fields` for operations: customActivity.create, customObject.create, customObject.update.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_object_type_id",
+          "label": "custom_object_type_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Custom Object type id for customObject.create (required); determines which custom fields apply. Example: cotype_3OOaHjBnmpsgJ3jYBnsWdw.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email address of the user to add on membership.add (required, with role_id); must belong to a verified organization domain. Example: new.rep@example.com.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c1d1b765-cf5f-48eb-8565-4c198aaa65b9",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Log ids only — bodies may contain PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c348ed35-2867-482c-932d-f9352326d6ff",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: lead.create, lead.get, lead.list, lead.update, lead.delete, contact.create, contact.get, contact.list, contact.update, opportunity.create, opportunity.get, opportunity.list, opportunity.update, call.create, call.get, email.create, sms.create, task.create, task.get, activity.list, customActivity.create, customObject.create, customObject.update, membership.add, membership.remove, trigger.listen.",
+      "value": "lead.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "lead.create",
+        "lead.get",
+        "lead.list",
+        "lead.update",
+        "lead.delete",
+        "contact.create",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "opportunity.create",
+        "opportunity.get",
+        "opportunity.list",
+        "opportunity.update",
+        "call.create",
+        "call.get",
+        "email.create",
+        "sms.create",
+        "task.create",
+        "task.get",
+        "activity.list",
+        "customActivity.create",
+        "customObject.create",
+        "customObject.update",
+        "membership.add",
+        "membership.remove",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "6d98cbe2-bc62-4e95-9e9f-c44902c5bbc5",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Close API key (Settings → Developer → API Keys). HTTP Basic username. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8deaacc5-e8ca-4e5c-88dc-c06cfab49dbf",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,276 @@
+{
+  "_id": "98c56c5a-bccd-4a7a-ab76-4da938de33ae",
+  "version": "1.0.0",
+  "name": "Milvus",
+  "label": "Milvus / Zilliz REST v2",
+  "description": "Official Milvus RESTful v2 at http://localhost:19530. POST /v2/vectordb/collections/create and /v2/vectordb/entities/{insert,search,query,delete}. Auth Bearer token (username:password or Zilliz token). Customer owns the cluster. Never log token or vectors. Docs: https://milvus.io/api-reference/restful/v2.6.x/v2/Vector%20(v2)/Insert.md",
+  "icon": "storage",
+  "tags": [
+    "vector",
+    "storage",
+    "milvus"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "150b9a00-3566-5c55-af48-557c41eb37a9",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put token here. Example: {\"operation\":\"collection.search\",\"collectionName\":\"demo\",\"data\":[[0.1,0.2]],\"annsField\":\"vector\",\"limit\":5}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "collection.create",
+          "description": "Overrides config operation when non-blank. EXACT: collection.create | collection.insert | collection.search | collection.query | collection.delete. trigger.listen is ingress (BPMN message event), not HTTP. Do not put token here. Example: 'collection.search'.",
+          "children": []
+        },
+        {
+          "shortCode": "collectionName",
+          "label": "collectionName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Collection name for every op. Example: movies.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Entities to insert, or query vectors for search. Insert: [{id, vector, …}]. Search: [[0.1,0.2,…]].",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Boolean expression for search / query / delete. Example: id in [1,2,3].",
+          "children": []
+        },
+        {
+          "shortCode": "dimension",
+          "label": "dimension",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "collection.create vector dimension when using quick setup. Example: 768.",
+          "children": []
+        },
+        {
+          "shortCode": "metricType",
+          "label": "metricType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "collection.create metric. EXACT: L2 | IP | COSINE.",
+          "children": []
+        },
+        {
+          "shortCode": "schema",
+          "label": "schema",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "collection.create full schema object when not using dimension shortcut.",
+          "children": []
+        },
+        {
+          "shortCode": "indexParams",
+          "label": "indexParams",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "collection.create index params list.",
+          "children": []
+        },
+        {
+          "shortCode": "annsField",
+          "label": "annsField",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search vector field name. Example: vector.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "search / query max results. Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "outputFields",
+          "label": "outputFields",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Fields to return. Example: [\"id\",\"title\"].",
+          "children": []
+        },
+        {
+          "shortCode": "dbName",
+          "label": "dbName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional database name.",
+          "children": []
+        },
+        {
+          "shortCode": "partitionName",
+          "label": "partitionName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional partition for insert.",
+          "children": []
+        },
+        {
+          "shortCode": "searchParams",
+          "label": "searchParams",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "search extra params object. Example: {\"metricType\":\"COSINE\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "query offset. Example: 0.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6cd096bb-409d-5652-83ab-6c89eba617dc",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Never includes secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "7879d547-0200-5220-8c31-b918e6cccd39",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: collection.create | collection.insert | collection.search | collection.query | collection.delete.",
+      "value": "collection.search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "collection.create",
+        "collection.insert",
+        "collection.search",
+        "collection.query",
+        "collection.delete"
+      ]
+    },
+    {
+      "_id": "ffccad29-5abb-5c74-9396-c7cf1c023098",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "Milvus REST token. Sent as Authorization: Bearer. Official username:password (e.g. root:Milvus) or Zilliz API key. Never on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0e542212-a44e-583b-9368-b37ad7a43d8e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

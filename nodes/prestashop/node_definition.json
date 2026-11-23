@@ -1,0 +1,243 @@
+{
+  "_id": "fe99decd-644d-5304-aa54-78d704235efa",
+  "version": "1.0.0",
+  "name": "PrestaShop",
+  "label": "PrestaShop Webservice — resource CRUD (JSON output)",
+  "description": "PrestaShop Webservice. HTTP Basic with api_key as username and empty password (auth.basicKeyPosition=username). Writes are XML. output_format=JSON on reads. Shop-wide key — scope it in PrestaShop. Docs: https://devdocs.prestashop-project.org/9/webservice/tutorials/testing-access/",
+  "icon": "storefront",
+  "tags": [
+    "prestashop",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "bb844243-7eb6-5568-a113-7539ef65956b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "resource_list",
+          "description": "Official API verb. EXACT: resource_list | resource_get | resource_create | resource_update | resource_delete. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id for get/update/delete path {id} when that operation needs it.",
+          "children": []
+        },
+        {
+          "shortCode": "resource",
+          "label": "resource",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `resource` for operations: resource_list, resource_get, resource_create, resource_update, resource_delete. Required by: resource_list, resource_get, resource_create, resource_update, resource_delete.",
+          "children": []
+        },
+        {
+          "shortCode": "output_format",
+          "label": "output_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `output_format` for operations: resource_list, resource_get.",
+          "children": []
+        },
+        {
+          "shortCode": "display",
+          "label": "display",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `display` for operation: resource_list.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `filter` for operation: resource_list.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: resource_list.",
+          "children": []
+        },
+        {
+          "shortCode": "xml",
+          "label": "xml",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "resource_create / resource_update raw XML body (PrestaShop Webservice writes are XML). Example: <?xml version=\"1.0\"?><prestashop><customer><firstname>Ada</firstname></customer></prestashop>.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "resource_list sort, e.g. [id_DESC]. Example: [id_DESC].",
+          "children": []
+        },
+        {
+          "shortCode": "date",
+          "label": "date",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "resource_list. true enables date filters. Example: true.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "877be672-62b8-500f-8059-326dd15a379a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b1c3b37a-eb73-5a20-bdb8-587d09f6108e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: resource_list | resource_get | resource_create | resource_update | resource_delete. trigger does not open a socket.",
+      "value": "resource_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "resource_list",
+        "resource_get",
+        "resource_create",
+        "resource_update",
+        "resource_delete"
+      ]
+    },
+    {
+      "_id": "4a947c5b-4808-52b6-b47d-811fa9f2c985",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "PrestaShop webservice key. HTTP Basic username with empty password (auth.basicKeyPosition=username). Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "69a775a8-f8a8-55c8-a09e-8bd3a35a84cb",
+      "shortCode": "store_host",
+      "label": "Store Host",
+      "type": "string",
+      "description": "Shop hostname only, no scheme.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6d84ac61-2d9a-5b7e-8320-6943c25a85a8",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

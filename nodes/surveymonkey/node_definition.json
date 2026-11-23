@@ -1,0 +1,221 @@
+{
+  "_id": "b26f209b-dce9-458a-8568-49744c03f004",
+  "version": "1.0.0",
+  "name": "SurveyMonkey",
+  "label": "SurveyMonkey REST v3 — surveys, responses, collectors",
+  "description": "Official SurveyMonkey REST API v3 at https://api.surveymonkey.com/v3. Handler: OfficialApiNode. Customer supplies OAuth access_token as Bearer. trigger.listen is ingress — use a BPMN message event. Responses are respondent PII. Customer owns the account. access_token is never logged or returned.",
+  "icon": "quiz",
+  "tags": [
+    "forms"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "7e954e16-53ca-4b0d-b59c-2d771ad93d32",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets (access_token) here. Example: {\"operation\":\"survey.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "survey.list",
+          "description": "Overrides config operation when non-blank. EXACT: 'survey.list' | 'survey.get' | 'response.get' | 'response.list' | 'collector.list' | 'trigger.listen'. trigger.listen is ingress only — not callable from tools.",
+          "children": []
+        },
+        {
+          "shortCode": "survey_id",
+          "label": "survey_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Survey id (positive integer, ^[1-9][0-9]*$, no leading zeros). Required for survey.get, response.*, collector.list.",
+          "children": []
+        },
+        {
+          "shortCode": "response_id",
+          "label": "response_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Response id. Required for response.get.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page number.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page size.",
+          "children": []
+        },
+        {
+          "shortCode": "include",
+          "label": "include",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "survey.list/get include query (comma-separated resources).",
+          "children": []
+        },
+        {
+          "shortCode": "start_created_at",
+          "label": "start_created_at",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "response.list created-after filter (ISO-8601).",
+          "children": []
+        },
+        {
+          "shortCode": "end_created_at",
+          "label": "end_created_at",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "response.list created-before filter (ISO-8601).",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "response.list status filter.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5c12d318-5fa1-4250-95fb-600a9b4e8781",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. PII may be present — do not log bodies.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "03503759-9c01-4419-9d92-45f4f0f25fd1",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: survey.list | survey.get | response.get | response.list | collector.list | trigger.listen.",
+      "value": "survey.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "survey.list",
+        "survey.get",
+        "response.get",
+        "response.list",
+        "collector.list",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "e17f2d20-984d-420a-bb34-740b47f811ef",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "OAuth access token (StudioQuack secret). Sent as Authorization: Bearer. Scopes surveys_read, collectors_read, responses_read / responses_read_detail, webhooks_write as needed. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6d5706cb-f6a3-4d42-aa0d-63c2adb3de93",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 uses api_spec default. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

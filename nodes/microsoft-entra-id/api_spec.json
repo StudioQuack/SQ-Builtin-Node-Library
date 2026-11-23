@@ -1,0 +1,123 @@
+{
+  "baseUrl": "https://graph.microsoft.com/v1.0",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "create-user": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/users",
+      "required": ["accountEnabled", "displayName", "mailNickname", "userPrincipalName", "passwordProfile"],
+      "bodyFrom": [
+        "accountEnabled",
+        "displayName",
+        "mailNickname",
+        "userPrincipalName",
+        "passwordProfile",
+        "givenName",
+        "surname",
+        "jobTitle",
+        "department",
+        "usageLocation",
+        "mail"
+      ]
+    },
+    "get-user": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/users/{userId}",
+      "required": ["userId"],
+      "queryFrom": ["$select"]
+    },
+    "list-users": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/users",
+      "queryFrom": ["$top", "$skip", "$filter", "$select", "$orderby", "$count"]
+    },
+    "update-user": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/users/{userId}",
+      "required": ["userId"],
+      "bodyFrom": [
+        "displayName",
+        "givenName",
+        "surname",
+        "jobTitle",
+        "department",
+        "usageLocation",
+        "accountEnabled",
+        "mailNickname",
+        "userPrincipalName",
+        "passwordProfile"
+      ]
+    },
+    "delete-user": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/users/{userId}",
+      "required": ["userId"]
+    },
+    "add-user-to-group": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/groups/{groupId}/members/$ref",
+      "required": ["groupId", "@odata.id"],
+      "bodyFrom": ["@odata.id"]
+    },
+    "remove-user-from-group": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/groups/{groupId}/members/{userId}/$ref",
+      "required": ["groupId", "userId"]
+    },
+    "create-group": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/groups",
+      "required": ["displayName", "mailEnabled", "mailNickname", "securityEnabled"],
+      "bodyFrom": [
+        "displayName",
+        "mailEnabled",
+        "mailNickname",
+        "securityEnabled",
+        "description",
+        "groupTypes",
+        "visibility"
+      ]
+    },
+    "get-group": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/groups/{groupId}",
+      "required": ["groupId"],
+      "queryFrom": ["$select"]
+    },
+    "list-groups": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/groups",
+      "queryFrom": ["$top", "$skip", "$filter", "$select", "$orderby", "$count"]
+    },
+    "update-group": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/groups/{groupId}",
+      "required": ["groupId"],
+      "bodyFrom": ["displayName", "description", "mailNickname", "visibility"]
+    },
+    "delete-group": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/groups/{groupId}",
+      "required": ["groupId"]
+    }
+  }
+}

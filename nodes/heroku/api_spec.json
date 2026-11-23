@@ -1,0 +1,109 @@
+{
+  "baseUrl": "https://api.heroku.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "extraHeaders": {
+    "Accept": "application/vnd.heroku+json; version=3"
+  },
+  "operations": {
+    "app_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/apps/{app_id_or_name}",
+      "required": [
+        "app_id_or_name"
+      ]
+    },
+    "app_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/apps"
+    },
+    "app_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/apps",
+      "bodyFrom": [
+        "name",
+        "region",
+        "stack"
+      ]
+    },
+    "dyno_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/apps/{app_id_or_name}/dynos",
+      "required": [
+        "app_id_or_name"
+      ],
+      "bodyFrom": [
+        "command",
+        "attach",
+        "size",
+        "type",
+        "env",
+        "time_to_live"
+      ]
+    },
+    "dyno_restart": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/apps/{app_id_or_name}/dynos",
+      "required": [
+        "app_id_or_name"
+      ]
+    },
+    "config_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/apps/{app_id_or_name}/config-vars",
+      "required": [
+        "app_id_or_name"
+      ]
+    },
+    "config_set": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/apps/{app_id_or_name}/config-vars",
+      "required": [
+        "app_id_or_name",
+        "config_vars"
+      ],
+      "contentType": "application/json",
+      "bodyFrom": [
+        "config_vars"
+      ],
+      "bodyMap": {
+        "config_vars": "$"
+      }
+    },
+    "release_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/apps/{app_id_or_name}/releases",
+      "required": [
+        "app_id_or_name"
+      ]
+    },
+    "build_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/apps/{app_id_or_name}/builds",
+      "required": [
+        "app_id_or_name"
+      ],
+      "bodyFrom": [
+        "source_blob"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

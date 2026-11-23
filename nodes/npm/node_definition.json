@@ -1,0 +1,370 @@
+{
+  "_id": "2943e652-5eed-4fa9-b728-3c889097de74",
+  "version": "1.0.0",
+  "name": "npm",
+  "label": "npm registry API",
+  "description": "npm registry API via OfficialApiNode. Base https://registry.npmjs.org. Docs: https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md. dist_tag_set PUT /-/package/{pkg}/dist-tags/{tag} body is a JSON string version (bodyFormat=raw). Optional npm-otp header. Auth token is config only. OUTPUT is {status,http_status,data}.",
+  "icon": "hub",
+  "tags": [
+    "npm",
+    "packages"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "91abb4f3-74cd-4b8b-9f65-f5259b7436fb",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "package_get",
+          "description": "Which official API call to run. EXACT values: package_get | package_versions | package_search | dist_tag_get | dist_tag_set. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'package_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "pkg",
+          "label": "pkg",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Package name for package_get, package_versions, dist_tag_*. Scoped names must encode `/` as `%2F` (e.g. @scope%2Fpkg). Example: left-pad.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search query for package_search (GET /-/v1/search?text=). Example: react hooks.",
+          "children": []
+        },
+        {
+          "shortCode": "tag",
+          "label": "tag",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "dist-tag name for dist_tag_set. Example: latest | next | beta.",
+          "children": []
+        },
+        {
+          "shortCode": "version",
+          "label": "version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Version to assign on dist_tag_set. Official body is a JSON string of the version (npm sends JSON.stringify(version), e.g. the bytes \"1.2.3\" including quotes). Example: 1.2.3 — send with quotes if the engine does not stringify.",
+          "children": []
+        },
+        {
+          "shortCode": "otp",
+          "label": "otp",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional npm one-time password for dist_tag_set when the token has auth-and-writes 2FA. Sent as header npm-otp. Example: 123456.",
+          "children": []
+        },
+        {
+          "shortCode": "size",
+          "label": "size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "package_search page size (query size). Default 20, max 250. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "package_search offset (query from). Example: 0.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "085522da-8d96-4c92-add1-44d5ab802cf9",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ffa9d704-b7d8-4b46-8686-710834e014fa",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: package_get, package_versions, package_search, dist_tag_get, dist_tag_set. listen is BPMN ingress, not a socket.",
+      "value": "package_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "package_get",
+        "package_versions",
+        "package_search",
+        "dist_tag_get",
+        "dist_tag_set"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "package_get",
+          "targets": [
+            {
+              "param": "pkg",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "package_versions",
+          "targets": [
+            {
+              "param": "pkg",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "package_search",
+          "targets": [
+            {
+              "param": "from",
+              "visible": true
+            },
+            {
+              "param": "size",
+              "visible": true
+            },
+            {
+              "param": "text",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "dist_tag_get",
+          "targets": [
+            {
+              "param": "pkg",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "dist_tag_set",
+          "targets": [
+            {
+              "param": "pkg",
+              "visible": true
+            },
+            {
+              "param": "otp",
+              "visible": true
+            },
+            {
+              "param": "version",
+              "visible": true
+            },
+            {
+              "param": "tag",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "3db05197-dd61-4d34-8889-9fedbdd787a3",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "npm access token. Required for dist_tag_set / publish-class verbs. Public GET works if the engine still requires the secret — bind a dummy only if needed; prefer a real token.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "90a16d58-8d0a-45a6-8378-56924cc60f97",
+      "shortCode": "pkg",
+      "label": "Pkg",
+      "type": "string",
+      "description": "Package name for package_get, package_versions, dist_tag_*. Scoped names must encode `/` as `%2F` (e.g. @scope%2Fpkg). Example: left-pad.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dbde6f3a-d0f7-470e-8711-8efc9e60e796",
+      "shortCode": "from",
+      "label": "From",
+      "type": "number",
+      "description": "package_search offset (query from). Example: 0.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dd5a2ca3-3d81-4db2-8d1b-58585664fade",
+      "shortCode": "size",
+      "label": "Size",
+      "type": "number",
+      "description": "package_search page size (query size). Default 20, max 250. Example: 20.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2df61269-db5f-45b8-b199-af09e854d517",
+      "shortCode": "text",
+      "label": "Text",
+      "type": "string",
+      "description": "Search query for package_search (GET /-/v1/search?text=). Example: react hooks.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "54baa30a-d273-4d2d-84b1-c5b8ac99251c",
+      "shortCode": "otp",
+      "label": "Otp",
+      "type": "string",
+      "description": "Optional npm one-time password for dist_tag_set when the token has auth-and-writes 2FA. Sent as header npm-otp. Example: 123456.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9ee8ee6a-1d52-4421-ba86-c4508767555f",
+      "shortCode": "version",
+      "label": "Version",
+      "type": "string",
+      "description": "Version to assign on dist_tag_set. Official body is a JSON string of the version (npm sends JSON.stringify(version), e.g. the bytes \"1.2.3\" including quotes). Example: 1.2.3 — send with quotes if the engine does not stringify.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e8983bed-ec4e-4b0f-b573-d45b13be3823",
+      "shortCode": "tag",
+      "label": "Tag",
+      "type": "string",
+      "description": "dist-tag name for dist_tag_set. Example: latest | next | beta.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6f61e8bd-17f1-41a0-b3cb-a25c8aadda35",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

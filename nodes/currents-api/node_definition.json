@@ -1,0 +1,212 @@
+{
+  "_id": "02361fb2-c359-511d-b357-b3aca17ff961",
+  "version": "1.0.0",
+  "name": "Currents API",
+  "label": "Currents API",
+  "description": "Currents API official API via OfficialApiNode (api_spec.json). Operations: search, latest, available_languages, available_regions. Docs: https://currentsapi.services/en/docs/. Currents API terms. Authorization header is the API key. Publisher copyright remains. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "news",
+  "tags": [
+    "news",
+    "currents"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "976679d0-89b3-5ef4-ba1f-82517856aed6",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Currents API request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"search\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: search | latest | available_languages | available_regions. Default: first listed or instance operation. Example: 'search'.",
+          "children": [],
+          "_id": "fc9b7955-c610-5f70-afff-1269fe8330c1"
+        },
+        {
+          "shortCode": "category",
+          "label": "category",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `category` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "d3f6504c-2153-5013-adce-8695bc3569c6"
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `country` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "5b2135f0-e02b-569d-9efe-4ee39a7a1b4a"
+        },
+        {
+          "shortCode": "end_date",
+          "label": "end_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `end_date` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "79baa159-2c42-5df5-9fda-42946d0c0583"
+        },
+        {
+          "shortCode": "keywords",
+          "label": "keywords",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `keywords` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "f2f787a4-ba9c-5a22-9671-5878257625bc"
+        },
+        {
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `language` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "a3afc843-5096-5982-81b1-db1e096f980e"
+        },
+        {
+          "shortCode": "start_date",
+          "label": "start_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `start_date` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "a543ff02-f298-583f-bbc7-259817a49973"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b0abc52b-7dc3-526e-87ce-e7b254e7b830",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "76234131-2bcc-5544-b746-3dff22868647"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "ecb0e695-8e72-5822-9929-122cdb6608bb"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "2e709be8-a360-5907-bda1-25d0103289a1"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "d1e96b9b-e7ac-5932-88c4-9201896b25ba",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: search, latest, available_languages, available_regions.",
+      "value": "search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "search",
+        "latest",
+        "available_languages",
+        "available_regions"
+      ]
+    },
+    {
+      "_id": "56c74c8e-1898-5c93-a12c-189f415bff5f",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `header`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cb767674-2c5f-5d33-b94f-e5be3eaf4c68",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

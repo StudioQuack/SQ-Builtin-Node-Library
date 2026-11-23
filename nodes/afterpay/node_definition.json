@@ -1,0 +1,252 @@
+{
+  "_id": "bf471ffa-43d3-41c9-aad3-d534dd10b2ce",
+  "version": "1.0.0",
+  "name": "Afterpay",
+  "label": "Afterpay — Afterpay / Clearpay Online API v2",
+  "description": "Official Afterpay / Clearpay Online API v2 (Block). Docs: https://developers.afterpay.com/afterpay-online-developer/api-reference/reference/introduction. Production host https://global-api.afterpay.com (regions AU, NZ, US, CA, UK, FR, IT, ES). One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. BNPL. Clearpay in UK. Age/credit rules. Token from Afterpay JS — never PAN. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "account_balance",
+  "tags": [
+    "afterpay",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1abc970f-3c7e-4cc7-8502-b23926cfe1a7",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Afterpay. Secrets never on this port. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "order_create",
+          "description": "Overrides config operation. EXACT: order_create | order_auth | order_capture | order_void | refund | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id when the path uses {id}.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Afterpay Money envelope escape hatch {amount, currency}. Purpose fields amount_value/currency merge as amount.amount / amount.currency via bodyMap. Example: {\"amount\":\"100.00\",\"currency\":\"USD\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "amount_value",
+          "label": "amount_value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Money amount string on order_create / refund. Nested as amount.amount (Afterpay's inner key; not Adyen's value). Example: 100.00.",
+          "children": []
+        },
+        {
+          "shortCode": "currency",
+          "label": "currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO-4217 currency on order_create / refund. Nested as amount.currency. Example: USD.",
+          "children": []
+        },
+        {
+          "shortCode": "consumer",
+          "label": "consumer",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Consumer {phoneNumber, givenNames, surname, email} for order_create.",
+          "children": []
+        },
+        {
+          "shortCode": "merchant",
+          "label": "merchant",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Merchant {redirectConfirmUrl, redirectCancelUrl} for order_create.",
+          "children": []
+        },
+        {
+          "shortCode": "token",
+          "label": "token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Checkout token for order_auth. Example: 002.abc…",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "Environment",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "API host. sandbox → global-api-sandbox.afterpay.com; production → global-api.afterpay.com. Select via config.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "081d6e37-7ff3-417c-9be3-6bfe63312b93",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "dc8c1606-e236-4e53-93fd-c68a40c8adca",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: order_create | order_auth | order_capture | order_void | refund | trigger. Default order_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "order_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "order_create",
+        "order_auth",
+        "order_capture",
+        "order_void",
+        "refund",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "0ece8207-7f48-4987-9a0c-f2efc18eed54",
+      "shortCode": "secret_key",
+      "label": "Secret Key",
+      "type": "password",
+      "description": "Afterpay credential (basic Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d35406a7-bde6-46d6-bc30-a198e069c166",
+      "shortCode": "merchant_id",
+      "label": "Merchant Id",
+      "type": "password",
+      "description": "Basic-auth username field `merchant_id`.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "91f1f143-4404-4f1a-92a4-58f53a96f869",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "Sandbox uses global-api-sandbox.afterpay.com; production uses global-api.afterpay.com.",
+      "value": "global-api",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {},
+      "options": [
+        "global-api-sandbox",
+        "global-api"
+      ]
+    },
+    {
+      "_id": "a5770c49-07ac-4262-86be-f50d1daa9081",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

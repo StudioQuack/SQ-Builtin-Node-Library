@@ -1,0 +1,39 @@
+{
+  "baseUrl": "https://aiplatform.googleapis.com",
+  "defaultTimeout": 300,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "chat": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/projects/{project}/locations/{location}/publishers/{publisher}/models/{model}:generateContent",
+      "required": ["messages"],
+      "bodyFrom": ["contents", "messages", "systemInstruction", "generationConfig", "safetySettings", "tools", "toolConfig", "labels", "cachedContent"],
+      "stream": {
+        "format": "gemini-sse",
+        "path": "/v1/projects/{project}/locations/{location}/publishers/{publisher}/models/{model}:streamGenerateContent",
+        "query": {"alt": "sse"}
+      }
+    },
+    "embeddings": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/projects/{project}/locations/{location}/publishers/{publisher}/models/{model}:embedContent",
+      "required": [],
+      "bodyFrom": ["content", "embedContentConfig"]
+    },
+    "predict": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/projects/{project}/locations/{location}/publishers/{publisher}/models/{model}:predict",
+      "required": ["instances"],
+      "bodyFrom": ["instances", "parameters"]
+    }
+  }
+}

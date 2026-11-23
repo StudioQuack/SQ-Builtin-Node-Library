@@ -1,0 +1,181 @@
+{
+  "_id": "46b4062f-dcf3-45b4-a7b3-a1abbe2805b7",
+  "version": "1.0.0",
+  "name": "InfluxDB",
+  "label": "InfluxDB 3 — HTTP query_sql",
+  "description": "InfluxDB 3 — HTTP query_sql. Handler: OfficialApiNode. Official API: https://docs.influxdata.com/influxdb3/core/query-data/execute-queries/influxdb-v3-api/. Customer owns the database. Minimize payload. Secrets never logged or returned.",
+  "icon": "storage",
+  "tags": [
+    "tsdb"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ffa6f4df-f8ce-5c58-abb9-a3dc8cececb6",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put token here. Example: {\"operation\":\"query.sql\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "query.sql",
+          "description": "Overrides config. EXACT: query.sql | query.influxql.",
+          "children": []
+        },
+        {
+          "shortCode": "db",
+          "label": "db",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Database name (official body `db`).",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SQL or InfluxQL text (official body `q`).",
+          "children": []
+        },
+        {
+          "shortCode": "params",
+          "label": "params",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Bind parameters for parameterized SQL.",
+          "children": []
+        },
+        {
+          "shortCode": "format",
+          "label": "format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "json | jsonl | csv. Default json.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6737b35b-c416-5766-813f-74d6e79f73cc",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Secrets never copied here.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "887938fa-7f86-5c32-98bf-85d2499ef2b7",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: query.sql | query.influxql.",
+      "value": "query.sql",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "query.sql",
+        "query.influxql"
+      ]
+    },
+    {
+      "_id": "28c90fc4-ee03-5bd8-a30e-3894ec0916a3",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "InfluxDB token (secret). Bearer.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2fd66d23-9248-5bf8-a6ab-9efc657ed08b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

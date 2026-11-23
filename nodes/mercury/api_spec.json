@@ -1,0 +1,55 @@
+{
+  "baseUrl": "https://api.mercury.com/api/v1",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "configKey": "api_token"
+  },
+  "operations": {
+    "account_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/accounts"
+    },
+    "transaction_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/account/{id}/transactions",
+      "required": [
+        "id"
+      ],
+      "queryFrom": [
+        "limit",
+        "offset"
+      ]
+    },
+    "recipient_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/recipients",
+      "bodyFrom": [
+        "name",
+        "emails",
+        "electronicRoutingInfo"
+      ]
+    },
+    "payment_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/account/{id}/transactions",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "amount",
+        "recipientId",
+        "paymentMethod",
+        "idempotencyKey"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

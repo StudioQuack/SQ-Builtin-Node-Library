@@ -1,0 +1,254 @@
+{
+  "_id": "2f1b746a-fa8e-52f9-b8de-5ff3bc6c19fe",
+  "version": "1.0.0",
+  "name": "Twilio",
+  "label": "Twilio — Twilio Programmable Messaging + Voice (2010-04-01)",
+  "description": "Twilio via the official Twilio Programmable Messaging + Voice (2010-04-01). Base https://api.twilio.com/2010-04-01. Docs: https://www.twilio.com/docs/messaging/api/message-resource. A2P 10DLC / TCPA / GDPR apply to SMS. send-whatsapp is Twilio's WhatsApp channel — not graph.facebook.com (see nodes/whatsapp). listen = inbound + status callbacks as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "sms",
+  "tags": [
+    "sms",
+    "voice"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5f17b42d-d49f-5b96-bb24-9374cf879be6",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Twilio operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"send-sms\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-sms",
+          "description": "Which official call to run. EXACT values: send-sms | send-mms | send-whatsapp | make-call-tts | get-message | list-messages | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "To",
+          "label": "To",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipient E.164. Required on send-sms / send-mms / send-whatsapp / make-call-tts. Example: +15551234567. https://www.twilio.com/docs/sms/api/message-resource",
+          "children": []
+        },
+        {
+          "shortCode": "From",
+          "label": "From",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sender E.164 or whatsapp:+E.164. Required on send-whatsapp and make-call-tts; used on SMS/MMS unless MessagingServiceSid is set.",
+          "children": []
+        },
+        {
+          "shortCode": "Body",
+          "label": "Body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message text. Required on send-sms; optional on MMS/WhatsApp. Example: Hello.",
+          "children": []
+        },
+        {
+          "shortCode": "MediaUrl",
+          "label": "MediaUrl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "MMS/WhatsApp media URL. send-mms / send-whatsapp. Example: https://example.com/a.jpg.",
+          "children": []
+        },
+        {
+          "shortCode": "Twiml",
+          "label": "Twiml",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "TwiML document for make-call-tts. Example: <Response><Say>Hello</Say></Response>.",
+          "children": []
+        },
+        {
+          "shortCode": "MessageSid",
+          "label": "MessageSid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Twilio Message SID (SM… / MM…). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "MessagingServiceSid",
+          "label": "MessagingServiceSid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional Messaging Service SID instead of From. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "StatusCallback",
+          "label": "StatusCallback",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `StatusCallback` for operations: send-sms, make-call-tts.",
+          "children": []
+        },
+        {
+          "shortCode": "DateSent",
+          "label": "DateSent",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `DateSent` for operation: list-messages.",
+          "children": []
+        },
+        {
+          "shortCode": "PageSize",
+          "label": "PageSize",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `PageSize` for operation: list-messages.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "bb77dd48-5f4d-524b-a666-7bc2f915973c",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "00272bc9-3f8d-58c5-ab7e-440561db9802",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-sms, send-mms, send-whatsapp, make-call-tts, get-message, list-messages, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-sms",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-sms",
+        "send-mms",
+        "send-whatsapp",
+        "make-call-tts",
+        "get-message",
+        "list-messages",
+        "listen"
+      ]
+    },
+    {
+      "_id": "bacf97d1-6ba2-59f7-b8c1-c98e07b3f296",
+      "shortCode": "auth_token",
+      "label": "Auth token",
+      "type": "password",
+      "description": "Twilio Auth Token (or API Key secret). HTTP Basic with account_sid. StudioQuack secret. Prefer API Key SID + secret in production. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9d297a70-d94d-51b4-a76e-6237fe478ce6",
+      "shortCode": "account_sid",
+      "label": "Auth username",
+      "type": "string",
+      "description": "Username / account id for HTTP Basic (account_sid). Paired with the password secret. Mailgun EXACT value: api.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "add287b6-cd49-523a-9aff-5978e30324e3",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

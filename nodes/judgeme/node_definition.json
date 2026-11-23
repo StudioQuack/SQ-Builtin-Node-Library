@@ -1,0 +1,285 @@
+{
+  "_id": "eb6b7b7c-4842-5d41-9165-63fc4c8b0af2",
+  "version": "1.0.0",
+  "name": "Judge.me",
+  "label": "Judge.me REST v1 — reviews",
+  "description": "Private api_token as recommended X-Api-Token header, and still as query api_token (docs allow both). shop_domain required. Never log reviewer email/body. Docs: https://judge.me/api/docs",
+  "icon": "rate_review",
+  "tags": [
+    "judgeme",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "07231951-40b1-575d-87bc-d224139de5ec",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "review_list",
+          "description": "Official API verb. EXACT: review_list | review_create. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page number for review_list. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for review_list. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reviewer email. Official body email for review_create. Example: ada@example.com. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reviewer display name for review_create. Example: Ada.",
+          "children": []
+        },
+        {
+          "shortCode": "rating",
+          "label": "rating",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Star rating 1–5 for review_create. Official rating. Example: 5.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Review title for review_create. Official title.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Review text for review_create. Official body.",
+          "children": []
+        },
+        {
+          "shortCode": "product_id",
+          "label": "product_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Judge.me product id for review_create. One of product_id / product_handle / product_external_id is required.",
+          "children": []
+        },
+        {
+          "shortCode": "product_handle",
+          "label": "product_handle",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Store product handle for review_create.",
+          "children": []
+        },
+        {
+          "shortCode": "product_external_id",
+          "label": "product_external_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Platform product id (e.g. Shopify product id) for review_create.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional reviewer external id for review_create.",
+          "children": []
+        },
+        {
+          "shortCode": "platform",
+          "label": "platform",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Platform slug for review_create. Typical: shopify | bigcommerce | woocommerce. Example: shopify.",
+          "children": []
+        },
+        {
+          "shortCode": "ip_addr",
+          "label": "ip_addr",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reviewer IP for review_create. Official ip_addr.",
+          "children": []
+        },
+        {
+          "shortCode": "shop_domain",
+          "label": "shop_domain",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Shop domain query (also config). review_list and review_create. Example: example.myshopify.com.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3e521ba2-5791-56b0-80b9-dbeccb28f95d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6a349063-8117-55e0-978f-9b175e695690",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: review_list | review_create. trigger does not open a socket.",
+      "value": "review_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "review_list",
+        "review_create"
+      ]
+    },
+    {
+      "_id": "3bba4b65-aad6-5618-a2b5-1a165007bd5b",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "StudioQuack secret. Sent as X-Api-Token (recommended) and as query api_token (still documented). Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f4c3d90e-b0f7-5a20-9b4d-953042dfe815",
+      "shortCode": "shop_domain",
+      "label": "Shop Domain",
+      "type": "string",
+      "description": "Shop domain sent as query shop_domain on every call. Example: example.myshopify.com.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6038be6e-c99b-59c1-a997-f10ce3040587",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

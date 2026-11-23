@@ -1,0 +1,137 @@
+{
+  "baseUrl": "https://api.bitbucket.org/2.0",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "access_token",
+    "userKey": "email"
+  },
+  "operations": {
+    "repo_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/repositories/{workspace}/{repo_slug}",
+      "required": [
+        "workspace",
+        "repo_slug"
+      ]
+    },
+    "repo_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/repositories/{workspace}",
+      "required": [
+        "workspace"
+      ],
+      "queryFrom": [
+        "pagelen",
+        "page",
+        "q",
+        "role"
+      ]
+    },
+    "file_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/repositories/{workspace}/{repo_slug}/src/{commit}/{path}",
+      "required": [
+        "workspace",
+        "repo_slug",
+        "commit",
+        "path"
+      ]
+    },
+    "pr_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/repositories/{workspace}/{repo_slug}/pullrequests",
+      "required": [
+        "workspace",
+        "repo_slug",
+        "title",
+        "source"
+      ],
+      "bodyFrom": [
+        "title",
+        "source",
+        "destination",
+        "description",
+        "close_source_branch"
+      ],
+      "bodyMap": {
+        "close_source_branch": "close_source_branch"
+      }
+    },
+    "pr_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/repositories/{workspace}/{repo_slug}/pullrequests/{id}",
+      "required": [
+        "workspace",
+        "repo_slug",
+        "id"
+      ]
+    },
+    "pr_merge": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/repositories/{workspace}/{repo_slug}/pullrequests/{id}/merge",
+      "required": [
+        "workspace",
+        "repo_slug",
+        "id"
+      ],
+      "bodyFrom": [
+        "type",
+        "message",
+        "close_source_branch",
+        "merge_strategy"
+      ],
+      "contentType": "application/json"
+    },
+    "pipeline_run": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/repositories/{workspace}/{repo_slug}/pipelines",
+      "required": [
+        "workspace",
+        "repo_slug"
+      ],
+      "bodyFrom": [
+        "target",
+        "variables"
+      ]
+    },
+    "pipeline_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/repositories/{workspace}/{repo_slug}/pipelines/{pipeline_uuid}",
+      "required": [
+        "workspace",
+        "repo_slug",
+        "pipeline_uuid"
+      ]
+    },
+    "commit_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/repositories/{workspace}/{repo_slug}/commits",
+      "required": [
+        "workspace",
+        "repo_slug"
+      ],
+      "queryFrom": [
+        "include",
+        "exclude",
+        "pagelen",
+        "page"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

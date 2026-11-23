@@ -1,0 +1,263 @@
+{
+  "_id": "304636af-fc04-4c3c-bf9c-fedbb68e9f59",
+  "version": "1.0.0",
+  "name": "Alpaca",
+  "label": "Alpaca — Alpaca Trading API v2 + Market Data",
+  "description": "Official Alpaca Trading API v2 + Market Data. Docs: https://docs.alpaca.markets. One node; operations via `operation`. operation=trigger is kind:ingress. Broker-dealer. PDT rules. Not unlicensed advisory. Paper host is default; live is api.alpaca.markets. DO NOT BUILD trade-updates WebSocket; trigger is BPMN ingress. bars uses per-op baseUrl https://data.alpaca.markets. APCA-API-SECRET-KEY is sent from config api_secret via extraHeaders. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "account_balance",
+  "tags": [
+    "alpaca",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "e918a91f-e547-463f-9864-ffdcc5736de0",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Alpaca. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "account_get",
+          "description": "Overrides config operation. EXACT: account_get | order_create | order_get | order_cancel | position_list | bars | clock | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id when the path uses {id}.",
+          "children": []
+        },
+        {
+          "shortCode": "symbol",
+          "label": "symbol",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Ticker for order_create and bars. Example: AAPL.",
+          "children": []
+        },
+        {
+          "shortCode": "qty",
+          "label": "qty",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Order quantity for order_create. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "side",
+          "label": "side",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "order_create side. EXACT: buy | sell.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "order_create type. EXACT: market | limit | stop | stop_limit | trailing_stop.",
+          "children": []
+        },
+        {
+          "shortCode": "time_in_force",
+          "label": "time_in_force",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "order_create time_in_force. EXACT: day | gtc | opg | cls | ioc | fok.",
+          "children": []
+        },
+        {
+          "shortCode": "timeframe",
+          "label": "timeframe",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Bars timeframe. Example: 1Day | 1Hour | 1Min.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: bars.",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "Environment",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Trading API host. Paper: paper-api.alpaca.markets; live: api.alpaca.markets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "d858456f-44a6-4807-8ed5-75292abdefa0",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ad4fe2ec-3c3f-4f48-a677-41d64ffdc644",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: account_get | order_create | order_get | order_cancel | position_list | bars | clock | trigger. Default account_get. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "account_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "account_get",
+        "order_create",
+        "order_get",
+        "order_cancel",
+        "position_list",
+        "bars",
+        "clock",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "d025c641-91b7-42a5-ad78-950fdfc1fa65",
+      "shortCode": "api_key_id",
+      "label": "Api Key Id",
+      "type": "password",
+      "description": "Alpaca credential (header APCA-API-KEY-ID). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1a7fd9d1-5f11-49dc-8fd0-2a9c9764bf24",
+      "shortCode": "api_secret",
+      "label": "Api Secret",
+      "type": "password",
+      "description": "APCA-API-SECRET-KEY. Sent via extraHeaders on every request together with APCA-API-KEY-ID.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "72bd7d7b-cc4f-4ff8-a835-e4f2e0239030",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "Paper trading (paper-api.alpaca.markets) or live (api.alpaca.markets).",
+      "value": "paper-api.alpaca.markets",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {},
+      "options": [
+        "paper-api.alpaca.markets",
+        "api.alpaca.markets"
+      ]
+    },
+    {
+      "_id": "7b35ebe4-0cd5-4ebb-abb4-3f35d22bd141",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

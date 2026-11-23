@@ -1,0 +1,755 @@
+{
+  "_id": "a6b99705-10ba-499d-aa80-39b26db78da3",
+  "version": "1.0.0",
+  "name": "Google Gemini",
+  "label": "Google Gemini",
+  "description": "Official Gemini API (Google AI Studio / Generative Language v1beta) on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). operation selects generateContent, Veo predictLongRunning, LRO poll, or embedContent. Thinking models (gemini-2.5 / gemini-3+) auto-get generationConfig.thinkingConfig {includeThoughts:true, thinkingBudget:-1} unless the caller set one, so thought summaries stream on the thinking channel. Auth is StudioQuack secret api_key sent as x-goog-api-key. Image/audio/video/PDF use type file (platform ref-id). Docs: https://ai.google.dev/gemini-api/docs. Terms: https://ai.google.dev/gemini-api/terms. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "google",
+    "gemini",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ae5950eb-e96d-4cbd-9c56-4257720552a6",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, contents?, generationConfig?, instances?, operation_name?, file?}. Image/audio/video/PDF use type file (platform ref-id), never inline bytes. Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Conversation for chat / generate_image. Gemini REST field is contents (role user|model). OfficialApiNode does not remap messages→contents; send contents as well when the engine does not. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "contents",
+          "label": "contents",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "GenerateContentRequest.contents. Prefer this for a faithful REST body.",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional functionDeclarations / Google tools. Omit or [] sends no tools. Do not enable googleSearch unless the operator opts in (separate terms).",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for multimodal parts (image/audio/video/PDF). Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "operation_name",
+          "label": "operation_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "LRO name from generate_video for download_video (GET /v1beta/{operation_name}).",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "systemInstruction",
+          "label": "systemInstruction",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `systemInstruction` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "generationConfig",
+          "label": "generationConfig",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `generationConfig` for operations: chat, generate_image.",
+          "children": []
+        },
+        {
+          "shortCode": "safetySettings",
+          "label": "safetySettings",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `safetySettings` for operations: chat, generate_image.",
+          "children": []
+        },
+        {
+          "shortCode": "toolConfig",
+          "label": "toolConfig",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `toolConfig` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "cachedContent",
+          "label": "cachedContent",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `cachedContent` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "instances",
+          "label": "instances",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `instances` for operation: generate_video.",
+          "children": []
+        },
+        {
+          "shortCode": "parameters",
+          "label": "parameters",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `parameters` for operation: generate_video.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `prompt` for operation: generate_video.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `content` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "embedContentConfig",
+          "label": "embedContentConfig",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Embedding options object for operation embeddings, sent as body field embedContentConfig (replaces the deprecated top-level taskType / title / outputDimensionality). Keys: taskType (RETRIEVAL_QUERY | RETRIEVAL_DOCUMENT | SEMANTIC_SIMILARITY | CLASSIFICATION | CLUSTERING | QUESTION_ANSWERING | FACT_VERIFICATION | CODE_RETRIEVAL_QUERY), title (only with RETRIEVAL_DOCUMENT), outputDimensionality (integer), autoTruncate (boolean). Example: {\"taskType\":\"RETRIEVAL_DOCUMENT\",\"title\":\"Handbook\",\"outputDimensionality\":768}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0d241753-9cac-4df0-85af-ab8fc6db10a7",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Gemini JSON (GenerateContentResponse, Operation, or EmbedContentResponse).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "8511d140-af82-44dd-bbcf-bb4d43e77c19",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Gemini verb. EXACT values: chat | generate_image | generate_video | download_video | embeddings. Default chat = POST /v1beta/models/{model}:generateContent.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "generate_image",
+        "generate_video",
+        "download_video",
+        "embeddings"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "chat",
+          "targets": [
+            {
+              "param": "model",
+              "visible": true
+            },
+            {
+              "param": "generationConfig",
+              "visible": true
+            },
+            {
+              "param": "messages",
+              "visible": true
+            },
+            {
+              "param": "cachedContent",
+              "visible": true
+            },
+            {
+              "param": "contents",
+              "visible": true
+            },
+            {
+              "param": "systemInstruction",
+              "visible": true
+            },
+            {
+              "param": "tools",
+              "visible": true
+            },
+            {
+              "param": "safetySettings",
+              "visible": true
+            },
+            {
+              "param": "toolConfig",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "generate_image",
+          "targets": [
+            {
+              "param": "model",
+              "visible": true
+            },
+            {
+              "param": "generationConfig",
+              "visible": true
+            },
+            {
+              "param": "messages",
+              "visible": true
+            },
+            {
+              "param": "contents",
+              "visible": true
+            },
+            {
+              "param": "safetySettings",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "generate_video",
+          "targets": [
+            {
+              "param": "model",
+              "visible": true
+            },
+            {
+              "param": "parameters",
+              "visible": true
+            },
+            {
+              "param": "instances",
+              "visible": true
+            },
+            {
+              "param": "prompt",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "download_video",
+          "targets": [
+            {
+              "param": "operation_name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "embeddings",
+          "targets": [
+            {
+              "param": "model",
+              "visible": true
+            },
+            {
+              "param": "content",
+              "visible": true
+            },
+            {
+              "param": "embedContentConfig",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "ce0853ee-7880-4c09-b0e9-f544da30e7b4",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Google AI Studio API key. Sent as header x-goog-api-key. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "25e115a3-1fe3-4287-b320-9e1d53453db5",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Model id in the URL path (models/{model}). Default gemini-3.7-flash (latest stable Flash). Chat: gemini-3.7-flash, gemini-3.6-flash, gemini-3.5-flash, gemini-3.5-flash-lite, gemini-3.1-flash-lite, gemini-3.1-pro-preview, gemini-3-flash-preview; previous gemini-2.5-flash / gemini-2.5-pro / gemini-2.5-flash-lite (shutdown 2026-10-16). Image: gemini-3.1-flash-image (Nano Banana 2), gemini-3.1-flash-lite-image, gemini-3-pro-image, gemini-2.5-flash-image. Video: veo-3.1-generate-preview / veo-3.1-lite-generate-preview. Embeddings: gemini-embedding-2-preview / gemini-embedding-001. Verify live list in AI Studio. Docs: https://ai.google.dev/gemini-api/docs/models .",
+      "value": "gemini-3.7-flash",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "gemini-3.7-flash",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-3.1-flash-lite",
+        "gemini-3.1-pro-preview",
+        "gemini-3-flash-preview",
+        "gemini-2.5-flash",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash-lite",
+        "gemini-3.1-flash-image",
+        "gemini-3.1-flash-lite-image",
+        "gemini-3-pro-image",
+        "gemini-2.5-flash-image",
+        "veo-3.1-generate-preview",
+        "veo-3.1-lite-generate-preview",
+        "gemini-embedding-2-preview",
+        "gemini-embedding-001"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "f98772d7-241f-4c39-866a-716c9c5176c6",
+      "shortCode": "generationConfig",
+      "label": "Generationconfig",
+      "type": "string",
+      "description": "Request-body parameter `generationConfig` for operations: chat, generate_image.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a2ab8673-fbd6-4314-9563-7a0f7a9c6395",
+      "shortCode": "messages",
+      "label": "Messages",
+      "type": "object",
+      "description": "Conversation for chat / generate_image. Gemini REST field is contents (role user|model). OfficialApiNode does not remap messages→contents; send contents as well when the engine does not. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4f06013e-c990-429b-a624-1d5dc66163fd",
+      "shortCode": "cachedContent",
+      "label": "Cachedcontent",
+      "type": "string",
+      "description": "Request-body parameter `cachedContent` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6d121cef-26a4-4d57-9241-617deedde5eb",
+      "shortCode": "contents",
+      "label": "Contents",
+      "type": "object",
+      "description": "GenerateContentRequest.contents. Prefer this for a faithful REST body.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c3056928-2668-472b-b7b7-e0969c97ceba",
+      "shortCode": "systemInstruction",
+      "label": "Systeminstruction",
+      "type": "string",
+      "description": "Request-body parameter `systemInstruction` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cf54e439-2f68-4775-b875-a687bd8f3f5d",
+      "shortCode": "tools",
+      "label": "Tools",
+      "type": "list",
+      "description": "Optional functionDeclarations / Google tools. Omit or [] sends no tools. Do not enable googleSearch unless the operator opts in (separate terms).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ac5aa7ac-0c7a-44cf-a6f9-bd369266c8d8",
+      "shortCode": "safetySettings",
+      "label": "Safetysettings",
+      "type": "string",
+      "description": "Request-body parameter `safetySettings` for operations: chat, generate_image.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4f525842-e354-49a0-beb0-3261c584292c",
+      "shortCode": "toolConfig",
+      "label": "Toolconfig",
+      "type": "string",
+      "description": "Request-body parameter `toolConfig` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c7ad5709-cac9-446c-85cb-a63b2a40b2bf",
+      "shortCode": "parameters",
+      "label": "Parameters",
+      "type": "object",
+      "description": "Request-body parameter `parameters` for operation: generate_video.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6445ebc4-46c5-41e9-b613-9ab457104d5f",
+      "shortCode": "instances",
+      "label": "Instances",
+      "type": "list",
+      "description": "Request-body parameter `instances` for operation: generate_video.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b97f56b3-81cd-42f5-b3f1-7f8960b28f38",
+      "shortCode": "prompt",
+      "label": "Prompt",
+      "type": "string",
+      "description": "Request-body parameter `prompt` for operation: generate_video.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "19e92640-8b1c-4084-b138-6383ea42abac",
+      "shortCode": "operation_name",
+      "label": "Operation Name",
+      "type": "string",
+      "description": "LRO name from generate_video for download_video (GET /v1beta/{operation_name}).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "52257b65-d690-42d3-9832-4faeddd6414c",
+      "shortCode": "content",
+      "label": "Content",
+      "type": "string",
+      "description": "Request-body parameter `content` for operation: embeddings.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bb7e934f-f745-473e-9806-4579ea3dd291",
+      "shortCode": "embedContentConfig",
+      "label": "Embedcontentconfig",
+      "type": "object",
+      "description": "Embedding options object for operation embeddings, sent as body field embedContentConfig (replaces the deprecated top-level taskType / title / outputDimensionality). Keys: taskType (RETRIEVAL_QUERY | RETRIEVAL_DOCUMENT | SEMANTIC_SIMILARITY | CLASSIFICATION | CLUSTERING | QUESTION_ANSWERING | FACT_VERIFICATION | CODE_RETRIEVAL_QUERY), title (only with RETRIEVAL_DOCUMENT), outputDimensionality (integer), autoTruncate (boolean). Example: {\"taskType\":\"RETRIEVAL_DOCUMENT\",\"title\":\"Handbook\",\"outputDimensionality\":768}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "60778893-7f75-430f-ac2c-96302e8d9b66",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1. Video LRO may need 600.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c02e34a4-e261-4744-b539-1da7d3863b2a",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether Google Gemini requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

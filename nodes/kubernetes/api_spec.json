@@ -1,0 +1,133 @@
+{
+  "baseUrl": "{api_server}",
+  "placeholderDefaults": {
+    "api_server": "https://kubernetes.default.svc"
+  },
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "token"
+  },
+  "operations": {
+    "get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v1/namespaces/{namespace}/{resource}/{name}",
+      "required": [
+        "namespace",
+        "resource",
+        "name"
+      ]
+    },
+    "list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v1/namespaces/{namespace}/{resource}",
+      "required": [
+        "namespace",
+        "resource"
+      ]
+    },
+    "apply": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v1/namespaces/{namespace}/{resource}",
+      "required": [
+        "namespace",
+        "resource"
+      ],
+      "bodyFrom": [
+        "manifest",
+        "metadata",
+        "spec",
+        "kind",
+        "apiVersion"
+      ],
+      "bodyMap": {
+        "manifest": "$"
+      }
+    },
+    "delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/api/v1/namespaces/{namespace}/{resource}/{name}",
+      "required": [
+        "namespace",
+        "resource",
+        "name"
+      ]
+    },
+    "patch": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/api/v1/namespaces/{namespace}/{resource}/{name}",
+      "required": [
+        "namespace",
+        "resource",
+        "name"
+      ],
+      "bodyFrom": [
+        "patch",
+        "spec"
+      ],
+      "contentType": "application/merge-patch+json",
+      "bodyMap": {
+        "patch": "$"
+      }
+    },
+    "scale": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/apis/apps/v1/namespaces/{namespace}/{resource}/{name}/scale",
+      "required": [
+        "namespace",
+        "resource",
+        "name"
+      ],
+      "bodyFrom": [
+        "replicas"
+      ],
+      "bodyMap": {
+        "replicas": "spec.replicas"
+      },
+      "contentType": "application/merge-patch+json"
+    },
+    "logs": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v1/namespaces/{namespace}/pods/{name}/log",
+      "required": [
+        "namespace",
+        "name"
+      ],
+      "queryFrom": [
+        "container",
+        "tailLines"
+      ]
+    },
+    "job_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/apis/batch/v1/namespaces/{namespace}/jobs",
+      "required": [
+        "namespace"
+      ],
+      "bodyFrom": [
+        "manifest",
+        "metadata",
+        "spec",
+        "kind",
+        "apiVersion"
+      ],
+      "bodyMap": {
+        "manifest": "$"
+      }
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

@@ -1,0 +1,293 @@
+{
+  "_id": "99b8375d-1fc3-47c0-a17b-cd560086b2ae",
+  "version": "1.0.0",
+  "name": "New Relic",
+  "label": "New Relic NerdGraph + Event API",
+  "description": "New Relic NerdGraph via OfficialApiNode. Docs: https://docs.newrelic.com/docs/apis/nerdgraph/get-started/introduction-new-relic-nerdgraph/. Operations: nrql_query (POST /graphql), event_ingest, deploy_marker, alert_policy_get, incident_get, listen. event_ingest uses per-op baseUrl https://insights-collector.newrelic.com and path /v1/accounts/{accountId}/events (https://docs.newrelic.com/docs/data-apis/ingest-apis/event-api/introduction-event-api/). REST API v2 and Deployments v0 EOL 2027-07-31 (https://docs.newrelic.com/eol/2026/07/eol-31-07-26-rest-api-v2/); /alerts_policies/* is not impacted. Auth secret user_api_key is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "newrelic",
+    "apm",
+    "nrql"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "55dd94d3-0012-461b-91c5-e2e58651b755",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "nrql_query",
+          "description": "Which official API call to run. EXACT values: nrql_query | event_ingest | deploy_marker | alert_policy_get | incident_get | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'nrql_query'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "NerdGraph GraphQL query for nrql_query. Example: { actor { account(id: 1) { nrql(query: \"SELECT count(*) FROM Transaction\") { results } } } }.",
+          "children": []
+        },
+        {
+          "shortCode": "variables",
+          "label": "variables",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "NerdGraph variables object for nrql_query.",
+          "children": []
+        },
+        {
+          "shortCode": "app_id",
+          "label": "app_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "APM application id for deploy_marker. Example: 123456789.",
+          "children": []
+        },
+        {
+          "shortCode": "eventType",
+          "label": "eventType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required on each object in events (Event API name; alphanumeric, colon, underscore; max 255). When events is an object this named field is merged at the root. Example: Purchase.",
+          "children": []
+        },
+        {
+          "shortCode": "events",
+          "label": "events",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "event_ingest body: JSON array sent as the whole POST /v1/accounts/{accountId}/events payload. Each object requires eventType (alphanumeric, colon, underscore; max 255). Attribute values are string or number only. Example: [{\"eventType\":\"Purchase\",\"amount\":259.54}]. https://docs.newrelic.com/docs/data-apis/ingest-apis/event-api/introduction-event-api/",
+          "children": []
+        },
+        {
+          "shortCode": "events_json",
+          "label": "events_json",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "event_ingest: JSON array as text when agent tools cannot send array-typed events (coerced to events). Example: [{\"eventType\":\"Purchase\",\"amount\":1}].",
+          "children": []
+        },
+        {
+          "shortCode": "deployment",
+          "label": "deployment",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "deploy_marker body {deployment:{revision, changelog, description, user}}.",
+          "children": []
+        },
+        {
+          "shortCode": "filter[name]",
+          "label": "filter[name]",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "alert_policy_get filter[name] exact policy name.",
+          "children": []
+        },
+        {
+          "shortCode": "incident_id",
+          "label": "incident_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "incident_get path id (REST v2 alerts incident). Agent alias incidentId accepted. Example: 123456789.",
+          "children": []
+        },
+        {
+          "shortCode": "filter_name",
+          "label": "filter_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "alert_policy_get: policy name filter (maps to query filter[name]).",
+          "children": []
+        },
+        {
+          "shortCode": "accountId",
+          "label": "accountId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "New Relic account id (event_ingest path). Falls back to configuration accountId.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e1939fcf-c646-4dab-bc44-13d14b9400a9",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "db166c82-16d7-4f70-8e29-089b0a1bad62",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: nrql_query, event_ingest, deploy_marker, alert_policy_get, incident_get, listen. listen is BPMN ingress, not a socket.",
+      "value": "nrql_query",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "nrql_query",
+        "event_ingest",
+        "deploy_marker",
+        "alert_policy_get",
+        "incident_get",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "263f9cf5-ffcd-4f8c-bd19-90d7dcee5e8a",
+      "shortCode": "user_api_key",
+      "label": "User Api Key",
+      "type": "password",
+      "description": "New Relic user API key (NerdGraph and REST v2). Header API-Key. event_ingest uses license_key instead when it is set. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bfa8c0c1-c9b9-4e2c-bed0-f68222dee847",
+      "shortCode": "license_key",
+      "label": "License Key",
+      "type": "password",
+      "description": "New Relic ingest license key for event_ingest (Event API). Sent as the API-Key header on that call only; a user key is rejected by the Event API. Never logged. Example: a 40-character key ending in NRAL from API keys > Ingest - License.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9dbc8416-2f0a-5ec2-a709-0bb297a76598",
+      "shortCode": "data_region",
+      "label": "Data region",
+      "type": "select",
+      "description": "Match the region of your New Relic account and API key. EXACT: us | eu. US uses api.newrelic.com; EU uses api.eu.newrelic.com and the EU Event API collector.",
+      "value": "us",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "us",
+        "eu"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "38250e1b-6027-4b1b-b612-28acfcfd8182",
+      "shortCode": "accountId",
+      "label": "Accountid",
+      "type": "string",
+      "description": "Account id for NRQL and ingest.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d45ee251-4893-45a0-94f2-8bd2cf6842f6",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,239 @@
+{
+  "_id": "8c7d24b0-8434-4a06-8660-ff49c1d0788c",
+  "version": "1.0.0",
+  "name": "Google Trends Search",
+  "label": "Google Trends (pytrends) - Search Interest Intelligence",
+  "description": "Opt-in unofficial connector: blocked unless configurationParameter accept_google_terms is true (operator accepts Google's Terms of Service at https://policies.google.com/terms; prefer official Google Ads API, Search Console API, or licensed data partners). Unofficial Java port of pytrends (no API key, no official Google Trends API). Calls the same public Trends HTTP endpoints pytrends uses under https://trends.google.com/trends: cookie/NID warmup, POST /api/explore for widget tokens, then GET /api/widgetdata/multiline|comparedgeo|relatedsearches, GET /hottrends/visualize/internal/data, and GET /api/autocomplete/{keyword}. Use it to compare search interest over time, list related queries/topics, rank regions, read daily hot searches, or autocomplete a seed term. Completely free. Soft rate limit ~30 requests/hour — bursts return HTTP 429. Google may change, empty-out, or block these unofficial endpoints (especially RELATED_TOPICS for scraper/NID sessions). Each invoke uses an isolated cookie jar so tenant cookies never leak. Not Ads, Search Console, or an official Google Cloud API. By setting accept_google_terms you accept Google's Terms of Service (https://policies.google.com/terms). Prefer official Google APIs (Ads, Search Console) or licensed data partners.",
+  "icon": "trending_up",
+  "tags": [
+    "google",
+    "trends",
+    "unofficial",
+    "search"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c52",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Google Trends query object delivered as inputVariables.input (or currentNode.inputList targetPortValue=input). REQUIRED field: keywords (JSON array of 1–5 strings) — required even for trending_searches and suggestions, matching the Python node. Optional: action, timeframe, geo, category, country, resolution. Unknown action fails with error listing the six names. Example: {\"action\":\"interest_over_time\",\"keywords\":[\"studioquack\",\"workflow engine\"],\"timeframe\":\"now 7-d\",\"geo\":\"US\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "action",
+          "label": "action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which unofficial Trends family to call after NID warmup. Omitted/empty defaults to 'interest_over_time'. EXACT accepted values (case-sensitive, same as the Python node): 'interest_over_time' (TIMESERIES widget → GET /api/widgetdata/multiline; relative interest 0–100 over timeframe, one series per keyword), 'related_queries' (RELATED_QUERIES widgets → GET /api/widgetdata/relatedsearches; per-keyword {top,rising} of {query,value}), 'related_topics' (RELATED_TOPICS widgets → same relatedsearches URL; per-keyword {top,rising} flattened maps with '_' like pandas json_normalize, e.g. topic.mid → topic_mid; empty lists are success when Google omits this widget for scraper sessions), 'interest_by_region' (GEO_MAP widget → GET /api/widgetdata/comparedgeo; geoName, geoCode, keyword values; rows with any keyword > 0; cap 50), 'trending_searches' (GET /hottrends/visualize/internal/data keyed by country pn; first 20 strings; still requires keywords), 'suggestions' (GET /api/autocomplete/{urlEncoded keywords[0]} → default.topics). Any other string fails: \"Unknown action: {action}. Use interest_over_time, related_queries, related_topics, interest_by_region, trending_searches, or suggestions.\". Example: 'interest_by_region'.",
+          "children": []
+        },
+        {
+          "shortCode": "keywords",
+          "label": "keywords",
+          "type": "list",
+          "required": true,
+          "value": "[]",
+          "description": "Search terms for Trends comparisonItem (and the autocomplete seed). REQUIRED JSON array of strings — the Python node fails if keywords is missing or not a list, including when action is trending_searches or suggestions. Each entry is trimmed; blanks dropped; more than 5 are cut to the first 5 (Google's compare limit). Series names in interest_over_time / interest_by_region match these strings. suggestions uses keywords[0] only. Example: ['AI automation','workflow platform']. Invalid: omitting the field, [], or a lone string 'AI automation' (must be a list).",
+          "children": []
+        },
+        {
+          "shortCode": "timeframe",
+          "label": "timeframe",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Window copied into every comparisonItem[].time and sent on POST /api/explore. Ignored by trending_searches and suggestions. Omitted/empty defaults to 'now 7-d'. EXACT Google Trends strings (spaces and case matter): 'now 1-H' (past hour), 'now 4-H', 'now 1-d', 'now 7-d' (default, past 7 days), 'today 1-m', 'today 3-m', 'today 12-m', 'today 5-y', 'all' (since 2004). Custom range: 'YYYY-MM-DD YYYY-MM-DD' (start then end, space-separated, inclusive calendar dates). Example: 'today 3-m'. Example custom: '2024-01-01 2024-06-30'.",
+          "children": []
+        },
+        {
+          "shortCode": "geo",
+          "label": "geo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Geographic filter for comparisonItem[].geo on POST /api/explore (and thus every widget). Omitted or '' = worldwide. EXACT accepted values: ISO 3166-1 alpha-2 country codes, typically uppercase. Examples: 'US' (United States), 'GB' (United Kingdom), 'DE' (Germany), 'IN' (India), 'BR' (Brazil), 'JP' (Japan), 'CA' (Canada), 'AU' (Australia), 'FR' (France), 'MX' (Mexico). Google also accepts some subdivision codes such as 'US-CA' (not alpha-2; only when you know Trends supports that geo). Do not pass hottrends names like 'united_states' here — that belongs on country when action='trending_searches'. Example: 'US'.",
+          "children": []
+        },
+        {
+          "shortCode": "category",
+          "label": "category",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Google Trends category id sent as explore req.category (integer). Restricts interest to that vertical. Omitted/empty/non-numeric defaults to 0 (all categories). Accepted values: non-negative integers from the Trends category picker (same ids pytrends uses). 0 = all. Common ids: 5 = Computers & Electronics, 7 = Finance, 8 = Games, 12 = People & Society, 16 = Science, 18 = Shopping, 20 = Sports. Example: 5.",
+          "children": []
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Hot-trends payload key (pytrends pn) used ONLY when action='trending_searches'. Ignored by every other action. Omitted/empty defaults to 'united_states'. EXACT accepted values are the lowercase underscore English names Google uses as keys in GET /hottrends/visualize/internal/data — not ISO alpha-2. Common keys: 'united_states', 'united_kingdom', 'germany', 'france', 'canada', 'australia', 'india', 'japan', 'brazil', 'mexico', 'italy', 'spain', 'netherlands', 'south_korea', 'indonesia', 'turkey'. Example: 'germany'. Wrong: 'US' or 'United States' (those miss the JSON key).",
+          "children": []
+        },
+        {
+          "shortCode": "resolution",
+          "label": "resolution",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GEO_MAP request.resolution used ONLY when action='interest_by_region'. includeLowSearchVolumeGeos is always true (Python inc_low_vol=True). Omitted/empty defaults to 'COUNTRY'. EXACT accepted values (case-insensitive; sent uppercase): 'COUNTRY' (countries; typical when geo is worldwide), 'REGION' (states/provinces — strongest when geo='US'), 'CITY' (cities), 'DMA' (US Nielsen designated market areas; meaningful mainly when geo='US'). Any other string is forwarded as-is and Google may ignore it. Example: 'REGION'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d62",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object for the chosen action on failure. Success always includes status='ok'. interest_over_time / interest_by_region set data (and data_points or regions_returned). related_queries / related_topics set those objects keyed by keyword. trending_searches sets trending[]. suggestions sets suggestions[]. message appears when a data action has no rows. Example success: {\"status\":\"ok\",\"data_points\":7,\"data\":[{\"date\":\"2026-08-13\",\"AI automation\":88}]}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Outcome flag on success. EXACT value: 'ok'. Present on every successful action (including empty related_topics lists and 'No data returned.'). Absent when the payload is a failure object that only has error. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data_points",
+          "label": "Data Points",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Count of timeline rows. Set only when action='interest_over_time' and Google returned timelineData. Integer >= 1. Omitted when data is empty (message is set instead) and omitted for other actions. Example: 7 (now 7-d at daily resolution) or 168 (now 7-d at hourly resolution, depending on Google).",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Row array for interest_over_time and interest_by_region. interest_over_time: [{date:'YYYY-MM-DD' from unix timelineData.time in UTC, <keyword>: int}, ...] — isPartial is dropped. interest_by_region: [{geoName, geoCode, <keyword>: int}, ...] sorted by geoName, only rows where any keyword value > 0, capped at 50. Empty array plus message='No data returned.' when Google sent no rows. Example over-time: [{\"date\":\"2026-08-13\",\"AI automation\":88,\"workflow platform\":42}]. Example region: [{\"geoName\":\"California\",\"geoCode\":\"US-CA\",\"AI automation\":100}].",
+          "children": []
+        },
+        {
+          "shortCode": "related_queries",
+          "label": "Related Queries",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Set when action='related_queries'. Object keyed by each input keyword. Each value is {top:[{query,value}], rising:[{query,value}]} from rankedList[0]/[1] rankedKeyword (query and value only). Missing widgets or empty rankedList → empty arrays for that keyword (not an error). Example: {\"AI automation\":{\"top\":[{\"query\":\"ai tools\",\"value\":100}],\"rising\":[{\"query\":\"agentic workflow\",\"value\":50}]}}.",
+          "children": []
+        },
+        {
+          "shortCode": "related_topics",
+          "label": "Related Topics",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Set when action='related_topics'. Object keyed by each input keyword. Each value is {top:[flattened maps], rising:[flattened maps]}. Nested topic objects are flattened with '_' (pandas json_normalize sep='_'), e.g. topic.mid → topic_mid, topic.title → topic_title, topic.type → topic_type, plus value/formattedValue/hasData/link when present. Google frequently returns no RELATED_TOPICS widget (or empty rankedList) for NID/scraper sessions — that is success with empty arrays, not error. Example: {\"AI automation\":{\"top\":[{\"topic_mid\":\"/m/0mkz\",\"topic_title\":\"Artificial intelligence\",\"topic_type\":\"Topic\",\"value\":100}],\"rising\":[]}}.",
+          "children": []
+        },
+        {
+          "shortCode": "regions_returned",
+          "label": "Regions Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Length of data after non-zero filter and the 50-row cap. Set when action='interest_by_region' and geoMapData was non-empty (even if every row was zero → 0). Omitted when Google sent no geoMapData (message='No data returned.' instead). Integer 0–50. Example: 12.",
+          "children": []
+        },
+        {
+          "shortCode": "trending",
+          "label": "Trending",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Set when action='trending_searches'. Array of strings: first 20 entries under the country (pn) key of GET /hottrends/visualize/internal/data. If Google stores rows as nested arrays, the first cell of each row is used. Example: [\"US election\",\"Olympics\",\"AI chatbot\"]. Missing pn key fails with error naming the country.",
+          "children": []
+        },
+        {
+          "shortCode": "suggestions",
+          "label": "Suggestions",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Set when action='suggestions'. Array copied from default.topics of GET /api/autocomplete/{keywords[0]}. Typical item shape: {mid, title, type} (Google entity mid, display title, entity type). Empty array when topics is missing. Example: [{\"mid\":\"/m/0mkz\",\"title\":\"Artificial intelligence\",\"type\":\"Topic\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "Message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Informational success text when a data action has no rows. EXACT value used: 'No data returned.' Set with status='ok' and data=[] for empty interest_over_time timelineData or empty interest_by_region geoMapData. Not used for empty related_* lists (those are empty arrays under the keyword). Example: 'No data returned.'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7d",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout in seconds applied to NID warmup, POST /api/explore, and widget/hottrends/autocomplete GETs (JDK HttpClient connect + request timeout). Omitted, empty, or not positive falls back to 30 (Python TrendReq timeout and this template's default value). Accepted values: positive integers. Raising this does not raise Google's unofficial ~30 req/hour quota. Example: 30. Example slow path: 60.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+      "shortCode": "accept_google_terms",
+      "label": "Accept Google Terms of Service",
+      "type": "boolean",
+      "description": "Required opt-in before this node calls unofficial Google Trends HTTP endpoints. Default false: the handler returns the error output port and does not contact Google. Set true only if you accept Google's Terms of Service (https://policies.google.com/terms) and will use Trends data solely as those terms allow. Prefer official Google products (Google Ads API, Search Console API) or licensed data partners. This flag is configurationParameters only — never an input port.",
+      "value": false,
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

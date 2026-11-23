@@ -1,0 +1,211 @@
+{
+  "_id": "4a1f4a61-8090-5f65-8007-11b4c57513ef",
+  "version": "1.0.0",
+  "name": "Crossref",
+  "label": "Crossref",
+  "description": "Crossref official API via OfficialApiNode (api_spec.json). Operations: works_search, work_get, funders. Docs: https://www.crossref.org/documentation/retrieve-metadata/rest-api/. Crossref REST (https://api.crossref.org/ or versioned https://api.crossref.org/v1/). Polite pool via mailto= (or User-Agent). Metadata Plus uses header Crossref-Plus-API-Token: Bearer — not wired in this node. Metadata licence; Plus for heavy commercial. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "book",
+  "tags": [
+    "academic",
+    "crossref"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "8670702a-cc44-53c9-b8f1-28bc7b63bfa7",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Crossref request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"works_search\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: works_search | work_get | funders. Default: first listed or instance operation. Example: 'works_search'.",
+          "children": [],
+          "_id": "6cb78ed3-a352-51cc-8aca-776289f71395"
+        },
+        {
+          "shortCode": "doi",
+          "label": "doi",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `doi` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "522c6ef4-808d-5ad0-ae63-b2a0d2c7c1b1"
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `filter` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "56e8839e-1cf8-528e-84e5-ac9031f1e470"
+        },
+        {
+          "shortCode": "mailto",
+          "label": "mailto",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `mailto` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "90a16fe1-285b-5091-8298-6f04cc7278ac"
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `offset` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "9b3862b7-a291-5bf0-9417-f2cb4064d7bf"
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `query` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "5fa48e34-915d-56f3-a464-ef4bf8096aef"
+        },
+        {
+          "shortCode": "rows",
+          "label": "rows",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `rows` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "de22e52b-48b4-592a-8603-a8cd21580c4b"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "42b7bdf9-09e4-5d59-b2c7-b29ab2296c1a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "0f8a8534-8cad-57bf-9dc8-988863a2904b"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "e7d40947-7aa6-5092-aeb5-a522fb8ad5d4"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "9a17b0ee-ce44-5a1d-af93-f51f89f67623"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "bd3f1979-50f4-56ca-8f7c-68fdf598083e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: works_search | work_get | funders. Example: 'works_search'.",
+      "value": "works_search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "works_search",
+        "work_get",
+        "funders"
+      ]
+    },
+    {
+      "_id": "c7c283d9-5b8e-5b7b-85df-e48c65699507",
+      "shortCode": "mailto",
+      "label": "Mailto",
+      "type": "string",
+      "description": "Polite-pool contact email sent as mailto=. Recommended.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f5ca9572-bd80-53db-b6bf-6b6cdf334ddb",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

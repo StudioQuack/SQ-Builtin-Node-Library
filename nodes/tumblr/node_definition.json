@@ -1,0 +1,238 @@
+{
+  "_id": "a06380b9-3d9a-4a50-b05b-f049f0cfbcd2",
+  "version": "1.0.0",
+  "name": "Tumblr",
+  "label": "Tumblr API v2 — NPF posts, blog info, dashboard",
+  "description": "Official Tumblr API v2 at https://api.tumblr.com/v2. OfficialApiNode: POST /blog/{blog_identifier}/posts, GET /blog/{blog_identifier}/posts/{post_id}, GET /blog/{blog_identifier}/info, GET /user/dashboard. Auth is StudioQuack secret access_token (Bearer). No trigger — Tumblr documents no webhook API. Customer owns the Tumblr app. Never log access_token.",
+  "icon": "article",
+  "tags": [
+    "tumblr",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "9f1bde78-6b08-47c2-ab52-d4a3c7429e03",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. No secrets. Example: {\"blog_identifier\":\"example.tumblr.com\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "post_create",
+          "description": "Overrides config operation when non-blank. EXACT: post_create | post_get | blog_info | user_dashboard.",
+          "children": []
+        },
+        {
+          "shortCode": "blog_identifier",
+          "label": "blog_identifier",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path {blog_identifier}: hostname or UUID. Required for post_create, post_get, blog_info.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official Tumblr Neue Post Format content blocks (list of {type, text, …}). Required on post_create. Example: [{\"type\":\"text\",\"text\":\"Hello\"}]. https://www.tumblr.com/docs/en/api/v2#posts--create-a-new-blog-post-neue-post-format",
+          "children": []
+        },
+        {
+          "shortCode": "layout",
+          "label": "layout",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "post_create optional NPF layout array.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated tags for post_create. Example: news,update.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_create state. EXACT: published | draft | queue | private. Example: published.",
+          "children": []
+        },
+        {
+          "shortCode": "post_id",
+          "label": "post_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_get path {post_id}.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "user_dashboard page size.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "user_dashboard offset. Prefer before/after beyond the documented offset max.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Dashboard post type filter. user_dashboard. EXACT: text | quote | link | answer | video | audio | photo | chat.",
+          "children": []
+        },
+        {
+          "shortCode": "since_id",
+          "label": "since_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Dashboard: return posts after this id. user_dashboard.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "dbf8bac8-188f-4444-b29e-96825436b9c4",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON including meta). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx. Tumblr may still put a non-200 meta.status in data.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (meta, blog, post, or posts).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6c9edd03-ee49-4860-9faf-ddbaf010ed45",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: post_create | post_get | blog_info | user_dashboard.",
+      "value": "blog_info",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "post_create",
+        "post_get",
+        "blog_info",
+        "user_dashboard"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "7db2558a-0b91-4ee7-8a4b-887f3413d8db",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Tumblr OAuth 2 access token (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT. Empty → no HTTP.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c886ad2e-326b-48bf-82d2-3ce87d9ec7af",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,97 @@
+{
+  "baseUrl": "{project_url}",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "apikey",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "extraHeaders": {
+    "Prefer": "{prefer}",
+    "Authorization": "Bearer {api_key}"
+  },
+  "operations": {
+    "table.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/rest/v1/{table}",
+      "queryFrom": [
+        "select",
+        "limit",
+        "offset",
+        "order",
+        "id"
+      ],
+      "required": [
+        "table"
+      ]
+    },
+    "table.insert": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/rest/v1/{table}",
+      "required": [
+        "table",
+        "record"
+      ],
+      "contentType": "application/json",
+      "bodyFrom": [
+        "record"
+      ],
+      "bodyMap": {
+        "record": "$"
+      }
+    },
+    "table.update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/rest/v1/{table}",
+      "queryFrom": [
+        "id",
+        "select"
+      ],
+      "required": [
+        "table",
+        "record"
+      ],
+      "contentType": "application/json",
+      "bodyFrom": [
+        "record"
+      ],
+      "bodyMap": {
+        "record": "$"
+      }
+    },
+    "table.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/rest/v1/{table}",
+      "queryFrom": [
+        "id"
+      ],
+      "required": [
+        "table",
+        "id"
+      ]
+    },
+    "rpc": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/rest/v1/rpc/{fn}",
+      "required": [
+        "fn"
+      ],
+      "contentType": "application/json",
+      "bodyFrom": [
+        "args",
+        "record"
+      ],
+      "bodyMap": {
+        "args": "$",
+        "record": "$"
+      }
+    }
+  }
+}

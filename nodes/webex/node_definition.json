@@ -1,0 +1,290 @@
+{
+  "_id": "f9235fc9-b202-5cd8-af08-0ef4b9d16015",
+  "version": "1.0.0",
+  "name": "Webex",
+  "label": "Webex — Webex REST API v1",
+  "description": "Webex via the official Webex REST API v1. Base https://webexapis.com/v1. Docs: https://developer.webex.com/docs/api/v1/messages. Bot vs user tokens differ (bots cannot list all rooms). listen = Webex webhooks as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "videocam",
+  "tags": [
+    "chat",
+    "video"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "02b8a3e8-33b8-55c1-bf24-6a414e06b5e2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Webex operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"create-message\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "create-message",
+          "description": "Which official call to run. EXACT values: create-message | get-message | list-messages | update-message | delete-message | create-meeting | get-meeting | list-meetings | update-meeting | delete-meeting | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "roomId",
+          "label": "roomId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Space id. create-message / list-messages / update-message. Example: Y2lzY29zcGFyazovL3VzL1JPT00v…",
+          "children": []
+        },
+        {
+          "shortCode": "messageId",
+          "label": "messageId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "meetingId",
+          "label": "meetingId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Meeting id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Plain text. create-message / update-message. Required unless markdown or files is set.",
+          "children": []
+        },
+        {
+          "shortCode": "toPersonEmail",
+          "label": "toPersonEmail",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Direct 1:1 by email when roomId omitted. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "toPersonId",
+          "label": "toPersonId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `toPersonId` for operation: create-message.",
+          "children": []
+        },
+        {
+          "shortCode": "markdown",
+          "label": "markdown",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `markdown` for operations: create-message, update-message.",
+          "children": []
+        },
+        {
+          "shortCode": "max",
+          "label": "max",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `max` for operations: list-messages, list-meetings.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Meeting title, required by create-meeting (also update-meeting). Example: Weekly sync.",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Meeting start, ISO 8601 date-time, required by create-meeting (also update-meeting). Example: 2026-12-01T10:00:00Z.",
+          "children": []
+        },
+        {
+          "shortCode": "end",
+          "label": "end",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Meeting end, ISO 8601 date-time after start, required by create-meeting (also update-meeting). Example: 2026-12-01T11:00:00Z.",
+          "children": []
+        },
+        {
+          "shortCode": "timezone",
+          "label": "timezone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `timezone` for operation: create-meeting.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `from` for operation: list-meetings.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `to` for operation: list-meetings.",
+          "children": []
+        },
+        {
+          "shortCode": "files",
+          "label": "files",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Public file URLs for create-message. Example: [\"https://example.com/a.png\"]. https://developer.webex.com/docs/api/v1/messages/create-a-message",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "4e067ed1-2783-5654-956c-efa0b8ded3ec",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e6e7d695-6078-55f8-88d2-97111cd4f2de",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: create-message, get-message, list-messages, update-message, delete-message, create-meeting, get-meeting, list-meetings, update-meeting, delete-meeting, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "create-message",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "create-message",
+        "get-message",
+        "list-messages",
+        "update-message",
+        "delete-message",
+        "create-meeting",
+        "get-meeting",
+        "list-meetings",
+        "update-meeting",
+        "delete-meeting",
+        "listen"
+      ]
+    },
+    {
+      "_id": "e803091a-d415-5421-9617-5439ebe37f8d",
+      "shortCode": "access_token",
+      "label": "Webex token",
+      "type": "password",
+      "description": "Webex bot token or OAuth user token. Header Authorization: Bearer. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "33c2ea79-3e2d-5b4e-8621-f88f98f0cfbd",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

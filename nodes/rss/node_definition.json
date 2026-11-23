@@ -1,0 +1,148 @@
+{
+  "_id": "2c460ad5-518a-5053-92ee-a0cdeab03f50",
+  "version": "1.0.0",
+  "name": "RSS",
+  "label": "RSS",
+  "description": "RSS 2.0 / Atom (RFC 4287) via OfficialApiNode. read = HTTP GET of host+path (no scheme; baseUrl is https://). listen = kind:ingress (BPMN message event — this node does not poll or open a socket). Honor feed copyright and robots. jobType custom-script-executor.",
+  "icon": "rss",
+  "tags": [
+    "news",
+    "rss",
+    "atom"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "52f520a4-bda7-5e64-802e-c16823f6964d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One RSS request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"read\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "read",
+          "description": "Which operation to run. EXACT: read | listen. read fetches the feed. listen is BPMN ingress. Example: 'read'.",
+          "children": [],
+          "_id": "6e8ae9a3-80c6-5863-8bd3-7deb98a13f65"
+        },
+        {
+          "shortCode": "host_and_path",
+          "label": "host_and_path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "For read: host + path + query, no scheme. Example: feeds.bbci.co.uk/news/rss.xml",
+          "children": [],
+          "_id": "6a243ec5-5fdb-5ca1-b73f-7349c5d202bf"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "1c465630-5edb-5d75-8f98-80da61159f45",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "ffc3120e-4eea-5d85-8330-d3acaa146c20"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "750e8df2-0364-5893-9d95-44f9846c2407"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "6d8fdb0e-c307-5154-a483-7762d3fa91b3"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "7d857dc0-e30e-5df4-a98f-106a34c0738d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: read | listen. Example: 'read'.",
+      "value": "read",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "read",
+        "listen"
+      ]
+    },
+    {
+      "_id": "40555843-224e-5d5b-a710-3c219d2f99d7",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

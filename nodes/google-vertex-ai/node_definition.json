@@ -1,0 +1,718 @@
+{
+  "_id": "0b357201-707b-4ad6-9c67-fea1687065ca",
+  "version": "1.0.0",
+  "name": "Google Vertex AI",
+  "label": "Google Vertex AI",
+  "description": "Official Vertex AI / Agent Platform REST v1 on aiplatform.googleapis.com (INPUT llm_input → OUTPUT llm_output). operation selects generateContent, embedContent, or Predict. Auth is operator-supplied OAuth access_token (Bearer). OfficialApiNode cannot sign service-account JSON. Image/video/PDF use type file (platform ref-id). Docs: https://cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.publishers.models/generateContent. Terms: https://cloud.google.com/terms. Never log access_token.",
+  "icon": "psychology",
+  "tags": [
+    "google",
+    "vertex",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "0f8bbf8e-e173-40a0-a64f-01d272aa07c5",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, contents?, tools?, instances?, parameters?, file?}. Multimodal parts use type file (platform ref-id) or gs:// URIs. Do not put access_token here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Conversation for operation=chat. Vertex REST field is contents (role user|model). OfficialApiNode does not remap. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "contents",
+          "label": "contents",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "GenerateContentRequest.contents for a faithful REST body.",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional function declarations. Omit or [] sends no tools.",
+          "children": []
+        },
+        {
+          "shortCode": "instances",
+          "label": "instances",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "PredictRequest.instances for operation=predict. No raw file bytes — text or gs:// URIs.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for multimodal generateContent parts. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "systemInstruction",
+          "label": "systemInstruction",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `systemInstruction` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "generationConfig",
+          "label": "generationConfig",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `generationConfig` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "safetySettings",
+          "label": "safetySettings",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `safetySettings` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "toolConfig",
+          "label": "toolConfig",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `toolConfig` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "labels",
+          "label": "labels",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `labels` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "cachedContent",
+          "label": "cachedContent",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `cachedContent` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `content` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "embedContentConfig",
+          "label": "embedContentConfig",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Embedding options object for operation embeddings, sent as body field embedContentConfig (replaces the deprecated top-level taskType / title / outputDimensionality). Keys: taskType (RETRIEVAL_QUERY | RETRIEVAL_DOCUMENT | SEMANTIC_SIMILARITY | CLASSIFICATION | CLUSTERING | QUESTION_ANSWERING | FACT_VERIFICATION | CODE_RETRIEVAL_QUERY), title (only with RETRIEVAL_DOCUMENT), outputDimensionality (integer), autoTruncate (boolean). Example: {\"taskType\":\"RETRIEVAL_DOCUMENT\",\"title\":\"Handbook\",\"outputDimensionality\":768}.",
+          "children": []
+        },
+        {
+          "shortCode": "parameters",
+          "label": "parameters",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `parameters` for operation: predict.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0019ec42-2c68-4d74-abb6-4eb0fe692d53",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Vertex JSON (GenerateContentResponse, EmbedContentResponse, or PredictResponse).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "8859efb3-1034-47cc-91e8-73929d4cab34",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Vertex verb. EXACT values: chat | embeddings | predict. Default chat = POST …/models/{model}:generateContent.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "embeddings",
+        "predict"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "chat",
+          "targets": [
+            {
+              "param": "generationConfig",
+              "visible": true
+            },
+            {
+              "param": "messages",
+              "visible": true
+            },
+            {
+              "param": "cachedContent",
+              "visible": true
+            },
+            {
+              "param": "contents",
+              "visible": true
+            },
+            {
+              "param": "systemInstruction",
+              "visible": true
+            },
+            {
+              "param": "tools",
+              "visible": true
+            },
+            {
+              "param": "safetySettings",
+              "visible": true
+            },
+            {
+              "param": "toolConfig",
+              "visible": true
+            },
+            {
+              "param": "labels",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "embeddings",
+          "targets": [
+            {
+              "param": "embedContentConfig",
+              "visible": true
+            },
+            {
+              "param": "content",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "predict",
+          "targets": [
+            {
+              "param": "instances",
+              "visible": true
+            },
+            {
+              "param": "parameters",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "94022289-43bc-4f38-9760-49886597e320",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "GCP OAuth 2.0 access token (cloud-platform). Sent as Authorization Bearer. Mint with gcloud or your SA outside this node — OfficialApiNode cannot sign service-account JSON. Never logged. Empty → error 'access_token is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4eaa485a-fae4-4967-9787-5cdd434f580d",
+      "shortCode": "project",
+      "label": "Project",
+      "type": "string",
+      "description": "GCP project id (path). Required for every operation.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1938fcc7-fe92-4c4b-a268-349e7df6da45",
+      "shortCode": "location",
+      "label": "Location",
+      "type": "string",
+      "description": "Region in the resource path (e.g. us-central1). Must match model availability.",
+      "value": "us-central1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1ad855c0-8c21-4dc3-af2b-9e39b1765444",
+      "shortCode": "publisher",
+      "label": "Publisher",
+      "type": "string",
+      "description": "Path publishers/{publisher}. Default google.",
+      "value": "google",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dd185640-5746-44ef-a3a9-b6628653c21d",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Model id without publishers/ prefix. Default gemini-3.7-flash (current Vertex / Agent Platform Flash). Same Gemini 3.x ids as the Gemini API: gemini-3.7-flash, gemini-3.6-flash, gemini-3.5-flash, gemini-3.5-flash-lite, gemini-3.1-pro-preview. gemini-2.5-flash / gemini-2.5-pro retire 2026-10-20. Verify live Model Garden list. Docs: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations .",
+      "value": "gemini-3.7-flash",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "gemini-3.7-flash",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-3.1-flash-lite",
+        "gemini-3.1-pro-preview",
+        "gemini-3-flash-preview",
+        "gemini-2.5-flash",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash-lite",
+        "gemini-3.1-flash-image",
+        "gemini-3-pro-image"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "17265a5f-9f74-4e32-bf68-a8d80f1fd58c",
+      "shortCode": "generationConfig",
+      "label": "Generationconfig",
+      "type": "string",
+      "description": "Request-body parameter `generationConfig` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d59d8eea-4742-4e03-b9b2-35426932bfc1",
+      "shortCode": "messages",
+      "label": "Messages",
+      "type": "object",
+      "description": "Conversation for operation=chat. Vertex REST field is contents (role user|model). OfficialApiNode does not remap. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0aa51e72-7f7f-4746-be1b-b51e7ea9796e",
+      "shortCode": "cachedContent",
+      "label": "Cachedcontent",
+      "type": "string",
+      "description": "Request-body parameter `cachedContent` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "98211666-9e93-496d-a331-f8c3572afb8b",
+      "shortCode": "contents",
+      "label": "Contents",
+      "type": "object",
+      "description": "GenerateContentRequest.contents for a faithful REST body.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4d3f8bca-0deb-4b83-8f79-54e4d3c2d175",
+      "shortCode": "systemInstruction",
+      "label": "Systeminstruction",
+      "type": "string",
+      "description": "Request-body parameter `systemInstruction` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "73f85b55-70fb-49ec-86c7-41b4479f45e5",
+      "shortCode": "tools",
+      "label": "Tools",
+      "type": "list",
+      "description": "Optional function declarations. Omit or [] sends no tools.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7d562824-9a3c-4d60-b9bd-0aa68d17d0c6",
+      "shortCode": "safetySettings",
+      "label": "Safetysettings",
+      "type": "string",
+      "description": "Request-body parameter `safetySettings` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ecb18e21-8441-43d9-aa70-6212b7e6a46d",
+      "shortCode": "toolConfig",
+      "label": "Toolconfig",
+      "type": "string",
+      "description": "Request-body parameter `toolConfig` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b739fdda-fe47-42a1-9ffb-b916e33931aa",
+      "shortCode": "labels",
+      "label": "Labels",
+      "type": "string",
+      "description": "Request-body parameter `labels` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "effd98fc-7d83-45be-8506-9feb8065f0b1",
+      "shortCode": "embedContentConfig",
+      "label": "Embedcontentconfig",
+      "type": "object",
+      "description": "Embedding options object for operation embeddings, sent as body field embedContentConfig (replaces the deprecated top-level taskType / title / outputDimensionality). Keys: taskType (RETRIEVAL_QUERY | RETRIEVAL_DOCUMENT | SEMANTIC_SIMILARITY | CLASSIFICATION | CLUSTERING | QUESTION_ANSWERING | FACT_VERIFICATION | CODE_RETRIEVAL_QUERY), title (only with RETRIEVAL_DOCUMENT), outputDimensionality (integer), autoTruncate (boolean). Example: {\"taskType\":\"RETRIEVAL_DOCUMENT\",\"title\":\"Handbook\",\"outputDimensionality\":768}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2b964451-8c9e-4f78-9023-eb0d1a0877e0",
+      "shortCode": "content",
+      "label": "Content",
+      "type": "string",
+      "description": "Request-body parameter `content` for operation: embeddings.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "240b876c-ed41-42cc-a11b-431a91fc8a16",
+      "shortCode": "instances",
+      "label": "Instances",
+      "type": "list",
+      "description": "PredictRequest.instances for operation=predict. No raw file bytes — text or gs:// URIs.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "eb20446b-9fc0-4e90-9c89-cd4986931532",
+      "shortCode": "parameters",
+      "label": "Parameters",
+      "type": "object",
+      "description": "Request-body parameter `parameters` for operation: predict.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d1d068e9-289b-4d0e-8bf2-02e7fc01b9be",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6d3c9de9-6ee2-4321-bcc9-8e8e14091379",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether Google Vertex AI requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

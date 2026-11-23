@@ -1,0 +1,221 @@
+{
+  "_id": "cbbe45b7-b502-557d-ab3e-d04ce86dd459",
+  "version": "1.0.0",
+  "name": "ntfy",
+  "label": "ntfy — ntfy HTTP API",
+  "description": "ntfy via the official ntfy HTTP API. Base https://ntfy.sh. Docs: https://docs.ntfy.sh/publish/. Self-host: OfficialApiNode host is ntfy.sh. Public topics are secrets. listen = JSON/SSE subscribe is not a long-poll on this node — BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data}. Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "notifications",
+  "tags": [
+    "push"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b5930f82-c32a-5377-afdd-1dd8109f5119",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One ntfy operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"publish\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "publish",
+          "description": "Which official call to run. EXACT values: publish | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "topic",
+          "label": "topic",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Topic path segment for publish (required on INPUT or instance config topic when publishing). Example: backups.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Notification body. Example: Backup finished.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Notification title.",
+          "children": []
+        },
+        {
+          "shortCode": "priority",
+          "label": "priority",
+          "type": "number",
+          "required": false,
+          "value": "3",
+          "description": "Priority 1–5 (5 max). Example: 3.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated tags / emojis. Example: warning,loudspeaker.",
+          "children": []
+        },
+        {
+          "shortCode": "click",
+          "label": "click",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL opened when the notification is clicked.",
+          "children": []
+        },
+        {
+          "shortCode": "attach",
+          "label": "attach",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Attachment URL.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9c403f04-d9dd-5cb5-8a06-3bf7d4dc2091",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2c667c30-cc19-5801-88e9-4d70ae712f58",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: publish, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "publish",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "publish",
+        "listen"
+      ]
+    },
+    {
+      "_id": "e9b64552-4a60-5c2f-abe8-84d3e54049a8",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "ntfy access token (Bearer) or leave blank only for public self-host topics you intend to be world-writable. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6f08a028-d8e4-538e-aef5-34b1b9b59b13",
+      "shortCode": "topic",
+      "label": "topic",
+      "type": "string",
+      "description": "Default topic. Public topics on ntfy.sh are guessable — use access tokens.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4cee3007-e35c-568a-99fe-3b281d805d9e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

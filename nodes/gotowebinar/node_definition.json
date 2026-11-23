@@ -1,0 +1,431 @@
+{
+  "_id": "1de06279-1aa6-43ea-aa78-3a99cc1d57f0",
+  "version": "1.0.0",
+  "name": "GoToWebinar",
+  "label": "GoTo Webinar REST API v2 — webinars, registrants, attendees",
+  "description": "Official GoTo Webinar REST API v2 at https://api.getgo.com/G2W/rest/v2. Handler: OfficialApiNode. Auth: OAuth access token as Bearer (customer supplies a current token; ~60 minute lifetime). Token host authentication.logmeininc.com. Registrant/attendee emails are PII. Customer owns the GoTo account. trigger.listen is ingress (official webhooks: registrant.added, registrant.joined, webinar.created, webinar.changed, survey.submitted). Never log tokens or joinUrl.",
+  "icon": "video_camera_front",
+  "tags": [
+    "webinar"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "189c08cf-ae16-4f36-95d1-b84d694fddcd",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. organizerKey falls back to config. Do not put access_token here. Example: {\"operation\":\"webinar.list\",\"fromTime\":\"2026-08-01T00:00:00Z\",\"toTime\":\"2026-08-31T23:59:59Z\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "webinar.create",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs: webinar.* session.* registrant.* attendee.* panelist.* coOrganizer.* trigger.listen. trigger.listen never opens a socket.",
+          "children": []
+        },
+        {
+          "shortCode": "webinarKey",
+          "label": "webinarKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Webinar key for get/update and nested resources.",
+          "children": []
+        },
+        {
+          "shortCode": "sessionKey",
+          "label": "sessionKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Session key for session.get/details and attendee ops.",
+          "children": []
+        },
+        {
+          "shortCode": "registrantKey",
+          "label": "registrantKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant/attendee key.",
+          "children": []
+        },
+        {
+          "shortCode": "panelistKey",
+          "label": "panelistKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Panelist key for delete/reinvite.",
+          "children": []
+        },
+        {
+          "shortCode": "coorganizerKey",
+          "label": "coorganizerKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Co-organizer key for delete/reinvite.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Webinar title for create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "times",
+          "label": "times",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "[{ startTime, endTime }] ISO-8601 for webinar.create.",
+          "children": []
+        },
+        {
+          "shortCode": "timeZone",
+          "label": "timeZone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IANA zone for webinar.create.",
+          "children": []
+        },
+        {
+          "shortCode": "firstName",
+          "label": "firstName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant given name. PII.",
+          "children": []
+        },
+        {
+          "shortCode": "lastName",
+          "label": "lastName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant family name. PII.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Registrant email. PII.",
+          "children": []
+        },
+        {
+          "shortCode": "panelists",
+          "label": "panelists",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "[{ name, email }] for panelist.create. Official API wants a top-level array; OfficialApiNode sends { panelists: [...] } (engine object-body limit).",
+          "children": []
+        },
+        {
+          "shortCode": "coOrganizers",
+          "label": "coOrganizers",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Internal: { external: false, organizerKey }. External: { external: true, givenName, surname, email }.",
+          "children": []
+        },
+        {
+          "shortCode": "fromTime",
+          "label": "fromTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO range start for webinar.list.",
+          "children": []
+        },
+        {
+          "shortCode": "toTime",
+          "label": "toTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO range end for webinar.list.",
+          "children": []
+        },
+        {
+          "shortCode": "external",
+          "label": "external",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Query flag for coOrganizer.delete / reinvite when the co-organizer has no GoTo account.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `description` for operations: webinar.create, webinar.update.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `type` for operation: webinar.create.",
+          "children": []
+        },
+        {
+          "shortCode": "isPasswordProtected",
+          "label": "isPasswordProtected",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `isPasswordProtected` for operation: webinar.create.",
+          "children": []
+        },
+        {
+          "shortCode": "resendConfirmation",
+          "label": "resendConfirmation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `resendConfirmation` for operation: registrant.create.",
+          "children": []
+        },
+        {
+          "shortCode": "experienceType",
+          "label": "Experience type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "webinar.create experienceType. EXACT: CLASSIC | BROADCAST | SIMULIVE.",
+          "children": []
+        },
+        {
+          "shortCode": "isOndemand",
+          "label": "On demand",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "webinar.create isOndemand.",
+          "children": []
+        },
+        {
+          "shortCode": "organization",
+          "label": "Organization",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "registrant.create organization.",
+          "children": []
+        },
+        {
+          "shortCode": "jobTitle",
+          "label": "Job title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "registrant.create jobTitle.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "Phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "registrant.create phone. PII.",
+          "children": []
+        },
+        {
+          "shortCode": "industry",
+          "label": "Industry",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "registrant.create industry.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "Page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "webinar.list page (0-based).",
+          "children": []
+        },
+        {
+          "shortCode": "size",
+          "label": "Page size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "webinar.list size. Example: 20.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "80396a0b-fddc-49f7-9445-8aee37204d43",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. registrant.create is 201; joinUrl is sensitive — do not log. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (PII — do not log).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2104b106-679b-4d58-b49a-cd2263950f7a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank.",
+      "value": "webinar.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "webinar.create",
+        "webinar.get",
+        "webinar.list",
+        "webinar.update",
+        "session.get",
+        "session.list",
+        "session.details",
+        "registrant.create",
+        "registrant.get",
+        "registrant.list",
+        "registrant.delete",
+        "attendee.get",
+        "attendee.list",
+        "attendee.details",
+        "panelist.create",
+        "panelist.list",
+        "panelist.delete",
+        "panelist.reinvite",
+        "coOrganizer.create",
+        "coOrganizer.list",
+        "coOrganizer.delete",
+        "coOrganizer.reinvite",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "2b3c3d63-41e6-46e8-8ebc-c77fc9a97714",
+      "shortCode": "access_token",
+      "label": "OAuth access token",
+      "type": "password",
+      "description": "GoTo OAuth access token (StudioQuack secret). Sent as Authorization: Bearer. ~60 minute lifetime; customer supplies a current token (refresh at authentication.logmeininc.com). Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "369b3f88-707b-44f9-b010-46fa2866b370",
+      "shortCode": "organizerKey",
+      "label": "Organizer key",
+      "type": "string",
+      "description": "Organizer key (often from token / accounts API). Path-substituted when INPUT omits organizerKey.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a3ae126c-c80a-4100-9ad4-cfa1d2368296",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

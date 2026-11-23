@@ -1,0 +1,384 @@
+{
+  "_id": "070cb258-81af-54ea-8e9d-c5f3e81ba784",
+  "version": "1.0.0",
+  "name": "Shippo",
+  "label": "Shippo REST 2018-02-08 — address, shipment, rate, label, track",
+  "description": "Shippo multi-carrier labels. Authorization: ShippoToken api_token. Docs: https://docs.goshippo.com/api-reference/shipments/create-a-new-shipment. address_validate uses name/street1/city/zip/country; shipment_create uses address_from, address_to, parcels; label_create uses rate or instalabel shipment. Handler: OfficialApiNode. Never log api_token.",
+  "icon": "local_shipping",
+  "tags": [
+    "shippo",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "542c7d9a-bb81-5e51-be52-97be90c90262",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "address_validate",
+          "description": "Official API verb. EXACT: address_validate | shipment_create | rate_get | label_create | track_get | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "object_id",
+          "label": "object_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `object_id` for operation: rate_get. Required by: rate_get.",
+          "children": []
+        },
+        {
+          "shortCode": "carrier",
+          "label": "carrier",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `carrier` for operation: track_get. Required by: track_get.",
+          "children": []
+        },
+        {
+          "shortCode": "tracking_number",
+          "label": "tracking_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Carrier tracking number for track_get path /tracks/{carrier}/{tracking_number}. Example: 1Z999AA10123456784.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Person name for address_validate. Required. Example: Shawn Ippotle.",
+          "children": []
+        },
+        {
+          "shortCode": "company",
+          "label": "company",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Company on address_validate. Optional.",
+          "children": []
+        },
+        {
+          "shortCode": "street1",
+          "label": "street1",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Street line 1 for address_validate. Required. Example: 215 Clayton St.",
+          "children": []
+        },
+        {
+          "shortCode": "street2",
+          "label": "street2",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Street line 2 for address_validate.",
+          "children": []
+        },
+        {
+          "shortCode": "city",
+          "label": "city",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "City for address_validate. Required. Example: San Francisco.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "State/province for address_validate. Example: CA.",
+          "children": []
+        },
+        {
+          "shortCode": "zip",
+          "label": "zip",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Postal code for address_validate. Required. Example: 94117.",
+          "children": []
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 3166-1 alpha-2 for address_validate and track_get carrier country context. Required on address_validate. Example: US.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Phone on address_validate. Example: +1 555 341 9393.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email on address_validate.",
+          "children": []
+        },
+        {
+          "shortCode": "is_residential",
+          "label": "is_residential",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "is_residential on address_validate. true for home delivery.",
+          "children": []
+        },
+        {
+          "shortCode": "validate",
+          "label": "validate",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "When true, address_validate runs Shippo validation (validate=true).",
+          "children": []
+        },
+        {
+          "shortCode": "metadata",
+          "label": "metadata",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional metadata string on address_validate / shipment_create / label_create. Example: Order ID #12345.",
+          "children": []
+        },
+        {
+          "shortCode": "address_from",
+          "label": "address_from",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Sender address object for shipment_create (required). Same keys as address_validate (name, street1, city, zip, country, …) or a stored address object_id string.",
+          "children": []
+        },
+        {
+          "shortCode": "address_to",
+          "label": "address_to",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Recipient address object for shipment_create (required). Same shape as address_from.",
+          "children": []
+        },
+        {
+          "shortCode": "parcels",
+          "label": "parcels",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Parcels for shipment_create (required). Each: length, width, height, distance_unit (in|cm), weight, mass_unit (lb|kg).",
+          "children": []
+        },
+        {
+          "shortCode": "async",
+          "label": "async",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "async flag on shipment_create / label_create. false waits for rates/label in the response.",
+          "children": []
+        },
+        {
+          "shortCode": "extra",
+          "label": "extra",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "shipment_create extra services (insurance, signature, COD). Official ShipmentExtra object.",
+          "children": []
+        },
+        {
+          "shortCode": "rate",
+          "label": "rate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Rate object_id for label_create (POST /transactions/). Required unless using instalabel shipment+carrier_account+servicelevel_token.",
+          "children": []
+        },
+        {
+          "shortCode": "label_file_type",
+          "label": "label_file_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "label_create format. PNG | PDF | PDF_4x6 | PDF_A4 | ZPLII. Example: PDF_4x6.",
+          "children": []
+        },
+        {
+          "shortCode": "shipment",
+          "label": "shipment",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Instalabel shipment object on label_create when rate is omitted (address_from/address_to/parcels).",
+          "children": []
+        },
+        {
+          "shortCode": "carrier_account",
+          "label": "carrier_account",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Carrier account object_id for instalabel label_create.",
+          "children": []
+        },
+        {
+          "shortCode": "servicelevel_token",
+          "label": "servicelevel_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Service token for instalabel label_create, e.g. usps_priority.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "d8ff312a-b339-519b-b61a-7588a04e906b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a037ef20-0b68-5431-9524-3b433e9d395f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: address_validate | shipment_create | rate_get | label_create | track_get | trigger. trigger does not open a socket.",
+      "value": "address_validate",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "address_validate",
+        "shipment_create",
+        "rate_get",
+        "label_create",
+        "track_get",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "91ff696b-154e-549a-bf65-f4e54d178a54",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type bearer with prefix ShippoToken (docs.goshippo.com). Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a27efff4-f757-57da-b1b2-08446b293959",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

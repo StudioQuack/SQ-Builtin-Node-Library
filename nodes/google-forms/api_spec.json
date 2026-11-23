@@ -1,0 +1,96 @@
+{
+  "baseUrl": "https://forms.googleapis.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "form.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/forms/{formId}",
+      "required": [
+        "formId"
+      ]
+    },
+    "form.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/forms",
+      "required": [
+        "info"
+      ],
+      "bodyFrom": [
+        "info"
+      ]
+    },
+    "form.update": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/forms/{formId}:batchUpdate",
+      "required": [
+        "formId",
+        "requests"
+      ],
+      "bodyFrom": [
+        "requests",
+        "includeFormInResponse"
+      ]
+    },
+    "question.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/forms/{formId}",
+      "required": [
+        "formId"
+      ]
+    },
+    "response.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/forms/{formId}/responses",
+      "required": [
+        "formId"
+      ],
+      "queryFrom": [
+        "pageSize",
+        "pageToken",
+        "filter"
+      ]
+    },
+    "response.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/forms/{formId}/responses/{responseId}",
+      "required": [
+        "formId",
+        "responseId"
+      ]
+    },
+    "watch.responses": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/forms/{formId}/watches",
+      "required": [
+        "formId",
+        "eventType",
+        "target"
+      ],
+      "bodyFrom": [
+        "eventType",
+        "target"
+      ],
+      "bodyMap": {
+        "eventType": "watch.eventType",
+        "target": "watch.target"
+      }
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "baseUrl": "http://localhost:5984",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "userKey": "username",
+    "configKey": "password"
+  },
+  "operations": {
+    "doc.get": {
+      "method": "GET",
+      "path": "/{db}/{docid}",
+      "required": [
+        "db",
+        "docid"
+      ],
+      "kind": "http",
+      "queryFrom": [
+        "rev",
+        "revs",
+        "conflicts"
+      ]
+    },
+    "doc.put": {
+      "method": "PUT",
+      "path": "/{db}/{docid}",
+      "required": [
+        "db",
+        "docid",
+        "document"
+      ],
+      "kind": "http",
+      "bodyFrom": [
+        "document",
+        "_id",
+        "_rev"
+      ],
+      "queryFrom": [
+        "rev",
+        "batch",
+        "new_edits"
+      ],
+      "bodyMap": {
+        "document": "$"
+      }
+    },
+    "doc.delete": {
+      "method": "DELETE",
+      "path": "/{db}/{docid}",
+      "queryFrom": [
+        "rev"
+      ],
+      "required": [
+        "db",
+        "docid",
+        "rev"
+      ],
+      "kind": "http"
+    },
+    "doc.find": {
+      "method": "POST",
+      "path": "/{db}/_find",
+      "bodyFrom": [
+        "selector",
+        "limit",
+        "skip",
+        "fields",
+        "sort",
+        "bookmark",
+        "use_index",
+        "execution_stats"
+      ],
+      "required": [
+        "db",
+        "selector"
+      ],
+      "kind": "http"
+    },
+    "db.allDocs": {
+      "method": "GET",
+      "path": "/{db}/_all_docs",
+      "queryFrom": [
+        "include_docs",
+        "limit",
+        "skip",
+        "startkey",
+        "endkey",
+        "descending"
+      ],
+      "required": [
+        "db"
+      ],
+      "kind": "http"
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

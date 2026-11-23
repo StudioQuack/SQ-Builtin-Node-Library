@@ -1,0 +1,312 @@
+{
+  "_id": "ff0ce84f-748a-564a-87a7-fcd6ddc8f1d9",
+  "version": "1.0.0",
+  "name": "Matrix",
+  "label": "Matrix — Matrix Client-Server API v1.19",
+  "description": "Matrix via the official Matrix Client-Server API v1.19. Base https://. Docs: https://spec.matrix.org/v1.19/client-server-api/. Endpoint paths remain /_matrix/client/v3 (spec version ≠ HTTP path version). E2EE rooms are out of v1 (plaintext only). homeserver is interpolated into the path (baseUrl https://). listen = /sync is not opened here — use a BPMN message event for appservice/webhook bridges. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "forum",
+  "tags": [
+    "chat"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "bf047770-6341-5c1e-bebf-347f5a30ec5f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Matrix operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"get-account\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "get-account",
+          "description": "Which official call to run. EXACT values: get-account | get-event | send-message | list-messages | send-media | create-room | invite-room | join-room | kick-room | leave-room | list-members | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "roomId",
+          "label": "roomId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Room id !opaque:server for send-message, list-messages, get-event, invite/kick/leave/list-members. Example: !abc:matrix.org.",
+          "children": []
+        },
+        {
+          "shortCode": "eventId",
+          "label": "eventId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event id for get-event. Example: $abc.",
+          "children": []
+        },
+        {
+          "shortCode": "txnId",
+          "label": "txnId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Transaction id path for send-message (client-generated unique). Example: txn-172.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message body for send-message. Official body.",
+          "children": []
+        },
+        {
+          "shortCode": "msgtype",
+          "label": "msgtype",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message type for send-message. EXACT typical: m.text | m.notice | m.emote. Example: m.text.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Matrix user id for invite-room / kick-room. Example: @bob:matrix.org.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination token for list-messages.",
+          "children": []
+        },
+        {
+          "shortCode": "dir",
+          "label": "dir",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination direction, required by list-messages (query `dir`). EXACT: b (backwards, newest first) | f (forwards). Example: b.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "list-messages page size. Example: 30.",
+          "children": []
+        },
+        {
+          "shortCode": "filename",
+          "label": "filename",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "filename query for send-media. Example: photo.jpg.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Room name for create-room.",
+          "children": []
+        },
+        {
+          "shortCode": "topic",
+          "label": "topic",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Room topic for create-room.",
+          "children": []
+        },
+        {
+          "shortCode": "preset",
+          "label": "preset",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-room preset. EXACT: private_chat | public_chat | trusted_private_chat.",
+          "children": []
+        },
+        {
+          "shortCode": "invite",
+          "label": "invite",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "User ids to invite on create-room. Example: [\"@ada:matrix.org\"].",
+          "children": []
+        },
+        {
+          "shortCode": "roomIdOrAlias",
+          "label": "roomIdOrAlias",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Room id or #alias:server for join-room.",
+          "children": []
+        },
+        {
+          "shortCode": "reason",
+          "label": "reason",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Kick reason for kick-room.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c488a021-3818-5b22-8538-ac83b611855c",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4f3c4901-f4a8-5229-936a-c8e8f59ba656",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: get-account, get-event, send-message, list-messages, send-media, create-room, invite-room, join-room, kick-room, leave-room, list-members, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "get-account",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "get-account",
+        "get-event",
+        "send-message",
+        "list-messages",
+        "send-media",
+        "create-room",
+        "invite-room",
+        "join-room",
+        "kick-room",
+        "leave-room",
+        "list-members",
+        "listen"
+      ]
+    },
+    {
+      "_id": "41ff5127-8af0-5e66-8fec-4b752f3ec94c",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Matrix access token. Header Authorization: Bearer. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0d011f67-2d38-52d9-b7fa-414d7325f8f1",
+      "shortCode": "homeserver",
+      "label": "homeserver",
+      "type": "string",
+      "description": "Homeserver host only (no scheme), e.g. matrix.example.com. Path prefix.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1a8c4525-3ba3-5cce-89c1-d785559f0c07",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

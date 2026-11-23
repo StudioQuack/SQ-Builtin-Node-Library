@@ -1,0 +1,289 @@
+{
+  "_id": "9c5b1786-4699-43af-ae9a-4f852ea12a8a",
+  "version": "1.0.0",
+  "name": "Braintree",
+  "label": "Braintree — Braintree GraphQL (Braintree-Version 2019-01-01)",
+  "description": "Official Braintree GraphQL (Braintree-Version 2019-01-01). Docs: https://developer.paypal.com/braintree/graphql/guides/making_api_calls. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. POST /graphql with query+variables. Charge with paymentMethodId nonce from Drop-in / client SDK — never PAN. Sandbox: payments.sandbox.braintree-api.com. Sends header Braintree-Version: 2019-01-01. Purpose-oriented fields nest into GraphQL variables.",
+  "icon": "account_balance",
+  "tags": [
+    "braintree",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d3604a91-f90a-4cae-b80d-ee5a8b8f439f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Braintree. Secrets never on this port. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "client_token_create",
+          "description": "Overrides config operation. EXACT: client_token_create | transaction_sale | transaction_void | transaction_refund | customer_create | subscription_create | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "Environment",
+          "type": "string",
+          "required": false,
+          "value": "payments.braintree-api.com",
+          "description": "Sandbox vs production GraphQL host. Substituted into api_spec baseUrl as https://{environment}. Example: payments.sandbox.braintree-api.com.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official GraphQL document (body query). Example: mutation Charge($input: ChargePaymentMethodInput!) { chargePaymentMethod(input: $input) { transaction { id status } } }.",
+          "children": []
+        },
+        {
+          "shortCode": "variables",
+          "label": "variables",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "GraphQL variables envelope escape hatch. Purpose fields paymentMethodId/transactionId/amount/customerId/… merge into variables via bodyMap. The GraphQL `query` document is still required.",
+          "children": []
+        },
+        {
+          "shortCode": "paymentMethodId",
+          "label": "paymentMethodId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Payment method id or nonce from Drop-in / client SDK (pm_ / fake-valid-nonce). NEVER a PAN. transaction_sale variables.paymentMethodId.",
+          "children": []
+        },
+        {
+          "shortCode": "transactionId",
+          "label": "transactionId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transaction_void / transaction_refund GraphQL transaction id.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transaction_sale / transaction_refund amount as a decimal string. Nested as variables.transaction.amount. Example: 10.00.",
+          "children": []
+        },
+        {
+          "shortCode": "merchantAccountId",
+          "label": "merchantAccountId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transaction_sale variables.transaction.merchantAccountId.",
+          "children": []
+        },
+        {
+          "shortCode": "customerId",
+          "label": "customerId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Vault customer id for sale / subscription / customer ops.",
+          "children": []
+        },
+        {
+          "shortCode": "planId",
+          "label": "planId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "subscription_create variables.subscription.planId.",
+          "children": []
+        },
+        {
+          "shortCode": "firstName",
+          "label": "firstName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create variables.customer.firstName. Example: Ada.",
+          "children": []
+        },
+        {
+          "shortCode": "lastName",
+          "label": "lastName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create variables.customer.lastName.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create variables.customer.email. Not a card number.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "d323ff0a-ab4d-4792-8d84-1b972c19e217",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "df263ee6-a1f4-438b-b313-0d56919880e2",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: client_token_create | transaction_sale | transaction_void | transaction_refund | customer_create | subscription_create | trigger. Default client_token_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "client_token_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "client_token_create",
+        "transaction_sale",
+        "transaction_void",
+        "transaction_refund",
+        "customer_create",
+        "subscription_create",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "44efb5de-6beb-422b-9e99-a0bd6ab6f8f6",
+      "shortCode": "private_key",
+      "label": "Private Key",
+      "type": "password",
+      "description": "Braintree credential (basic Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "42beeea4-dc00-43b3-bd4d-a649dd0f8089",
+      "shortCode": "public_key",
+      "label": "Public Key",
+      "type": "password",
+      "description": "Basic-auth username field `public_key`.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "91510c5d-7e38-48a2-b7a4-c8bc681a70d8",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "Sandbox vs production GraphQL host. Substituted into api_spec baseUrl as https://{environment}. Example: payments.sandbox.braintree-api.com.",
+      "value": "payments.braintree-api.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "payments.braintree-api.com",
+        "payments.sandbox.braintree-api.com"
+      ]
+    },
+    {
+      "_id": "2ef68ad5-b6b4-4cff-bf34-8158852192c2",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

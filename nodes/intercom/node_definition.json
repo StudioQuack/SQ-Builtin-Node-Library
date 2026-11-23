@@ -1,0 +1,403 @@
+{
+  "_id": "549551e3-81ac-4e07-8051-3d8f3cde0a24",
+  "version": "1.0.0",
+  "name": "Intercom",
+  "label": "Intercom — contacts, companies, conversations",
+  "description": "Official Intercom REST. Handler: OfficialApiNode. Bearer private-app or OAuth access token. baseUrl is https://{region} (api.intercom.io / api.eu.intercom.io / api.au.intercom.io — https://developers.intercom.com/docs/build-an-integration/learn-more/rest-apis). extraHeaders send Intercom-Version: 2.16 (https://developers.intercom.com/docs/references/introduction). Legacy /users and /leads collections are retired. trigger.listen is ingress. Customer owns the workspace. Conversations are PII. Never log access_token.",
+  "icon": "chat",
+  "tags": [
+    "chat",
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d36fbb70-ce5a-4d80-8f72-cb99a6923b4b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation Intercom JSON keys. Create contact needs email or external_id. trigger.listen does not call HTTP. Do not put access_token here. Example: {\"operation\":\"contact.get\",\"id\":\"…\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.create",
+          "description": "Overrides config. EXACT catalog verb including trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact, company, or tag id depending on the operation.",
+          "children": []
+        },
+        {
+          "shortCode": "contact_id",
+          "label": "contact_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact id path for tag.add.",
+          "children": []
+        },
+        {
+          "shortCode": "role",
+          "label": "role",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact role. EXACT: user | lead. contact.create / contact.update.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact email for contact.create / contact.update. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "external_id",
+          "label": "external_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Your user id. Official external_id. contact.create / contact.update.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact or company name. contact.* / company.*.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact phone. contact.create / contact.update.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_attributes",
+          "label": "custom_attributes",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Custom attributes map for contact/company create and update.",
+          "children": []
+        },
+        {
+          "shortCode": "unsubscribed_from_emails",
+          "label": "unsubscribed_from_emails",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Official unsubscribed_from_emails. contact.create / contact.update.",
+          "children": []
+        },
+        {
+          "shortCode": "company_id",
+          "label": "company_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Your company id. Official company_id for company.create / company.update.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for list operations. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "starting_after",
+          "label": "starting_after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cursor for contact.list / conversation.list.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page number for company.list.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Intercom from-object escape hatch for conversation.create and message.send. Purpose fields from_type/from_id merge as from.type / from.id via bodyMap. Example: {\"type\":\"user\",\"id\":\"123\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTML/plain body for conversation.create, conversation.reply, message.send.",
+          "children": []
+        },
+        {
+          "shortCode": "conversation_id",
+          "label": "conversation_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Conversation id path for conversation.reply.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reply author type for conversation.reply. EXACT: admin | user.",
+          "children": []
+        },
+        {
+          "shortCode": "admin_id",
+          "label": "admin_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Admin id for conversation.reply when type=admin.",
+          "children": []
+        },
+        {
+          "shortCode": "message_type",
+          "label": "message_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "conversation.reply message_type (comment|note) or message.send message_type (inapp|email).",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email subject for message.send when message_type=email.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Intercom to-object escape hatch for message.send. Purpose fields to_type/to_id merge as to.type / to.id via bodyMap. Example: {\"type\":\"user\",\"id\":\"456\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "from_type",
+          "label": "from_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sender type on conversation.create / message.send. Nested as from.type. EXACT common: user | lead | admin | contact. Example: user.",
+          "children": []
+        },
+        {
+          "shortCode": "from_id",
+          "label": "from_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sender id on conversation.create / message.send. Nested as from.id. Example: 123.",
+          "children": []
+        },
+        {
+          "shortCode": "to_type",
+          "label": "to_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipient type on message.send. Nested as to.type. EXACT common: user | lead | admin | contact. Example: user.",
+          "children": []
+        },
+        {
+          "shortCode": "to_id",
+          "label": "to_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipient id on message.send. Nested as to.id. Example: 456.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "943a5cbe-fc6d-4714-9e32-8dfe80df2b49",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. trigger.listen: BPMN message event (verify X-Hub-Signature on ingress). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6874a93b-7afd-4b10-be43-f8c56e18d097",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank.",
+      "value": "contact.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "contact.create",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "contact.delete",
+        "company.create",
+        "company.get",
+        "company.list",
+        "company.update",
+        "company.listUsers",
+        "conversation.create",
+        "conversation.reply",
+        "conversation.list",
+        "message.send",
+        "tag.add",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "c3f75827-5749-478d-bcb6-d9b0bbf8291b",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Intercom private-app or OAuth access token. Sent as Authorization: Bearer. Never log. Developer Hub.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c07275ae-d6bb-4683-aba9-56fa17a70ab9",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "select",
+      "description": "Workspace API host without scheme. US: api.intercom.io. EU: api.eu.intercom.io. AU: api.au.intercom.io. Substituted into baseUrl https://{region}.",
+      "value": "api.intercom.io",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "api.intercom.io",
+        "api.eu.intercom.io",
+        "api.au.intercom.io"
+      ]
+    },
+    {
+      "_id": "a6db9feb-b61f-47e0-bfef-34c52ddd3878",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Webhooks must be answered in ~5s on ingress.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

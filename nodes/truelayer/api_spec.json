@@ -1,0 +1,70 @@
+{
+  "baseUrl": "https://api.truelayer.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "auth_link": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v3/data-connections",
+      "bodyFrom": [
+        "user",
+        "user_consent",
+        "hosted_page",
+        "authorization_flow",
+        "provider_selection",
+        "data_access_type",
+        "scopes"
+      ]
+    },
+    "accounts_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v3/connected-accounts",
+      "queryFrom": [
+        "cursor",
+        "type"
+      ],
+      "extraHeaders": {
+        "Connection-Id": "{connection_id}"
+      }
+    },
+    "transactions_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v3/connected-accounts/{account_id}/transactions/requests/{request_id}",
+      "required": [
+        "account_id",
+        "request_id"
+      ],
+      "extraHeaders": {
+        "Connection-Id": "{connection_id}"
+      }
+    },
+    "payment_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v3/payments",
+      "bodyFrom": [
+        "amount_in_minor",
+        "currency",
+        "payment_method"
+      ]
+    },
+    "payment_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v3/payments/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

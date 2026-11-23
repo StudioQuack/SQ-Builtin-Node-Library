@@ -1,0 +1,385 @@
+{
+  "_id": "3f8d2c41-9a70-4e55-b1c8-6d4e0f92a3b5",
+  "version": "1.0.0",
+  "name": "PGVector",
+  "label": "PGVector — Postgres similarity search",
+  "description": "Generic pgvector node on a customer-owned PostgreSQL. Operations: QUERY (vector similarity when embedding is a number[]; substring match on the document column when embedding is empty), UPSERT, DELETE. Wire this to an AI Agent data FUNCTION port — the agent emits {operation:'QUERY', query, embedding?, topK, filter}. Password stays in configurationParameters and is never logged. Auth: trust, cleartext, MD5, SCRAM-SHA-256. jobType custom-script-executor.",
+  "icon": "storage",
+  "tags": [
+    "postgres",
+    "pgvector",
+    "vector",
+    "search"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c12a8d70-1e44-4b90-9c21-6a7b8c9d0e11",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One vector-store operation. Do not put password here. Example: {\"operation\":\"QUERY\",\"query\":\"order 42\",\"topK\":5,\"filter\":{\"source\":\"orders\"}}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "QUERY",
+          "description": "Overrides config operation when non-blank. Purpose: choose the SQL path. EXACT accepted values (case-insensitive): QUERY (similarity or text fallback) | UPSERT (insert/update one row) | DELETE (by id and/or filter). Any other token fails with error and does not connect. Example: 'QUERY'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Free-text query. Purpose: when embedding is empty, QUERY uses position(query in document_column) > 0 (no ILIKE wildcards). On UPSERT, used as document when document is omitted. Accepted value: any string. Empty QUERY with no embedding and no filter returns the first topK rows. Example: 'invoice 8831 line items'.",
+          "children": []
+        },
+        {
+          "shortCode": "embedding",
+          "label": "embedding",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Dense vector. Purpose: QUERY uses pgvector <=> cosine distance when this is a non-empty number[]; UPSERT requires it. Accepted values: number[] of finite floats. Nested [[...]] is flattened to one vector. Empty/omit on QUERY → text fallback. Do not log. Example: [0.12, -0.04, 0.88].",
+          "children": []
+        },
+        {
+          "shortCode": "topK",
+          "label": "topK",
+          "type": "number",
+          "required": false,
+          "value": "5",
+          "description": "Neighbor / row cap for QUERY (SQL LIMIT). Purpose: bound the result set. Accepted values: integers ≥ 1. Non-positive / blank → 5 (or config topK). Alias on input: limit. Example: 5.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Metadata equality filter. Purpose: AND of metadata_column ->> key = value. Key 'id' compares the id column instead. Accepted value: JSON object of string keys to scalars. Empty {} → no extra predicate. Example: {\"source\":\"orders\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Row id for UPSERT (required) or DELETE. Purpose: primary key. Accepted value: non-empty string. Empty on DELETE is allowed only when filter is non-empty. Example: 'doc-42'.",
+          "children": []
+        },
+        {
+          "shortCode": "document",
+          "label": "document",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Text stored on UPSERT. Purpose: the retrieval document. Accepted value: any string. When omitted, input.query is used. Example: 'Order 42 is in bin A-12.'.",
+          "children": []
+        },
+        {
+          "shortCode": "metadata",
+          "label": "metadata",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JSON object stored on UPSERT (jsonb). Purpose: filterable attributes. Accepted value: object (JSON-encoded) or a JSON string. Null → {}. Example: {\"source\":\"orders\",\"lang\":\"en\"}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "d23b9e81-2f55-4ca1-ad32-7b8c9d0e1f22",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', matches, data:{matches,value}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "matches",
+          "label": "matches",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "QUERY/DELETE rows as {id, document?, metadata?, score?}. Purpose: AI Agent pre-RAG unwraps this list. Empty when no neighbors. Example: [{\"id\":\"42\",\"document\":\"Order 42 is in bin A-12\",\"score\":0.91}].",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Same matches under data.matches and data.value so generic unwrap (data.value / matches) works. Never includes secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e34c0f92-3066-4db2-be43-8c9d0e1f2033",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb when input.operation is blank. Purpose: instance default. EXACT accepted values: QUERY | UPSERT | DELETE. Required. Example: 'QUERY'.",
+      "value": "QUERY",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "QUERY",
+        "UPSERT",
+        "DELETE"
+      ]
+    },
+    {
+      "_id": "f45d10a3-4177-4ec3-cf54-9d0e1f203144",
+      "shortCode": "host",
+      "label": "Host",
+      "type": "string",
+      "description": "PostgreSQL hostname or IP. Purpose: TCP connect target. Accepted value: non-empty host. Default 127.0.0.1. Customer owns this endpoint. Example: '127.0.0.1'. Example: 'pg.prod.svc'.",
+      "value": "127.0.0.1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a56e21b4-5288-4fd4-d065-0e1f20314455",
+      "shortCode": "port",
+      "label": "Port",
+      "type": "number",
+      "description": "PostgreSQL port. Purpose: TCP connect. Accepted values: positive integers. Default 5432. ≤0 → 5432. Example: 5432.",
+      "value": "5432",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b67f32c5-6399-40e5-e176-1f2031445566",
+      "shortCode": "database",
+      "label": "Database",
+      "type": "string",
+      "description": "Database name in the startup message. Purpose: which catalog to open. Accepted value: non-empty identifier-like name. Default postgres. Example: 'app'.",
+      "value": "postgres",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c78043d6-74aa-41f6-f287-203144556677",
+      "shortCode": "user",
+      "label": "User",
+      "type": "string",
+      "description": "PostgreSQL role. Purpose: startup user. Accepted value: non-empty. Default postgres. Example: 'sq_agent'.",
+      "value": "postgres",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d89154e7-85bb-4207-0398-314455667788",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "Role password. Purpose: cleartext, MD5, or SCRAM-SHA-256 after startup. StudioQuack secret. Never on INPUT, never logged, never returned. Blank is valid for trust auth. Example: bind a secret reference, not a literal.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e9a265f8-96cc-4318-14a9-425566778899",
+      "shortCode": "schema",
+      "label": "Schema",
+      "type": "string",
+      "description": "Schema of the vector table. Purpose: quoted identifier. Accepted values: [A-Za-z_][A-Za-z0-9_]*. Default public. Invalid tokens fail before connect. Example: 'public'.",
+      "value": "public",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f0b37609-a7dd-4429-25ba-536677889900",
+      "shortCode": "table",
+      "label": "Table",
+      "type": "string",
+      "description": "Vector table name. Purpose: FROM/INSERT/DELETE target. REQUIRED. Accepted values: [A-Za-z_][A-Za-z0-9_]*. Empty fails with 'table is required'. Example: 'documents'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a1c4871a-b8ee-453a-36cb-647788990011",
+      "shortCode": "id_column",
+      "label": "Id Column",
+      "type": "string",
+      "description": "Primary-key column. Purpose: SELECT/UPSERT/DELETE id. Accepted values: [A-Za-z_][A-Za-z0-9_]*. Default id. Example: 'id'.",
+      "value": "id",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b2d5982b-c9ff-464b-47dc-758899001122",
+      "shortCode": "document_column",
+      "label": "Document Column",
+      "type": "string",
+      "description": "Text column retrieved and used for the no-embedding QUERY fallback. Accepted values: [A-Za-z_][A-Za-z0-9_]*. Default document. Example: 'document'.",
+      "value": "document",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c3e6a93c-da00-475c-58ed-869900112233",
+      "shortCode": "embedding_column",
+      "label": "Embedding Column",
+      "type": "string",
+      "description": "pgvector column used with <=> on QUERY/UPSERT. Accepted values: [A-Za-z_][A-Za-z0-9_]*. Default embedding. Example: 'embedding'.",
+      "value": "embedding",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d4f7ba4d-eb11-486d-69fe-97aa01223344",
+      "shortCode": "metadata_column",
+      "label": "Metadata Column",
+      "type": "string",
+      "description": "jsonb column for filter and UPSERT metadata. Accepted values: [A-Za-z_][A-Za-z0-9_]*. Default metadata. Example: 'metadata'.",
+      "value": "metadata",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e508cb5e-fc22-497e-7a0f-a8bb12334455",
+      "shortCode": "topK",
+      "label": "Top K",
+      "type": "number",
+      "description": "Default QUERY LIMIT when input.topK is missing or not a positive integer. Accepted values: integers ≥ 1. Default 5. Example: 5.",
+      "value": "5",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f619dc6f-0d33-4a8f-8b10-b9cc23445566",
+      "shortCode": "sslmode",
+      "label": "Ssl Mode",
+      "type": "select",
+      "description": "TLS to Postgres. Purpose: disable = plain TCP (default); require = SSLRequest then TLS. EXACT: disable | require. Example: 'disable'. Use require on any network that is not loopback.",
+      "value": "disable",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "disable",
+        "require"
+      ]
+    },
+    {
+      "_id": "a72aed70-1e44-4b90-9c21-cad345566677",
+      "shortCode": "verify_tls",
+      "label": "Verify Tls",
+      "type": "string",
+      "description": "Certificate check when sslmode=require. Purpose: default true. EXACT: 'true' | 'false' (lab-only trust-all). Blank/other → true. Example: 'true'.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b83bfe81-2f55-4ca1-ad32-dbe456677788",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect + read budget in seconds. Purpose: bound a hung Postgres. Accepted values: positive integers. Blank/0/negative → 25. Capped at 60. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-09-15T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-09-15T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

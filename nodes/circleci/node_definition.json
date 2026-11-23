@@ -1,0 +1,250 @@
+{
+  "_id": "92cf2ffa-c3d7-4615-b5a0-986e5a7b833d",
+  "version": "1.0.0",
+  "name": "CircleCI",
+  "label": "CircleCI API v2",
+  "description": "CircleCI API v2 via OfficialApiNode. Docs: https://circleci.com/docs/api/v2/index.html. Operations: pipeline_get, pipeline_list, pipeline_trigger, pipeline_run, workflow_cancel, job_get, listen. pipeline_run is POST /project/{project-slug}/pipeline/run (current Cloud trigger; https://circleci.com/docs/guides/orchestrate/triggers-overview/). pipeline_trigger is the older POST /project/{project-slug}/pipeline (still documented for CircleCI Server). Auth secret token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "circleci",
+    "ci"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f31102aa-0141-4c72-b147-5995c6742cf0",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "pipeline_get",
+          "description": "Which official API call to run. EXACT values: pipeline_get | pipeline_list | pipeline_trigger | pipeline_run | workflow_cancel | job_get | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'pipeline_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "project_slug",
+          "label": "project_slug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "vcs-slug/org/repo e.g. gh/org/repo.",
+          "children": []
+        },
+        {
+          "shortCode": "pipeline_id",
+          "label": "pipeline_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pipeline UUID.",
+          "children": []
+        },
+        {
+          "shortCode": "job_number",
+          "label": "job_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job number.",
+          "children": []
+        },
+        {
+          "shortCode": "definition_id",
+          "label": "definition_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pipeline definition id for pipeline_run (Project Settings → Pipelines). Sent in the JSON body of POST /project/{project_slug}/pipeline/run. https://circleci.com/docs/api/v2/index.html#tag/Pipeline/operation/triggerPipelineRun",
+          "children": []
+        },
+        {
+          "shortCode": "page-token",
+          "label": "page-token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page-token` for operation: pipeline_list.",
+          "children": []
+        },
+        {
+          "shortCode": "branch",
+          "label": "branch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `branch` for operation: pipeline_trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "tag",
+          "label": "tag",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tag` for operation: pipeline_trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "parameters",
+          "label": "parameters",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `parameters` for operations: pipeline_trigger, pipeline_run.",
+          "children": []
+        },
+        {
+          "shortCode": "config",
+          "label": "config",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `config` for operation: pipeline_run.",
+          "children": []
+        },
+        {
+          "shortCode": "checkout",
+          "label": "checkout",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `checkout` for operation: pipeline_run.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `id` for operation: workflow_cancel. Required by: workflow_cancel.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7c460b2f-0f12-4f33-8349-6a437e65715e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "8759e5de-79a7-4485-a788-6ff5f41fa09d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: pipeline_get, pipeline_list, pipeline_trigger, pipeline_run, workflow_cancel, job_get, listen. pipeline_run is the current Cloud trigger; pipeline_trigger remains for CircleCI Server. listen is BPMN ingress, not a socket.",
+      "value": "pipeline_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "pipeline_get",
+        "pipeline_list",
+        "pipeline_trigger",
+        "pipeline_run",
+        "workflow_cancel",
+        "job_get",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "072ba184-f3cc-47e2-9892-41d9a90f533a",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "CircleCI personal API token. Header Circle-Token. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "42b75fe3-53f6-445d-9af1-b6ef5e3a374c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

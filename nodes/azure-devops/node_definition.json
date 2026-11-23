@@ -1,0 +1,1003 @@
+{
+  "_id": "fd32b04d-cd9b-435c-990f-55ed07610d62",
+  "version": "1.0.0",
+  "name": "Azure DevOps",
+  "label": "Azure DevOps REST API",
+  "description": "Azure DevOps REST (api-version 7.2) via OfficialApiNode. Docs: https://learn.microsoft.com/en-us/rest/api/azure/devops/?view=azure-devops-rest-7.2. Operations: workitem_create, workitem_get, workitem_update, workitem_query, workitem_comment, workitem_link, pr_create, pr_get, build_queue, build_get, release_get, git_push_listen, listen. release_get uses per-op baseUrl https://vsrm.dev.azure.com (GET /{organization}/{project}/_apis/release/releases/{releaseId}). Auth secret personal_access_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "hub",
+  "tags": [
+    "azure-devops",
+    "boards",
+    "pipelines"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "826956b6-cf65-4e70-894d-986e93b5b84a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "workitem_create",
+          "description": "Which official API call to run. EXACT values: workitem_create | workitem_get | workitem_update | workitem_query | workitem_comment | workitem_link | pr_create | pr_get | build_queue | build_get | release_get | git_push_listen | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'workitem_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Work item id path for workitem_get/update/comment/link. Example: 131489.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Work item type path ${type} for workitem_create. Example: Bug | Task | User Story | Feature | Epic.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "WIQL string body for workitem_query. Example: SELECT [System.Id] FROM WorkItems WHERE [System.WorkItemType] = 'Bug'.",
+          "children": []
+        },
+        {
+          "shortCode": "api-version",
+          "label": "api-version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "REST api-version query on every call. Set 7.2 or 7.2-preview.3. Example: 7.2.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "JSON Patch array sent as the whole workitem_create body (Content-Type application/json-patch+json). Each item is {op, path, value}. System.Title is required: [{\"op\":\"add\",\"path\":\"/fields/System.Title\",\"value\":\"Bug\"}]. Common paths: /fields/System.Title, /fields/System.Description, /fields/System.AssignedTo, /fields/System.AreaPath, /fields/System.IterationPath, /fields/System.Tags, /fields/Microsoft.VSTS.Common.Priority. https://learn.microsoft.com/en-us/rest/api/azure/devops/wit/work-items/create",
+          "children": []
+        },
+        {
+          "shortCode": "operations",
+          "label": "operations",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "JSON Patch array sent as the whole workitem_update / workitem_link body. Example replace title: [{\"op\":\"replace\",\"path\":\"/fields/System.Title\",\"value\":\"Fixed\"}]. Link example: [{\"op\":\"add\",\"path\":\"/relations/-\",\"value\":{\"rel\":\"System.LinkTypes.Hierarchy-Forward\",\"url\":\"https://dev.azure.com/{org}/{project}/_apis/wit/workItems/42\"}}].",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comment HTML/text for workitem_comment (body text). Example: Please review.",
+          "children": []
+        },
+        {
+          "shortCode": "repositoryId",
+          "label": "repositoryId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Git repository id for pr_create / pr_get.",
+          "children": []
+        },
+        {
+          "shortCode": "sourceRefName",
+          "label": "sourceRefName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Source branch ref for pr_create. Example: refs/heads/feature/login.",
+          "children": []
+        },
+        {
+          "shortCode": "targetRefName",
+          "label": "targetRefName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Target branch ref for pr_create. Example: refs/heads/main.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pull request title for pr_create. Example: Add login.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pull request description for pr_create.",
+          "children": []
+        },
+        {
+          "shortCode": "pullRequestId",
+          "label": "pullRequestId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pull request id for pr_get.",
+          "children": []
+        },
+        {
+          "shortCode": "definition",
+          "label": "definition",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Build definition for build_queue. Official shape {id: <definitionId>}. Example: {\"id\":12}.",
+          "children": []
+        },
+        {
+          "shortCode": "sourceBranch",
+          "label": "sourceBranch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Branch to build for build_queue. Example: refs/heads/main.",
+          "children": []
+        },
+        {
+          "shortCode": "buildId",
+          "label": "buildId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Build id for build_get.",
+          "children": []
+        },
+        {
+          "shortCode": "releaseId",
+          "label": "releaseId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Release id for release_get (vsrm.dev.azure.com).",
+          "children": []
+        },
+        {
+          "shortCode": "$expand",
+          "label": "$expand",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Work item expand for workitem_get (and optional create). EXACT: None | Relations | Fields | Links | All.",
+          "children": []
+        },
+        {
+          "shortCode": "validateOnly",
+          "label": "validateOnly",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Query validateOnly for workitem_create/update: validate without saving. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "bypassRules",
+          "label": "bypassRules",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Query bypassRules for workitem_create/update: skip work-item type rules. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "suppressNotifications",
+          "label": "suppressNotifications",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Query suppressNotifications for workitem_create/update. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "reviewers",
+          "label": "reviewers",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional reviewers for pr_create: [{id or descriptor}]. Example: [{\"id\":\"d291b0c4-…\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "isDraft",
+          "label": "isDraft",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Create the PR as draft (pr_create). Example: false.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "97edd36f-c5ab-4094-80a7-51584ff64d65",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4456bd0a-c85c-4314-a02e-bff21af4eacc",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: workitem_create, workitem_get, workitem_update, workitem_query, workitem_comment, workitem_link, pr_create, pr_get, build_queue, build_get, release_get, git_push_listen, listen. listen is BPMN ingress, not a socket.",
+      "value": "workitem_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "workitem_create",
+        "workitem_get",
+        "workitem_update",
+        "workitem_query",
+        "workitem_comment",
+        "workitem_link",
+        "pr_create",
+        "pr_get",
+        "build_queue",
+        "build_get",
+        "release_get",
+        "git_push_listen",
+        "listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "workitem_create",
+          "targets": [
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            },
+            {
+              "param": "$expand",
+              "visible": true
+            },
+            {
+              "param": "suppressNotifications",
+              "visible": true
+            },
+            {
+              "param": "validateOnly",
+              "visible": true
+            },
+            {
+              "param": "bypassRules",
+              "visible": true
+            },
+            {
+              "param": "fields",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "workitem_get",
+          "targets": [
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            },
+            {
+              "param": "$expand",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "workitem_update",
+          "targets": [
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            },
+            {
+              "param": "suppressNotifications",
+              "visible": true
+            },
+            {
+              "param": "validateOnly",
+              "visible": true
+            },
+            {
+              "param": "bypassRules",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "operations",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "workitem_query",
+          "targets": [
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            },
+            {
+              "param": "query",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "workitem_comment",
+          "targets": [
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "text",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "workitem_link",
+          "targets": [
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "operations",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "pr_create",
+          "targets": [
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            },
+            {
+              "param": "reviewers",
+              "visible": true
+            },
+            {
+              "param": "targetRefName",
+              "visible": true
+            },
+            {
+              "param": "title",
+              "visible": true
+            },
+            {
+              "param": "sourceRefName",
+              "visible": true
+            },
+            {
+              "param": "description",
+              "visible": true
+            },
+            {
+              "param": "repositoryId",
+              "visible": true
+            },
+            {
+              "param": "isDraft",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "pr_get",
+          "targets": [
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            },
+            {
+              "param": "repositoryId",
+              "visible": true
+            },
+            {
+              "param": "pullRequestId",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "build_queue",
+          "targets": [
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            },
+            {
+              "param": "sourceBranch",
+              "visible": true
+            },
+            {
+              "param": "definition",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "build_get",
+          "targets": [
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            },
+            {
+              "param": "buildId",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "release_get",
+          "targets": [
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            },
+            {
+              "param": "releaseId",
+              "visible": true
+            },
+            {
+              "param": "api-version",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "2259f08c-d3c8-4536-92b3-d8b6574c8994",
+      "shortCode": "personal_access_token",
+      "label": "Personal Access Token",
+      "type": "password",
+      "description": "Azure DevOps PAT. Sent as HTTP Basic with an empty username and the PAT as the password (:PAT). Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "124ed32e-4483-4f30-80b1-e4a7096362a4",
+      "shortCode": "organization",
+      "label": "Organization",
+      "type": "string",
+      "description": "Azure DevOps organization.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bad39b8d-67fa-4efa-985a-b07faaf98bc4",
+      "shortCode": "project",
+      "label": "Project",
+      "type": "string",
+      "description": "Project name or id.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6b3bf03a-6870-4afa-8446-9c2058b74335",
+      "shortCode": "$expand",
+      "label": "$expand",
+      "type": "string",
+      "description": "Work item expand for workitem_get (and optional create). EXACT: None | Relations | Fields | Links | All.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "098ae30f-708f-4715-847e-2ec999ee2ca2",
+      "shortCode": "suppressNotifications",
+      "label": "Suppressnotifications",
+      "type": "boolean",
+      "description": "Query suppressNotifications for workitem_create/update. Example: false.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b4e7b71d-a5e6-45c6-877e-54124a13d696",
+      "shortCode": "validateOnly",
+      "label": "Validateonly",
+      "type": "boolean",
+      "description": "Query validateOnly for workitem_create/update: validate without saving. Example: false.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "76f87962-32f1-497c-ba40-a7fb90e59700",
+      "shortCode": "bypassRules",
+      "label": "Bypassrules",
+      "type": "boolean",
+      "description": "Query bypassRules for workitem_create/update: skip work-item type rules. Example: false.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "86abd3a1-e8ed-436c-84a0-8c1003e69f5c",
+      "shortCode": "fields",
+      "label": "Fields",
+      "type": "list",
+      "description": "JSON Patch array sent as the whole workitem_create body (Content-Type application/json-patch+json). Each item is {op, path, value}. System.Title is required: [{\"op\":\"add\",\"path\":\"/fields/System.Title\",\"value\":\"Bug\"}]. Common paths: /fields/System.Title, /fields/System.Description, /fields/System.AssignedTo, /fields/System.AreaPath, /fields/System.IterationPath, /fields/System.Tags, /fields/Microsoft.VSTS.Common.Priority. https://learn.microsoft.com/en-us/rest/api/azure/devops/wit/work-items/create",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4505e1cd-d674-45f4-a74c-10b01043fc58",
+      "shortCode": "type",
+      "label": "Type",
+      "type": "string",
+      "description": "Work item type path ${type} for workitem_create. Example: Bug | Task | User Story | Feature | Epic.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0b82b57d-f34b-4c20-9c1c-bcb31999f602",
+      "shortCode": "id",
+      "label": "ID",
+      "type": "string",
+      "description": "Work item id path for workitem_get/update/comment/link. Example: 131489.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c0a03e63-ec96-441b-abce-5cd0d50c7e85",
+      "shortCode": "operations",
+      "label": "Operations",
+      "type": "list",
+      "description": "JSON Patch array sent as the whole workitem_update / workitem_link body. Example replace title: [{\"op\":\"replace\",\"path\":\"/fields/System.Title\",\"value\":\"Fixed\"}]. Link example: [{\"op\":\"add\",\"path\":\"/relations/-\",\"value\":{\"rel\":\"System.LinkTypes.Hierarchy-Forward\",\"url\":\"https://dev.azure.com/{org}/{project}/_apis/wit/workItems/42\"}}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7dd78aa7-5283-4895-818a-95f0251c6380",
+      "shortCode": "query",
+      "label": "Query",
+      "type": "string",
+      "description": "WIQL string body for workitem_query. Example: SELECT [System.Id] FROM WorkItems WHERE [System.WorkItemType] = 'Bug'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "59058702-9f89-4148-98c6-7e1bc9932577",
+      "shortCode": "text",
+      "label": "Text",
+      "type": "string",
+      "description": "Comment HTML/text for workitem_comment (body text). Example: Please review.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e36cc644-cd63-48a6-9d2b-b0585c7ac4d3",
+      "shortCode": "reviewers",
+      "label": "Reviewers",
+      "type": "list",
+      "description": "Optional reviewers for pr_create: [{id or descriptor}]. Example: [{\"id\":\"d291b0c4-…\"}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d75c3296-43d6-4ec4-9a5c-3029eef6fd86",
+      "shortCode": "targetRefName",
+      "label": "Targetrefname",
+      "type": "string",
+      "description": "Target branch ref for pr_create. Example: refs/heads/main.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e2712451-7934-4488-be19-4126f5a44b2e",
+      "shortCode": "title",
+      "label": "Title",
+      "type": "string",
+      "description": "Pull request title for pr_create. Example: Add login.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "48b42727-c327-4a5f-b88f-2bc12b3de637",
+      "shortCode": "sourceRefName",
+      "label": "Sourcerefname",
+      "type": "string",
+      "description": "Source branch ref for pr_create. Example: refs/heads/feature/login.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "56086123-888a-42a3-8b2b-ecdc8bf5ae89",
+      "shortCode": "description",
+      "label": "Description",
+      "type": "string",
+      "description": "Pull request description for pr_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a3955fd9-e03f-41a5-be41-17fe2d7bc6d7",
+      "shortCode": "repositoryId",
+      "label": "Repositoryid",
+      "type": "string",
+      "description": "Git repository id for pr_create / pr_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "04b1a031-9fa8-4412-a16b-1c6208a5e753",
+      "shortCode": "isDraft",
+      "label": "Isdraft",
+      "type": "boolean",
+      "description": "Create the PR as draft (pr_create). Example: false.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6bd1c8bf-3024-4fb8-b108-e3f04a7390e8",
+      "shortCode": "pullRequestId",
+      "label": "Pullrequestid",
+      "type": "string",
+      "description": "Pull request id for pr_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "40239900-ba8d-45d9-87b4-e825ec4e2b9b",
+      "shortCode": "sourceBranch",
+      "label": "Sourcebranch",
+      "type": "string",
+      "description": "Branch to build for build_queue. Example: refs/heads/main.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e62fc7af-72ca-41fd-8f77-3544379d1f22",
+      "shortCode": "definition",
+      "label": "Definition",
+      "type": "object",
+      "description": "Build definition for build_queue. Official shape {id: <definitionId>}. Example: {\"id\":12}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5090c9e6-88ea-453e-b525-f4e41e4ee63a",
+      "shortCode": "buildId",
+      "label": "Buildid",
+      "type": "string",
+      "description": "Build id for build_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "982b6a09-a44d-4aa3-87c6-952adca6b4f0",
+      "shortCode": "releaseId",
+      "label": "Releaseid",
+      "type": "string",
+      "description": "Release id for release_get (vsrm.dev.azure.com).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "25a6d330-7bd1-4d78-b9a8-e1ba0a0de000",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9d2046a3-5797-4a56-b15a-ef4571c78676",
+      "shortCode": "api-version",
+      "label": "api-version",
+      "type": "string",
+      "description": "Default REST api-version when INPUT api-version is empty. Example: 7.2.",
+      "value": "7.2",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

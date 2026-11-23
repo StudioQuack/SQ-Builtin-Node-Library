@@ -1,0 +1,153 @@
+{
+  "baseUrl": "https://api.sendgrid.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "send-email": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v3/mail/send",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "personalizations",
+        "to",
+        "cc",
+        "bcc",
+        "from",
+        "from_name",
+        "subject",
+        "content",
+        "text",
+        "html",
+        "text_type",
+        "html_type",
+        "reply_to",
+        "attachments",
+        "template_id",
+        "categories",
+        "send_at",
+        "asm",
+        "mail_settings",
+        "tracking_settings"
+      ],
+      "required": [
+        "from",
+        "to"
+      ],
+      "bodyMap": {
+        "personalizations": "personalizations[0]",
+        "to": "personalizations[0].to[0].email",
+        "cc": "personalizations[0].cc[0].email",
+        "bcc": "personalizations[0].bcc[0].email",
+        "from": "from.email",
+        "from_name": "from.name",
+        "content": "content[0]",
+        "text": "content[0].value",
+        "text_type": "content[0].type",
+        "html": "content[1].value",
+        "html_type": "content[1].type"
+      }
+    },
+    "upsert-contact": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/v3/marketing/contacts",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "contacts",
+        "list_ids"
+      ],
+      "required": [
+        "contacts"
+      ]
+    },
+    "get-contact": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v3/marketing/contacts/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "list-contacts": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v3/marketing/contacts",
+      "contentType": "application/json"
+    },
+    "delete-contact": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/v3/marketing/contacts",
+      "contentType": "application/json",
+      "queryFrom": [
+        "ids"
+      ]
+    },
+    "create-list": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v3/marketing/lists",
+      "contentType": "application/json",
+      "required": [
+        "name"
+      ],
+      "bodyFrom": [
+        "name"
+      ]
+    },
+    "get-list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v3/marketing/lists/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "list-lists": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v3/marketing/lists",
+      "contentType": "application/json",
+      "queryFrom": [
+        "page_size",
+        "page_token"
+      ]
+    },
+    "update-list": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/v3/marketing/lists/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "name"
+      ]
+    },
+    "delete-list": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/v3/marketing/lists/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ],
+      "queryFrom": [
+        "delete_contacts"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

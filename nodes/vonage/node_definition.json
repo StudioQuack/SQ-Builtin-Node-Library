@@ -1,0 +1,203 @@
+{
+  "_id": "e05ddfa5-221f-5a10-a3a4-a1e6d9d3d7e9",
+  "version": "1.0.0",
+  "name": "Vonage",
+  "label": "Vonage — Vonage Messages API",
+  "description": "Vonage via the official Vonage Messages API. Base https://api.nexmo.com/v1. Docs: https://developer.vonage.com/en/api/messages. Official operations are POST /v1/messages (send) and PATCH /v1/messages/{message_uuid} (update status). get-message GET was removed — it is not in the Messages API. Local telecom rules apply. JWT application auth is an alternative the engine does not mint — supply Basic api_key:api_secret. listen = inbound webhooks as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "sms",
+  "tags": [
+    "sms"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b17cb15e-dfc1-5668-b1ee-b6c8de326b4a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Vonage operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"send-sms\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-sms",
+          "description": "Which official call to run. EXACT values: send-sms | listen. get-message GET was removed (not in the Messages API). listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipient phone number in E.164 format, required by send-sms (leading + optional). Example: 15551234567.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sender ID for send-sms (required): a Vonage virtual number or an alphanumeric sender ID where the country allows it. Example: 15557654321.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SMS text for send-sms (required; sent with fixed channel sms and message_type text). Example: Hello.",
+          "children": []
+        },
+        {
+          "shortCode": "ttl",
+          "label": "ttl",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Message TTL seconds. send-sms. Example: 60000. https://developer.vonage.com/en/api/messages",
+          "children": []
+        },
+        {
+          "shortCode": "webhook_url",
+          "label": "webhook_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Status webhook URL. send-sms.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "4a4e1834-ece8-55d5-af83-71bbf1a0a5fc",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "3b385249-d3b0-5031-b755-081eae5eaf2d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-sms, listen. get-message GET was removed (not in the Messages API). listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-sms",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-sms",
+        "listen"
+      ]
+    },
+    {
+      "_id": "c52a54f7-f580-532a-899a-63d43dd8c0a4",
+      "shortCode": "api_secret",
+      "label": "API secret",
+      "type": "password",
+      "description": "Vonage API secret. HTTP Basic with api_key. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c13a32e6-a619-55e9-8be7-6975b6d4e1f7",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Vonage API key used as HTTP Basic username, paired with api_secret. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8f003da3-333a-5785-b0b3-1516d9968258",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

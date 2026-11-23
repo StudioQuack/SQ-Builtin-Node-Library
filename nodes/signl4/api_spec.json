@@ -1,0 +1,44 @@
+{
+  "baseUrl": "https://connect.signl4.com/webhook",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "none",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "team_secret"
+  },
+  "operations": {
+    "send-alert": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{team_secret}",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "title",
+        "message",
+        "X-S4-Service",
+        "X-S4-Location",
+        "X-S4-AlertingScenario",
+        "X-S4-ExternalID",
+        "X-S4-Filtering",
+        "X-S4-Status"
+      ]
+    },
+    "resolve-alert": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{team_secret}",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "title",
+        "message",
+        "X-S4-Status",
+        "X-S4-ExternalID"
+      ],
+      "required": [
+        "X-S4-ExternalID"
+      ]
+    }
+  }
+}

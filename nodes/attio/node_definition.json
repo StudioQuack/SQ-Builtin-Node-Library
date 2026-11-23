@@ -1,0 +1,404 @@
+{
+  "_id": "dbc32a57-f99a-40ee-8d22-c1efc4b50b8b",
+  "version": "1.0.0",
+  "name": "Attio",
+  "label": "Attio — CRM records, lists, tasks (REST v2)",
+  "description": "Official Attio REST API v2 (OpenAPI 2.0.0) at https://api.attio.com. Handler: OfficialApiNode. Bearer workspace token (single-workspace API key). Prefer OAuth for multi-workspace apps — engine auth is Bearer only. person.upsert / company.upsert are PUT upsert-by-matching-attribute. Customer owns the Attio workspace. api_key is never logged. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "recent_actors",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "92ac16df-a7eb-4ea7-ba4c-67007d1332ce",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Set operation to override config.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "record.create",
+          "description": "Overrides config operation when non-blank. EXACT catalog verb.",
+          "children": []
+        },
+        {
+          "shortCode": "object",
+          "label": "object",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Object slug or id for record.*, attribute.*, selectOption.create. EXACT common: people | companies | deals, or a custom slug. Example: people.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Attio `data` envelope escape hatch. Purpose fields merge into data / data.values via bodyMap and win on conflict. Custom attributes stay in values or here. Example: {\"values\":{\"job_title\":[\"Engineer\"]}}.",
+          "children": []
+        },
+        {
+          "shortCode": "values",
+          "label": "values",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Record attribute map for record.create/update. Nested as data.values. Keys are attribute slugs. On person/company upsert use email/name/domains (or the data escape hatch) — values is not sent on those ops. Example: {\"email_addresses\":[\"ada@example.com\"]}.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Person email on person.upsert. Nested as data.values.email_addresses[0] (Attio accepts a string). Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Person/company name (data.values.name) on person.upsert / company.upsert, or list name (data.name) on list.create. Example: Ada Lovelace.",
+          "children": []
+        },
+        {
+          "shortCode": "domains",
+          "label": "domains",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Company domains on company.upsert. Nested as data.values.domains. Example: [\"example.com\"].",
+          "children": []
+        },
+        {
+          "shortCode": "parent_object",
+          "label": "parent_object",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List parent object slug on list.create and list.entry.create/update. Nested as data.parent_object. EXACT common: people | companies | deals. Example: people.",
+          "children": []
+        },
+        {
+          "shortCode": "api_slug",
+          "label": "api_slug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "API slug on list.create or attribute.create. Nested as data.api_slug. Example: hot_leads.",
+          "children": []
+        },
+        {
+          "shortCode": "parent_record_id",
+          "label": "parent_record_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Parent record UUID on list.entry.create/update. Nested as data.parent_record_id. Example: 0f8c3e2a-….",
+          "children": []
+        },
+        {
+          "shortCode": "entry_values",
+          "label": "entry_values",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "List-entry attribute values on list.entry.create/update. Nested as data.entry_values. Example: {\"stage\":[\"Qualified\"]}.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Attribute or select-option title on attribute.create / selectOption.create. Nested as data.title. Example: Industry.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Attribute type on attribute.create. Nested as data.type. EXACT common: text | number | date | timestamp | checkbox | email-address | domain | select. Example: text.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task text on task.create/update (max 2000). Nested as data.content. Example: Follow up Monday.",
+          "children": []
+        },
+        {
+          "shortCode": "format",
+          "label": "format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task content format on task.create/update. EXACT: plaintext | markdown. Nested as data.format. Example: plaintext.",
+          "children": []
+        },
+        {
+          "shortCode": "deadline_at",
+          "label": "deadline_at",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task deadline ISO-8601 on task.create/update. Nested as data.deadline_at. Example: 2026-12-01T17:00:00.000Z.",
+          "children": []
+        },
+        {
+          "shortCode": "is_completed",
+          "label": "is_completed",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Task completed flag on task.create/update. Nested as data.is_completed. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "assignees",
+          "label": "assignees",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Task actor array on task.create/update. Nested as data.assignees. Example: [{\"referenced_actor_type\":\"workspace-member\",\"referenced_actor_id\":\"…\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "record_id",
+          "label": "record_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Record UUID for record.get/update/delete. Example: 0f8c3e2a-….",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Attio filter object for record.search and list.entry.search. Example: {\"email_addresses\":{\"email_address\":{\"eq\":\"ada@example.com\"}}}.",
+          "children": []
+        },
+        {
+          "shortCode": "sorts",
+          "label": "sorts",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Sort array for record.search / list.entry.search. Example: [{\"attribute\":\"created_at\",\"direction\":\"desc\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for record.search / list.entry.search. Positive integer, Attio caps apply. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Offset for record.search / list.entry.search. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "matching_attribute",
+          "label": "matching_attribute",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Unique attribute slug used as the upsert match query on person.upsert / company.upsert. EXACT common: email_addresses | domains. Example: email_addresses.",
+          "children": []
+        },
+        {
+          "shortCode": "list",
+          "label": "list",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List id or slug for list.entry.* . Example: hot_leads.",
+          "children": []
+        },
+        {
+          "shortCode": "entry_id",
+          "label": "entry_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List entry UUID for list.entry.update/delete. Example: 0f8c3e2a-….",
+          "children": []
+        },
+        {
+          "shortCode": "attribute_id",
+          "label": "attribute_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Attribute id or slug for attribute.archive and selectOption.create. Example: industry.",
+          "children": []
+        },
+        {
+          "shortCode": "task_id",
+          "label": "task_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task UUID for task.update. Allowed body fields: deadline_at, is_completed, linked_records, assignees, content, format.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "79020199-3597-4ee0-a76c-6b1867c20093",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Minimize retained PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "26e3cbd1-d4cf-48b0-8834-f306c5ea9725",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: record.create | record.get | record.update | record.search | record.delete | person.upsert | company.upsert | list.create | list.entry.create | list.entry.update | list.entry.delete | list.entry.search | attribute.create | attribute.archive | selectOption.create | task.create | task.update | trigger.listen.",
+      "value": "record.create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "record.create",
+        "record.get",
+        "record.update",
+        "record.search",
+        "record.delete",
+        "person.upsert",
+        "company.upsert",
+        "list.create",
+        "list.entry.create",
+        "list.entry.update",
+        "list.entry.delete",
+        "list.entry.search",
+        "attribute.create",
+        "attribute.archive",
+        "selectOption.create",
+        "task.create",
+        "task.update",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "8e9d7519-0026-4c83-b06c-31ac4a23676b",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Workspace API token (developer settings) or OAuth access token. Authorization: Bearer. Admin API keys are 64 characters — partial copy causes HTTP 401. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e0d6730c-772a-4e34-a62f-22f607bd0b83",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

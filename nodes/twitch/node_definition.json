@@ -1,0 +1,271 @@
+{
+  "_id": "8a9258d7-eedf-4db6-b1f1-b3aa111c771b",
+  "version": "1.0.0",
+  "name": "Twitch",
+  "label": "Twitch Helix API",
+  "description": "Official Twitch Helix API via OfficialApiNode. Base https://api.twitch.tv/helix. Operations: stream_get, user_get, clip_create, chat_send, trigger (EventSub ingress). Auth secret access_token is instance config only (never on INPUT, never logged). extraHeaders send required Client-Id: {client_id}. Failures are output.error. Official API only. https://dev.twitch.tv/docs/api/",
+  "icon": "videocam",
+  "tags": [
+    "twitch",
+    "social",
+    "video"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "6be0cb61-3ee7-4468-8b94-27f726cbf458",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. stream_get: user_id, user_login. user_get: id, login. clip_create: broadcaster_id. chat_send: broadcaster_id, sender_id, message. Do not put access_token here. Example: {\"operation\":\"user_get\",\"login\":\"twitch\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "stream_get",
+          "description": "Overrides config operation when non-blank. EXACT: 'stream_get' | 'user_get' | 'clip_create' | 'chat_send' | 'trigger'. trigger is EventSub ingress (BPMN message event), not HTTP. Example: 'user_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Helix user_id query for stream_get. Repeatable on Helix; this node sends one string. Example: '141981764'.",
+          "children": []
+        },
+        {
+          "shortCode": "user_login",
+          "label": "user_login",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Helix user_login query for stream_get. Example: 'twitchdev'.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Helix user id query for user_get. Combined with login, Helix max 100. Example: '141981764'.",
+          "children": []
+        },
+        {
+          "shortCode": "login",
+          "label": "login",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Helix login query for user_get. Omit id and login → token user (user access token). Example: 'twitchdev'.",
+          "children": []
+        },
+        {
+          "shortCode": "broadcaster_id",
+          "label": "broadcaster_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Twitch user id of the broadcaster. Required on clip_create and chat_send. Example: 141981764.",
+          "children": []
+        },
+        {
+          "shortCode": "sender_id",
+          "label": "sender_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Twitch user id of the sender (must match the token user). Required on chat_send.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Chat text. Required on chat_send. Max 500 characters.",
+          "children": []
+        },
+        {
+          "shortCode": "game_id",
+          "label": "game_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `game_id` for operation: stream_get.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `type` for operation: stream_get.",
+          "children": []
+        },
+        {
+          "shortCode": "first",
+          "label": "first",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `first` for operation: stream_get.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `after` for operation: stream_get.",
+          "children": []
+        },
+        {
+          "shortCode": "has_delay",
+          "label": "has_delay",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "clip_create query. true adds a delay so the clip captures the moment the broadcaster clicks. Default false. https://dev.twitch.tv/docs/api/reference/#create-clip",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c983a8d1-d36e-48d5-91ee-c69618b9676f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Never includes access_token. trigger returns a BPMN message-event instruction. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Helix JSON (data array, clip edit_url, chat is_sent).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "87721235-7dd0-4721-8555-5ac0ef7c9f85",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Helix verb. EXACT: stream_get | user_get | clip_create | chat_send | trigger. trigger is BPMN EventSub ingress, not a socket. Default user_get.",
+      "value": "user_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "stream_get",
+        "user_get",
+        "clip_create",
+        "chat_send",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "6dc0f39f-bbe0-4407-9a31-b25ebd538443",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Twitch user or app OAuth access token. Sent as Authorization: Bearer (StudioQuack secret). Never on INPUT, never logged. Empty → error. Chat send needs a user token with user:write:chat.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b2b02f69-b6be-4989-8dfe-433bceda9b67",
+      "shortCode": "client_id",
+      "label": "Client ID",
+      "type": "string",
+      "description": "Twitch application Client-Id. Required by Helix on every call; sent as header Client-Id via extraHeaders. Not a secret.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "de3897f7-c0a2-4cda-a139-b252074b2b98",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Floor 1. Keep at or below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

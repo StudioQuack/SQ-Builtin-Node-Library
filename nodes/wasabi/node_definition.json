@@ -1,0 +1,267 @@
+{
+  "_id": "a90e88e6-08e4-5afc-a223-b6aa4133bac2",
+  "version": "1.0.0",
+  "name": "Wasabi",
+  "label": "Wasabi S3-compatible object storage",
+  "description": "Wasabi S3-compatible object storage. Official API https://docs.wasabi.com/docs/wasabi-api. One node; pick operation. Handler: OfficialApiNode + api_spec.json. Auth is AWS SigV4 (access_key + secret_key). Host is https://s3.{region}.wasabisys.com. The generic s3.wasabisys.com host may allow GET but not PUT/DELETE. Do not claim unexpected egress pricing in product copy.",
+  "icon": "cloud",
+  "tags": [
+    "wasabi",
+    "s3",
+    "object-storage"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a11ed986-1b80-5e1c-a5e2-0a3e7ad98de2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "bucket_create",
+          "description": "Overrides config operation. Accepted: bucket_create, bucket_list, object_put, object_get, object_delete, object_list.",
+          "children": []
+        },
+        {
+          "shortCode": "bucket",
+          "label": "bucket",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Bucket or container name.",
+          "children": []
+        },
+        {
+          "shortCode": "key",
+          "label": "key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Object key.",
+          "children": []
+        },
+        {
+          "shortCode": "list-type",
+          "label": "list-type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "S3 list API version for object_list. Use 2 for ListObjectsV2. Example: 2.",
+          "children": []
+        },
+        {
+          "shortCode": "prefix",
+          "label": "prefix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Key prefix filter for object_list. Example: invoices/2026/.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Object bytes for object_put (S3 PUT). Platform file block {mime_type, source, data, name}. Required on object_put. Sent as the raw body.",
+          "children": []
+        },
+        {
+          "shortCode": "delimiter",
+          "label": "delimiter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "S3 list delimiter for object_list. Example: / to group common prefixes.",
+          "children": []
+        },
+        {
+          "shortCode": "max-keys",
+          "label": "max-keys",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "S3 list max keys for object_list. Example: 1000.",
+          "children": []
+        },
+        {
+          "shortCode": "continuation-token",
+          "label": "continuation-token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "S3 list-type=2 continuation token from a previous object_list.",
+          "children": []
+        },
+        {
+          "shortCode": "start-after",
+          "label": "start-after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "S3 list-type=2 start-after key for object_list.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6bfca4cf-9574-5340-b991-d1a2f22ff60b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "02a1aea8-d409-5496-a935-6424ef766ee0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "bucket_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "bucket_create",
+        "bucket_list",
+        "object_put",
+        "object_get",
+        "object_delete",
+        "object_list"
+      ]
+    },
+    {
+      "_id": "41cf3855-71a0-58f5-ac85-d781e98a57ab",
+      "shortCode": "secret_key",
+      "label": "Secret Key",
+      "type": "password",
+      "description": "Wasabi secret key used to sign SigV4. StudioQuack secret binding. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9ca95376-46b9-5a5b-a5c0-fce34cd1d3c9",
+      "shortCode": "access_key",
+      "label": "Access Key",
+      "type": "password",
+      "description": "Wasabi access key used as the SigV4 credential. StudioQuack secret. Never logged. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9bc2e1ff-ea9b-57e1-9ae7-721a504ae3bd",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "Wasabi region for SigV4 signing and host s3.{region}.wasabisys.com (us-east-1, eu-central-1, …). Official: https://docs.wasabi.com/docs/service-urls-for-wasabis-storage-regions.",
+      "value": "us-east-1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ce513259-d338-5ec1-b24f-b654858441eb",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

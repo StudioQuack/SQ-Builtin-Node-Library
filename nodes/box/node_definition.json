@@ -1,0 +1,318 @@
+{
+  "_id": "8dc7037a-063b-5343-a404-4b7c42aaf8ff",
+  "version": "1.0.0",
+  "name": "Box",
+  "label": "Box Platform API 2.0 — files and folders",
+  "description": "Box Platform API 2.0. Docs: https://developer.box.com/reference/. upload POSTs multipart attributes+file to https://upload.box.com/api/2.0/files/content (not api.box.com). Direct upload max 50 MB. Bearer access_token minted outside StudioQuack.",
+  "icon": "folder",
+  "tags": [
+    "box",
+    "files"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "7d466d3d-5fe8-5173-be01-788b76677601",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port. File bytes are type file.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official Box Platform API 2.0 verb. EXACT: copy_file | delete_file | download | get_file | search | share_file | upload | create_folder | get_folder | delete_folder | share_folder | update_folder | listen. Example: upload.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search query `query`. Example: contract.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "File or folder name. copy_file, create_folder, update_folder body `name`. For upload put it inside attributes.name. Example: Contract.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "file_id",
+          "label": "file_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Box file id for get/copy/delete/download/share. Example: 12345.",
+          "children": []
+        },
+        {
+          "shortCode": "folder_id",
+          "label": "folder_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Box folder id for get/delete/share/update. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "parent",
+          "label": "parent",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official parent folder object {id}. copy_file, create_folder, update_folder. Prefer parent_id. Example: {\"id\":\"0\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated fields query for get_file, share_file, get_folder, share_folder. Example: id,name,shared_link.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "search query `limit`. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "search query `offset`. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "shared_link",
+          "label": "shared_link",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "share_file / share_folder body `shared_link`. Example: {\"access\":\"open\",\"password\":null}.",
+          "children": []
+        },
+        {
+          "shortCode": "recursive",
+          "label": "recursive",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "delete_folder query `recursive`. true deletes contents. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "upload multipart part `file` (bytes). Official host upload.box.com. Max 50 MB for this endpoint; larger files need chunked upload (not implemented).",
+          "children": []
+        },
+        {
+          "shortCode": "attributes",
+          "label": "attributes",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "upload multipart part `attributes` (JSON). Official: {name, parent:{id}}. Must be sent before file. Example: {\"name\":\"a.pdf\",\"parent\":{\"id\":\"0\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "jwt_public_key_id",
+          "label": "jwt_public_key_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Box JWT public key id (kid) for jwt_app auth.",
+          "children": []
+        },
+        {
+          "shortCode": "jwt_passphrase",
+          "label": "jwt_passphrase",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Passphrase for the Box JWT private key. Never log.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e073664d-5d4e-539e-8a3d-86c53ec9dc11",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ef44d060-d95d-5608-b82a-21dad169b0db",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "copy_file",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "copy_file",
+        "delete_file",
+        "download",
+        "get_file",
+        "search",
+        "share_file",
+        "upload",
+        "create_folder",
+        "get_folder",
+        "delete_folder",
+        "share_folder",
+        "update_folder",
+        "listen"
+      ]
+    },
+    {
+      "_id": "2f6143fe-a310-5424-99d5-37a7a2f41e93",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Box access token minted outside StudioQuack (OAuth, JWT, or CCG). StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "28dec7eb-b900-4565-967d-1fa3baae6139",
+      "shortCode": "jwt_public_key_id",
+      "label": "JWT Public Key ID",
+      "type": "string",
+      "description": "Box JWT public key id (kid) for jwt_app auth.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "a704cb1e-0570-4cf0-8fda-03993737d98a",
+      "shortCode": "jwt_passphrase",
+      "label": "JWT Passphrase",
+      "type": "password",
+      "description": "Passphrase for the Box JWT private key. Never log.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7b2fe6c7-7d44-598c-a41c-ccac515a6c37",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

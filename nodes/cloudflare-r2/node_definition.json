@@ -1,0 +1,446 @@
+{
+  "_id": "ddfac632-1ef5-5d88-b525-1457a9e91209",
+  "version": "1.0.0",
+  "name": "Cloudflare R2",
+  "label": "Cloudflare R2 S3-compatible API",
+  "description": "Cloudflare R2 S3-compatible API. Official API https://developers.cloudflare.com/r2/api/s3/api/. One node; pick operation. Upload/download use type file (Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.) Handler: OfficialApiNode + api_spec.json. S3-compatible SigV4. Host https://{account_id}.{jurisdiction} (default jurisdiction r2.cloudflarestorage.com; EU eu.r2.cloudflarestorage.com; US us.r2.cloudflarestorage.com; FedRAMP fedramp.r2.cloudflarestorage.com).",
+  "icon": "cloud",
+  "tags": [
+    "cloudflare",
+    "r2",
+    "object-storage"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "161d5e16-9f68-5812-8abf-397ed005cf2e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation S3 fields. object_put takes file plus optional PutObject headers (content_type, cache_control, …). Do not put access keys here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which official S3-compatible call to run. EXACT: bucket_create | bucket_list | object_put | object_get | object_delete | object_list | presign. Example: object_put.",
+          "children": []
+        },
+        {
+          "shortCode": "bucket",
+          "label": "bucket",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "S3 bucket name (path). Used by every object/bucket op except bucket_list. Example: invoices.",
+          "children": []
+        },
+        {
+          "shortCode": "key",
+          "label": "key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Object key (path). object_put, object_get, object_delete, presign. Example: reports/2026-10.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "list-type",
+          "label": "list-type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "object_list query `list-type`. Use 2 for ListObjectsV2. Example: 2.",
+          "children": []
+        },
+        {
+          "shortCode": "prefix",
+          "label": "prefix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "object_list query `prefix` to limit keys. Example: reports/.",
+          "children": []
+        },
+        {
+          "shortCode": "expires_in",
+          "label": "Expires In",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Presign URL expiry in seconds (maps to X-Amz-Expires). Example: 3600. Used by: presign.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "object_put body: official PutObject bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes. Required for object_put unless config file is set.",
+          "children": []
+        },
+        {
+          "shortCode": "content_type",
+          "label": "content_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PutObject header Content-Type. Official R2 system metadata. Example: application/pdf. object_put.",
+          "children": []
+        },
+        {
+          "shortCode": "cache_control",
+          "label": "cache_control",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PutObject header Cache-Control. Example: max-age=3600. object_put.",
+          "children": []
+        },
+        {
+          "shortCode": "content_disposition",
+          "label": "content_disposition",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PutObject header Content-Disposition. Example: attachment; filename=report.pdf. object_put.",
+          "children": []
+        },
+        {
+          "shortCode": "content_encoding",
+          "label": "content_encoding",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PutObject header Content-Encoding. Example: gzip. object_put.",
+          "children": []
+        },
+        {
+          "shortCode": "content_language",
+          "label": "content_language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PutObject header Content-Language. Example: en-US. object_put.",
+          "children": []
+        },
+        {
+          "shortCode": "expires",
+          "label": "expires",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PutObject header Expires (HTTP-date). Example: Wed, 21 Oct 2026 07:28:00 GMT. object_put.",
+          "children": []
+        },
+        {
+          "shortCode": "content_md5",
+          "label": "content_md5",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PutObject header Content-MD5 (base64 MD5 of the body). object_put.",
+          "children": []
+        },
+        {
+          "shortCode": "storage_class",
+          "label": "storage_class",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PutObject header x-amz-storage-class. EXACT: STANDARD | STANDARD_IA. object_put.",
+          "children": []
+        },
+        {
+          "shortCode": "if_match",
+          "label": "if_match",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Conditional If-Match ETag. object_put and object_get. Example: \"33a64df5\".",
+          "children": []
+        },
+        {
+          "shortCode": "if_none_match",
+          "label": "if_none_match",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Conditional If-None-Match. PutObject `*` creates only if the key is absent. object_put and object_get.",
+          "children": []
+        },
+        {
+          "shortCode": "range",
+          "label": "range",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "object_get header Range. Example: bytes=0-1023.",
+          "children": []
+        },
+        {
+          "shortCode": "versionId",
+          "label": "versionId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "S3 versionId query param for object_get and object_delete when versioning is on.",
+          "children": []
+        },
+        {
+          "shortCode": "delimiter",
+          "label": "delimiter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "object_list query `delimiter` for grouping. Example: /.",
+          "children": []
+        },
+        {
+          "shortCode": "max-keys",
+          "label": "max-keys",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "object_list query `max-keys` page size. Example: 100.",
+          "children": []
+        },
+        {
+          "shortCode": "continuation-token",
+          "label": "continuation-token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "object_list ListObjectsV2 `continuation-token` from the previous NextContinuationToken.",
+          "children": []
+        },
+        {
+          "shortCode": "start-after",
+          "label": "start-after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "object_list ListObjectsV2 `start-after` key. Example: reports/2026-01.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "encoding-type",
+          "label": "encoding-type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "object_list query `encoding-type`. Official: url.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "2a25d3ab-7290-5a94-b24d-b39beef48069",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6b516f59-f084-515f-955e-ecd757bc6eb5",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "bucket_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "bucket_create",
+        "bucket_list",
+        "object_put",
+        "object_get",
+        "object_delete",
+        "object_list",
+        "presign"
+      ]
+    },
+    {
+      "_id": "08220cab-8004-57ce-a914-99f10c0e2938",
+      "shortCode": "secret_access_key",
+      "label": "Secret Access Key",
+      "type": "password",
+      "description": "R2 S3 secret access key (SigV4). StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9d7f3f6d-9d06-59df-b7c8-8625aac1da8d",
+      "shortCode": "access_key_id",
+      "label": "Access Key Id",
+      "type": "password",
+      "description": "R2 S3 access key id (SigV4). StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2a90ce49-cedf-5b66-82dd-9b498fc7703b",
+      "shortCode": "account_id",
+      "label": "Account Id",
+      "type": "string",
+      "description": "Cloudflare account id. S3 host: https://{account_id}.{jurisdiction}",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d2c7819d-627e-45a1-9e7e-794f8bab172c",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "SigV4 signing region. Official R2 value is auto (us-east-1 aliases to auto).",
+      "value": "auto",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "15236acd-af47-5674-9e3a-2c26e7f022eb",
+      "shortCode": "jurisdiction",
+      "label": "Jurisdiction",
+      "type": "string",
+      "description": "S3 host suffix after account_id. Default r2.cloudflarestorage.com. EU: eu.r2.cloudflarestorage.com. US: us.r2.cloudflarestorage.com. FedRAMP: fedramp.r2.cloudflarestorage.com.",
+      "value": "r2.cloudflarestorage.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e5d43933-096e-5d28-9544-ab03a6cbf441",
+      "shortCode": "file",
+      "label": "File",
+      "type": "file",
+      "description": "Default upload/convert/sign source. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fc897cb9-36b4-4e20-9ff9-c92b2a31433d",
+      "shortCode": "expires_in",
+      "label": "Expires In",
+      "type": "number",
+      "description": "Presign URL expiry in seconds. Example: 3600. Used by: presign.",
+      "value": "3600",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "30ac5755-5605-5738-acd6-57749a8bd14f",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,197 @@
+{
+  "_id": "32208d7d-7672-58d6-8b26-301a7e492c2b",
+  "version": "1.0.0",
+  "name": "ONLYOFFICE",
+  "label": "ONLYOFFICE Docs Conversion API",
+  "description": "ONLYOFFICE Docs Conversion API. Official API https://api.onlyoffice.com/docs/docs-api/additional-api/conversion-api/. One node; pick operation. Conversion source is INPUT url; OUTPUT may include file. baseUrl is config docs_base_url. Handler: OfficialApiNode + api_spec.json. Community edition is AGPL — keep the server customer-hosted. POST https://documentserver/converter. Conversion input is url. Not a SaaS ToS if self-hosted.",
+  "icon": "description",
+  "tags": [
+    "onlyoffice",
+    "convert",
+    "office"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "dc5367d7-6890-54e6-8efc-aeaf9c9d1f03",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port. File bytes are type file.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "key",
+          "label": "key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document key (unique id for this file version). Example: doc-1042.",
+          "children": []
+        },
+        {
+          "shortCode": "async",
+          "label": "async",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "true for asynchronous conversion. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "filetype",
+          "label": "filetype",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Source type. Example: docx.",
+          "children": []
+        },
+        {
+          "shortCode": "outputtype",
+          "label": "outputtype",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Target type. Example: pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Output file name. Example: notes.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTTPS URL of the source document. OnlyOffice Document Server must be able to GET it.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "25c9b2f0-b488-5976-a1a5-c59e2ca08233",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "f1f4a269-c7e1-584d-b3b5-daaba7d4f8b7",
+      "shortCode": "jwt_secret",
+      "label": "Jwt Secret",
+      "type": "password",
+      "description": "Docs Server JWT secret. OfficialApiNode sends it as Bearer; the conversion API expects a signed JWT — mint the token or put a pre-signed JWT here. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f791dc25-44c3-5e08-aadd-5edf249c33ae",
+      "shortCode": "docs_base_url",
+      "label": "Docs Base Url",
+      "type": "string",
+      "description": "Customer Docs Server origin. Interpolated as api_spec baseUrl. Required.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "95a0cb3a-e657-5e3f-b388-f52e92cf02f1",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 120.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,233 @@
+{
+  "_id": "83226eb9-3d21-4b15-8404-33ef438b2256",
+  "version": "1.0.0",
+  "name": "Product Hunt Search",
+  "label": "Product Hunt GraphQL - Product Launch Discovery",
+  "description": "Query Product Hunt launches via GraphQL API v2. The handler POSTs QUERY_POSTS to https://api.producthunt.com/v2/api/graphql with variables (order, first, optional postedAfter/postedBefore/topic/after) and maps each edge.node into a flattened post (id, name, tagline, description first 500 chars, votes_count, comments_count, website, url, created_at, makers names, topics {name, slug}). Authenticates per request (bearer is never cached): (1) developer_token as Authorization Bearer, (2) api_key alone as Bearer when api_secret is empty, (3) api_key + api_secret exchanged at POST https://api.producthunt.com/v2/oauth/token with grant_type=client_credentials (retried up to 3 times on Cloudflare/transient errors). Prefer a Developer Token — the OAuth token endpoint sits behind Cloudflare and can return HTML challenge pages instead of JSON. Official fair-use rate limit is about 450 requests / 15 minutes. jobType is custom-script-executor; execution is the in-process ProducthuntNode handler. Do not use this node to mutate Product Hunt data (posts query is read-only). Example: order=NEWEST, limit=10, topic=artificial-intelligence.",
+  "icon": "rocket_launch",
+  "tags": [
+    "producthunt",
+    "graphql",
+    "launches",
+    "products"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Single object of Product Hunt GraphQL search parameters. Optional fields: posted_after, posted_before, topic, order, limit, after. The daemon delivers this object as inputVariables.input (or currentNode.inputList targetPortValue=input). Empty/omitted object still runs a search with order=NEWEST and first=min(default_limit, 20). Auth is NOT on this port — credentials live in configurationParameters. Example: {\"order\":\"NEWEST\",\"limit\":10,\"topic\":\"developer-tools\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "posted_after",
+          "label": "posted_after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lower bound for launch time. Purpose: sent as GraphQL variable postedAfter (DateTime) so only products posted AFTER this instant are returned. EXACT accepted values: an ISO 8601 DateTime string the Product Hunt API accepts (typically UTC with a trailing Z, e.g. YYYY-MM-DDTHH:MM:SSZ). Empty string, whitespace, or omit = do not send postedAfter (no lower bound). Invalid timestamps are forwarded as-is and surface as GraphQL errors on the output.error field. Example: '2026-01-01T00:00:00Z'.",
+          "children": []
+        },
+        {
+          "shortCode": "posted_before",
+          "label": "posted_before",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Upper bound for launch time. Purpose: sent as GraphQL variable postedBefore (DateTime) so only products posted BEFORE this instant are returned. EXACT accepted values: an ISO 8601 DateTime string (typically UTC with a trailing Z). Empty string, whitespace, or omit = do not send postedBefore (no upper bound). Combine with posted_after for a window. Invalid timestamps are forwarded as-is and surface as GraphQL errors. Example: '2026-08-01T00:00:00Z'.",
+          "children": []
+        },
+        {
+          "shortCode": "topic",
+          "label": "topic",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Topic slug filter. Purpose: sent as GraphQL variable topic (String) so posts() only returns launches tagged with that Product Hunt topic. EXACT accepted values: a Product Hunt topic slug (lowercase kebab-case as shown in producthunt.com/topics/<slug>), not a display name. Empty string, whitespace, or omit = do not send topic (all topics). Unknown slugs typically yield an empty posts array, not a transport error. Examples: 'artificial-intelligence', 'developer-tools', 'productivity'.",
+          "children": []
+        },
+        {
+          "shortCode": "order",
+          "label": "order",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sort order for posts(). Purpose: sent as GraphQL variable order (PostsOrder!). EXACT accepted values (case-sensitive Product Hunt enum, pick exactly one): 'NEWEST' (most recently posted first; handler default when this field is omitted, blank, or whitespace), 'VOTES' (highest vote count first), 'RANKING' (Product Hunt ranking order). Any other string is forwarded as-is and typically returns GraphQL errors on output.error (e.g. invalid value for PostsOrder). Do not send lowercase 'newest'. Example: 'NEWEST'.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for this request. Purpose: becomes GraphQL variable first (Int!) after clamping. EXACT accepted values: a JSON number or numeric string. The handler uses min(limit or default_limit, 20). 0, empty, or omit falls back to the instance default_limit (itself default 20). Values above 20 are clamped to 20 — Product Hunt GraphQL allows at most 20 posts per page; use after (end_cursor) to page. Negative values are forwarded (GraphQL will error). Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Forward pagination cursor. Purpose: sent as GraphQL variable after (String) so posts() returns the page AFTER the previous response. EXACT accepted values: the opaque cursor string from the previous output.end_cursor (Product Hunt pageInfo.endCursor). Empty string, whitespace, or omit = first page (do not send after). Do not invent cursors; a stale/invalid cursor surfaces as GraphQL errors. Example: 'MjA=' (whatever end_cursor the previous ok response returned).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Single object. Success: {status:'ok', posts_returned, has_next_page, end_cursor, posts[]}. …' (no credentials), 'GraphQL errors: …' (JSON array from the API), 'Product Hunt API Error: …' (HTTP/Cloudflare/transport), 'Error: ClassName: …' (unexpected). Secrets (developer_token, api_key, api_secret, access_token) are redacted to ***. Example success: {\"status\":\"ok\",\"posts_returned\":2,\"has_next_page\":true,\"end_cursor\":\"MjA=\",\"posts\":[{\"name\":\"Widget\",\"votes_count\":42}]}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Operation status on success. Purpose: lets downstream nodes gate on a stable literal without inspecting posts. EXACT accepted values: 'ok' on a successful GraphQL posts query (even when posts_returned is 0). Absent on failure (failure objects have error instead of status). Never 'OK' or 'success'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "posts_returned",
+          "label": "Posts Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Count of mapped post objects in this page. Purpose: len(posts) after mapping GraphQL edges. EXACT accepted values: a non-negative integer 0..20 (the GraphQL page cap). Present only on success. 0 means the query succeeded but no launches matched the filters. Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "has_next_page",
+          "label": "Has Next Page",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Whether Product Hunt has another page after this cursor. Purpose: copied from GraphQL pageInfo.hasNextPage. EXACT accepted values: true (more rows — pass end_cursor as the next input.after) or false (this is the last page). Missing/null from the API is treated as false. Present only on success. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "end_cursor",
+          "label": "End Cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Opaque pagination cursor for the next page. Purpose: copied from GraphQL pageInfo.endCursor; pass it unchanged as input.after on the next invoke. EXACT accepted values: a Product Hunt cursor string, or JSON null when the API omitted it / last page. Do not URL-encode or prefix it. Present on success. Example: 'MjA='.",
+          "children": []
+        },
+        {
+          "shortCode": "posts",
+          "label": "Posts",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Mapped Product Hunt launches for this page. Purpose: each GraphQL edge.node is flattened for workflow use. EXACT accepted values: an array of objects, each with: id (string), name (string), tagline (string), description (string, first 500 chars of node.description), votes_count (number, from votesCount, 0 if missing), comments_count (number, from commentsCount, 0 if missing), website (string), url (string, Product Hunt post URL), created_at (string, from createdAt), makers (array of maker name strings), topics (array of {name, slug} from topics.edges.node). Empty array when nothing matched. Present only on success. Example: [{\"id\":\"123\",\"name\":\"Acme\",\"tagline\":\"Does X\",\"description\":\"…\",\"votes_count\":42,\"comments_count\":3,\"website\":\"https://acme.example\",\"url\":\"https://www.producthunt.com/posts/acme\",\"created_at\":\"2026-08-01T12:00:00Z\",\"makers\":[\"Ada\"],\"topics\":[{\"name\":\"Developer Tools\",\"slug\":\"developer-tools\"}]}].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e70",
+      "shortCode": "developer_token",
+      "label": "Developer Token (Recommended)",
+      "type": "password",
+      "description": "Pre-obtained Product Hunt Developer Token used as Authorization Bearer. Purpose: auth priority 1 — when set (non-blank after trim), api_key and api_secret are ignored and the OAuth token POST is skipped, which avoids Cloudflare HTML challenges on /v2/oauth/token. EXACT accepted values: the token string copied once from Product Hunt → https://www.producthunt.com/v2/oauth/applications → your application → Developer Token → Generate Token. Empty / whitespace = missing (fall through to api_key). Never logged or returned. If set, it is sent as 'Authorization: Bearer <token>' on the GraphQL POST only. Example: a long opaque token from that dashboard (paste into the password field; do not put it on the input port).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7a",
+      "shortCode": "api_key",
+      "label": "API Key (client_id)",
+      "type": "password",
+      "description": "Product Hunt application API Key / OAuth client_id. Purpose: used only when developer_token is empty. Auth priority 2: if api_key is set and api_secret is empty, the handler treats api_key as a Bearer token (same as a developer token pasted into this field). Auth priority 3: if api_key AND api_secret are both set, they are POSTed as client_id / client_secret to https://api.producthunt.com/v2/oauth/token with grant_type=client_credentials. EXACT accepted values: the API Key / Client ID string from https://www.producthunt.com/v2/oauth/applications (create or open an application → copy API Key). Empty / whitespace = missing. Never logged or returned. Example: the client_id shown on that application page.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7b",
+      "shortCode": "api_secret",
+      "label": "API Secret (client_secret)",
+      "type": "password",
+      "description": "Product Hunt application API Secret / OAuth client_secret. Purpose: used only when developer_token is empty AND api_key is set. Together they trigger the OAuth client_credentials exchange (up to 3 attempts, sleep 2*(attempt+1) seconds on Cloudflare or transient HTTP errors). EXACT accepted values: the API Secret / Client Secret string from https://www.producthunt.com/v2/oauth/applications. Empty / whitespace = missing, which (with api_key set) selects api_key-as-bearer instead of OAuth. Ignored when developer_token is configured. Never logged or returned. Keep private; a leaked secret can mint client-level tokens for public GraphQL reads. Example: the client_secret shown once on that application page.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout for the OAuth POST (when used) and the GraphQL POST. Purpose: passed to DataSupport.post as the request timeout (connect+read budget for that call). EXACT accepted values: a positive integer (seconds). Missing, blank, 0, or non-positive fall back to 25. Each OAuth retry is a separate timed call; Cloudflare backoff sleeps (2, then 4, then 6 seconds) are extra wall time on top of this. Example: 25. Keep this at or below the daemon stateful request budget so the daemon does not kill the node first.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9c",
+      "shortCode": "default_limit",
+      "label": "Default Limit",
+      "type": "number",
+      "description": "Fallback page size when input.limit is omitted, blank, or 0. Purpose: used as `limit` in first=min(limit or default_limit, 20). EXACT accepted values: a positive integer. Missing, blank, 0, or non-positive fall back to 20. The GraphQL API still caps first at 20, so 50 becomes 20 at send time. Example: 20. Does not change how after/end_cursor pagination works.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,318 @@
+{
+  "_id": "9109d04e-83dd-4b05-98b3-1c6ed8a0688f",
+  "version": "1.0.0",
+  "name": "Bitwarden",
+  "label": "Bitwarden Public API + Secrets Manager",
+  "description": "Bitwarden Public API (/public) + Secrets Manager REST via OfficialApiNode. Docs: https://bitwarden.com/help/public-api/. Operations: list-collections, get-collection, update-collection, delete-collection, list-events, create-group, get-group, list-groups, update-group, delete-group, get-group-members, update-group-members, create-member, get-member, list-members, update-member, delete-member, get-member-groups, update-member-groups, get-secret, list-secrets, listen. Auth secret access_token is instance config only (never on INPUT, never logged). GET/access operations still call the official GET (or access) HTTP method. Retrieved secret material must not be logged and should stay in StudioQuack secret bindings (bind OUTPUT `data` into a secret; do not print it, persist it in engine variables, or leave it on a logged edge). listen is kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "lock",
+  "tags": [
+    "secrets",
+    "iam"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f2d43825-6474-41d8-9eef-c3cce4043f15",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_token here. Path params match api_spec.json placeholders. Example: {\"operation\":\"list-collections\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "list-collections",
+          "description": "Which official API call to run. EXACT values: list-collections | get-collection | update-collection | delete-collection | list-events | create-group | get-group | list-groups | update-group | delete-group | get-group-members | update-group-members | create-member | get-member | list-members | update-member | delete-member | get-member-groups | update-member-groups | get-secret | list-secrets | listen. Prefer the instance config operation select. listen is ingress: no HTTP — use a BPMN message event. Example: 'list-collections'.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Collection, group, member, or SM secret UUID depending on operation.",
+          "children": []
+        },
+        {
+          "shortCode": "organizationId",
+          "label": "organizationId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Org UUID for list-secrets when not set in config.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Invite email for create-member (personal data).",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Group name for create-group / update-group.",
+          "children": []
+        },
+        {
+          "shortCode": "continuationToken",
+          "label": "continuationToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Public API pagination token (lists of 50+).",
+          "children": []
+        },
+        {
+          "shortCode": "externalId",
+          "label": "externalId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `externalId` for operations: update-collection, create-group, update-group, create-member, update-member.",
+          "children": []
+        },
+        {
+          "shortCode": "groups",
+          "label": "groups",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `groups` for operations: update-collection, create-member.",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `start` for operation: list-events.",
+          "children": []
+        },
+        {
+          "shortCode": "end",
+          "label": "end",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `end` for operation: list-events.",
+          "children": []
+        },
+        {
+          "shortCode": "collections",
+          "label": "collections",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `collections` for operations: create-group, update-group, create-member, update-member.",
+          "children": []
+        },
+        {
+          "shortCode": "memberIds",
+          "label": "memberIds",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `memberIds` for operation: update-group-members.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `type` for operations: create-member, update-member.",
+          "children": []
+        },
+        {
+          "shortCode": "accessAll",
+          "label": "accessAll",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `accessAll` for operations: create-member, update-member.",
+          "children": []
+        },
+        {
+          "shortCode": "groupIds",
+          "label": "groupIds",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `groupIds` for operation: update-member-groups.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "fd6f88df-3d47-4e11-8692-525d1d6253c6",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Secret bytes in data must not be logged; bind them into StudioQuack secrets. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON from the official API. May contain secret material — never log; bind into StudioQuack secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "3dcbef84-61dc-4dd4-89f2-33e8b455deb0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: list-collections, get-collection, update-collection, delete-collection, list-events, create-group, get-group, list-groups, update-group, delete-group, get-group-members, update-group-members, create-member, get-member, list-members, update-member, delete-member, get-member-groups, update-member-groups, get-secret, list-secrets, listen. listen is BPMN ingress, not a socket.",
+      "value": "list-collections",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "list-collections",
+        "get-collection",
+        "update-collection",
+        "delete-collection",
+        "list-events",
+        "create-group",
+        "get-group",
+        "list-groups",
+        "update-group",
+        "delete-group",
+        "get-group-members",
+        "update-group-members",
+        "create-member",
+        "get-member",
+        "list-members",
+        "update-member",
+        "delete-member",
+        "get-member-groups",
+        "update-member-groups",
+        "get-secret",
+        "list-secrets",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "370c799d-c7a3-45a6-9a99-722f6b7f02ce",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Bearer for Public API (org token after client_credentials) or SM machine-account token. StudioQuack secret. Never logged. OfficialApiNode does not POST identity.bitwarden.com. Reject personal user.* keys.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8f0a030b-65c6-40c5-90c6-18a6101c960c",
+      "shortCode": "apiHost",
+      "label": "API host",
+      "type": "string",
+      "description": "API host without scheme. Cloud US default api.bitwarden.com. EU: api.bitwarden.eu. Self-host: your.domain.com/api (path already includes /api).",
+      "value": "api.bitwarden.com",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0e190bd1-20db-40e4-a4c2-4081e28cf349",
+      "shortCode": "organizationId",
+      "label": "Organization ID",
+      "type": "string",
+      "description": "Org UUID for list-secrets (SM).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d3aec6ad-9812-4cce-86b6-d1a409795911",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon invoke budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

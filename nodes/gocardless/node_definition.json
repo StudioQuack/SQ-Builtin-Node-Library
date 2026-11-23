@@ -1,0 +1,373 @@
+{
+  "_id": "07976b8c-a9e3-4909-931b-8912cd17779a",
+  "version": "1.0.0",
+  "name": "GoCardless",
+  "label": "GoCardless — GoCardless Bank Debits API (GoCardless-Version 2015-07-06)",
+  "description": "Official GoCardless Bank Debits API (GoCardless-Version 2015-07-06). Docs: https://developer.gocardless.com/api-reference. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. ACH/BACS/SEPA. Collect bank details via GoCardless Drop-in — do not put IBAN/account numbers on INPUT if a mandate token exists. Sandbox: api-sandbox.gocardless.com.",
+  "icon": "account_balance",
+  "tags": [
+    "gocardless",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "0d186b4f-4b0d-4ae5-826e-1a13ebb1bd3f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for GoCardless. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "customer_create",
+          "description": "Overrides config operation. EXACT: customer_create | mandate_create | payment_create | payout_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "Environment",
+          "type": "string",
+          "required": false,
+          "value": "api.gocardless.com",
+          "description": "Live api.gocardless.com vs sandbox api-sandbox.gocardless.com. Substituted into baseUrl as https://{environment}.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create email. Nested to customers.email. Required. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "given_name",
+          "label": "given_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create given_name. Nested to customers.given_name.",
+          "children": []
+        },
+        {
+          "shortCode": "family_name",
+          "label": "family_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create family_name. Nested to customers.family_name.",
+          "children": []
+        },
+        {
+          "shortCode": "country_code",
+          "label": "country_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 3166-1 alpha-2 for customer_create. Example: GB.",
+          "children": []
+        },
+        {
+          "shortCode": "scheme",
+          "label": "scheme",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "mandate_create scheme. EXACT: bacs | sepa_core | sepa_cor1 | becs | becs_nz | autogiro | pad | pay_to. Nested to mandates.scheme.",
+          "children": []
+        },
+        {
+          "shortCode": "links",
+          "label": "links",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "mandate_create {customer, customer_bank_account} or payment_create {mandate}. Nested into mandates.links / payments.links.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "payment_create amount in pence/cents. Nested to payments.amount. Example: 1000.",
+          "children": []
+        },
+        {
+          "shortCode": "currency",
+          "label": "currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create ISO currency. Nested to payments.currency. Example: GBP.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: payout_list.",
+          "children": []
+        },
+        {
+          "shortCode": "company_name",
+          "label": "company_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create company_name.",
+          "children": []
+        },
+        {
+          "shortCode": "address_line1",
+          "label": "address_line1",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create address_line1.",
+          "children": []
+        },
+        {
+          "shortCode": "address_line2",
+          "label": "address_line2",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create address_line2.",
+          "children": []
+        },
+        {
+          "shortCode": "city",
+          "label": "city",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create city.",
+          "children": []
+        },
+        {
+          "shortCode": "region",
+          "label": "region",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create region.",
+          "children": []
+        },
+        {
+          "shortCode": "postal_code",
+          "label": "postal_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create postal_code.",
+          "children": []
+        },
+        {
+          "shortCode": "phone_number",
+          "label": "phone_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create phone_number.",
+          "children": []
+        },
+        {
+          "shortCode": "metadata",
+          "label": "metadata",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Key/value metadata on customer_create, mandate_create, payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create description.",
+          "children": []
+        },
+        {
+          "shortCode": "charge_date",
+          "label": "charge_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create charge_date YYYY-MM-DD.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payout_list cursor after.",
+          "children": []
+        },
+        {
+          "shortCode": "before",
+          "label": "before",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payout_list cursor before.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payout_list status filter.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5a4cc765-6a10-45e5-a05b-e68624fb4731",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c739e1fd-ec60-4b5e-b03a-e3c38fc4976a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: customer_create | mandate_create | payment_create | payout_list | trigger. Default customer_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "customer_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "customer_create",
+        "mandate_create",
+        "payment_create",
+        "payout_list",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "3e515d43-9a32-40ae-8466-42756d089852",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "GoCardless credential (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1eea124e-8178-4edf-871b-0c6152205c4f",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "Live api.gocardless.com vs sandbox api-sandbox.gocardless.com. Substituted into baseUrl as https://{environment}.",
+      "value": "api.gocardless.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "api.gocardless.com",
+        "api-sandbox.gocardless.com"
+      ]
+    },
+    {
+      "_id": "e98cfb1e-4bf9-489f-8aab-e363ca9b7e8e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

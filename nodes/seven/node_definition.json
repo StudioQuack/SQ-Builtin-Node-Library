@@ -1,0 +1,231 @@
+{
+  "_id": "a85a8e5b-dd8c-519d-91fd-3f131e1a6af9",
+  "version": "1.0.0",
+  "name": "seven",
+  "label": "seven — seven.io Gateway API",
+  "description": "seven via the official seven.io Gateway API. Base https://gateway.seven.io/api. Docs: https://docs.seven.io/en/. Formerly sms77. Local telecom rules apply. Official gateway.seven.io. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "sms",
+  "tags": [
+    "sms",
+    "voice"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "9c1f67c7-921d-527d-8560-c92d6edb425c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One seven operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"send-sms\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-sms",
+          "description": "Which official call to run. EXACT values: send-sms | voice-call. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipient MSISDN for send-sms / voice-call. Required. Comma-separated for SMS. Example: +4915123456789.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SMS body (max 1520 chars) or TTS text for voice-call. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sender id (phone or alphanumeric ≤11). Falls back to config from.",
+          "children": []
+        },
+        {
+          "shortCode": "delay",
+          "label": "delay",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-sms delay as unix timestamp or YYYY-MM-DD HH:MM:SS.",
+          "children": []
+        },
+        {
+          "shortCode": "label",
+          "label": "label",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-sms label for analytics.",
+          "children": []
+        },
+        {
+          "shortCode": "foreign_id",
+          "label": "foreign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-sms foreign_id for your correlation.",
+          "children": []
+        },
+        {
+          "shortCode": "flash",
+          "label": "flash",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "send-sms flash SMS.",
+          "children": []
+        },
+        {
+          "shortCode": "performance_tracking",
+          "label": "performance_tracking",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "send-sms performance_tracking (link tracking).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7f572c34-4c92-5ab9-b2fb-dbca0602b8f2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "838a1367-d57b-5fdd-9039-2b341a6f74ec",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-sms, voice-call. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-sms",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-sms",
+        "voice-call"
+      ]
+    },
+    {
+      "_id": "7b1b0d3c-4263-532e-a7ea-1ceade6c5b99",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "seven.io API key. Header X-Api-Key. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bc447986-b7a8-57db-8afb-0229735f944e",
+      "shortCode": "from",
+      "label": "from",
+      "type": "string",
+      "description": "Default sender id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4ec1d6b3-a379-5b61-880f-0e43793253fb",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

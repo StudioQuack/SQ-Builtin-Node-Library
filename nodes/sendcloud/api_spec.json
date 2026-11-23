@@ -1,0 +1,61 @@
+{
+  "baseUrl": "https://panel.sendcloud.sc/api/v3",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "configKey": "secret_key",
+    "userKey": "public_key"
+  },
+  "operations": {
+    "parcel_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/shipments/announce",
+      "required": [
+        "ship_with",
+        "to_address",
+        "from_address",
+        "parcels"
+      ],
+      "bodyFrom": [
+        "ship_with",
+        "to_address",
+        "from_address",
+        "parcels",
+        "brand_id",
+        "order_number",
+        "total_order_price",
+        "external_reference_id",
+        "customs_information"
+      ],
+      "contentType": "application/json"
+    },
+    "label_create": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/parcels/{id}/documents/label",
+      "required": [
+        "id"
+      ],
+      "extraHeaders": {
+        "Accept": "{accept}"
+      }
+    },
+    "shipping_method_list": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/shipping-options",
+      "bodyFrom": [
+        "from_address",
+        "to_address",
+        "parcels",
+        "functionalities"
+      ],
+      "contentType": "application/json"
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

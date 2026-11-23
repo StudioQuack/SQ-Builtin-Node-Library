@@ -1,0 +1,69 @@
+{
+  "baseUrl": "https://{region}",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "api_key",
+    "userKey": "api_user"
+  },
+  "placeholderDefaults": {
+    "region": "api.mailgun.net"
+  },
+  "operations": {
+    "send-email": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v3/{domain}/messages",
+      "contentType": "multipart/form-data",
+      "bodyFormat": "multipart",
+      "required": [
+        "to"
+      ],
+      "bodyFrom": [
+        "from",
+        "to",
+        "cc",
+        "bcc",
+        "subject",
+        "text",
+        "html",
+        "attachment",
+        "reply_to",
+        "o:tag"
+      ],
+      "bodyMap": {
+        "reply_to": "h:Reply-To",
+        "o:tag": "o:tag"
+      }
+    },
+    "get-event": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v3/{domain}/events",
+      "contentType": "application/json",
+      "queryFrom": [
+        "event",
+        "recipient",
+        "limit"
+      ]
+    },
+    "list-events": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v3/{domain}/events",
+      "contentType": "application/json",
+      "queryFrom": [
+        "begin",
+        "end",
+        "limit",
+        "event"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

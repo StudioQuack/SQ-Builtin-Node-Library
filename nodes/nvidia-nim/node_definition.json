@@ -1,0 +1,471 @@
+{
+  "_id": "0b27d4ad-6b19-4afa-ab60-a2c341082f64",
+  "version": "1.0.0",
+  "name": "NVIDIA NIM",
+  "label": "NVIDIA NIM",
+  "description": "Official NVIDIA API Catalog / NIM OpenAI-compat inference (INPUT llm_input → OUTPUT llm_output). operation selects chat (POST /v1/chat/completions) or embeddings (POST /v1/embeddings) at https://integrate.api.nvidia.com. Auth is StudioQuack secret api_key (typically nvapi-…) sent as Authorization Bearer. File/image payloads use type file (platform ref-id). Docs: https://docs.nvidia.com/nim/large-language-models/latest/reference/api-reference.html. Terms: https://ngc.nvidia.com/legal/terms. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "nvidia",
+    "nim",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5312262e-054a-42be-adcc-f5a262dace81",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, stream?, model?, input?, file?, input_type?}. Image sources use type file (platform ref-id). Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "chat",
+          "description": "Which official call to run. EXACT: chat | embeddings. Example: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Conversation for operation=chat. List of {role, content}. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional OpenAI-style tools for chat. Omit or [] sends no tools.",
+          "children": []
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Text or string[] for operation=embeddings (POST /v1/embeddings). Required for embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for multimodal chat when the selected NIM supports vision. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "tool_choice",
+          "label": "tool_choice",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tool_choice` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "temperature",
+          "label": "temperature",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `temperature` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_p` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_tokens` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `stop` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `seed` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "frequency_penalty",
+          "label": "frequency_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `frequency_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "presence_penalty",
+          "label": "presence_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `presence_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "input_type",
+          "label": "input_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `input_type` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "encoding_format",
+          "label": "encoding_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `encoding_format` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "dimensions",
+          "label": "dimensions",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `dimensions` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "truncate",
+          "label": "truncate",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `truncate` for operation: embeddings.",
+          "children": []
+        },
+        {
+          "shortCode": "user",
+          "label": "user",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `user` for operation: embeddings.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6cab8990-5451-4b01-92a3-e924681f0919",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed NIM JSON (chat completion or embeddings data[]).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "063948a1-4b95-4212-9cd2-96ea14e15a44",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official NIM verb. EXACT values: chat | embeddings. Default chat = POST /v1/chat/completions. embeddings = POST /v1/embeddings (embedding NIM only).",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "embeddings"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "e76832f4-f53d-47a2-8542-068bc9a967e2",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "NVIDIA API Catalog key from build.nvidia.com (typically nvapi-…). Sent as Authorization: Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'. NGC personal keys for nvcr.io pulls are a different secret — do not substitute.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "af1c097e-4f12-473c-b685-e37ec8108a79",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Catalog id. Default nvidia/nemotron-3-nano-30b-a3b (current Nemotron 3 nano). Also nvidia/nemotron-3.5-lightning-30b-a3b, nvidia/nemotron-3-ultra-550b-a55b, nvidia/nvidia-nemotron-nano-9b-v2. Previous llama-3.1-nemotron-nano-8b-v1 remains listed on the NIM LLM APIs page. llama-3.3-nemotron-super-49b-v1.5 API deprecates 2026-08-25. Embeddings: e.g. nvidia/nv-embedqa-e5-v5. Verify GET /v1/models. Also send on llm_input. Docs: https://docs.api.nvidia.com/nim/reference/llm-apis .",
+      "value": "nvidia/nemotron-3-nano-30b-a3b",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "nvidia/nemotron-3-nano-30b-a3b",
+        "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "nvidia/nemotron-3-ultra-550b-a55b",
+        "nvidia/nvidia-nemotron-nano-9b-v2",
+        "nvidia/llama-3.1-nemotron-nano-8b-v1",
+        "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+        "nvidia/nv-embedqa-e5-v5"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "c25a5a9c-05b2-4510-b200-8c24bef30204",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "960401b3-8d55-45ce-b530-821bb70066a8",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether NVIDIA NIM requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,286 @@
+{
+  "_id": "c16b9afc-430a-4610-9d8c-590f2096cb0c",
+  "version": "1.0.0",
+  "name": "AWS IAM",
+  "label": "AWS IAM Query API (users and groups)",
+  "description": "AWS IAM Query API 2010-05-08 via OfficialApiNode, signed with AWS SigV4 (service iam). Host https://iam.amazonaws.com. Docs: https://docs.aws.amazon.com/IAM/latest/APIReference/Welcome.html. Operations: create-user, get-user, list-users, update-user, delete-user, add-user-to-group, remove-user-from-group, create-group, get-group, list-groups, update-group, delete-group, listen. Form body plus Action/Version in the query string. Auth secrets access_key_id, secret_access_key, optional session_token are instance config only (never on INPUT, never logged). Commercial IAM signing region is us-east-1. listen is kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "admin_panel_settings",
+  "tags": [
+    "iam",
+    "aws"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "442bc0f9-2ab9-4e15-809e-d809c44ee1ac",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_key_id, secret_access_key, or session_token here. Path params match api_spec.json placeholders. Example: {\"operation\":\"create-user\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "create-user",
+          "description": "Which official API call to run. EXACT values: create-user | get-user | list-users | update-user | delete-user | add-user-to-group | remove-user-from-group | create-group | get-group | list-groups | update-group | delete-group | listen. Prefer the instance config operation select. listen is ingress: no HTTP — use a BPMN message event. Example: 'create-user'.",
+          "children": []
+        },
+        {
+          "shortCode": "UserName",
+          "label": "UserName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IAM user name for user ops. Example: deploy-bot.",
+          "children": []
+        },
+        {
+          "shortCode": "GroupName",
+          "label": "GroupName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IAM group name for group ops. Example: developers.",
+          "children": []
+        },
+        {
+          "shortCode": "PathPrefix",
+          "label": "PathPrefix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional path prefix for list-users / list-groups.",
+          "children": []
+        },
+        {
+          "shortCode": "Path",
+          "label": "Path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IAM path for create-user / create-group. Example: /.",
+          "children": []
+        },
+        {
+          "shortCode": "PermissionsBoundary",
+          "label": "PermissionsBoundary",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Permissions boundary ARN for create-user.",
+          "children": []
+        },
+        {
+          "shortCode": "MaxItems",
+          "label": "MaxItems",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `MaxItems` for operations: list-users, get-group, list-groups.",
+          "children": []
+        },
+        {
+          "shortCode": "Marker",
+          "label": "Marker",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Marker` for operations: list-users, get-group, list-groups.",
+          "children": []
+        },
+        {
+          "shortCode": "NewUserName",
+          "label": "NewUserName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `NewUserName` for operation: update-user.",
+          "children": []
+        },
+        {
+          "shortCode": "NewPath",
+          "label": "NewPath",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `NewPath` for operations: update-user, update-group.",
+          "children": []
+        },
+        {
+          "shortCode": "NewGroupName",
+          "label": "NewGroupName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `NewGroupName` for operation: update-group.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3e42be53-4ed9-4cdb-8fd3-70fdaf0e0490",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Secret bytes in data must not be logged; bind them into StudioQuack secrets. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON from the official API. May contain secret material — never log; bind into StudioQuack secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "d0b4375a-a80b-40e6-919d-7151206ed5d3",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: create-user, get-user, list-users, update-user, delete-user, add-user-to-group, remove-user-from-group, create-group, get-group, list-groups, update-group, delete-group, listen. listen is BPMN ingress, not a socket.",
+      "value": "create-user",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "create-user",
+        "get-user",
+        "list-users",
+        "update-user",
+        "delete-user",
+        "add-user-to-group",
+        "remove-user-from-group",
+        "create-group",
+        "get-group",
+        "list-groups",
+        "update-group",
+        "delete-group",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "0fff1f5f-f54a-4555-9d9f-ee89a6f06e56",
+      "shortCode": "access_key_id",
+      "label": "AWS access key ID",
+      "type": "password",
+      "description": "IAM access key ID used as the SigV4 credential. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7b20d24c-c1d9-43bd-ab5e-e122332d5bfc",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "SigV4 signing region. Commercial IAM is global — use us-east-1. Host is iam.amazonaws.com (not iam.{region}).",
+      "value": "us-east-1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2fbf378e-40d4-4afa-b8af-83c213795b3f",
+      "shortCode": "secret_access_key",
+      "label": "AWS secret access key",
+      "type": "password",
+      "description": "IAM secret access key used to sign SigV4. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "07b3448b-9df2-493b-b87c-03094bacaa67",
+      "shortCode": "session_token",
+      "label": "AWS session token",
+      "type": "password",
+      "description": "Optional STS session token. When set, OfficialApiNode adds x-amz-security-token. Empty for long-lived keys. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0e4fc827-064f-4b3d-92ac-0f08bae2947c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon invoke budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

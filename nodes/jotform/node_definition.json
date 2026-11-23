@@ -1,0 +1,222 @@
+{
+  "_id": "071ff9ca-04a5-40a3-a735-a600b6180201",
+  "version": "1.0.0",
+  "name": "Jotform",
+  "label": "Jotform — forms, submissions, reports",
+  "description": "Official Jotform REST API v1. Handler: OfficialApiNode. api_key sent as header APIKEY (never apiKey on the query string). Config host selects the official API hostname (api.jotform.com / eu-api.jotform.com / hipaa-api.jotform.com) and is substituted into baseUrl as https://{host}. Keys are region-bound. trigger.listen is ingress (BPMN message event), not POST /form/{id}/webhooks. Submissions are respondent PII. Customer owns the Jotform account. Never log api_key or answers.",
+  "icon": "assignment",
+  "tags": [
+    "forms"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "8602edbd-7780-4cb5-9046-4501fdd931a1",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "form_id / submission_id and list filters (offset, limit, filter, orderby). trigger.listen does not call HTTP — register the StudioQuack ingress URL in Jotform (HTTPS). Do not put api_key here. Example: {\"operation\":\"form.get\",\"form_id\":\"…\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "form.list",
+          "description": "Overrides config. EXACT: form.list | form.get | submission.list | submission.get | submission.delete | report.list | trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "form_id",
+          "label": "form_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Form id for form.get, submission.list, report.list. Example: 241234567890123.",
+          "children": []
+        },
+        {
+          "shortCode": "submission_id",
+          "label": "submission_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Submission id for submission.get / submission.delete.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List offset for form.list / submission.list.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List limit for form.list / submission.list. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "JSON filter for form.list / submission.list. Example: {\"created_at:gt\":\"2026-01-01\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "orderby",
+          "label": "orderby",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Order field for form.list / submission.list. Example: created_at.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "62adb2ab-23e7-401d-995c-3dc8a2cf42b5",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (Jotform content envelope). trigger.listen: BPMN message event. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6f5ae934-4f1e-41ea-9ff5-d3f632e18e6c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank.",
+      "value": "form.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "form.list",
+        "form.get",
+        "submission.list",
+        "submission.get",
+        "submission.delete",
+        "report.list",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "a3e75735-36b0-4eb8-9df5-767ae53a37e1",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Jotform API key. Sent only as header APIKEY. Never query-string. Never log. Jotform API settings.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "01da32c3-46cf-429e-a7c8-81c848a26314",
+      "shortCode": "host",
+      "label": "Host",
+      "type": "select",
+      "description": "Official Jotform API hostname. Substituted into baseUrl as https://{host}. US api.jotform.com; EU eu-api.jotform.com; HIPAA hipaa-api.jotform.com. Keys are region-bound.",
+      "value": "api.jotform.com",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "api.jotform.com",
+        "eu-api.jotform.com",
+        "hipaa-api.jotform.com"
+      ]
+    },
+    {
+      "_id": "d5727c7b-02ea-4803-98dd-5043fdc8b7ff",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

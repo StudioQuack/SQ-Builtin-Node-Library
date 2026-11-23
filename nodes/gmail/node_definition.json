@@ -1,0 +1,1306 @@
+{
+  "_id": "6565547f-cf65-5ba6-bfd6-f5cb2c57d8f2",
+  "version": "1.0.0",
+  "name": "Gmail",
+  "label": "Gmail — Google Gmail API v1",
+  "description": "Gmail via the official Google Gmail API v1. Base https://gmail.googleapis.com/gmail/v1. Docs: https://developers.google.com/gmail/api/reference/rest. Restricted Gmail scopes need Google CASA/verification. Never log message bodies. listen = users.watch + Pub/Sub delivered as a BPMN message event — not a socket on this node. Cross-ref none. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments belong inside raw (URL-safe base64 RFC 2822); this node does not send a separate file. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "mail",
+  "tags": [
+    "email",
+    "google"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3a43ebb4-7017-5043-b5d3-b9afd2f86c48",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Gmail operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"send-message\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-message",
+          "description": "Which official call to run. EXACT values: send-message | reply-message | get-message | list-messages | delete-message | mark-read | mark-unread | add-label-message | remove-label-message | create-draft | get-draft | list-drafts | delete-draft | create-label | get-label | list-labels | delete-label | get-thread | list-threads | reply-thread | trash-thread | untrash-thread | delete-thread | add-label-thread | remove-label-thread | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "To",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipients for send-message, reply-message, reply-thread and create-draft. Comma-separated addresses. Example: ada@example.com, Bob <bob@example.com>. Required unless raw is set.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "From",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sender address. Must be the account or a verified send-as alias; Gmail uses the account address when empty. Example: Ada <ada@example.com>.",
+          "children": []
+        },
+        {
+          "shortCode": "cc",
+          "label": "Cc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cc recipients, comma-separated. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "bcc",
+          "label": "Bcc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Bcc recipients, comma-separated. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "reply_to",
+          "label": "Reply-To",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reply-To address(es), comma-separated. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "Subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message subject. For replies keep the original subject (optionally prefixed with Re:) so Gmail threads it.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "Text body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Plain-text body. When html is also set the message is multipart/alternative.",
+          "children": []
+        },
+        {
+          "shortCode": "html",
+          "label": "HTML body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTML body. Omit for plain-text mail.",
+          "children": []
+        },
+        {
+          "shortCode": "in_reply_to",
+          "label": "In-Reply-To",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message-ID header of the message being answered (reply-message / reply-thread), e.g. <CAF...@mail.gmail.com>. Use with threadId so the reply stays in the thread.",
+          "children": []
+        },
+        {
+          "shortCode": "references",
+          "label": "References",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "References header for replies: the Message-IDs of the thread, space-separated. Defaults to in_reply_to when empty.",
+          "children": []
+        },
+        {
+          "shortCode": "attachments",
+          "label": "Attachments",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Files to attach: list of StudioQuack file blocks {mime_type, source, data, name}. Up to 25.",
+          "children": []
+        },
+        {
+          "shortCode": "raw",
+          "label": "raw",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prebuilt RFC 2822 message as Gmail raw (URL-safe base64). Optional: when empty the node builds it from to/from/cc/bcc/reply_to/subject/text/html/in_reply_to/references/attachments. Sent as-is when set.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Gmail message, draft, label, or thread id for get/delete/modify. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "threadId",
+          "label": "threadId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Thread id for reply-message / reply-thread / create-draft. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Gmail search query for list-messages, list-threads, and list-drafts. Example: from:ada@example.com is:unread. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "labelIds",
+          "label": "labelIds",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Label id filter for list-messages and list-threads. Sent as one query value. Modify operations use addLabelIds and removeLabelIds, not this field. Example: INBOX. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Label name for create-label. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "format",
+          "label": "format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Gmail format: full | metadata | minimal | raw. Default full. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "addLabelIds",
+          "label": "addLabelIds",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Label ids to add. JSON array of strings. mark-unread uses [\"UNREAD\"]. add-label-message and add-label-thread use this list. Example: [\"UNREAD\"]. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "removeLabelIds",
+          "label": "removeLabelIds",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Label ids to remove. JSON array of strings. mark-read uses [\"UNREAD\"]. remove-label-message and remove-label-thread use this list. Example: [\"UNREAD\"]. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "maxResults",
+          "label": "maxResults",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for list-messages, list-threads, and list-drafts. Positive integer. Gmail caps messages and threads at 500. Example: 20. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "pageToken",
+          "label": "pageToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "nextPageToken from a previous list-messages, list-threads, or list-drafts response. Example: 0123456789. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "labelListVisibility",
+          "label": "labelListVisibility",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-label only. EXACT: labelShow | labelShowIfUnread | labelHide. Example: labelShow. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "messageListVisibility",
+          "label": "messageListVisibility",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-label only. EXACT: show | hide. Example: show. Omit when unused.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "cbc91a31-b294-57ae-90fd-aab07e279e6b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ef3a66eb-0db4-5b62-99ea-b83c02f96b8e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-message, reply-message, get-message, list-messages, delete-message, mark-read, mark-unread, add-label-message, remove-label-message, create-draft, get-draft, list-drafts, delete-draft, create-label, get-label, list-labels, delete-label, get-thread, list-threads, reply-thread, trash-thread, untrash-thread, delete-thread, add-label-thread, remove-label-thread, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-message",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-message",
+        "reply-message",
+        "get-message",
+        "list-messages",
+        "delete-message",
+        "mark-read",
+        "mark-unread",
+        "add-label-message",
+        "remove-label-message",
+        "create-draft",
+        "get-draft",
+        "list-drafts",
+        "delete-draft",
+        "create-label",
+        "get-label",
+        "list-labels",
+        "delete-label",
+        "get-thread",
+        "list-threads",
+        "reply-thread",
+        "trash-thread",
+        "untrash-thread",
+        "delete-thread",
+        "add-label-thread",
+        "remove-label-thread",
+        "listen"
+      ],
+      "filterRules": [
+        {
+          "when": "send-message",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "from",
+              "visible": true
+            },
+            {
+              "param": "raw",
+              "visible": true
+            },
+            {
+              "param": "html",
+              "visible": true
+            },
+            {
+              "param": "cc",
+              "visible": true
+            },
+            {
+              "param": "subject",
+              "visible": true
+            },
+            {
+              "param": "attachments",
+              "visible": true
+            },
+            {
+              "param": "threadId",
+              "visible": true
+            },
+            {
+              "param": "text",
+              "visible": true
+            },
+            {
+              "param": "reply_to",
+              "visible": true
+            },
+            {
+              "param": "bcc",
+              "visible": true
+            },
+            {
+              "param": "to",
+              "visible": true
+            },
+            {
+              "param": "in_reply_to",
+              "visible": true
+            },
+            {
+              "param": "references",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "reply-message",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "from",
+              "visible": true
+            },
+            {
+              "param": "raw",
+              "visible": true
+            },
+            {
+              "param": "html",
+              "visible": true
+            },
+            {
+              "param": "cc",
+              "visible": true
+            },
+            {
+              "param": "subject",
+              "visible": true
+            },
+            {
+              "param": "attachments",
+              "visible": true
+            },
+            {
+              "param": "threadId",
+              "visible": true
+            },
+            {
+              "param": "text",
+              "visible": true
+            },
+            {
+              "param": "reply_to",
+              "visible": true
+            },
+            {
+              "param": "bcc",
+              "visible": true
+            },
+            {
+              "param": "to",
+              "visible": true
+            },
+            {
+              "param": "in_reply_to",
+              "visible": true
+            },
+            {
+              "param": "references",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-message",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "format",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-messages",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "labelIds",
+              "visible": true
+            },
+            {
+              "param": "q",
+              "visible": true
+            },
+            {
+              "param": "maxResults",
+              "visible": true
+            },
+            {
+              "param": "pageToken",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "delete-message",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "mark-read",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "removeLabelIds",
+              "visible": true
+            },
+            {
+              "param": "addLabelIds",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "mark-unread",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "removeLabelIds",
+              "visible": true
+            },
+            {
+              "param": "addLabelIds",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "add-label-message",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "addLabelIds",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "remove-label-message",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "removeLabelIds",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "create-draft",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "from",
+              "visible": true
+            },
+            {
+              "param": "raw",
+              "visible": true
+            },
+            {
+              "param": "html",
+              "visible": true
+            },
+            {
+              "param": "cc",
+              "visible": true
+            },
+            {
+              "param": "subject",
+              "visible": true
+            },
+            {
+              "param": "attachments",
+              "visible": true
+            },
+            {
+              "param": "threadId",
+              "visible": true
+            },
+            {
+              "param": "text",
+              "visible": true
+            },
+            {
+              "param": "reply_to",
+              "visible": true
+            },
+            {
+              "param": "bcc",
+              "visible": true
+            },
+            {
+              "param": "to",
+              "visible": true
+            },
+            {
+              "param": "in_reply_to",
+              "visible": true
+            },
+            {
+              "param": "references",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-draft",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-drafts",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "q",
+              "visible": true
+            },
+            {
+              "param": "maxResults",
+              "visible": true
+            },
+            {
+              "param": "pageToken",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "delete-draft",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "create-label",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "messageListVisibility",
+              "visible": true
+            },
+            {
+              "param": "labelListVisibility",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-label",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-labels",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "delete-label",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-thread",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "format",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-threads",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "labelIds",
+              "visible": true
+            },
+            {
+              "param": "q",
+              "visible": true
+            },
+            {
+              "param": "maxResults",
+              "visible": true
+            },
+            {
+              "param": "pageToken",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "reply-thread",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "from",
+              "visible": true
+            },
+            {
+              "param": "raw",
+              "visible": true
+            },
+            {
+              "param": "html",
+              "visible": true
+            },
+            {
+              "param": "cc",
+              "visible": true
+            },
+            {
+              "param": "subject",
+              "visible": true
+            },
+            {
+              "param": "attachments",
+              "visible": true
+            },
+            {
+              "param": "threadId",
+              "visible": true
+            },
+            {
+              "param": "text",
+              "visible": true
+            },
+            {
+              "param": "reply_to",
+              "visible": true
+            },
+            {
+              "param": "bcc",
+              "visible": true
+            },
+            {
+              "param": "to",
+              "visible": true
+            },
+            {
+              "param": "in_reply_to",
+              "visible": true
+            },
+            {
+              "param": "references",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "trash-thread",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "untrash-thread",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "delete-thread",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "add-label-thread",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "addLabelIds",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "remove-label-thread",
+          "targets": [
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "removeLabelIds",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "ec6d2541-dc93-5125-a024-cb7aead03671",
+      "shortCode": "access_token",
+      "label": "OAuth access token",
+      "type": "password",
+      "description": "Google OAuth 2.0 access token with Gmail scopes (gmail.send / gmail.modify / gmail.readonly as needed). Header Authorization: Bearer. StudioQuack secret. Never on INPUT. Refresh stays in the secret store. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cca5c263-20e8-522f-b9a9-eb33f1bbf7a7",
+      "shortCode": "user_id",
+      "label": "user_id",
+      "type": "string",
+      "description": "Gmail userId. Default me. Accepted: me or the mailbox email.",
+      "value": "me",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3be07d6f-02a8-5bc3-8a88-e8c67a7503dd",
+      "shortCode": "from",
+      "label": "Default sender",
+      "type": "string",
+      "description": "Sender address used when INPUT from is empty. Must be the account or a verified send-as alias. Example: Ada <ada@example.com>.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3be07d6f-02a8-5bc3-8a88-e8c67a7503dd",
+      "shortCode": "raw",
+      "label": "raw",
+      "type": "string",
+      "description": "Optional RFC 2822 message as Gmail raw (URL-safe base64), including any attachments. Sent only when INPUT raw is empty, on send-message, reply-message, reply-thread, and create-draft. INPUT raw wins when it is set. A call that omits operation uses the default operation and will send this value. Never log. Example: a base64url MIME blob.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bc88799c-d98a-40b0-a8f2-827c3b762fc0",
+      "shortCode": "html",
+      "label": "HTML body",
+      "type": "string",
+      "description": "HTML body. Omit for plain-text mail.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e47dfba0-6e2d-4b84-908c-d322bb8f85e8",
+      "shortCode": "cc",
+      "label": "Cc",
+      "type": "string",
+      "description": "Cc recipients, comma-separated. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "19a7332f-fb36-4a78-a6a0-a0ee6b439792",
+      "shortCode": "subject",
+      "label": "Subject",
+      "type": "string",
+      "description": "Message subject. For replies keep the original subject (optionally prefixed with Re:) so Gmail threads it.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e5d2da53-3c79-442c-9503-5a7bd73d1747",
+      "shortCode": "attachments",
+      "label": "Attachments",
+      "type": "list",
+      "description": "Files to attach: list of StudioQuack file blocks {mime_type, source, data, name}. Up to 25.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ff69abf2-6415-425b-af0c-d473961e2fbb",
+      "shortCode": "threadId",
+      "label": "Threadid",
+      "type": "string",
+      "description": "Thread id for reply-message / reply-thread / create-draft. Purpose: operation input. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "457951ae-7621-4286-9bbe-38107e6161ac",
+      "shortCode": "text",
+      "label": "Text body",
+      "type": "string",
+      "description": "Plain-text body. When html is also set the message is multipart/alternative.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "824b2563-24e2-4dbd-94f1-82d31c3d756a",
+      "shortCode": "reply_to",
+      "label": "Reply-To",
+      "type": "string",
+      "description": "Reply-To address(es), comma-separated. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "edf272e8-b651-46ae-9c7b-fa9a711e1bb5",
+      "shortCode": "bcc",
+      "label": "Bcc",
+      "type": "string",
+      "description": "Bcc recipients, comma-separated. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "611bd501-2473-4b4f-be35-d5d3e18f33b0",
+      "shortCode": "to",
+      "label": "To",
+      "type": "string",
+      "description": "Recipients for send-message, reply-message, reply-thread and create-draft. Comma-separated addresses. Example: ada@example.com, Bob <bob@example.com>. Required unless raw is set.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0cd5c10b-5fe0-4d1e-a453-47a4dfe237f6",
+      "shortCode": "in_reply_to",
+      "label": "In-Reply-To",
+      "type": "string",
+      "description": "Message-ID header of the message being answered (reply-message / reply-thread), e.g. <CAF...@mail.gmail.com>. Use with threadId so the reply stays in the thread.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e5bce8bb-bed7-4958-b7d5-05a31a599751",
+      "shortCode": "references",
+      "label": "References",
+      "type": "string",
+      "description": "References header for replies: the Message-IDs of the thread, space-separated. Defaults to in_reply_to when empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8e5a29d4-3b11-4738-a0b1-8c8a0c3b1ad1",
+      "shortCode": "id",
+      "label": "ID",
+      "type": "string",
+      "description": "Gmail message, draft, label, or thread id for get/delete/modify. Purpose: operation input. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "37123374-1882-40cf-a071-2c99dd4f56d5",
+      "shortCode": "format",
+      "label": "Format",
+      "type": "string",
+      "description": "Gmail format: full | metadata | minimal | raw. Default full. Purpose: operation input. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b4a0cce6-7c58-45a8-9ebd-ac485ac8cfb8",
+      "shortCode": "labelIds",
+      "label": "Labelids",
+      "type": "string",
+      "description": "Label id filter for list-messages and list-threads. Sent as one query value. Modify operations use addLabelIds and removeLabelIds, not this field. Example: INBOX. Purpose: operation input. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "093fa743-f5b7-4e70-8e4d-e80f6dc8fa19",
+      "shortCode": "q",
+      "label": "Q",
+      "type": "string",
+      "description": "Gmail search query for list-messages, list-threads, and list-drafts. Example: from:ada@example.com is:unread. Purpose: operation input. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b5017f16-d83c-440c-b3ee-b1b2fb68c554",
+      "shortCode": "maxResults",
+      "label": "Maxresults",
+      "type": "number",
+      "description": "Page size for list-messages, list-threads, and list-drafts. Positive integer. Gmail caps messages and threads at 500. Example: 20. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c9e99ee1-9664-427e-829b-7d64715636c9",
+      "shortCode": "pageToken",
+      "label": "Pagetoken",
+      "type": "string",
+      "description": "nextPageToken from a previous list-messages, list-threads, or list-drafts response. Example: 0123456789. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7b9cd528-17d2-4b8f-b6c2-28e2593e5759",
+      "shortCode": "removeLabelIds",
+      "label": "Removelabelids",
+      "type": "list",
+      "description": "Label ids to remove. JSON array of strings. mark-read uses [\"UNREAD\"]. remove-label-message and remove-label-thread use this list. Example: [\"UNREAD\"]. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8ec93c90-e8ca-4f6c-a865-d8987355ef98",
+      "shortCode": "addLabelIds",
+      "label": "Addlabelids",
+      "type": "list",
+      "description": "Label ids to add. JSON array of strings. mark-unread uses [\"UNREAD\"]. add-label-message and add-label-thread use this list. Example: [\"UNREAD\"]. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9dc59e2f-6723-4a36-9a55-98bec7a21436",
+      "shortCode": "messageListVisibility",
+      "label": "Messagelistvisibility",
+      "type": "string",
+      "description": "create-label only. EXACT: show | hide. Example: show. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "89151662-e2a6-440c-a1d3-896bfc3ca9a7",
+      "shortCode": "labelListVisibility",
+      "label": "Labellistvisibility",
+      "type": "string",
+      "description": "create-label only. EXACT: labelShow | labelShowIfUnread | labelHide. Example: labelShow. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3253a07e-8859-4354-a8c9-2f6f4805f883",
+      "shortCode": "name",
+      "label": "Name",
+      "type": "string",
+      "description": "Label name for create-label. Purpose: operation input. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "84d3bed4-6f9f-5878-a086-bedc4cd3cda1",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

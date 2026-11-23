@@ -1,0 +1,257 @@
+{
+  "_id": "0ce1e96d-1f5d-479b-b41a-72d7655b4fbc",
+  "version": "1.0.0",
+  "name": "Travis CI",
+  "label": "Travis CI API v3",
+  "description": "Travis CI API v3 via OfficialApiNode. Docs: https://docs.travis-ci.com/user/developer/ and https://developer.travis-ci.com/. Operations: build_get, build_list, build_cancel, build_restart, build_trigger. V3 sends header Travis-API-Version: 3 via extraHeaders (https://docs.travis-ci.com/user/triggering-builds/). Auth secret api_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "travis",
+    "ci"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ea911af5-951c-4658-9e55-795e2009d503",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "build_get",
+          "description": "Which official API call to run. EXACT values: build_get | build_list | build_cancel | build_restart | build_trigger. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'build_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "build_id",
+          "label": "build_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Travis build id for build_get, build_cancel, build_restart. Example: 123456789.",
+          "children": []
+        },
+        {
+          "shortCode": "slug",
+          "label": "slug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Repository slug owner/name, URL-encoded as owner%2Fname in the path. Required for build_list and build_trigger. Example: travis-ci%2Ftravis-core.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "build_list page size (Travis v3 limit). Positive integer. Example: 25.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "build_list offset for pagination. Non-negative integer. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "branch",
+          "label": "branch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Git branch to build (build_trigger) or filter (build_list). Example: master. Nested as request.branch on trigger. https://docs.travis-ci.com/user/triggering-builds/",
+          "children": []
+        },
+        {
+          "shortCode": "sha",
+          "label": "sha",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Commit SHA to build on build_trigger. Omit to use the branch tip. Example: bf944c952724dd2f00ff0c466a5e217d10f73bea. Nested as request.sha.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Commit/request message override on build_trigger. Example: API build. Nested as request.message.",
+          "children": []
+        },
+        {
+          "shortCode": "config",
+          "label": "config",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Travis job config overlay on build_trigger (env, script, …). Keys override .travis.yml. Example: {\"script\":\"echo FOO\"}. Nested as request.config.",
+          "children": []
+        },
+        {
+          "shortCode": "merge_mode",
+          "label": "merge_mode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "How request.config merges with .travis.yml on build_trigger. EXACT: deep_merge_append | deep_merge | merge | replace. Example: deep_merge.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "build_list filter. Accepted: created | started | passed | failed | canceled | errored. Example: passed.",
+          "children": []
+        },
+        {
+          "shortCode": "event_type",
+          "label": "event_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "build_list filter. Accepted: push | pull_request | api | cron. Example: api.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_by",
+          "label": "sort_by",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "build_list sort. Example: id:desc. Official Travis v3 collection sort_by.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "4da17dc0-8832-4393-9a19-b8bc74b9bda2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "de37d0f0-331e-4f44-8848-7df4570578d8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: build_get, build_list, build_cancel, build_restart, build_trigger. listen is BPMN ingress, not a socket.",
+      "value": "build_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "build_get",
+        "build_list",
+        "build_cancel",
+        "build_restart",
+        "build_trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "789f3119-c84d-4cef-92d1-82ec6ab661e6",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "Travis CI API token. Authorization: token <token>. Header Travis-API-Version: 3 is sent via extraHeaders. travis-ci.com (org is legacy).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cc649ca3-de58-49ac-aa60-6d1f6ef9afa1",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

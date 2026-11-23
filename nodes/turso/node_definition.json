@@ -1,0 +1,226 @@
+{
+  "_id": "30d7b6c6-8b20-4acb-801d-56812e3c504a",
+  "version": "1.0.0",
+  "name": "Turso",
+  "label": "Turso (libSQL HTTP v2) — SQL over HTTPS",
+  "description": "Official libSQL SQL-over-HTTP v2. POST /v2/pipeline and GET /health on the database origin https://<db>-<org>.turso.io. execute.sql maps sql → requests[0].stmt.sql with config type=execute. Handler: OfficialApiNode. auth_token is never logged. Edit api_spec.baseUrl; the engine cannot bind host.",
+  "icon": "database",
+  "tags": [
+    "sql",
+    "libsql",
+    "sqlite"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "60a0d632-f37e-4cf8-932d-941b4b1d59e0",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. execute.sql POSTs the entire INPUT JSON (empty bodyFrom); include requests (array of pipeline ops, typically execute then close). database.health needs no extra fields. Do not put auth_token here. Example: {\"operation\":\"execute.sql\",\"requests\":[{\"type\":\"execute\",\"stmt\":{\"sql\":\"SELECT 1\"}},{\"type\":\"close\"}]}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "execute.sql",
+          "description": "Overrides config operation when non-blank. EXACT: 'execute.sql' | 'database.health'.",
+          "children": []
+        },
+        {
+          "shortCode": "requests",
+          "label": "requests",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "libSQL v2 pipeline requests array (execute then close). Or send top-level sql only. Example: [{\"type\":\"execute\",\"stmt\":{\"sql\":\"SELECT 1\"}},{\"type\":\"close\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "sql",
+          "label": "sql",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "execute.sql statement. Wired to requests[0].stmt.sql. requests[0].type comes from config type (default execute). Example: SELECT 1.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "execute",
+          "description": "Pipeline request type for execute.sql. Wired to requests[0].type. Config default execute. EXACT: execute | close.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "f35ec228-d3b3-40b3-99fc-aafedc7ca08a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (pipeline results, or empty health body).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "548cc10e-da6f-4427-8d3a-ec2be6513dc8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: execute.sql | database.health.",
+      "value": "execute.sql",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "execute.sql",
+        "database.health"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "a8f3c2e1-4b5d-4e6f-9a0b-1c2d3e4f5a6b",
+      "shortCode": "database_url",
+      "label": "Database URL",
+      "type": "string",
+      "description": "HTTPS libSQL database origin (from Turso dashboard). libsql:// and turso:// are normalized to https://. Required unless database_name + organization_slug are set. Example: https://mydb-myorg.turso.io",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b9e4d3f2-5c6b-4d7e-8f9a-0b1c2d3e4f5a",
+      "shortCode": "database_name",
+      "label": "Database name",
+      "type": "string",
+      "description": "With organization_slug builds https://{database_name}-{organization_slug}.turso.io when database_url is blank.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c0f5e4d3-6b7c-4e8f-9a0b-1c2d3e4f5a6c",
+      "shortCode": "organization_slug",
+      "label": "Organization slug",
+      "type": "string",
+      "description": "Turso organization slug paired with database_name for the database host.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d0981a7e-4323-467d-8c75-e7b3af4c200b",
+      "shortCode": "auth_token",
+      "label": "Auth token",
+      "type": "password",
+      "description": "Turso per-database token (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT. Create: turso db tokens create. Dashboard database URL is not this token.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cdfe9599-9a8a-4c86-912d-07a38c333a87",
+      "shortCode": "type",
+      "label": "type",
+      "type": "string",
+      "description": "Default requests[0].type for execute.sql. Official execute.",
+      "value": "execute",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a1dd038c-ca33-4230-a102-8dd93029cb06",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

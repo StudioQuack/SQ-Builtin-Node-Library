@@ -1,0 +1,262 @@
+{
+  "_id": "8a351dd6-e84d-5e45-9bca-4916b740a6af",
+  "version": "1.0.0",
+  "name": "Printful",
+  "label": "Printful API v2 (Open Beta) — orders, files, rates",
+  "description": "Printful API v2 Open Beta at api.printful.com/v2. Bearer private token. X-PF-Store-Id from config store_id when set (required for account-level tokens). sync_product stays on v1 POST /store/products — store product sync is not in v2 yet. Artwork via file ref-id / URL, never inline bytes. Customer warrants IP rights. Docs: https://developers.printful.com/docs/v2-beta/",
+  "icon": "print",
+  "tags": [
+    "printful",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "50888601-534d-5c2a-8f4d-ca41ad5093fb",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "sync_product",
+          "description": "Official API verb. EXACT: sync_product | order_create | order_get | file_upload | shipping_rates | trigger. Blank uses configurationParameters.operation. v2 Open Beta except sync_product (v1). trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id for get/update/delete path {id} when that operation needs it.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `url` for operation: file_upload.",
+          "children": []
+        },
+        {
+          "shortCode": "filename",
+          "label": "filename",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `filename` for operation: file_upload.",
+          "children": []
+        },
+        {
+          "shortCode": "sync_product",
+          "label": "sync_product",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "v1 POST /store/products sync_product object. Required name. Example: {\"name\":\"Tee\"}. sync_product only.",
+          "children": []
+        },
+        {
+          "shortCode": "sync_variants",
+          "label": "sync_variants",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "v1 sync_variants array (variant_id, retail_price, files). sync_product. Example: [{\"variant_id\":4011,\"retail_price\":\"24.00\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "recipient",
+          "label": "recipient",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "v2 order/shipping recipient. Required keys: name, address1, city, country_code, zip. Also state_code, email, phone. order_create and shipping_rates. Example: {\"name\":\"Ada\",\"address1\":\"1 Market\",\"city\":\"San Francisco\",\"country_code\":\"US\",\"zip\":\"94105\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "order_items",
+          "label": "order_items",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "v2 order items [{source, catalog_variant_id, quantity, placements}]. order_create and shipping_rates. Example: [{\"source\":\"catalog\",\"catalog_variant_id\":4012,\"quantity\":1}].",
+          "children": []
+        },
+        {
+          "shortCode": "items",
+          "label": "items",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Alias of order_items kept for existing workflows. Prefer order_items.",
+          "children": []
+        },
+        {
+          "shortCode": "external_id",
+          "label": "external_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Merchant order id for order_create. Example: ORD-1001.",
+          "children": []
+        },
+        {
+          "shortCode": "shipping",
+          "label": "shipping",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Shipping method for order_create. Common: STANDARD | EXPRESS. Example: STANDARD.",
+          "children": []
+        },
+        {
+          "shortCode": "role",
+          "label": "role",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "file_upload file role. Common: printfile | preview | label. Example: printfile.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "4326b465-ed36-5953-951f-15ac56e395bd",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "99db1bc1-74f7-538b-b418-b6e0837f24e8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: sync_product | order_create | order_get | file_upload | shipping_rates | trigger. sync_product is v1; others are v2 Open Beta. trigger does not open a socket.",
+      "value": "sync_product",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "sync_product",
+        "order_create",
+        "order_get",
+        "file_upload",
+        "shipping_rates",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "15d33383-db5c-5ccf-8cbc-83b6170ab57c",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type bearer. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1cc69fa6-9be9-5dfa-8c48-ba49a664ffd3",
+      "shortCode": "store_id",
+      "label": "Store Id",
+      "type": "string",
+      "description": "X-PF-Store-Id for account-level tokens. Sent via extraHeaders when set; omitted when blank.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0ccbaf72-dcb5-52e6-a528-a49838e3453e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

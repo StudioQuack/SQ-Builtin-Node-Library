@@ -1,0 +1,167 @@
+{
+  "_id": "a2f3fcf6-183a-5dce-894b-bfc7cb56cbb0",
+  "version": "1.0.0",
+  "name": "ip-api",
+  "label": "ip-api",
+  "description": "ip-api official API via OfficialApiNode (api_spec.json). Operations: lookup, batch. Docs: https://ip-api.com/docs/api:json. Free HTTP endpoint is non-commercial. Commercial requires SSL + key (pro.ip-api.com). IP can be PII. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "globe",
+  "tags": [
+    "ip",
+    "ip-api"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ad355293-1e60-5c1c-b413-26ddb5b47214",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One ip-api request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"lookup\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: lookup | batch. Default: first listed or instance operation. Example: 'lookup'.",
+          "children": [],
+          "_id": "dee45a7a-841d-5fea-881f-f08c92150bbf"
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `fields` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "68485787-279c-55fa-bd93-272dad6d1d86"
+        },
+        {
+          "shortCode": "ip",
+          "label": "ip",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `ip` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "61ec9fe0-599b-5926-9502-6aa69bc3b5c6"
+        },
+        {
+          "shortCode": "ips",
+          "label": "ips",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Required for batch: JSON array sent as the whole POST /batch body, up to 100 entries (more returns HTTP 422). Each entry is an IP string or an object {query, fields?, lang?} that overrides the query-string fields for that IP. Example: [\"208.80.152.201\", {\"query\":\"8.8.8.8\",\"fields\":\"country,city\"}].",
+          "children": [],
+          "_id": "4b7e2c91-6f3a-4d58-9e1b-2a8c5d7f0e63"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e82d7edf-44b9-5b0f-b999-3ce75813ff17",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "ea7b3b66-3856-5a08-a2d7-aca299c75a52"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "8a1c2735-b275-57b0-9691-96db0a6d6792"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "cc2d7fda-d3e6-59b8-995a-5a0dae0747a5"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "3d1a59a4-2679-5b6b-86e6-d1f8bb69cf9f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: lookup, batch.",
+      "value": "lookup",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "lookup",
+        "batch"
+      ]
+    },
+    {
+      "_id": "74ca8cf0-c17e-523d-850b-24f23483ed4f",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 15. Keep under the daemon sandbox request budget.",
+      "value": "15",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

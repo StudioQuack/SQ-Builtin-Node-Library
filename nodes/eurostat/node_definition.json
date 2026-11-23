@@ -1,0 +1,223 @@
+{
+  "_id": "2da5e3d9-df92-5504-833f-1e99d9fc4406",
+  "version": "1.0.0",
+  "name": "Eurostat",
+  "label": "Eurostat",
+  "description": "Eurostat official API via OfficialApiNode (api_spec.json). Operations: query, metadata_get. Docs: https://ec.europa.eu/eurostat/web/user-guides/data-browser/api-data-access/api-detailed-guidelines/api-statistics. Commission reuse licence. Statistics API 1.0 JSON-stat 2.0. No key. Citation required. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "chart",
+  "tags": [
+    "stats",
+    "eurostat"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "24040126-f02e-5666-887f-d550b25d4686",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Eurostat request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"query\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: query | metadata_get. Default: first listed or instance operation. Example: 'query'.",
+          "children": [],
+          "_id": "7444e69a-c9b5-5c47-8e4e-ad803804564b"
+        },
+        {
+          "shortCode": "datasetCode",
+          "label": "datasetCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `datasetCode` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "bba63199-bead-5b4d-a80d-895f30a26f8e"
+        },
+        {
+          "shortCode": "geo",
+          "label": "geo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `geo` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "718ea5a5-a110-5080-869c-28be22d702e2"
+        },
+        {
+          "shortCode": "geoLevel",
+          "label": "geoLevel",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "query only: aggregate | country | nuts1 | nuts2 | nuts3 | city.",
+          "children": [],
+          "_id": "95284dfb-8e9a-5eaa-8a19-337579fb60fb"
+        },
+        {
+          "shortCode": "lang",
+          "label": "lang",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Response language: EN | FR | DE (case-insensitive). Default upstream is EN.",
+          "children": [],
+          "_id": "214fe111-ecf7-5c75-8ad2-b94f0b0fe55a"
+        },
+        {
+          "shortCode": "time",
+          "label": "time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "query: single TIME_PERIOD (e.g. 2022, 2015-Q4, 2015-02). Not a range — use sinceTimePeriod/untilTimePeriod instead.",
+          "children": [],
+          "_id": "ae20411e-3cb4-560e-9ac8-0e14397766dc"
+        },
+        {
+          "shortCode": "sinceTimePeriod",
+          "label": "sinceTimePeriod",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "query range start (same format as time). Pair with untilTimePeriod; do not combine with time or lastTimePeriod.",
+          "children": []
+        },
+        {
+          "shortCode": "untilTimePeriod",
+          "label": "untilTimePeriod",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "query range end (same format as time). Pair with sinceTimePeriod.",
+          "children": []
+        },
+        {
+          "shortCode": "lastTimePeriod",
+          "label": "lastTimePeriod",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "query: return the N most recent periods (positive integer). Do not combine with time or since/until.",
+          "children": []
+        },
+        {
+          "shortCode": "precision",
+          "label": "precision",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "query decimal precision. Official precision.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "af170d08-ba50-5980-b798-916fd6941d79",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "682537fd-7248-5e8f-ab4b-496dfd01a655"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "70911e73-d308-5ce5-800b-4b9a9b5504ff"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "de0d9705-dc64-5fc7-88cd-33106d89fd1f"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "513d224b-d284-5919-92ed-5f95def70b35",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: query, metadata_get.",
+      "value": "query",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "query",
+        "metadata_get"
+      ]
+    },
+    {
+      "_id": "8f1f7ef9-f216-58d7-a2ea-e66c1a174fee",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 45. Keep under the daemon sandbox request budget.",
+      "value": "45",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

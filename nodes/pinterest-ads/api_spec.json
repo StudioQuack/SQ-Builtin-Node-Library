@@ -1,0 +1,94 @@
+{
+  "baseUrl": "https://api.pinterest.com/v5",
+  "defaultTimeout": 30,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "adAccount.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/ad_accounts",
+      "required": [],
+      "queryFrom": ["page_size", "bookmark"]
+    },
+    "campaign.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/ad_accounts/{ad_account_id}/campaigns",
+      "required": ["ad_account_id", "campaigns"],
+      "bodyFrom": ["campaigns"]
+    },
+    "campaign.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/ad_accounts/{ad_account_id}/campaigns",
+      "required": ["ad_account_id"],
+      "queryFrom": ["page_size", "bookmark", "entity_statuses", "campaign_ids"]
+    },
+    "adGroup.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/ad_accounts/{ad_account_id}/ad_groups",
+      "required": ["ad_account_id", "ad_groups"],
+      "bodyFrom": ["ad_groups"]
+    },
+    "adGroup.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/ad_accounts/{ad_account_id}/ad_groups",
+      "required": ["ad_account_id"],
+      "queryFrom": ["page_size", "bookmark", "entity_statuses", "campaign_ids", "ad_group_ids"]
+    },
+    "ad.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/ad_accounts/{ad_account_id}/ads",
+      "required": ["ad_account_id", "ads"],
+      "bodyFrom": ["ads"]
+    },
+    "ad.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/ad_accounts/{ad_account_id}/ads",
+      "required": ["ad_account_id"],
+      "queryFrom": ["page_size", "bookmark", "entity_statuses", "campaign_ids", "ad_group_ids", "ad_ids"]
+    },
+    "analytics.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/ad_accounts/{ad_account_id}/campaigns/analytics",
+      "required": ["ad_account_id", "start_date", "end_date", "columns", "granularity"],
+      "queryFrom": ["start_date", "end_date", "granularity", "columns", "click_window_days", "engagement_window_days", "view_window_days", "conversion_report_time"]
+    },
+    "audience.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/ad_accounts/{ad_account_id}/customer_lists",
+      "required": ["ad_account_id", "name", "list_type", "records"],
+      "bodyFrom": ["name", "list_type", "records"]
+    },
+    "conversion.upload": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/ad_accounts/{ad_account_id}/events",
+      "required": ["ad_account_id", "event_name", "action_source", "event_time"],
+      "queryFrom": ["test"],
+      "bodyFrom": ["data", "event_name", "action_source", "event_time", "event_id", "user_data", "custom_data", "event_source_url"],
+      "bodyMap": {
+        "data": "data[0]",
+        "event_name": "data[0].event_name",
+        "action_source": "data[0].action_source",
+        "event_time": "data[0].event_time",
+        "event_id": "data[0].event_id",
+        "user_data": "data[0].user_data",
+        "custom_data": "data[0].custom_data",
+        "event_source_url": "data[0].event_source_url"
+      }
+    }
+  }
+}

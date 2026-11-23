@@ -1,0 +1,326 @@
+{
+  "_id": "f60dc468-b66e-4123-82eb-e09b24c550bf",
+  "version": "1.0.0",
+  "name": "Metricool",
+  "label": "Metricool REST API 2.0",
+  "description": "Official Metricool API 2.0 via OfficialApiNode. Base https://app.metricool.com/api. Header X-Mc-Auth = api_token. Query userId and blogId. Operations: post_schedule, analytics_get, inbox_list. api_token is instance config only (never on INPUT, never logged). Official API only. Advanced/Custom plan required.",
+  "icon": "insights",
+  "tags": [
+    "metricool",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c156823a-741a-4c59-b55c-b2c6c587709b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. post_schedule needs text and providers. analytics_get needs network, metric, from, to. inbox_list needs provider. userId/blogId may come from config. Do not put api_token here. Example: {\"operation\":\"inbox_list\",\"provider\":\"instagram\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "post_schedule",
+          "description": "Overrides config operation when non-blank. EXACT: post_schedule | analytics_get | inbox_list.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Post text for post_schedule. Official text.",
+          "children": []
+        },
+        {
+          "shortCode": "providers",
+          "label": "providers",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Networks to publish. Official providers. Example: [\"twitter\",\"instagram\"].",
+          "children": []
+        },
+        {
+          "shortCode": "publicationDate",
+          "label": "publicationDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO datetime for post_schedule. Official publicationDate.",
+          "children": []
+        },
+        {
+          "shortCode": "publication_date_time",
+          "label": "publication_date_time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alternate datetime field accepted by the scheduler.",
+          "children": []
+        },
+        {
+          "shortCode": "timezone",
+          "label": "timezone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Timezone for post_schedule / analytics_get. Example: Europe/Madrid.",
+          "children": []
+        },
+        {
+          "shortCode": "draft",
+          "label": "draft",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "post_schedule draft flag.",
+          "children": []
+        },
+        {
+          "shortCode": "auto_publish",
+          "label": "auto_publish",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "post_schedule auto_publish.",
+          "children": []
+        },
+        {
+          "shortCode": "media_url",
+          "label": "media_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Single media URL for post_schedule.",
+          "children": []
+        },
+        {
+          "shortCode": "network",
+          "label": "network",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "analytics_get network. Example: instagram.",
+          "children": []
+        },
+        {
+          "shortCode": "metric",
+          "label": "metric",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "analytics_get metric. Example: followers.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "analytics_get start date YYYY-MM-DD.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "analytics_get end date YYYY-MM-DD.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "analytics_get subject.",
+          "children": []
+        },
+        {
+          "shortCode": "scope",
+          "label": "scope",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "analytics_get scope.",
+          "children": []
+        },
+        {
+          "shortCode": "provider",
+          "label": "provider",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "inbox_list provider. Example: instagram.",
+          "children": []
+        },
+        {
+          "shortCode": "userId",
+          "label": "userId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Metricool user id query. Also config.",
+          "children": []
+        },
+        {
+          "shortCode": "blogId",
+          "label": "blogId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Metricool blog/brand id query. Also config.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5bee11b4-9879-469f-9367-94a3507af15c",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "79d96608-e881-4107-887d-a0208c41fda1",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank.",
+      "value": "analytics_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "post_schedule",
+        "analytics_get",
+        "inbox_list"
+      ]
+    },
+    {
+      "_id": "abcc0e16-4876-4e84-89b3-6192ffaf72af",
+      "shortCode": "api_token",
+      "label": "API token",
+      "type": "password",
+      "description": "Metricool userToken. Sent as X-Mc-Auth. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "44a2d044-3ba4-4e04-a691-3a76c7631fd2",
+      "shortCode": "userId",
+      "label": "User ID",
+      "type": "string",
+      "description": "Query userId on every call.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fab01c59-521f-4f39-a15f-1c4c0ceb7582",
+      "shortCode": "blogId",
+      "label": "Blog ID",
+      "type": "string",
+      "description": "Query blogId (brand) on every call.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6cf0a95f-0e15-406e-820e-d81fe0f662b2",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

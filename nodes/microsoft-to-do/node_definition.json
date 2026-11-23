@@ -1,0 +1,259 @@
+{
+  "_id": "f20a0093-a815-4bcd-bb6f-d5d4f3f17921",
+  "version": "1.0.0",
+  "name": "Microsoft To Do",
+  "label": "Microsoft Graph To Do",
+  "description": "Microsoft Graph To Do via OfficialApiNode (nodes/microsoft-to-do/api_spec.json). Official Graph To Do v1.0. Tasks.Read / Tasks.ReadWrite. App-only uses /users/{id} — this spec uses /me (delegated). Official docs: https://learn.microsoft.com/en-us/graph/api/resources/todo-overview?view=graph-rest-1.0. OUTPUT is {status, http_status, data}. Secrets never appear on OUTPUT.",
+  "icon": "task_alt",
+  "tags": [
+    "microsoft",
+    "todo",
+    "tasks"
+  ],
+  "category": "Productivity & Collaboration",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3576094c-1d68-40c4-a493-d0625e6821db",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Microsoft To Do official API call. Delivered as inputVariables.input. Set operation plus the path/query/body fields that operation lists in api_spec.json. Do not put secrets on this port. Example: {\"operation\":\"task_create\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "task_create",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'task_create', 'task_get', 'task_list', 'task_update', 'task_delete', 'list_create', 'list_get', 'list_list', 'list_update', 'list_delete', 'linked_resource_create', 'linked_resource_get', 'linked_resource_list', 'linked_resource_update', 'linked_resource_delete'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'task_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "list_id",
+          "label": "list_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "To Do task-list id for task_* and list_*. Example: AAMkAGI2...",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task title for task_create / task_update. Example: Review invoice.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Task body {contentType, content} for task_create / task_update. Example: {\"contentType\":\"text\",\"content\":\"Follow up\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "dueDateTime",
+          "label": "dueDateTime",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "task_create dueDateTime {dateTime, timeZone}. Example: {\"dateTime\":\"2026-11-01T17:00:00\",\"timeZone\":\"UTC\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "importance",
+          "label": "importance",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "task_create importance. EXACT: low | normal | high.",
+          "children": []
+        },
+        {
+          "shortCode": "task_id",
+          "label": "task_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "To Do task id. Example: AAMkAGI2...AAA=",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "task_update status. EXACT: notStarted | inProgress | completed | waitingOnOthers | deferred.",
+          "children": []
+        },
+        {
+          "shortCode": "displayName",
+          "label": "displayName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List displayName (list_create/update) or linked-resource display name.",
+          "children": []
+        },
+        {
+          "shortCode": "webUrl",
+          "label": "webUrl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "linked_resource_create/update webUrl. HTTPS.",
+          "children": []
+        },
+        {
+          "shortCode": "applicationName",
+          "label": "applicationName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "linked_resource_create applicationName. Example: StudioQuack.",
+          "children": []
+        },
+        {
+          "shortCode": "linked_id",
+          "label": "linked_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Linked resource id for linked_resource_get/update/delete.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "032e1650-4d5d-48ba-9934-ae4e5f0283fa",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or the raw string when not JSON. Example: {}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "d5dc9710-71e5-4740-a371-c633dcc25077",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: task_create, task_get, task_list, task_update, task_delete, list_create, list_get, list_list, list_update, list_delete, linked_resource_create, linked_resource_get, linked_resource_list, linked_resource_update, linked_resource_delete. Default: task_create. Example: task_create.",
+      "value": "task_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "task_create",
+        "task_get",
+        "task_list",
+        "task_update",
+        "task_delete",
+        "list_create",
+        "list_get",
+        "list_list",
+        "list_update",
+        "list_delete",
+        "linked_resource_create",
+        "linked_resource_get",
+        "linked_resource_list",
+        "linked_resource_update",
+        "linked_resource_delete"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "75009818-e129-4389-a68f-6e9c0957a85f",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Provider credential for auth.type=bearer (configKey access_token). REQUIRED secret — StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e606ffdf-8bdf-4461-8f74-e7ffcc913118",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative → 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

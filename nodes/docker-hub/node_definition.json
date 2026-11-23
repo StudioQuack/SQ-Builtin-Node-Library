@@ -1,0 +1,227 @@
+{
+  "_id": "5e8f9522-0fff-4513-83ae-9155887de4c4",
+  "version": "1.0.0",
+  "name": "Docker Hub",
+  "label": "Docker Hub HTTP API",
+  "description": "Docker Hub API via OfficialApiNode. Docs: https://docs.docker.com/reference/api/hub/latest/. Operations: repo_get, repo_list, tag_list, tag_delete, webhook_set, listen. Auth: exchange username+PAT at POST /v2/auth/token and send the JWT as Authorization: Bearer (PAT is not a bearer; /v2/users/login is deprecated). Auth secret access_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "docker",
+    "registry",
+    "hub"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "50b3b4a8-e082-441e-8b2e-25701ef17c33",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "repo_get",
+          "description": "Which official API call to run. EXACT values: repo_get | repo_list | tag_list | tag_delete | webhook_set | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'repo_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "namespace",
+          "label": "namespace",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Hub namespace / org.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Repository name.",
+          "children": []
+        },
+        {
+          "shortCode": "tag",
+          "label": "tag",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tag name.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page` for operations: repo_list, tag_list.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page_size` for operations: repo_list, tag_list.",
+          "children": []
+        },
+        {
+          "shortCode": "webhook_url",
+          "label": "webhook_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `webhook_url` for operation: webhook_set.",
+          "children": []
+        },
+        {
+          "shortCode": "expect_final_callback",
+          "label": "expect_final_callback",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "webhook_set expect_final_callback.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6002c07a-dd3a-4b56-875e-511f0fe956b3",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "69ba828d-e77c-4b75-a9df-d44cec38d109",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: repo_get, repo_list, tag_list, tag_delete, webhook_set, listen. listen is BPMN ingress, not a socket.",
+      "value": "repo_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "repo_get",
+        "repo_list",
+        "tag_list",
+        "tag_delete",
+        "webhook_set",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "fc4b8375-5898-46d5-b8c7-138e64dca722",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Docker Hub JWT from POST https://hub.docker.com/v2/auth/token (identifier + PAT/OAT secret). Do not send a PAT as Bearer. /v2/users/login is deprecated. Never logged. Not an Engine socket token.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d3d9f9e3-dab3-4e64-b055-541c3be1530c",
+      "shortCode": "namespace",
+      "label": "namespace",
+      "type": "string",
+      "description": "Default Docker Hub namespace / org when INPUT namespace is empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "02c061c8-585c-42fb-a145-7da06b10c530",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,545 @@
+{
+  "_id": "ca28a076-b243-4df3-a19f-0936f723bf6a",
+  "version": "1.0.0",
+  "name": "Perplexity",
+  "label": "Perplexity",
+  "description": "Official Perplexity Agent + Search APIs on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). operation selects chat (POST /v1/agent, grounded answer with citations; successor to POST /v1/sonar which retires 2026-09-27) or search (POST /search, ranked results[]). Chat body field is Agent `input` (string or [{role,content}] items), not Sonar `messages`. Auth is StudioQuack secret api_key sent as Bearer. Docs: https://docs.perplexity.ai/docs/agent-api/quickstart. Terms: https://www.perplexity.ai/hub/legal/perplexity-api-terms-of-service. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "perplexity",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ae3aa711-974e-4cb0-9167-1e62bfb2dad1",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {input, messages?, tools?, stream?, model?, query?}. Chat requires Agent `input`. Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "v2 AI Agent transcript. Agent API chat does not send this field — copy the same {role,content} items (or a string prompt) onto `input`. Kept for port-schema stability.",
+          "children": []
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Required for operation=chat (POST /v1/agent). String prompt or list of {role, content} items (type:message optional). Example: [{\"role\":\"user\",\"content\":\"What is quantum computing?\"}]. Copy v2 messages here. Do not put api_key here.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search string (or string[]) for operation=search. Required for search. Example: official Perplexity API rate limits.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id if a later Agent path accepts documents. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "instructions",
+          "label": "instructions",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `instructions` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "models",
+          "label": "models",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `models` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "max_output_tokens",
+          "label": "max_output_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_output_tokens` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_tokens` for operations: chat, search.",
+          "children": []
+        },
+        {
+          "shortCode": "max_steps",
+          "label": "max_steps",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_steps` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "temperature",
+          "label": "temperature",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `temperature` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_p` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tools` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "skills",
+          "label": "skills",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `skills` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "reasoning",
+          "label": "reasoning",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `reasoning` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "language_preference",
+          "label": "language_preference",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `language_preference` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "previous_response_id",
+          "label": "previous_response_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `previous_response_id` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "background",
+          "label": "background",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `background` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "max_results",
+          "label": "max_results",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_results` for operation: search.",
+          "children": []
+        },
+        {
+          "shortCode": "search_context_size",
+          "label": "search_context_size",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `search_context_size` for operation: search.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens_per_page",
+          "label": "max_tokens_per_page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_tokens_per_page` for operation: search.",
+          "children": []
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `country` for operation: search.",
+          "children": []
+        },
+        {
+          "shortCode": "search_language_filter",
+          "label": "search_language_filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `search_language_filter` for operation: search.",
+          "children": []
+        },
+        {
+          "shortCode": "search_domain_filter",
+          "label": "search_domain_filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `search_domain_filter` for operation: search.",
+          "children": []
+        },
+        {
+          "shortCode": "search_recency_filter",
+          "label": "search_recency_filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `search_recency_filter` for operation: search.",
+          "children": []
+        },
+        {
+          "shortCode": "search_after_date_filter",
+          "label": "search_after_date_filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `search_after_date_filter` for operation: search.",
+          "children": []
+        },
+        {
+          "shortCode": "search_before_date_filter",
+          "label": "search_before_date_filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `search_before_date_filter` for operation: search.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b74ccea0-4b6f-49ed-9ea2-7a2ad4f6340c",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Chat is Agent API JSON (output_text / output[] / citations). Search includes results[]. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Perplexity JSON (Agent response with output_text / citations, or Search results[]).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "367d29c7-e386-4c6f-aefb-967c76e1df12",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Perplexity verb. EXACT values: chat | search. Default chat = POST /v1/agent (Sonar POST /v1/sonar retires 2026-09-27). search = POST /search (separate Search API, not invented).",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "search"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "ca6be317-8e19-43d7-9088-2263d11c8796",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Perplexity API key. Sent as Authorization: Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a15943a0-60f6-4067-9576-3fd012f09b00",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Agent API model id in provider/model format when not using preset. Official example: perplexity/sonar. Put on llm_input so OfficialApiNode sends it. Ignored for operation=search. Docs: https://docs.perplexity.ai/docs/agent-api/models .",
+      "value": "perplexity/sonar",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "perplexity/sonar"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "fca81fb2-9b24-4ba4-94a3-69dd5805f361",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1. Deep research needs the full budget.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f47b6d55-7c07-4233-9dc4-ce5017da1025",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Agent API SSE (stream:true). Engine collector format is responses-sse (OpenAI Responses events: response.output_text.delta → answer; reasoning deltas → thinking). Default true so llm_input is merged and live emitPartial fans Agent deltas. Set false for a single-shot POST (then send fields on an input port — this node is llm_input-only). EXACT: true | false.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,296 @@
+{
+  "_id": "5bac02f0-d789-46ff-bf36-1ecfbc91bd6d",
+  "version": "1.0.0",
+  "name": "Infisical",
+  "label": "Infisical Public REST API",
+  "description": "Infisical Public REST API (secrets v4, folders v2) via OfficialApiNode. Docs: https://infisical.com/docs/api-reference/overview/introduction. Operations: get-secret, list-secrets, create-secret, update-secret, delete-secret, list-folders, listen. delete-secret sends official JSON body (projectId, environment, optional secretPath/type) — https://infisical.com/docs/api-reference/endpoints/secrets/delete. Auth secret access_token is instance config only (never on INPUT, never logged). GET/access operations still call the official GET (or access) HTTP method. Retrieved secret material must not be logged and should stay in StudioQuack secret bindings (bind OUTPUT `data` into a secret; do not print it, persist it in engine variables, or leave it on a logged edge). listen is kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "lock",
+  "tags": [
+    "secrets"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "0c195cee-0149-4d4f-9532-6b78740f6118",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_token here. Path params match api_spec.json placeholders. Example: {\"operation\":\"get-secret\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "get-secret",
+          "description": "Which official API call to run. EXACT values: get-secret | list-secrets | create-secret | update-secret | delete-secret | list-folders | listen. Prefer the instance config operation select. listen is ingress: no HTTP — use a BPMN message event. Example: 'get-secret'.",
+          "children": []
+        },
+        {
+          "shortCode": "secretName",
+          "label": "secretName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Secret name path segment for get/create/update/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "secretValue",
+          "label": "secretValue",
+          "type": "password",
+          "required": false,
+          "value": "",
+          "description": "create/update value from a StudioQuack secret binding. Never a logged field.",
+          "children": []
+        },
+        {
+          "shortCode": "path",
+          "label": "path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Folder path for list-folders (query path). secretPath is used for secret ops.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string/request-body parameter `type` for operations: get-secret, create-secret, update-secret, delete-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "version",
+          "label": "version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `version` for operation: get-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "viewSecretValue",
+          "label": "viewSecretValue",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `viewSecretValue` for operations: get-secret, list-secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "recursive",
+          "label": "recursive",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `recursive` for operations: list-secrets, list-folders.",
+          "children": []
+        },
+        {
+          "shortCode": "secretComment",
+          "label": "secretComment",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `secretComment` for operation: create-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "skipMultilineEncoding",
+          "label": "Skip multiline encoding",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "create-secret / update-secret skipMultilineEncoding.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3086080e-fa0b-4709-aff9-1ea0470db6ca",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Secret bytes in data must not be logged; bind them into StudioQuack secrets. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON from the official API. May contain secret material — never log; bind into StudioQuack secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "44ba6d5b-157b-49ab-8312-3b875f292060",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: get-secret, list-secrets, create-secret, update-secret, delete-secret, list-folders, listen. listen is BPMN ingress, not a socket.",
+      "value": "get-secret",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "get-secret",
+        "list-secrets",
+        "create-secret",
+        "update-secret",
+        "delete-secret",
+        "list-folders",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "02ea1500-2d89-48ea-8e02-299009bd4c33",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Universal Auth access token (or equivalent identity token). Sent as Authorization: Bearer. StudioQuack secret. Never logged. OfficialApiNode does not exchange client id/secret.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fc495c8e-559a-41b7-9882-19a249363391",
+      "shortCode": "siteHost",
+      "label": "Site host",
+      "type": "string",
+      "description": "API host without scheme. Cloud default app.infisical.com. Self-host: your Infisical host.",
+      "value": "app.infisical.com",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2c038970-fc92-4a37-afb7-f53097457897",
+      "shortCode": "projectId",
+      "label": "Project ID",
+      "type": "string",
+      "description": "Project id (query/body).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "610b95e8-903c-42e7-b3a4-e8f3b4b325e8",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "string",
+      "description": "Environment slug, e.g. dev.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4e412f78-74c3-49e9-8873-6083094a6369",
+      "shortCode": "secretPath",
+      "label": "Secret path",
+      "type": "string",
+      "description": "Folder path. Default /.",
+      "value": "/",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ee0ef27f-96b8-4883-a1f4-fa7cb463579e",
+      "shortCode": "path",
+      "label": "Folder path",
+      "type": "string",
+      "description": "list-folders query path. Default /. Distinct from secretPath used on secret ops.",
+      "value": "/",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "00798833-db13-4c88-91d4-312228846df9",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon invoke budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,252 @@
+{
+  "_id": "13fa2a1a-765a-56eb-980e-6462269f8adc",
+  "version": "1.0.0",
+  "name": "Backblaze B2",
+  "label": "Backblaze B2 Native API v4",
+  "description": "Backblaze B2 Native API v4 (current as of April 2025; /b2api/v4). Official API https://www.backblaze.com/apidocs/introduction-to-the-b2-native-api. One node; pick operation. Handler: OfficialApiNode + api_spec.json. Put the authorizationToken from b2_authorize_account in application_key (engine does not run authorize or switch to the returned apiUrl). Multi-bucket application keys require v4 authorize. Lifecycle rules are customer-owned. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "cloud",
+  "tags": [
+    "backblaze",
+    "b2",
+    "object-storage"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "67f4a5e9-8a56-5e71-9352-1a114671497e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port. File bytes are type file.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "bucket_list",
+          "description": "Overrides config operation. Accepted: bucket_list, bucket_create, file_upload, file_download, file_delete, file_list, hide_file, get_download_auth.",
+          "children": []
+        },
+        {
+          "shortCode": "accountId",
+          "label": "accountId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "B2 account id for bucket_list / bucket_create. Usually from b2_authorize_account.",
+          "children": []
+        },
+        {
+          "shortCode": "bucketName",
+          "label": "bucketName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Bucket name for bucket_create. Example: invoices-prod.",
+          "children": []
+        },
+        {
+          "shortCode": "bucketType",
+          "label": "bucketType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "bucket_create type. EXACT: allPrivate | allPublic.",
+          "children": []
+        },
+        {
+          "shortCode": "bucketId",
+          "label": "bucketId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Bucket id for file_upload / file_list / hide_file / get_download_auth.",
+          "children": []
+        },
+        {
+          "shortCode": "fileId",
+          "label": "fileId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "File id for file_download / file_delete.",
+          "children": []
+        },
+        {
+          "shortCode": "fileName",
+          "label": "fileName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "File name for file_delete / hide_file.",
+          "children": []
+        },
+        {
+          "shortCode": "prefix",
+          "label": "prefix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `prefix` for operation: file_list.",
+          "children": []
+        },
+        {
+          "shortCode": "maxFileCount",
+          "label": "maxFileCount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `maxFileCount` for operation: file_list.",
+          "children": []
+        },
+        {
+          "shortCode": "fileNamePrefix",
+          "label": "fileNamePrefix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `fileNamePrefix` for operation: get_download_auth.",
+          "children": []
+        },
+        {
+          "shortCode": "validDurationInSeconds",
+          "label": "validDurationInSeconds",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `validDurationInSeconds` for operation: get_download_auth.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ea57ca91-7e06-5d1e-b181-694f09868a5d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e9e0477d-fdc5-5384-bc2c-73a3c2f5716e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "bucket_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "bucket_list",
+        "bucket_create",
+        "file_upload",
+        "file_download",
+        "file_delete",
+        "file_list",
+        "hide_file",
+        "get_download_auth"
+      ]
+    },
+    {
+      "_id": "4e227aca-b8c0-53c4-92a9-a35cc96857fd",
+      "shortCode": "application_key",
+      "label": "Application Key",
+      "type": "password",
+      "description": "B2 authorizationToken from b2_authorize_account (minted outside StudioQuack). Sent as Authorization. Native API only — no S3/SigV4. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "89dfc8b6-d619-5fe0-9c27-e2137868a054",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

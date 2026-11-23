@@ -1,0 +1,304 @@
+{
+  "baseUrl": "https://api.attio.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "record.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/objects/{object}/records",
+      "required": [
+        "object",
+        "data"
+      ],
+      "bodyFrom": [
+        "data",
+        "values"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "values": "data.values"
+      }
+    },
+    "record.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/objects/{object}/records/{record_id}",
+      "required": [
+        "object",
+        "record_id"
+      ]
+    },
+    "record.update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/v2/objects/{object}/records/{record_id}",
+      "required": [
+        "object",
+        "record_id"
+      ],
+      "bodyFrom": [
+        "data",
+        "values"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "values": "data.values"
+      }
+    },
+    "record.search": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/objects/{object}/records/query",
+      "required": [
+        "object"
+      ],
+      "bodyFrom": [
+        "filter",
+        "sorts",
+        "limit",
+        "offset"
+      ],
+      "contentType": "application/json"
+    },
+    "record.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/v2/objects/{object}/records/{record_id}",
+      "required": [
+        "object",
+        "record_id"
+      ]
+    },
+    "person.upsert": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/v2/objects/people/records",
+      "required": [
+        "data"
+      ],
+      "queryFrom": [
+        "matching_attribute"
+      ],
+      "bodyFrom": [
+        "data",
+        "email",
+        "name"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "email": "data.values.email_addresses[0]",
+        "name": "data.values.name"
+      }
+    },
+    "company.upsert": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/v2/objects/companies/records",
+      "required": [
+        "data"
+      ],
+      "queryFrom": [
+        "matching_attribute"
+      ],
+      "bodyFrom": [
+        "data",
+        "name",
+        "domains"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "name": "data.values.name",
+        "domains": "data.values.domains"
+      }
+    },
+    "list.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/lists",
+      "required": [
+        "data"
+      ],
+      "bodyFrom": [
+        "data",
+        "name",
+        "parent_object",
+        "api_slug"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "name": "data.name",
+        "parent_object": "data.parent_object",
+        "api_slug": "data.api_slug"
+      }
+    },
+    "list.entry.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/lists/{list}/entries",
+      "required": [
+        "list"
+      ],
+      "bodyFrom": [
+        "data",
+        "parent_record_id",
+        "parent_object",
+        "entry_values"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "parent_record_id": "data.parent_record_id",
+        "parent_object": "data.parent_object",
+        "entry_values": "data.entry_values"
+      }
+    },
+    "list.entry.update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/v2/lists/{list}/entries/{entry_id}",
+      "required": [
+        "list",
+        "entry_id"
+      ],
+      "bodyFrom": [
+        "data",
+        "parent_record_id",
+        "parent_object",
+        "entry_values"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "parent_record_id": "data.parent_record_id",
+        "parent_object": "data.parent_object",
+        "entry_values": "data.entry_values"
+      }
+    },
+    "list.entry.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/v2/lists/{list}/entries/{entry_id}",
+      "required": [
+        "list",
+        "entry_id"
+      ]
+    },
+    "list.entry.search": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/lists/{list}/entries/query",
+      "required": [
+        "list"
+      ],
+      "bodyFrom": [
+        "filter",
+        "sorts",
+        "limit",
+        "offset"
+      ],
+      "contentType": "application/json"
+    },
+    "attribute.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/objects/{object}/attributes",
+      "required": [
+        "object"
+      ],
+      "bodyFrom": [
+        "data",
+        "title",
+        "api_slug",
+        "type"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "title": "data.title",
+        "api_slug": "data.api_slug",
+        "type": "data.type"
+      }
+    },
+    "attribute.archive": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/objects/{object}/attributes/{attribute_id}/archive",
+      "required": [
+        "object",
+        "attribute_id"
+      ]
+    },
+    "selectOption.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/objects/{object}/attributes/{attribute_id}/options",
+      "required": [
+        "object",
+        "attribute_id"
+      ],
+      "bodyFrom": [
+        "data",
+        "title"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "title": "data.title"
+      }
+    },
+    "task.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/tasks",
+      "required": [
+        "data"
+      ],
+      "bodyFrom": [
+        "data",
+        "content",
+        "format",
+        "deadline_at",
+        "is_completed",
+        "assignees"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "content": "data.content",
+        "format": "data.format",
+        "deadline_at": "data.deadline_at",
+        "is_completed": "data.is_completed",
+        "assignees": "data.assignees"
+      }
+    },
+    "task.update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/v2/tasks/{task_id}",
+      "required": [
+        "task_id"
+      ],
+      "bodyFrom": [
+        "data",
+        "content",
+        "format",
+        "deadline_at",
+        "is_completed",
+        "assignees"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "content": "data.content",
+        "format": "data.format",
+        "deadline_at": "data.deadline_at",
+        "is_completed": "data.is_completed",
+        "assignees": "data.assignees"
+      }
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

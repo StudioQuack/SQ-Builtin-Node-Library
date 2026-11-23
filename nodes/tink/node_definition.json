@@ -1,0 +1,228 @@
+{
+  "_id": "a939c035-35e5-401c-a5cf-c8de0a3a777c",
+  "version": "1.0.0",
+  "name": "Tink",
+  "label": "Tink — Tink / Visa Data API v2",
+  "description": "Tink Data API at https://api.tink.com. Docs: https://docs.tink.com/api. authorize is POST /api/v1/oauth/token as application/x-www-form-urlencoded (client_id, client_secret, grant_type, scope). accounts_list / transactions_list / identity_get use Bearer access_token. Handler: OfficialApiNode. Never log client_secret or access_token.",
+  "icon": "account_balance",
+  "tags": [
+    "tink",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "919a74dd-d9c2-4fd1-b276-ec2e7ac20bb4",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Tink. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "authorize",
+          "description": "Overrides config operation. EXACT: authorize | accounts_list | transactions_list | identity_get. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "grant_type",
+          "label": "grant_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "authorize grant_type. client_credentials (most common) | authorization_code | refresh_token. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "scope",
+          "label": "scope",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "authorize scope, space-separated. Example: accounts:read transactions:read identity:read.",
+          "children": []
+        },
+        {
+          "shortCode": "accountIdIn",
+          "label": "accountIdIn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `accountIdIn` for operation: transactions_list.",
+          "children": []
+        },
+        {
+          "shortCode": "bookedDateGte",
+          "label": "bookedDateGte",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `bookedDateGte` for operation: transactions_list.",
+          "children": []
+        },
+        {
+          "shortCode": "pageSize",
+          "label": "pageSize",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `pageSize` for operation: transactions_list.",
+          "children": []
+        },
+        {
+          "shortCode": "pageToken",
+          "label": "pageToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `pageToken` for operation: transactions_list.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "1a9197d9-8396-4ee2-8170-444257dd30c6",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b06e1d75-43a0-4b93-afcc-2ee13de2d87c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: authorize | accounts_list | transactions_list | identity_get. Default authorize. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "authorize",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "authorize",
+        "accounts_list",
+        "transactions_list",
+        "identity_get"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "5939cbca-95bd-4aec-bef1-2f55d2901145",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Tink credential (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7dd49141-aad7-40eb-9281-f67719825062",
+      "shortCode": "client_id",
+      "label": "Client Id",
+      "type": "password",
+      "description": "Tink client id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "78a8308c-3951-4264-9494-0bed1cb2b48b",
+      "shortCode": "client_secret",
+      "label": "Client Secret",
+      "type": "password",
+      "description": "Tink client secret.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dfb372a2-de2b-486c-bea9-3e56a1e46024",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

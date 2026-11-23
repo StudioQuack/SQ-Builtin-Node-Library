@@ -1,0 +1,238 @@
+{
+  "_id": "551a13d9-e11b-4eea-98db-e287cd0dbf20",
+  "version": "1.0.0",
+  "name": "Disqus",
+  "label": "Disqus Web API 3.0",
+  "description": "Official Disqus Web API 3.0 via OfficialApiNode. Base https://disqus.com/api/3.0. Auth query api_key (OfficialApiNode sends one secret; api_secret/access_token omitted). Operations: post_list, post_create, thread_get, forum_list. No official webhook — no trigger. Comment PII (email/IP) omitted from OUTPUT by default. Official API only.",
+  "icon": "forum",
+  "tags": [
+    "disqus",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "77e99eb0-6cd5-492f-a637-87d482fe8994",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. post_create needs message and thread. thread_get needs thread. Do not put api_key here. Example: {\"operation\":\"thread_get\",\"thread\":\"6\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "post_list",
+          "description": "Overrides config operation when non-blank. EXACT: post_list | post_create | thread_get | forum_list.",
+          "children": []
+        },
+        {
+          "shortCode": "forum",
+          "label": "forum",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Forum shortname for post_list / thread_get.",
+          "children": []
+        },
+        {
+          "shortCode": "thread",
+          "label": "thread",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Thread id for post_create / thread_get / post_list.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_create comment HTML/text. Official message.",
+          "children": []
+        },
+        {
+          "shortCode": "user",
+          "label": "user",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "user id for forum_list.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "forum_list cursor.",
+          "children": []
+        },
+        {
+          "shortCode": "order",
+          "label": "order",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "forum_list order.",
+          "children": []
+        },
+        {
+          "shortCode": "author_name",
+          "label": "author_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_create guest author_name (when not authenticated as user).",
+          "children": []
+        },
+        {
+          "shortCode": "author_email",
+          "label": "author_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_create guest author_email.",
+          "children": []
+        },
+        {
+          "shortCode": "parent",
+          "label": "parent",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_create parent post id for a reply.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6eb4bc74-198b-4be3-b2da-d0815924b18e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Do not persist commenter email/IP. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "617c5014-1cba-411a-a5b5-98d5d648dcbe",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: post_list | post_create | thread_get | forum_list.",
+      "value": "post_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "post_list",
+        "post_create",
+        "thread_get",
+        "forum_list"
+      ]
+    },
+    {
+      "_id": "0ab2cdeb-66ff-413e-b509-bc4c89462b74",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Disqus public api_key. Sent as query api_key. OfficialApiNode cannot also send api_secret. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "735b91c1-f95d-4c98-812b-2968f66d9a61",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

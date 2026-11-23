@@ -1,0 +1,385 @@
+{
+  "_id": "5a1cca43-4ec9-56a8-8b97-b205d64647f1",
+  "version": "1.0.0",
+  "name": "Adobe Acrobat Sign",
+  "label": "Acrobat Sign REST API v6",
+  "description": "Acrobat Sign REST API v6. Official API https://developer.adobe.com/acrobat-sign/docs/overview/developer_guide/apiusage. One node; pick operation. Upload/download/convert/sign payloads use type file (Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.) Handler: OfficialApiNode + api_spec.json. SOAP is retired. Discover api_access_point via GET /base_uris. Enterprise provisioned; regional shards. Customer is the sender. Transient document upload then POST /agreements. webhook_listen is ingress (BPMN). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "draw",
+  "tags": [
+    "adobe",
+    "acrobat-sign",
+    "esign"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "fca5e8f0-14ae-5c8e-b678-60274f6a2fad",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "agreement_create",
+          "description": "Overrides config operation. Accepted: agreement_create, agreement_get, agreement_cancel, agreement_documents, webhook_listen, group_get, workflow_get, webform_get, megasign_get.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Agreement name for agreement_create. Example: NDA.",
+          "children": []
+        },
+        {
+          "shortCode": "fileInfos",
+          "label": "fileInfos",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Documents for agreement_create. JSON array of {libraryDocumentId} or {transientDocumentId} or {urlFileInfo:{url}}. Example: [{\"libraryDocumentId\":\"CBJCHBCAABAA…\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "participantSetsInfo",
+          "label": "participantSetsInfo",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Signer sets for agreement_create. JSON array of {memberInfos:[{email}], role, order}. role EXACT: SIGNER | APPROVER | ACCEPTOR | CERTIFIED_RECIPIENT | FORM_FILLER | DELEGATE_TO_SIGNER. Example: [{\"memberInfos\":[{\"email\":\"ada@example.com\"}],\"role\":\"SIGNER\",\"order\":1}].",
+          "children": []
+        },
+        {
+          "shortCode": "signatureType",
+          "label": "signatureType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "agreement_create signatureType. EXACT: ESIGN | WRITTEN. Example: ESIGN.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "agreement_create: IN_PROCESS | DRAFT. agreement_cancel: CANCELLED. Example: IN_PROCESS.",
+          "children": []
+        },
+        {
+          "shortCode": "agreementId",
+          "label": "agreementId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `agreementId` for operations: agreement_get, agreement_cancel, agreement_documents. Required by: agreement_get, agreement_cancel, agreement_documents.",
+          "children": []
+        },
+        {
+          "shortCode": "comment",
+          "label": "comment",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cancel comment for agreement_cancel.",
+          "children": []
+        },
+        {
+          "shortCode": "groupId",
+          "label": "groupId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `groupId` for operation: group_get. Required by: group_get.",
+          "children": []
+        },
+        {
+          "shortCode": "workflowId",
+          "label": "workflowId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `workflowId` for operation: workflow_get. Required by: workflow_get.",
+          "children": []
+        },
+        {
+          "shortCode": "widgetId",
+          "label": "widgetId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `widgetId` for operation: webform_get. Required by: webform_get.",
+          "children": []
+        },
+        {
+          "shortCode": "megaSignId",
+          "label": "megaSignId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `megaSignId` for operation: megasign_get. Required by: megasign_get.",
+          "children": []
+        },
+        {
+          "shortCode": "agreement_id",
+          "label": "agreement_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Agreement id for agreement_get/cancel/documents.",
+          "children": []
+        },
+        {
+          "shortCode": "group_id",
+          "label": "group_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Group id for group_get.",
+          "children": []
+        },
+        {
+          "shortCode": "workflow_id",
+          "label": "workflow_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Workflow id for workflow_get.",
+          "children": []
+        },
+        {
+          "shortCode": "widget_id",
+          "label": "widget_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Widget (web form) id for webform_get.",
+          "children": []
+        },
+        {
+          "shortCode": "megasign_id",
+          "label": "megasign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "MegaSign id for megasign_get.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8328c5d5-338b-59f7-918a-986c98c33758",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b2acc6ec-e6fd-5efe-a49d-d24f6da8c83c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "agreement_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "agreement_create",
+        "agreement_get",
+        "agreement_cancel",
+        "agreement_documents",
+        "webhook_listen",
+        "group_get",
+        "workflow_get",
+        "webform_get",
+        "megasign_get"
+      ]
+    },
+    {
+      "_id": "81262704-6ace-5f74-b862-5ceab52c20eb",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "OAuth access token minted outside StudioQuack. Set shard to the account apiAccessPoint host fragment. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cf09ca4c-c9a4-587d-a1ce-a433ffe55173",
+      "shortCode": "shard",
+      "label": "Shard",
+      "type": "string",
+      "description": "Account shard from GET /baseUris apiAccessPoint (na1, eu1, na4, …). Host is api.{shard}.adobesign.com.",
+      "value": "na1",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "716e8872-a37e-4948-8ff4-319477629c9d",
+      "shortCode": "agreement_id",
+      "label": "Agreement ID",
+      "type": "string",
+      "description": "Agreement id for agreement_get/cancel/documents.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "319f4b4d-8dc8-46f1-8745-f3dcea0d99a9",
+      "shortCode": "group_id",
+      "label": "Group ID",
+      "type": "string",
+      "description": "Group id for group_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8fde6780-8b2a-4485-8e39-5fa02a0a25d8",
+      "shortCode": "workflow_id",
+      "label": "Workflow ID",
+      "type": "string",
+      "description": "Workflow id for workflow_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "58cb1ddc-b53c-4b3c-9d4f-02e9e4bb666c",
+      "shortCode": "widget_id",
+      "label": "Widget ID",
+      "type": "string",
+      "description": "Widget (web form) id for webform_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9d8e65a5-90d3-4c75-8a96-699d25b48044",
+      "shortCode": "megasign_id",
+      "label": "Megasign ID",
+      "type": "string",
+      "description": "MegaSign id for megasign_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f3806abb-4fba-5493-b3ac-30f49cfebce6",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

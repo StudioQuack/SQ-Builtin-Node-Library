@@ -1,0 +1,364 @@
+{
+  "_id": "309005be-14d0-4b62-8b0c-ac65d43df7d0",
+  "version": "1.0.0",
+  "name": "Reddit Search",
+  "label": "Reddit API - Community Intelligence",
+  "description": "Search Reddit posts and read subreddit listings for community intelligence. Purpose: pull titles, snippets, scores, and permalinks from Reddit into a workflow without a separate script. Official Data API Wiki (https://support.reddithelp.com/hc/en-us/articles/16160319875092-Reddit-Data-API-Wiki): unauthenticated traffic is blocked; OAuth2 is required (~100 QPM per client id, averaged over 10 minutes). Public JSON (no credentials; old.reddit.com then www.reddit.com) is deprecated and often 403-blocked. Register a 'script' app at https://www.reddit.com/prefs/apps; commercial use needs a separate Reddit agreement (https://redditinc.com/policies/data-api-terms, revised 2026-07-20). EXACT actions: 'search' (default, full-text; optional subreddit scope) | 'listing' (hot/new/top/rising of one subreddit). Tokens, passwords, and client_secret are never logged or returned. Example input: {\"action\":\"search\",\"query\":\"workflow automation\",\"subreddit\":\"artificial\",\"sort\":\"relevance\",\"time\":\"week\",\"limit\":25}. Use is subject to Reddit Developer Terms: https://www.redditinc.com/policies/developer-terms. Prefer OAuth2 (oauth.reddit.com) for production.",
+  "icon": "forum",
+  "tags": [
+    "reddit",
+    "oauth2",
+    "social",
+    "search"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Reddit operation. Purpose: choose search vs listing and pass query, subreddit, sort/time filters, page size, and optional pagination token `after`. Delivered as inputVariables.input (or currentNode.inputList targetPortValue=input). Required for search: query (alias q). Required for listing: subreddit. Example: {\"action\":\"listing\",\"subreddit\":\"artificial\",\"listing\":\"hot\",\"limit\":25}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "action",
+          "label": "action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which Reddit operation to run. Purpose: full-text search vs a subreddit listing feed. EXACT accepted values: 'search' | 'listing'. 'search' (default) hits /search or /r/{subreddit}/search when subreddit is set. 'listing' hits /r/{subreddit}/{listing} and requires subreddit. Any other string fails with error \"Unknown action: {action}. Use 'search' or 'listing'.\". Example: 'search'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Full-text search string (Reddit search syntax is allowed, e.g. title:\"workflow\" self:yes). Purpose: the q= parameter for action=search. Required when action is 'search' (or omitted, which defaults to search). Alias: input field 'q' is used when query is blank. Missing both returns {\"error\":\"query is required for search action.\"}. Ignored for action=listing. Example: 'workflow automation'.",
+          "children": []
+        },
+        {
+          "shortCode": "subreddit",
+          "label": "subreddit",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subreddit name without the r/ prefix. Purpose: scope search (restrict_sr=true) or select the listing feed. Required when action is 'listing'; missing returns {\"error\":\"subreddit is required for listing action.\"}. Optional for search (omit for site-wide search). Example: 'artificial'.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "relevance",
+          "description": "Search-result sort (action=search only; sent as sort=). Purpose: rank hits by relevance vs activity. EXACT accepted values: 'relevance' | 'hot' | 'top' | 'new' | 'comments'. Default: 'relevance'. Other strings are forwarded to Reddit unchanged. Ignored for action=listing. Example: 'top'.",
+          "children": []
+        },
+        {
+          "shortCode": "time",
+          "label": "time",
+          "type": "string",
+          "required": false,
+          "value": "day",
+          "description": "Time window for search and for listing=top (sent as t=). Purpose: limit results to a recency bucket. EXACT accepted values: 'hour' | 'day' | 'week' | 'month' | 'year' | 'all'. Default: 'day'. Other strings are forwarded to Reddit unchanged. Example: 'week'.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "25",
+          "description": "Maximum posts to return in this page (sent as limit=). Purpose: bound payload size. Default: 25. Capped at 100 (min(limit, 100)). Example: 25.",
+          "children": []
+        },
+        {
+          "shortCode": "listing",
+          "label": "listing",
+          "type": "string",
+          "required": false,
+          "value": "hot",
+          "description": "Subreddit feed type when action is 'listing' (path /r/{subreddit}/{listing}). Purpose: pick Reddit's built-in ranking. EXACT accepted values: 'hot' | 'new' | 'top' | 'rising'. Default: 'hot'. Any other value is treated as 'hot'. Ignored for action=search. Example: 'rising'.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reddit listing pagination cursor (a fullname such as t3_abc123). Purpose: fetch the next page; send the previous output.after. Omitted or blank = first page. Example: 't3_1abcdef'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Normalized Reddit listing. Purpose: success object {status, auth_mode, posts_returned, after, posts}. auth_mode is 'oauth' or 'public'. after is the next-page fullname (may be null). posts is an array of normalized post objects. This port never contains access_token, password, or client_secret. Example success: {\"status\":\"ok\",\"auth_mode\":\"public\",\"posts_returned\":2,\"after\":\"t3_xyz\",\"posts\":[{\"title\":\"Hello\",\"permalink\":\"https://www.reddit.com/r/artificial/comments/...\"}]}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Present on success only. Purpose: confirm the Reddit call completed. EXACT value on success: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "auth_mode",
+          "label": "Auth Mode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which transport was used. Purpose: tell the workflow whether OAuth2 or public JSON answered. EXACT values: 'oauth' (client_id and client_secret were both set; ~100 QPM) | 'public' (credentials omitted; deprecated — official wiki blocks unauthenticated traffic). Omitted on error. Example: 'oauth'.",
+          "children": []
+        },
+        {
+          "shortCode": "posts_returned",
+          "label": "Posts Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Count of objects in posts for this page (not a site-wide total). Purpose: pagination bookkeeping. Example: 25.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "After Token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reddit fullname cursor for the next page (data.after). Purpose: pass through to the next invoke as input.after. Null/omitted when Reddit reports no further page. Example: 't3_1abcdef'.",
+          "children": []
+        },
+        {
+          "shortCode": "posts",
+          "label": "Posts",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Normalized post rows from listing children[].data. Purpose: stable field names for downstream nodes. Each object has title, selftext (capped at 500 chars), url, permalink (https://www.reddit.com{permalink}), score (long), num_comments (long), created_utc, subreddit, author, is_self, link_flair_text (may be null). Example: [{\"title\":\"Show HN: ...\",\"score\":120,\"subreddit\":\"artificial\"}].",
+          "children": [
+            {
+              "shortCode": "title",
+              "label": "title",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Post title. Purpose: headline for ranking or display. Empty string when Reddit omits it. Example: 'We replaced our cron jobs with a self-hosted workflow'.",
+              "children": []
+            },
+            {
+              "shortCode": "selftext",
+              "label": "selftext",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Self-post body, truncated to 500 characters (Python [:500]). Purpose: snippet without a huge payload. Empty for link posts. Example: 'We hit rate limits after ...' .",
+              "children": []
+            },
+            {
+              "shortCode": "url",
+              "label": "url",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Outbound or Reddit URL on the post (data.url). Purpose: open the linked resource. Example: 'https://example.com/blog'.",
+              "children": []
+            },
+            {
+              "shortCode": "permalink",
+              "label": "permalink",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Canonical comments-page URL: https://www.reddit.com + data.permalink. Purpose: cite the thread. Example: 'https://www.reddit.com/r/artificial/comments/abc123/title/'.",
+              "children": []
+            },
+            {
+              "shortCode": "score",
+              "label": "score",
+              "type": "number",
+              "required": false,
+              "value": "",
+              "description": "Net upvotes (long). Purpose: rank by community interest. Default 0 when missing. Example: 42.",
+              "children": []
+            },
+            {
+              "shortCode": "num_comments",
+              "label": "num_comments",
+              "type": "number",
+              "required": false,
+              "value": "",
+              "description": "Comment count (long). Purpose: thread-activity filter. Default 0 when missing. Example: 18.",
+              "children": []
+            },
+            {
+              "shortCode": "created_utc",
+              "label": "created_utc",
+              "type": "number",
+              "required": false,
+              "value": "",
+              "description": "UTC unix timestamp from Reddit (seconds, may be fractional). Purpose: recency sort downstream. 0 when missing. Example: 1710000000.",
+              "children": []
+            },
+            {
+              "shortCode": "subreddit",
+              "label": "subreddit",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Subreddit name without r/. Purpose: group results. Example: 'artificial'.",
+              "children": []
+            },
+            {
+              "shortCode": "author",
+              "label": "author",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Reddit username (no u/ prefix). Purpose: attribution. May be '[deleted]'. Example: 'spez'.",
+              "children": []
+            },
+            {
+              "shortCode": "is_self",
+              "label": "is_self",
+              "type": "boolean",
+              "required": false,
+              "value": "",
+              "description": "True when the post is a text self-post; false for link posts. Purpose: filter content type. Default false when missing. Example: true.",
+              "children": []
+            },
+            {
+              "shortCode": "link_flair_text",
+              "label": "link_flair_text",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Link flair label from Reddit. Purpose: topic tagging. May be null when the post has no flair. Example: 'Discussion'.",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+      "shortCode": "client_id",
+      "label": "Client ID (Optional)",
+      "type": "string",
+      "description": "Reddit OAuth2 client id from a 'script' app at https://www.reddit.com/prefs/apps. Purpose: switch from deprecated public JSON to oauth.reddit.com (~100 QPM). OAuth mode is used only when BOTH client_id AND client_secret are non-blank; otherwise public mode (often blocked). Never logged or returned. Example: 'AbCdEfGhIjKlMo'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+      "shortCode": "client_secret",
+      "label": "Client Secret (Optional)",
+      "type": "password",
+      "description": "Reddit OAuth2 client secret (shown when you click edit on the app at reddit.com/prefs/apps). Purpose: HTTP Basic with client_id against https://www.reddit.com/api/v1/access_token. Required together with client_id for OAuth; ignored in public mode. Never logged or returned. Example: a 27-character secret from the apps page.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a1b2c3d4-0001-4aaa-bbbb-000000000001",
+      "shortCode": "username",
+      "label": "Reddit Username (Optional)",
+      "type": "string",
+      "description": "Reddit account username without u/. Purpose: password grant (grant_type=password) when BOTH username and password are set; otherwise the token request uses grant_type=client_credentials. Leave empty for app-only OAuth or public mode. Example: 'studioquack'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a1b2c3d4-0002-4aaa-bbbb-000000000002",
+      "shortCode": "password",
+      "label": "Reddit Password (Optional)",
+      "type": "password",
+      "description": "Reddit account password for password grant (used only when username is also set). Purpose: user-context OAuth for a script app. If 2FA is enabled, append the TOTP as 'password:123456'. Never logged or returned. Leave empty for client_credentials or public mode. Example: 'hunter2:123456'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+      "shortCode": "user_agent",
+      "label": "User Agent",
+      "type": "string",
+      "description": "HTTP User-Agent sent on every Reddit request (token, OAuth GET, and public GET). Purpose: satisfy Reddit's unique-UA rule; generic agents are rate-limited (429) or blocked. Format: 'platform:appid:version (by /u/yourusername)'. Default: 'StudioQuack:v1.0 (by /u/studioquack)'. Change this to your own Reddit username in production. Example: 'StudioQuack:mywf:v1.0 (by /u/yourname)'.",
+      "value": "StudioQuack:v1.0 (by /u/studioquack)",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout in seconds (token POST and listing GET). Purpose: bound hangs. Default: 25. Values <= 0 fall back to 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

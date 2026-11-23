@@ -1,0 +1,239 @@
+{
+  "_id": "aff8c83b-0233-4a61-8906-9bd4e3601276",
+  "version": "1.0.0",
+  "name": "Ideogram",
+  "label": "Ideogram",
+  "description": "Official Ideogram Image API (v4 generate, async poll, remix, upscale) at https://api.ideogram.ai. Handler: OfficialApiNode. Auth is StudioQuack secret api_key as header Api-Key. Image payloads use type file. Docs: https://developer.ideogram.ai/api-reference/api-reference. Ephemeral result URLs expire — download if you need to keep them. Never log api_key.",
+  "icon": "palette",
+  "tags": [
+    "ideogram",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5cecab44-12bc-42e9-902a-c85a9020ba4d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "generate: prompt or json_prompt (mutually exclusive). generate_async returns generation_id — poll get_task. remix requires image (type file) + prompt. upscale requires image (type file) + image_request. Do not put api_key here. Example: {\"prompt\":\"a bold poster\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "generate",
+          "description": "EXACT: generate | generate_async | get_task | remix | upscale. Blank: infer from generation_id / image+prompt, else config.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Natural-language prompt for generate / generate_async / remix (Ideogram v2 field). Mutually exclusive with json_prompt on generate. Example: a bold poster.",
+          "children": []
+        },
+        {
+          "shortCode": "image",
+          "label": "image",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for remix or upscale (JPEG/WebP/PNG, max 25MB). Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "generation_id",
+          "label": "generation_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL-safe id from generate_async for get_task. Status: pending | completed | failed.",
+          "children": []
+        },
+        {
+          "shortCode": "json_prompt",
+          "label": "json_prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `json_prompt` for operations: generate, generate_async.",
+          "children": []
+        },
+        {
+          "shortCode": "resolution",
+          "label": "resolution",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `resolution` for operations: generate, generate_async, remix.",
+          "children": []
+        },
+        {
+          "shortCode": "rendering_speed",
+          "label": "rendering_speed",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `rendering_speed` for operations: generate, generate_async, remix.",
+          "children": []
+        },
+        {
+          "shortCode": "enable_copyright_detection",
+          "label": "enable_copyright_detection",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `enable_copyright_detection` for operations: generate, generate_async, remix.",
+          "children": []
+        },
+        {
+          "shortCode": "webhook_url",
+          "label": "webhook_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `webhook_url` for operation: generate_async.",
+          "children": []
+        },
+        {
+          "shortCode": "image_weight",
+          "label": "image_weight",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `image_weight` for operation: remix.",
+          "children": []
+        },
+        {
+          "shortCode": "image_request",
+          "label": "image_request",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "upscale: JSON string for multipart field image_request (e.g. {\"resemblance\":50,\"detail\":90}). Required with image.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a354a806-97fa-46c1-8ca6-a9986110e494",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (urls in data[] or generation_id). is_image_safe=false means empty url. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (created, data[].url, generation_id, poll status).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2b6c1784-43fb-4a1d-ba62-938f31be789c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "EXACT: generate | generate_async | get_task | remix | upscale. Default generate = synchronous POST /v1/ideogram-v4/generate. Poll with get_task after generate_async.",
+      "value": "generate",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "generate",
+        "generate_async",
+        "get_task",
+        "remix",
+        "upscale"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "8cfacfda-e74f-477c-a6ee-ac911a3abbf4",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Ideogram developer API key. Sent as header Api-Key. StudioQuack secret. Never logged. Setup: https://developer.ideogram.ai/ideogram-api/api-setup",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f99b8528-65af-452e-963c-212f0f543faf",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 120. Floor 1. Use generate_async + get_task instead of raising this for long jobs.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

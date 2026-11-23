@@ -1,0 +1,94 @@
+{
+  "baseUrl": "https://api.goshippo.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "prefix": "ShippoToken ",
+    "configKey": "api_token"
+  },
+  "operations": {
+    "address_validate": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/addresses/",
+      "required": [
+        "name",
+        "street1",
+        "city",
+        "zip",
+        "country"
+      ],
+      "bodyFrom": [
+        "name",
+        "company",
+        "street1",
+        "street2",
+        "city",
+        "state",
+        "zip",
+        "country",
+        "phone",
+        "email",
+        "is_residential",
+        "validate",
+        "metadata"
+      ],
+      "contentType": "application/json"
+    },
+    "shipment_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/shipments/",
+      "required": [
+        "address_from",
+        "address_to",
+        "parcels"
+      ],
+      "bodyFrom": [
+        "address_from",
+        "address_to",
+        "parcels",
+        "async",
+        "extra",
+        "metadata"
+      ],
+      "contentType": "application/json"
+    },
+    "rate_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/rates/{object_id}",
+      "required": [
+        "object_id"
+      ]
+    },
+    "label_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/transactions/",
+      "bodyFrom": [
+        "rate",
+        "label_file_type",
+        "async",
+        "metadata",
+        "shipment",
+        "carrier_account",
+        "servicelevel_token"
+      ],
+      "contentType": "application/json"
+    },
+    "track_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/tracks/{carrier}/{tracking_number}",
+      "required": [
+        "carrier",
+        "tracking_number"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

@@ -1,0 +1,280 @@
+{
+  "_id": "5851a697-ddc6-42fa-b6a0-b6b9893c2ff5",
+  "version": "1.0.0",
+  "name": "Toggl",
+  "label": "Toggl Track API v9",
+  "description": "Toggl Track API v9 via OfficialApiNode (nodes/toggl/api_spec.json). Official Toggl Track API v9. Basic auth: username is the API token, password is the literal 'api_token'. time_entry_create requires created_with (client identifier) in the JSON body. Official docs: https://engineering.toggl.com/docs/track/api/time_entries/. OUTPUT is {status, http_status, data} or {error}. Secrets never appear on OUTPUT.",
+  "icon": "timer",
+  "tags": [
+    "toggl",
+    "time",
+    "tracking"
+  ],
+  "category": "Productivity & Collaboration",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "145b7bbf-e094-4692-80cb-7d6fc1871c3b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Toggl official API call. Delivered as inputVariables.input. Set operation plus the path/query/body fields that operation lists in api_spec.json. Do not put secrets on this port. Example: {\"operation\":\"time_entry_create\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "time_entry_create",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'time_entry_create', 'time_entry_get', 'time_entry_update', 'time_entry_delete', 'time_entry_start', 'time_entry_stop', 'project_list', 'client_list', 'workspace_list', 'listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'time_entry_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "workspace_id",
+          "label": "workspace_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request field for operations that declare `workspace_id` as a path, query, or JSON body key. Omitted/blank is dropped. Example: 'example-value'.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Time entry description. create / start / update. Example: Design review.",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Start datetime ISO8601. create / start / update. Example: 2026-01-15T09:00:00Z. For start, duration should be -1.",
+          "children": []
+        },
+        {
+          "shortCode": "duration",
+          "label": "duration",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Duration in seconds. Negative (typically -1) means running. create / start. Example: 3600.",
+          "children": []
+        },
+        {
+          "shortCode": "project_id",
+          "label": "project_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Toggl project id. create / start / update. Example: 123456789.",
+          "children": []
+        },
+        {
+          "shortCode": "time_entry_id",
+          "label": "time_entry_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request field for operations that declare `time_entry_id` as a path, query, or JSON body key. Omitted/blank is dropped. Example: 'example-value'.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Stop datetime ISO8601. time_entry_update. Example: 2026-01-15T10:00:00Z.",
+          "children": []
+        },
+        {
+          "shortCode": "created_with",
+          "label": "created_with",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client name required by Toggl on create/start. Example: studioquack.",
+          "children": []
+        },
+        {
+          "shortCode": "billable",
+          "label": "billable",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Billable flag. time_entry_create / start / update. Default false. https://developers.track.toggl.com/docs/api/time_entries",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Tag names. time_entry_create / start / update. Example: [\"client-a\"].",
+          "children": []
+        },
+        {
+          "shortCode": "tag_ids",
+          "label": "tag_ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Tag ids. time_entry_create / start / update. Example: [123,456].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ff94963a-eaa5-44aa-9fe6-8a6f3579d4e9",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or the raw string when not JSON. Example: {}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e8b096a7-78b0-48b5-94ba-84a278dad184",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: time_entry_create, time_entry_get, time_entry_update, time_entry_delete, time_entry_start, time_entry_stop, project_list, client_list, workspace_list, listen. Default: time_entry_create. Example: time_entry_create.",
+      "value": "time_entry_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "time_entry_create",
+        "time_entry_get",
+        "time_entry_update",
+        "time_entry_delete",
+        "time_entry_start",
+        "time_entry_stop",
+        "project_list",
+        "client_list",
+        "workspace_list",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "53c5860f-cb43-41b1-ac26-58c5cd97ab9f",
+      "shortCode": "api_token_password",
+      "label": "Api Token Password",
+      "type": "password",
+      "description": "Provider credential for auth.type=basic (configKey api_token_password). REQUIRED secret — StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "52fa5df2-24ee-4cf1-b97d-e0974038bb7d",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "Basic-auth username field (api_token). Toggl API token used as the Basic username. Secret. Example: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "44a4666e-1035-4ae1-a40a-3fc6fd7b8352",
+      "shortCode": "workspace_id",
+      "label": "Workspace Id",
+      "type": "string",
+      "description": "Default workspace id. Example: '1234567'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cc2c454a-c63c-41a8-a940-7080e358e42e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative → 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

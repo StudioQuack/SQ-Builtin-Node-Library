@@ -1,0 +1,358 @@
+{
+  "_id": "df0fd473-c0d4-444c-8296-312aaaed1226",
+  "version": "1.0.0",
+  "name": "Azure Cosmos DB",
+  "label": "Azure Cosmos DB — NoSQL REST",
+  "description": "Azure Cosmos DB — NoSQL REST. Handler: OfficialApiNode. Official paths GET/POST https://{account}.documents.azure.com/dbs/{db}/colls/{coll}/docs[/{id}]. item.query sends Content-Type application/query+json and x-ms-documentdb-isquery: True; partition_key becomes x-ms-documentdb-partitionkey. Sends x-ms-version: 2018-12-31 (latest listed data-plane REST version) and x-ms-date: RFC 1123 via extraHeaders (https://learn.microsoft.com/en-us/rest/api/cosmos-db/). AAD/RBAC is not supported: official AAD Authorization is type=aad&ver=1.0&sig={token} (URL-encoded), not Bearer — this node still sends Bearer. Docs: https://learn.microsoft.com/en-us/rest/api/cosmos-db/common-cosmosdb-rest-request-headers. Customer owns the database. Minimize payload. Secrets never logged or returned. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "storage",
+  "tags": [
+    "nosql"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ede8c0b0-b135-5ed5-9307-6106a5c4e617",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_token here. Example: {\"operation\":\"item.get\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "item.get",
+          "description": "Overrides config. EXACT: item.get | item.create | item.query.",
+          "children": []
+        },
+        {
+          "shortCode": "db",
+          "label": "db",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Database id. Path.",
+          "children": []
+        },
+        {
+          "shortCode": "coll",
+          "label": "coll",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Container id. Path.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Item id for item.get.",
+          "children": []
+        },
+        {
+          "shortCode": "partition_key",
+          "label": "partition_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Partition key value of the item, sent as the x-ms-documentdb-partitionkey header. Accepted: a JSON array with one value matching the container partition key path. Required by item.get and item.create on partitioned containers; optional for item.query (scopes the query to one partition). Blank omits the header. Example: [\"ada\"].",
+          "children": []
+        },
+        {
+          "shortCode": "document",
+          "label": "document",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Item JSON sent as the whole request body for item.create (POST /dbs/{db}/colls/{coll}/docs). Must contain a string `id` (max 255 chars) and the partition key property. Example: {\"id\":\"order-100\",\"pk\":\"ada\",\"total\":42}.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SQL query text for item.query. Example: SELECT * FROM c WHERE c.pk = @pk.",
+          "children": []
+        },
+        {
+          "shortCode": "parameters",
+          "label": "parameters",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Official query parameters [{name, value}] for item.query. Example: [{\"name\":\"@pk\",\"value\":\"ada\"}].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0cc41f02-ab21-5271-9cfc-fc4a7ace4309",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Secrets never copied here.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6c043e09-676d-5c04-8b0c-af094424409b",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: item.get | item.create | item.query.",
+      "value": "item.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "item.get",
+        "item.create",
+        "item.query"
+      ],
+      "filterRules": [
+        {
+          "when": "item.get",
+          "targets": [
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "partition_key",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "item.create",
+          "targets": [
+            {
+              "param": "document",
+              "visible": true
+            },
+            {
+              "param": "partition_key",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "item.query",
+          "targets": [
+            {
+              "param": "parameters",
+              "visible": true
+            },
+            {
+              "param": "query",
+              "visible": true
+            },
+            {
+              "param": "partition_key",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "ded3c33c-424a-5c2e-b79d-2adeb829cf0a",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Azure AD access token (secret). Official REST Authorization is type=aad&ver=1.0&sig={token} (URL-encoded; https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-setup-rbac). OfficialApiNode sends Authorization: Bearer. Master-key HMAC is not supported.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5cd986bc-c8db-4830-bab7-9827a797e3e0",
+      "shortCode": "account",
+      "label": "Account",
+      "type": "string",
+      "description": "Cosmos DB account name substituted into the endpoint host https://{account}.documents.azure.com. Accepted: the account name only, without scheme or domain. Example: contoso-orders.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1be9b6b4-7968-484d-ac6b-cdc6424c8069",
+      "shortCode": "db",
+      "label": "Db",
+      "type": "string",
+      "description": "Database id. Path.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d6d18bed-2e74-4f6f-ab33-42b8f41b49e5",
+      "shortCode": "id",
+      "label": "ID",
+      "type": "string",
+      "description": "Item id for item.get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "75940317-3c2d-459d-85d7-17b945abd3de",
+      "shortCode": "partition_key",
+      "label": "Partition Key",
+      "type": "string",
+      "description": "Partition key value of the item, sent as the x-ms-documentdb-partitionkey header. Accepted: a JSON array with one value matching the container partition key path. Required by item.get and item.create on partitioned containers; optional for item.query (scopes the query to one partition). Blank omits the header. Example: [\"ada\"].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3345e332-2fdf-4bc1-8b30-dd69e2b82457",
+      "shortCode": "document",
+      "label": "Document",
+      "type": "object",
+      "description": "Item JSON sent as the whole request body for item.create (POST /dbs/{db}/colls/{coll}/docs). Must contain a string `id` (max 255 chars) and the partition key property. Example: {\"id\":\"order-100\",\"pk\":\"ada\",\"total\":42}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ec2e0418-fd86-400b-91b2-b8514d4bbcab",
+      "shortCode": "coll",
+      "label": "Coll",
+      "type": "string",
+      "description": "Container id. Path.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "72e4811f-fa1f-4cc4-87c6-1e9470eb843b",
+      "shortCode": "parameters",
+      "label": "Parameters",
+      "type": "list",
+      "description": "Official query parameters [{name, value}] for item.query. Example: [{\"name\":\"@pk\",\"value\":\"ada\"}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "303e3d6b-d43e-4e76-aa81-b7bab3911b80",
+      "shortCode": "query",
+      "label": "Query",
+      "type": "string",
+      "description": "SQL query text for item.query. Example: SELECT * FROM c WHERE c.pk = @pk.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d9754040-2ffe-57ba-b340-99518e9a1c73",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

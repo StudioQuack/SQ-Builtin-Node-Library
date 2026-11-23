@@ -1,0 +1,292 @@
+{
+  "_id": "fd152ef8-41c6-4d1f-84ce-ee32e05d9f3d",
+  "version": "1.0.0",
+  "name": "Wufoo",
+  "label": "Wufoo — REST API v3 forms and entries",
+  "description": "Official Wufoo REST API v3 at https://{subdomain}.wufoo.com/api/v3/. Handler: OfficialApiNode. HTTP Basic (api_key as username). JSON only (.json). Entries are respondent PII. Customer owns the Wufoo account. Minimize; never log api_key, handshakeKey, or field values. trigger.listen is BPMN message-event ingress. Docs: https://wufoo.github.io/docs/",
+  "icon": "dynamic_form",
+  "tags": [
+    "forms"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5ee57ae5-84c8-47fe-a441-a5bb725aaaa5",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. subdomain and identifier may come from config. File fields: type file. Do not put api_key here. handshakeKey is only for webhook.register. Example: {\"operation\":\"form.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "form.list",
+          "description": "Overrides config operation when non-blank. EXACT: form.list | form.get | entry.list | entry.submit | webhook.register | trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "subdomain",
+          "label": "subdomain",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Account subdomain (^[a-z0-9-]+$). Else config. Host only — interpolated into {subdomain}.wufoo.com.",
+          "children": []
+        },
+        {
+          "shortCode": "identifier",
+          "label": "identifier",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Form hash (preferred) or title. Else config form_hash.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Wufoo entry.submit field map using the form's FieldN ids as keys (Field1, Field2, …). Required. Example: {\"Field1\":\"Ada\",\"Field2\":\"ada@example.com\"}. https://wufoo.github.io/docs/#submit-entry",
+          "children": []
+        },
+        {
+          "shortCode": "pageStart",
+          "label": "pageStart",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "entry.list start. Default 0.",
+          "children": []
+        },
+        {
+          "shortCode": "pageSize",
+          "label": "pageSize",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "entry.list size. Default 25; max 100.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "entry.list field id to sort by.",
+          "children": []
+        },
+        {
+          "shortCode": "sortDirection",
+          "label": "sortDirection",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ASC | DESC.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTTPS subscriber URL for webhook.register.",
+          "children": []
+        },
+        {
+          "shortCode": "handshakeKey",
+          "label": "handshakeKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Webhook handshake for webhook.register. Echoed as HandshakeKey.",
+          "children": []
+        },
+        {
+          "shortCode": "metadata",
+          "label": "metadata",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "webhook.register include FormStructure / FieldStructure.",
+          "children": []
+        },
+        {
+          "shortCode": "system",
+          "label": "system",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `system` for operation: entry.list.",
+          "children": []
+        },
+        {
+          "shortCode": "FilterId",
+          "label": "FilterId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `FilterId` for operation: entry.list.",
+          "children": []
+        },
+        {
+          "shortCode": "match",
+          "label": "match",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `match` for operation: entry.list.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "59aa0407-b587-42bc-9a04-d0a5f9d142c7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. May contain PII — never log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4557e50d-74d2-4014-a7ec-3e93982f75bd",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: form.list | form.get | entry.list | entry.submit | webhook.register | trigger.listen. trigger.listen is ingress.",
+      "value": "form.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "form.list",
+        "form.get",
+        "entry.list",
+        "entry.submit",
+        "webhook.register",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "23a927e7-5133-4b2d-87fa-20abfe6b0911",
+      "shortCode": "subdomain",
+      "label": "Subdomain",
+      "type": "string",
+      "description": "Account subdomain (fishbowl in docs). Hostname label only: {subdomain}.wufoo.com. Allowlist ^[a-z0-9-]+$.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fd9dcf6b-be49-4392-b31b-50fd53c069d1",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "16-character key from Form Manager → API Information (StudioQuack secret). HTTP Basic username. OfficialApiNode also sends the same value as the Basic password (Wufoo accepts any non-empty password). Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9b9ef12b-b818-48dc-abb3-bc9a8269ca03",
+      "shortCode": "identifier",
+      "label": "Form hash",
+      "type": "string",
+      "description": "Default form hash used as path {identifier}. Overridable on INPUT as identifier.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9c292206-58dc-4460-974d-267145e04e0e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

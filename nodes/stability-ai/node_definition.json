@@ -1,0 +1,430 @@
+{
+  "_id": "d156b5eb-0326-4666-ab2a-92d20812cdf0",
+  "version": "1.0.0",
+  "name": "Stability AI",
+  "label": "Stability AI",
+  "description": "Official Stability REST v2beta Stable Image (generate / upscale / edit / control) at https://api.stability.ai. Handler: OfficialApiNode. Auth is StudioQuack secret api_key as Authorization Bearer. Image payloads use type file (platform ref-id). Docs: https://platform.stability.ai/docs/api-reference/. Terms: https://stability.ai/terms-of-service. Never log api_key. Prompt and images leave the host.",
+  "icon": "auto_awesome",
+  "tags": [
+    "stability",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f3d00413-9d53-401f-9dc5-6e23bc5d4f36",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. generate requires prompt. upscale/control require image (type file) + prompt. edit requires image (type file). get_result requires id from an async job. Do not put api_key here. Example: {\"prompt\":\"lighthouse on a cliff\",\"aspect_ratio\":\"1:1\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "select",
+          "required": false,
+          "value": "generate",
+          "description": "Which official call to run. EXACT: generate | upscale | edit | control | get_result. get_result needs id only (no prompt). Blank uses config operation or infers get_result when only id is set.",
+          "options": [
+            "generate",
+            "upscale",
+            "edit",
+            "control",
+            "get_result"
+          ],
+          "children": []
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Text prompt. generate/upscale/control: required (1–10000 chars). edit: required for inpaint/search-and-replace; omit for remove-background.",
+          "children": []
+        },
+        {
+          "shortCode": "image",
+          "label": "image",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for upscale/edit/control (and optional image-to-image generate). jpeg/png/webp. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "mask",
+          "label": "mask",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id mask for inpaint/erase. White = edit region. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Generation id for get_result (GET /v2beta/results/{id}). HTTP 202 = still running.",
+          "children": []
+        },
+        {
+          "shortCode": "aspect_ratio",
+          "label": "aspect_ratio",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `aspect_ratio` for operation: generate.",
+          "children": []
+        },
+        {
+          "shortCode": "negative_prompt",
+          "label": "negative_prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `negative_prompt` for operations: generate, upscale, edit, control.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Seed integer for generate / upscale / edit / control. 0 = random.",
+          "children": []
+        },
+        {
+          "shortCode": "style_preset",
+          "label": "style_preset",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `style_preset` for operation: generate.",
+          "children": []
+        },
+        {
+          "shortCode": "output_format",
+          "label": "output_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `output_format` for operations: generate, upscale, edit, control.",
+          "children": []
+        },
+        {
+          "shortCode": "creativity",
+          "label": "creativity",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "upscale creativity 0.1–0.5 (conservative–creative).",
+          "children": []
+        },
+        {
+          "shortCode": "search_prompt",
+          "label": "search_prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `search_prompt` for operation: edit.",
+          "children": []
+        },
+        {
+          "shortCode": "select_prompt",
+          "label": "select_prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "What to recolor for edit_mode search-and-recolor. Example: the red car.",
+          "children": []
+        },
+        {
+          "shortCode": "left",
+          "label": "left",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "edit outpaint pixels left.",
+          "children": []
+        },
+        {
+          "shortCode": "right",
+          "label": "right",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "edit outpaint pixels right.",
+          "children": []
+        },
+        {
+          "shortCode": "up",
+          "label": "up",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "edit outpaint pixels up.",
+          "children": []
+        },
+        {
+          "shortCode": "down",
+          "label": "down",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "edit outpaint pixels down.",
+          "children": []
+        },
+        {
+          "shortCode": "control_strength",
+          "label": "control_strength",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "control control_strength 0–1.",
+          "children": []
+        },
+        {
+          "shortCode": "style_strength",
+          "label": "style_strength",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "control style_strength 0–1 for style-transfer mode.",
+          "children": []
+        },
+        {
+          "shortCode": "style_image",
+          "label": "style_image",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Reference style image (type file) for control_mode style-transfer.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "10e3dd5c-d330-48bb-a144-7f59a6f44153",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON or binary metadata). HTTP 202 on get_result means in progress. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx (including 202 in-progress for get_result).",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON when Accept is application/json; otherwise opaque body. Prefer JSON so OfficialApiNode can parse.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "9b142729-28d7-4228-b853-eb81524928f7",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Stable Image verb. EXACT: generate | upscale | edit | control | get_result. Default generate = POST /v2beta/stable-image/generate/{engine}.",
+      "value": "generate",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "generate",
+        "upscale",
+        "edit",
+        "control",
+        "get_result"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "93a2854e-2821-46a1-806d-6427a9eace6c",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Stability platform API key. Sent as Authorization: Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e1fae625-bc15-4da9-b254-95febf3b1204",
+      "shortCode": "engine",
+      "label": "Generate engine",
+      "type": "select",
+      "description": "Path {engine} for operation=generate. EXACT: core | ultra | sd3. Default core (Stable Image Core). Verify live list on platform.stability.ai.",
+      "value": "core",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "core",
+        "ultra",
+        "sd3"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "29c617d6-0435-4818-be33-31a8e52461a4",
+      "shortCode": "upscale_mode",
+      "label": "Upscale mode",
+      "type": "select",
+      "description": "Path {upscale_mode} for operation=upscale. EXACT: conservative | creative | fast. creative is async — poll get_result with the returned id.",
+      "value": "conservative",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "conservative",
+        "creative",
+        "fast"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "ced3117d-a646-4d13-a1e7-a132bc816a20",
+      "shortCode": "edit_mode",
+      "label": "Edit mode",
+      "type": "select",
+      "description": "Path {edit_mode} for operation=edit. EXACT: inpaint | outpaint | erase | search-and-replace | search-and-recolor | remove-background | replace-background-and-relight.",
+      "value": "inpaint",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "inpaint",
+        "outpaint",
+        "erase",
+        "search-and-replace",
+        "search-and-recolor",
+        "remove-background",
+        "replace-background-and-relight"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "4202809d-7355-43b0-9083-aa6576a801e2",
+      "shortCode": "select_prompt",
+      "label": "Select Prompt",
+      "type": "string",
+      "description": "What to recolor for edit search-and-recolor. Example: the red car.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "0bdd1e55-561d-4b66-983e-f8265a042f4f",
+      "shortCode": "control_mode",
+      "label": "Control mode",
+      "type": "select",
+      "description": "Path {control_mode} for operation=control. EXACT: sketch | structure | style | style-transfer.",
+      "value": "structure",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "sketch",
+        "structure",
+        "style",
+        "style-transfer"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "828c52c6-f563-4d8e-9536-0b30f8b5869a",
+      "shortCode": "style_image",
+      "label": "Style Image",
+      "type": "file",
+      "description": "Reference style image for control style-transfer (platform file ref-id).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "e13ad232-f153-4e66-8726-9fec045c1636",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 120. Floor 1. Creative upscale/edit can exceed 60s — use get_result instead of raising this unbounded.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

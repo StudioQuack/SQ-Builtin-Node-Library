@@ -1,0 +1,614 @@
+{
+  "_id": "fcba3de5-033c-4a9d-9a07-e62fe03e8406",
+  "version": "1.0.0",
+  "name": "OpenRouter",
+  "label": "OpenRouter",
+  "description": "Official OpenRouter Chat Completions + model catalog on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). operation selects chat (POST /api/v1/chat/completions) or list_models (GET /api/v1/models). Auth is StudioQuack secret api_key sent as Bearer. Routes to third-party models — customer accepts upstream ToS per model. Docs: https://openrouter.ai/docs/api-reference/overview. Terms: https://openrouter.ai/terms. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "openrouter",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1ce18544-0134-4b7d-9c78-14beff2a1bcc",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, stream?, model?, q?, limit?}. Image parts use type file (platform ref-id), never inline bytes. Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "chat",
+          "description": "Which official call to run. EXACT: chat | list_models. Example: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Conversation for operation=chat. List of {role, content}. User content may include image_url parts. Image sources use type file (platform ref-id). Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional OpenAI function tools. OpenRouter maps them to upstreams that lack native tools. Omit or [] sends no tools.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for vision image_url. Never inline bytes. Never send platform ref-ids upstream — resolve to URL/data URI on the wire.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional search substring for operation=list_models.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `prompt` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "models",
+          "label": "models",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `models` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "provider",
+          "label": "provider",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `provider` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "tool_choice",
+          "label": "tool_choice",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tool_choice` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "temperature",
+          "label": "temperature",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `temperature` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_p` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_k",
+          "label": "top_k",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_k` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_tokens` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `stop` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `seed` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "frequency_penalty",
+          "label": "frequency_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `frequency_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "presence_penalty",
+          "label": "presence_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `presence_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "repetition_penalty",
+          "label": "repetition_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `repetition_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "plugins",
+          "label": "plugins",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `plugins` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "modalities",
+          "label": "modalities",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `modalities` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "user",
+          "label": "user",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `user` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "route",
+          "label": "route",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `route` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `offset` for operation: list_models.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: list_models.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sort` for operation: list_models.",
+          "children": []
+        },
+        {
+          "shortCode": "output_modalities",
+          "label": "output_modalities",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `output_modalities` for operation: list_models.",
+          "children": []
+        },
+        {
+          "shortCode": "input_modalities",
+          "label": "input_modalities",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `input_modalities` for operation: list_models.",
+          "children": []
+        },
+        {
+          "shortCode": "supported_parameters",
+          "label": "supported_parameters",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `supported_parameters` for operation: list_models.",
+          "children": []
+        },
+        {
+          "shortCode": "model_authors",
+          "label": "model_authors",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `model_authors` for operation: list_models.",
+          "children": []
+        },
+        {
+          "shortCode": "region",
+          "label": "region",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `region` for operation: list_models.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e11ee170-7f6c-4bd3-baff-5abbf2e7559f",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed OpenRouter JSON (chat completion or models list).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "34962707-65d9-4ca6-bfe8-c5e75e71e7bf",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official OpenRouter verb. EXACT values: chat | list_models. Default chat = POST /api/v1/chat/completions.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "list_models"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "fa12b4a8-d3a9-422f-88da-e2d4f5742f7d",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "OpenRouter API key. Sent as Authorization: Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "571fd3c6-4295-443d-99f9-49571390e146",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "OpenRouter id with org prefix. Curated options cover current frontier aliases only — the full catalog is hundreds of ids (GET /models). Examples: openai/gpt-5.6-sol, anthropic/claude-sonnet-5, google/gemini-3.7-flash, x-ai/grok-4.6. Omit only if the OpenRouter account has a default model. Docs: https://openrouter.ai/docs .",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "openai/gpt-5.6-sol",
+        "openai/gpt-5.6-terra",
+        "anthropic/claude-sonnet-5",
+        "anthropic/claude-opus-5",
+        "google/gemini-3.7-flash",
+        "x-ai/grok-4.6",
+        "deepseek/deepseek-v4-pro",
+        "moonshotai/kimi-k3"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "1cdeddec-9917-435d-bc62-f1d216cf95a3",
+      "shortCode": "http_referer",
+      "label": "HTTP-Referer",
+      "type": "string",
+      "description": "App URL for OpenRouter attribution (header HTTP-Referer). Sent when set; omitted when blank. Not a tracking cookie. Do not put secrets here.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b824e2ee-f191-4230-84d4-1dc43899ed21",
+      "shortCode": "title",
+      "label": "App title",
+      "type": "string",
+      "description": "Display name for OpenRouter rankings (header X-OpenRouter-Title). Sent when set; omitted when blank.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "04ec2939-a3f6-4802-96ed-c5fafb9edc11",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "47fe3a8d-74f2-42e1-bc1e-ba07ab0d076b",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether OpenRouter requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,402 @@
+{
+  "_id": "36c9220e-7cb6-5d29-8a1f-9f2c19147860",
+  "version": "1.0.0",
+  "name": "EasyPost",
+  "label": "EasyPost v2 — address, parcel, shipment, buy, tracker",
+  "description": "EasyPost REST v2. HTTP Basic with api_key as username and empty password (auth.basicKeyPosition=username). Docs: https://www.easypost.com/docs/api",
+  "icon": "local_shipping",
+  "tags": [
+    "easypost",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f6944202-a9f2-5f3c-9380-ad4d64edf840",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "address_create",
+          "description": "Official API verb. EXACT: address_create | parcel_create | shipment_create | buy | tracker_create | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Shipment id for buy. Path {id}. Example: shp_...",
+          "children": []
+        },
+        {
+          "shortCode": "street1",
+          "label": "street1",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Address line 1 for address_create. Nested to address.street1. Example: 417 Montgomery Street.",
+          "children": []
+        },
+        {
+          "shortCode": "street2",
+          "label": "street2",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Address line 2 for address_create. Nested to address.street2.",
+          "children": []
+        },
+        {
+          "shortCode": "city",
+          "label": "city",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "City for address_create. Nested to address.city. Example: San Francisco.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "State / province for address_create. Nested to address.state. Example: CA.",
+          "children": []
+        },
+        {
+          "shortCode": "zip",
+          "label": "zip",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Postal code for address_create. Nested to address.zip. Example: 94104.",
+          "children": []
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO country for address_create. Nested to address.country. Example: US.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Person name for address_create. Nested to address.name.",
+          "children": []
+        },
+        {
+          "shortCode": "company",
+          "label": "company",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Company for address_create. Nested to address.company.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Phone for address_create. Nested to address.phone.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email for address_create. Nested to address.email.",
+          "children": []
+        },
+        {
+          "shortCode": "verify",
+          "label": "verify",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Verification types for address_create, e.g. [\"delivery\"]. Nested to address.verify.",
+          "children": []
+        },
+        {
+          "shortCode": "length",
+          "label": "length",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Parcel length (inches) for parcel_create. Nested to parcel.length. Example: 20.2.",
+          "children": []
+        },
+        {
+          "shortCode": "width",
+          "label": "width",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Parcel width (inches) for parcel_create. Nested to parcel.width.",
+          "children": []
+        },
+        {
+          "shortCode": "height",
+          "label": "height",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Parcel height (inches) for parcel_create. Nested to parcel.height.",
+          "children": []
+        },
+        {
+          "shortCode": "weight",
+          "label": "weight",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Parcel weight in ounces (required for parcel_create). Nested to parcel.weight. Example: 65.9.",
+          "children": []
+        },
+        {
+          "shortCode": "predefined_package",
+          "label": "predefined_package",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "EasyPost predefined_package instead of LxWxH. Nested to parcel.predefined_package. Example: Letter.",
+          "children": []
+        },
+        {
+          "shortCode": "parcel",
+          "label": "parcel",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Full Parcel object. parcel_create escape hatch, or shipment_create parcel (id or inline). Nested to shipment.parcel on shipment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "to_address",
+          "label": "to_address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Destination Address id or inline object for shipment_create. Nested to shipment.to_address.",
+          "children": []
+        },
+        {
+          "shortCode": "from_address",
+          "label": "from_address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Origin Address id or inline object for shipment_create. Nested to shipment.from_address.",
+          "children": []
+        },
+        {
+          "shortCode": "return_address",
+          "label": "return_address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Optional return Address for shipment_create. Nested to shipment.return_address.",
+          "children": []
+        },
+        {
+          "shortCode": "customs_info",
+          "label": "customs_info",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "CustomsInfo for international shipment_create. Nested to shipment.customs_info.",
+          "children": []
+        },
+        {
+          "shortCode": "carrier_accounts",
+          "label": "carrier_accounts",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Carrier account ids to rate on shipment_create. Nested to shipment.carrier_accounts.",
+          "children": []
+        },
+        {
+          "shortCode": "is_return",
+          "label": "is_return",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "When true, shipment_create is a return shipment.",
+          "children": []
+        },
+        {
+          "shortCode": "rate",
+          "label": "rate",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Rate to purchase on buy: {\"id\":\"rate_...\"}. Official buy body.rate.",
+          "children": []
+        },
+        {
+          "shortCode": "insurance",
+          "label": "insurance",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Insurance amount in USD for buy. Example: 249.99.",
+          "children": []
+        },
+        {
+          "shortCode": "tracking_code",
+          "label": "tracking_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Carrier tracking code for tracker_create. Nested to tracker.tracking_code. Example: EZ1000000001.",
+          "children": []
+        },
+        {
+          "shortCode": "carrier",
+          "label": "carrier",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional carrier override for tracker_create. Nested to tracker.carrier. Example: USPS.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ab3c1f52-c002-5b73-8a97-2baf0b3826d0",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ae2963c7-442f-557c-9d9f-1655f88c76d6",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: address_create | parcel_create | shipment_create | buy | tracker_create | trigger. trigger does not open a socket.",
+      "value": "address_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "address_create",
+        "parcel_create",
+        "shipment_create",
+        "buy",
+        "tracker_create",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "0bbecf6d-6666-5fcb-8fc7-3276aa5ec5c8",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "EasyPost API key. HTTP Basic username with empty password (auth.basicKeyPosition=username). Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f7551c9d-f082-53e1-bdb3-f735bad3860d",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

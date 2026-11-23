@@ -1,0 +1,315 @@
+{
+  "_id": "5108dc21-e481-4251-ac3a-30dc7061d875",
+  "version": "1.0.0",
+  "name": "Emelia",
+  "label": "Emelia REST API — outreach campaigns and contact lists",
+  "description": "Official Emelia REST API at https://api.emelia.io. Handler: OfficialApiNode. API key in the Authorization header. Outreach / cold-email: sender reputation and CAN-SPAM/CASL/GDPR consent are the customer's duty. Prefer current /advanced/campaigns and /lists routes (legacy /emails/campaigns still exist). trigger.listen is BPMN ingress. Customer owns the Emelia account. api_key is never logged or returned.",
+  "icon": "outgoing_mail",
+  "tags": [
+    "outreach"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d7605fec-75bb-4161-9d3d-948babdfb63e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example: {\"operation\":\"campaign.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "campaign.create",
+          "description": "Overrides config operation when non-blank. EXACT: campaign.create | campaign.get | campaign.list | campaign.start | campaign.pause | campaign.delete | campaign.addContact | contactList.add | contactList.list | trigger.listen. trigger.listen is ingress (BPMN message event, no socket).",
+          "children": []
+        },
+        {
+          "shortCode": "campaignId",
+          "label": "campaignId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign id for get/start/pause/addContact.",
+          "children": []
+        },
+        {
+          "shortCode": "listId",
+          "label": "listId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact list id for contactList.* . Contacts added to a list used by campaigns are attached to those campaigns.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required for campaign.create (unique per account). Wire field name. Aliases campaignName / title are accepted.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact email. Outreach: only addresses the customer has permission to contact.",
+          "children": []
+        },
+        {
+          "shortCode": "firstName",
+          "label": "firstName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact given name.",
+          "children": []
+        },
+        {
+          "shortCode": "lastName",
+          "label": "lastName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact family name.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Phone (PII). Minimize.",
+          "children": []
+        },
+        {
+          "shortCode": "linkedinUrlProfile",
+          "label": "linkedinUrlProfile",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional profile URL on contactList.add (provider field linkedinUrlProfile). Customer's duty to comply with that destination network's terms. This node does not scrape.",
+          "children": []
+        },
+        {
+          "shortCode": "updateIfExists",
+          "label": "updateIfExists",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "contactList.add: update a duplicate instead of ignoring it.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "contactList.list page.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "contactList.list page size.",
+          "children": []
+        },
+        {
+          "shortCode": "recipients",
+          "label": "recipients",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "campaign.create recipients.lists / excludedLists per current schema.",
+          "children": []
+        },
+        {
+          "shortCode": "sequence",
+          "label": "sequence",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "campaign.create sequence steps. Do not put purchased lists here.",
+          "children": []
+        },
+        {
+          "shortCode": "sender",
+          "label": "sender",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `sender` for operation: campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "settings",
+          "label": "settings",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `settings` for operation: campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "_empty",
+          "label": "_empty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `_empty` for operations: campaign.start, campaign.pause.",
+          "children": []
+        },
+        {
+          "shortCode": "customVariables",
+          "label": "customVariables",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "campaign.addContact customVariables map. Official customVariables.",
+          "children": []
+        },
+        {
+          "shortCode": "companyName",
+          "label": "companyName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `companyName` for operation: contactList.add.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "589a8ccc-ff3c-463e-b595-b85cdc764906",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Log ids only — bodies may contain PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "fd14ce02-a51a-4618-b910-e6f9cb494d21",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: campaign.create, campaign.get, campaign.list, campaign.start, campaign.pause, campaign.delete, campaign.addContact, contactList.add, contactList.list, trigger.listen.",
+      "value": "campaign.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "campaign.create",
+        "campaign.get",
+        "campaign.list",
+        "campaign.start",
+        "campaign.pause",
+        "campaign.delete",
+        "campaign.addContact",
+        "contactList.add",
+        "contactList.list",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "3545c627-4cbb-4e68-a9a5-9aa6687278b1",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Emelia API key from account settings. Sent as Authorization header value. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e7c09ca8-df6f-4033-a88e-f6e724086376",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,430 @@
+{
+  "_id": "2e21b596-233a-464d-8efe-888d24841156",
+  "version": "1.0.0",
+  "name": "Auth0",
+  "label": "Auth0 Management API v2 — users, roles, clients, logs",
+  "description": "Official Auth0 Management API v2. Bearer access_token is a Management API token the operator already minted (this node does not exchange client credentials). domain is host only. Handler: OfficialApiNode. Tenant user/log data is personal data — minimize. Never log access_token. listen is BPMN message-event ingress. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "lock",
+  "tags": [
+    "iam",
+    "idp"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5ef573c5-cd2d-4086-a329-3b3398a30b09",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Path {id} is user id, role is not used as path except assign-role uses user id. Do not put access_token here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "create-user",
+          "description": "Overrides config when non-blank. EXACT: create-user | get-user | list-users | update-user | delete-user | create-role | list-roles | assign-role | list-clients | get-log | list-logs | listen.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path id: user_id (auth0|…), or log_id for get-log. Path-encoded.",
+          "children": []
+        },
+        {
+          "shortCode": "connection",
+          "label": "connection",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-user required. Database or passwordless connection name. Example: Username-Password-Authentication.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User email (RFC 5322). Required for most database create-user calls.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Display name (users) or role name (create-role; required for create-role).",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Role description for create-role.",
+          "children": []
+        },
+        {
+          "shortCode": "roles",
+          "label": "roles",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "assign-role: array of existing role ids. Example: [\"rol_…\"]. New roles cannot be created here.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search query for list-users (v3 syntax) or list-logs (log query syntax).",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "0-based page index for list-users, list-roles, list-clients, list-logs.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size. Typical max 100. list-logs search is capped at 1000 total results.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list-logs checkpoint cursor (log id to search from).",
+          "children": []
+        },
+        {
+          "shortCode": "take",
+          "label": "take",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "list-logs checkpoint page size when using from.",
+          "children": []
+        },
+        {
+          "shortCode": "password",
+          "label": "password",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Database connection password for create-user / update-user. Never log. Prefer a StudioQuack secret binding when storing a new user secret.",
+          "children": []
+        },
+        {
+          "shortCode": "given_name",
+          "label": "given_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `given_name` for operations: create-user, update-user.",
+          "children": []
+        },
+        {
+          "shortCode": "family_name",
+          "label": "family_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `family_name` for operations: create-user, update-user.",
+          "children": []
+        },
+        {
+          "shortCode": "nickname",
+          "label": "nickname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `nickname` for operations: create-user, update-user.",
+          "children": []
+        },
+        {
+          "shortCode": "username",
+          "label": "username",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `username` for operation: create-user.",
+          "children": []
+        },
+        {
+          "shortCode": "picture",
+          "label": "picture",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `picture` for operations: create-user, update-user.",
+          "children": []
+        },
+        {
+          "shortCode": "user_metadata",
+          "label": "user_metadata",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "user_metadata object for create-user / update-user. Example: {\"plan\":\"pro\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "app_metadata",
+          "label": "app_metadata",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "app_metadata object for create-user / update-user (elevated). Example: {\"roles\":[\"admin\"]}.",
+          "children": []
+        },
+        {
+          "shortCode": "email_verified",
+          "label": "email_verified",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "create-user / update-user email_verified flag.",
+          "children": []
+        },
+        {
+          "shortCode": "verify_email",
+          "label": "verify_email",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "create-user: send a verification email when true.",
+          "children": []
+        },
+        {
+          "shortCode": "phone_number",
+          "label": "phone_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `phone_number` for operations: create-user, update-user.",
+          "children": []
+        },
+        {
+          "shortCode": "blocked",
+          "label": "blocked",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "create-user / update-user blocked flag.",
+          "children": []
+        },
+        {
+          "shortCode": "search_engine",
+          "label": "search_engine",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `search_engine` for operation: list-users.",
+          "children": []
+        },
+        {
+          "shortCode": "include_totals",
+          "label": "include_totals",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `include_totals` for operations: list-users, list-roles, list-clients.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sort` for operations: list-users, list-logs.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `fields` for operations: list-users, list-clients, list-logs.",
+          "children": []
+        },
+        {
+          "shortCode": "name_filter",
+          "label": "name_filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `name_filter` for operation: list-roles.",
+          "children": []
+        },
+        {
+          "shortCode": "include_fields",
+          "label": "include_fields",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `include_fields` for operations: list-clients, list-logs.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ab6687f6-be05-47f5-bcf2-04dc32b72489",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "2xx: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Management API JSON. Do not log user PII or tokens.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "29000bd8-6530-48a0-917d-3372d2db5985",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb when input.operation is blank. listen is ingress (BPMN message event).",
+      "value": "get-user",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "create-user",
+        "get-user",
+        "list-users",
+        "update-user",
+        "delete-user",
+        "create-role",
+        "list-roles",
+        "assign-role",
+        "list-clients",
+        "get-log",
+        "list-logs",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "0ff8b1cf-9560-44b7-bd72-2647c5786e06",
+      "shortCode": "access_token",
+      "label": "Management API token",
+      "type": "password",
+      "description": "Already-minted Management API access token (Authorization: Bearer). StudioQuack secret. Scope to the verbs you call (create:users, read:users, update:users, delete:users, create:roles, read:roles, read:clients, read:logs). Never on INPUT or in logs.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "abd4ce7a-56b4-4273-8ebe-252f9a3c92da",
+      "shortCode": "domain",
+      "label": "Tenant host",
+      "type": "string",
+      "description": "Host only, no scheme, no path. Canonical tenant host or custom domain host. Example: tenant.us.auth0.com.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a0aca167-5208-4f3c-8968-b8f8359054e6",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,623 @@
+{
+  "_id": "9462f700-00cc-4e9c-872d-97a97aba984c",
+  "bpmnType": "local.llm.provider",
+  "version": "2.0.0",
+  "nodeType": "serviceTask",
+  "name": "Local LLM",
+  "label": "Local LLM",
+  "description": "Self-hosted OpenAI-compatible LLM provider for the v2 agent model-port contract (INPUT llm_input → OUTPUT llm_output). The handler reads llm_input, merges instance configurationParameters, strips a designer picker env prefix from model, and calls studioquack.llm.completion() — the StudioQuack engine daemon proxies that call to the OpenAI-compatible engine configured in Engine Settings (Ollama, vLLM, llama.cpp, TGI, or any BYO /v1/chat/completions endpoint). Provider base URL, API keys, and TLS material never enter this sandbox; only the bare model id, sampling knobs, tools, and messages are forwarded. When stream is true (default), the handler emits live helper emitPartial(\"thinking\", delta) for reasoning/thinking token deltas and emitPartial(\"answer\", delta) for content deltas, then returns one aggregated llm_output.result (thoughts/thinking, finish_reason, usage, tool_calls assembled at end). On any exception the node still HTTP-200s with llm_output.result = {error, type}. Do not use this node for OpenAI cloud keys — use OpenAI Models. templateId: 1c8b0d45-1d10-4f2e-844c-2318af96b123. Purpose: the handler reads this field to drive Local LLM. Example: \"sample\". Model select stores envId::modelId; the handler strips the prefix and sets envId on the daemon LLM call so credentials never enter this sandbox. On exception llm_output.result is {error, type}. Data protection: prompts and context stay on the daemon's local LLM provider proxy (Engine Settings); they do not go to OpenAI cloud. GDPR: processing remains under the operator's host. Secrets never enter this sandbox.",
+  "icon": "dns",
+  "tags": [
+    "llm",
+    "ollama",
+    "local",
+    "openai-compatible",
+    "daemon"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "c525bb64-f52e-4829-8bf0-f1fe33aa6b42",
+  "ports": [
+    {
+      "_id": "8ee4bd39-3470-4dd6-9969-8dc433f274ad",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "Canonical v2 LLM request. The handler reads studioquack.getInputValuesByPortValue('llm_input') (first list element). A bare UTF-8 string is wrapped as {messages:[{role:'user', content:<string>}]}. A JSON string is json.loads'd. Object keys messages, prompt, tools are consumed; any other top-level key that is not already a configurationParameter shortCode is forwarded verbatim to studioquack.llm.completion() (OpenAI-compatible passthrough). REQUIRED: empty/missing input fails with result {error, type:'ValueError'} and message 'No input received on llm_input'. Either messages or prompt should be present (both omitted → daemon/provider error). Streaming is governed by this node's own stream/streaming configuration (default ON), never per call. Example: {\"messages\":[{\"role\":\"user\",\"content\":\"Summarize this log.\"}],\"tools\":[]}. Purpose: the handler reads this field to drive llm_input. Accepted: type INPUT; required.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Chat-completions message list passed to studioquack.llm.completion(messages=…). Purpose: the conversation the local engine must complete. Accepted value: JSON array of objects {role, content, tool_calls?, thinking?, thoughts?, tool_call_id?, name?}. role is one of system | user | assistant | tool (case-sensitive, OpenAI-compatible). content is a string or a list of typed blocks: {type:'text', text} | {type:'image'|'audio'|'video'|'document', mime_type, source:'base64'|'url'|'file_id', data, name?} | {type:'tool_use', id, name, input} | {type:'tool_result', tool_use_id, content}. Omit or [] when using prompt instead. Invalid non-array/non-object is forwarded as-is and typically 400s at the engine. Example: [{\"role\":\"system\",\"content\":\"You are a log analyst.\"},{\"role\":\"user\",\"content\":\"What failed in build 442?\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Function-calling tool definitions merged into the completion call as tools=… unless already supplied via configuration. Purpose: advertise callable tools to the local engine. Accepted value: list of {name:string, description:string, request:<JSON Schema object>}. name must be a non-empty identifier the model can emit. Omit, null, or [] → no tools field on the daemon call. Invalid non-list is still assigned and may 400 at the engine. Example: [{\"name\":\"lookup_order\",\"description\":\"Fetch an order by id.\",\"request\":{\"type\":\"object\",\"properties\":{\"order_id\":{\"type\":\"string\"}},\"required\":[\"order_id\"]}}].",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "User-uploaded files and voice clips for the model. Folded onto the last user message (or a new user message) then converted under the BASIC OpenAI-compatible profile (text / image_url only).",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "File kind. EXACT values: image | document | audio | video.",
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png.",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "string",
+              "required": false,
+              "value": "base64",
+              "description": "How the payload is carried. EXACT values: base64 | url. Default: base64.",
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Base64-encoded payload (when source=base64) or absolute URL (when source=url).",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name.",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9668bf75-bcc3-446c-8a78-6d1576e1bf29",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "Always emitted via studioquack.returnResult([ResultItem('llm_output', {result: …, outputFiles?})]). Success: result is the assistant payload extracted from the provider's first choice (choices[0].message, or {role:'assistant', content: choices[0].text} for legacy text completions), plus thoughts/thinking (reasoning deltas accumulated during stream), output_files when the engine returns media, finish_reason, usage, and tool_calls assembled after the stream ends. Non-empty result.output_files / outputFiles are also copied to top-level outputFiles on this envelope. The port is still present on HTTP 200; do not treat HTTP status as success. Example success envelope: {\"result\":{\"role\":\"assistant\",\"content\":\"4\",\"finish_reason\":\"stop\"}}. Purpose: the handler reads this field to drive llm_output. Accepted: type OUTPUT; omit to use default \"llm_output\". Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": true,
+          "value": "{}",
+          "description": "Success assistant payload (fields depend on the local engine, all optional except role/content on a normal chat turn): {role:'assistant', content: string | [{type:'text', text}], tool_calls?:[{id, name, args, type:'tool_call'}], thoughts?:[{type:'thinking'|'reasoning_summary', text, signature?}], thinking?: <legacy mirror of thoughts, [{type:'thinking', thinking:string}]>, output_files?:[{type, mime_type, source, data, name?}], finish_reason?: 'stop'|'length'|'tool_calls'|'content_filter'|'error'|engine-specific, usage?:{prompt_tokens, completion_tokens, total_tokens, reasoning_tokens?}}. During streaming, thinking/reasoning deltas are also published live via helper emitPartial(\"thinking\", delta) and content deltas via emitPartial(\"answer\", delta); the fields above are the assembled end state. ValueError, TimeoutError, HelperException). Never contains daemon credentials or the envId prefix. Example success: {\"role\":\"assistant\",\"content\":\"The build failed at test CollectOrder.\",\"thoughts\":[{\"type\":\"thinking\",\"text\":\"Checking the stack trace…\"}],\"thinking\":[{\"type\":\"thinking\",\"thinking\":\"Checking the stack trace…\"}],\"finish_reason\":\"stop\",\"usage\":{\"prompt_tokens\":128,\"completion_tokens\":42,\"total_tokens\":170}}. Example error: {\"error\":\"Connection refused to local engine\",\"type\":\"ConnectionError\"}. Purpose: the handler reads this field to drive result. Accepted: type object; required.",
+          "children": [
+            {
+              "shortCode": "role",
+              "label": "role",
+              "type": "string",
+              "required": false,
+              "value": "assistant",
+              "description": "Always 'assistant' on a completed turn.",
+              "children": []
+            },
+            {
+              "shortCode": "content",
+              "label": "content",
+              "type": "list",
+              "required": false,
+              "value": "[]",
+              "description": "Typed content blocks: {type:'text', text} plus media/tool blocks. The final answer text is the concatenation of text blocks.",
+              "children": []
+            },
+            {
+              "shortCode": "tool_calls",
+              "label": "tool_calls",
+              "type": "list",
+              "required": false,
+              "value": "[]",
+              "description": "Tool calls the model requested: {id, name, arguments}. Present only when the model calls tools.",
+              "children": []
+            },
+            {
+              "shortCode": "thoughts",
+              "label": "thoughts",
+              "type": "list",
+              "required": false,
+              "value": "[]",
+              "description": "Reasoning trace entries {text} when the model exposes chain-of-thought.",
+              "children": []
+            },
+            {
+              "shortCode": "thinking",
+              "label": "thinking",
+              "type": "list",
+              "required": false,
+              "value": "[]",
+              "description": "Thinking blocks {type:'thinking', thinking} mirroring thoughts for UI rendering.",
+              "children": []
+            },
+            {
+              "shortCode": "output_files",
+              "label": "output_files",
+              "type": "file",
+              "required": false,
+              "value": "",
+              "description": "Generated files {kind, mime_type, source, data, name} (e.g. audio out).",
+              "children": [
+                {
+                  "shortCode": "kind",
+                  "label": "kind",
+                  "type": "string",
+                  "required": false,
+                  "value": "",
+                  "description": "File kind. EXACT values: image | document | audio | video.",
+                  "children": []
+                },
+                {
+                  "shortCode": "mime_type",
+                  "label": "mime_type",
+                  "type": "string",
+                  "required": false,
+                  "value": "",
+                  "description": "RFC 1521 media type, e.g. application/pdf, image/png.",
+                  "children": []
+                },
+                {
+                  "shortCode": "source",
+                  "label": "source",
+                  "type": "string",
+                  "required": false,
+                  "value": "base64",
+                  "description": "How the payload is carried. EXACT values: base64 | url. Default: base64.",
+                  "children": []
+                },
+                {
+                  "shortCode": "data",
+                  "label": "data",
+                  "type": "string",
+                  "required": false,
+                  "value": "",
+                  "description": "Base64-encoded payload (when source=base64) or absolute URL (when source=url).",
+                  "children": []
+                },
+                {
+                  "shortCode": "name",
+                  "label": "name",
+                  "type": "string",
+                  "required": false,
+                  "value": "",
+                  "description": "Original filename, surfaced as the upload name.",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "shortCode": "finish_reason",
+              "label": "finish_reason",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Provider finish reason (stop, tool_calls, length, ...).",
+              "children": []
+            },
+            {
+              "shortCode": "usage",
+              "label": "usage",
+              "type": "object",
+              "required": false,
+              "value": "{}",
+              "description": "Token usage {prompt_tokens, completion_tokens, total_tokens, reasoning_tokens?} when the provider reports it.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Files produced by the model, e.g. generated images/audio. Copied from result.output_files / result.outputFiles when non-empty; omitted when empty.",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "File kind. EXACT values: image | document | audio | video.",
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png.",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "string",
+              "required": false,
+              "value": "base64",
+              "description": "How the payload is carried. EXACT values: base64 | url. Default: base64.",
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Base64-encoded payload (when source=base64) or absolute URL (when source=url).",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "streaming",
+          "label": "streaming",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Live stream channel, present when the request sets stream/streaming true. While `result` assembles, the node emits deltas as {channel, delta} frames: channel 'thinking' carries reasoning/thinking deltas, channel 'answer' carries content deltas. A function-port caller (e.g. AI Agent model port) listens to this channel to render the stream live; the final assembled payload always arrives in `result`.",
+          "children": [
+            {
+              "shortCode": "channel",
+              "label": "channel",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Delta channel. EXACT values: thinking | answer.",
+              "children": [],
+              "_id": "be8b724d-cf29-4e5c-9d0c-9e2295ec702c"
+            },
+            {
+              "shortCode": "delta",
+              "label": "delta",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Incremental text piece for the channel. Append in arrival order.",
+              "children": [],
+              "_id": "0d08aeaf-32d6-43f6-a57d-1d0145fb1c77"
+            }
+          ],
+          "_id": "5ed42773-ca16-48b1-b63c-df9cedee8f02"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "67240459-06c0-46af-b070-364725b7fb31",
+      "shortCode": "model",
+      "label": "AI Model",
+      "type": "select",
+      "description": "Model identifier on the daemon's configured OpenAI-compatible provider. Purpose: studioquack.llm.completion(model=…) after stripping the designer picker prefix. The designer populates options via GET /be/v1/llm/models/picker (labels like 'llama3.1 (Mac Mini LLM)'; stored value 'envId::modelId'). The handler splits on the first '::': left side is target_env (daemon overlay routing; the running engine must hold an llm allow-list rule on that engine); right side is the bare model id sent to the provider. No '::' → loopback on this engine (target_env=null). Required (required:true). Empty/missing → completion is called without a model and the daemon/provider returns an error that is packed as {error, type}. Do not put credentials here. Example stored value: '3f2a9c10-1111-2222-3333-444455556666::llama3.1'. Example loopback: 'llama3.1'. Accepted: type select; required.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [],
+      "validationRules": {}
+    },
+    {
+      "_id": "6df6b423-d32f-4aa1-9403-dfad6d85e4ee",
+      "shortCode": "temperature",
+      "label": "Temperature",
+      "type": "number",
+      "description": "Sampling temperature forwarded as a float to the local provider. Purpose: controls randomness of token sampling. Accepted values: number or numeric string in 0.0–2.0 (OpenAI-compatible). Parsed with float(); non-numeric is omitted so the engine default applies. Empty string / unset → omitted from the request. Example: 0.2 for extraction; 0.8 for drafting.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "072f47ac-e946-4927-85f0-7d148df15170",
+      "shortCode": "top_p",
+      "label": "Top P",
+      "type": "number",
+      "description": "Nucleus sampling top_p forwarded as a float. Purpose: restrict sampling to the smallest set of tokens whose cumulative probability ≥ top_p. Accepted values: number or numeric string in 0.0–1.0. Non-numeric or empty → omitted. Example: 0.9. Do not combine aggressive temperature and top_p unless the engine documents that pairing.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1032df69-1ef9-437f-a607-11206710b34f",
+      "shortCode": "max_completion_tokens",
+      "label": "Max Completion Tokens",
+      "type": "number",
+      "description": "Hard cap on completion tokens (max_completion_tokens). Purpose: bound cost and latency of one call. Preferred over deprecated max_tokens. Accepted values: positive integers (parsed int(); floats that are whole numbers are accepted). Empty/unset → omitted. Invalid non-numeric → omitted. When both this and max_tokens are set, this wins. Example: 1024.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "92a48e3d-db4b-46fe-8822-7907bbc6ec4c",
+      "shortCode": "max_tokens",
+      "label": "Max Tokens (deprecated)",
+      "type": "number",
+      "description": "Deprecated OpenAI alias for output length. Purpose: forwarded as max_tokens only when set AND max_completion_tokens is unset. Accepted values: positive integers. Empty → omitted. Prefer max_completion_tokens. Example: 512.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8f9805e3-26e4-460f-aab7-1c350e0856f4",
+      "shortCode": "frequency_penalty",
+      "label": "Frequency Penalty",
+      "type": "number",
+      "description": "OpenAI-compatible frequency penalty forwarded as float. Purpose: penalize tokens already present in the text proportionally to count. Accepted values: -2.0–2.0. Empty/non-numeric → omitted. Support depends on the local engine (Ollama may ignore it). Example: 0.2.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c8b890fb-1697-4830-bd3e-9252032256a9",
+      "shortCode": "presence_penalty",
+      "label": "Presence Penalty",
+      "type": "number",
+      "description": "OpenAI-compatible presence penalty forwarded as float. Purpose: penalize tokens once they have appeared, encouraging new topics. Accepted values: -2.0–2.0. Empty/non-numeric → omitted. Example: 0.1.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "26dadc48-192d-411f-a998-47fc2173f52a",
+      "shortCode": "stop",
+      "label": "Stop Sequences",
+      "type": "string",
+      "description": "Stop sequences forwarded to the provider. Purpose: halt generation when a sequence is emitted. Accepted values: a JSON array of strings, or a raw string (parsed as JSON when possible, otherwise kept as a single stop string). OpenAI-compatible engines typically allow at most 4 sequences. Empty → omitted. Example JSON: [\"END\",\"\\n\\nUser:\"]. Example raw: 'END'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "99906fe2-c9e4-4699-b68a-e96f721ff1a2",
+      "shortCode": "n",
+      "label": "Completions Count",
+      "type": "number",
+      "description": "Number of completions to generate (n). Purpose: request multiple samples. Accepted values: positive integers. Empty → omitted (provider default, usually 1). The handler still returns only choices[0] on llm_output. Example: 1.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7d95c713-d986-4f6a-abd2-1da355053d1e",
+      "shortCode": "logprobs",
+      "label": "Logprobs",
+      "type": "boolean",
+      "description": "Whether to return token log-probabilities. Purpose: forwarded as a real boolean (not the string 'true') because strict OpenAI-compatible servers 400 on stringly-typed scalars. Accepted values: boolean, or strings true|1|yes|on / false|0|no|off (case-insensitive). Unparseable → omitted. Default stored value 'false'. Support depends on the local engine. Example: false.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2c9fb73b-4fab-4c4d-bf27-da92e948a37e",
+      "shortCode": "top_logprobs",
+      "label": "Top Logprobs",
+      "type": "number",
+      "description": "Number of most likely tokens to return at each position when logprobs=true. Purpose: forwarded as integer top_logprobs. Accepted values: non-negative integers (typical OpenAI range 0–20). Empty → omitted. Ignored by engines that do not support logprobs. Example: 5.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "addb3428-f0a3-4b01-a47d-b87f77e6ed52",
+      "shortCode": "reasoning_effort",
+      "label": "Reasoning Effort",
+      "type": "select",
+      "description": "Reasoning-model hint forwarded when the local engine supports it (o-series / some gpt-5* compatible endpoints). Purpose: trade latency vs. hidden reasoning tokens. EXACT accepted values: 'low' | 'medium' | 'high'. Empty / unset → omitted. Unknown strings are still forwarded and may 400 at the engine. Example: 'medium'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "28c2d39c-a04d-404b-8e4d-3ec727fae589",
+      "shortCode": "verbosity",
+      "label": "Verbosity",
+      "type": "string",
+      "description": "Reasoning verbosity hint for compatible models. Purpose: how much of the reasoning the engine should surface. Accepted values: 'low' | 'medium' | 'high'. Empty → omitted. Example: 'low'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e34469f4-0773-4983-b63e-d61b3115553d",
+      "shortCode": "response_format",
+      "label": "Response Format",
+      "type": "string",
+      "description": "Structured-output hint parsed as JSON when possible. Purpose: ask the engine for JSON or a schema-constrained object. Accepted values: JSON object string such as {\"type\":\"json_object\"}; literals 'json' or 'text' (engine-dependent); or a JSON-schema object string. Empty → omitted. Invalid JSON that is not json/text is omitted (not forwarded raw) unless the parser keeps a dict/list. Example: {\"type\":\"json_object\"}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "83254dcc-3ddc-44af-8eb5-9bd40fcaa85b",
+      "shortCode": "modalities",
+      "label": "Output Modalities",
+      "type": "string",
+      "description": "Requested output modalities for multimodal chat models. Purpose: forwarded as modalities to engines that can return audio as well as text. Accepted values: JSON array or comma-separated list. Typical tokens: 'text', 'audio'. Empty → omitted. Example: [\"text\"] or [\"text\",\"audio\"].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "16a90d64-583b-416d-a9fb-e275671e31ed",
+      "shortCode": "audio",
+      "label": "Audio Output Config",
+      "type": "string",
+      "description": "JSON object for audio output settings when modalities includes audio. Purpose: voice and container format for local engines that speak. Accepted value: JSON object, e.g. {\"voice\":\"alloy\",\"format\":\"wav\"}. Empty / invalid JSON → omitted. Example: {\"voice\":\"alloy\",\"format\":\"wav\"}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ee193179-b9fe-4954-a560-1737e1544d22",
+      "shortCode": "parallel_tool_calls",
+      "label": "Parallel Tool Calls",
+      "type": "boolean",
+      "description": "Allow multiple tool calls in one assistant turn (parallel_tool_calls). Purpose: forwarded as a real boolean. Accepted values: boolean or true|1|yes|on / false|0|no|off. Unparseable → omitted. Default stored value 'false'. Example: true when the graph's tools are independent.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "39ba68b1-6823-4667-a842-4c68f2c1a242",
+      "shortCode": "prompt_cache_key",
+      "label": "Prompt Cache Key",
+      "type": "string",
+      "description": "Stable string key for prompt-prefix caching on providers that support it. Purpose: bucket cache entries across calls that share a long system prompt. Accepted values: non-empty string. Empty → omitted. Not a secret; do not put PHI uniquely identifying a patient if your policy forbids it. Example: 'order-agent-sys-v3'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2e42249e-9048-4910-96c6-7f4f4969747b",
+      "shortCode": "seed",
+      "label": "Seed",
+      "type": "number",
+      "description": "Best-effort determinism seed forwarded as integer. Purpose: reproduce a sample when the engine honors seed. Accepted values: integers. Empty/non-numeric → omitted. Not a guarantee on all local engines. Example: 42.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ddcc3a64-d95b-40af-9a78-05182c59b2c8",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether this provider requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Input-port stream/streaming overrides this config. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cuser": "c525bb64-f52e-4829-8bf0-f1fe33aa6b42",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "c525bb64-f52e-4829-8bf0-f1fe33aa6b42",
+  "agenticNode": true,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

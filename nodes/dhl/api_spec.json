@@ -1,0 +1,84 @@
+{
+  "baseUrl": "https://express.api.dhl.com/mydhlapi",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "configKey": "api_secret",
+    "userKey": "api_key"
+  },
+  "operations": {
+    "tracking_get": {
+      "kind": "http",
+      "method": "GET",
+      "baseUrl": "https://api-eu.dhl.com",
+      "path": "/track/shipments",
+      "required": [
+        "trackingNumber"
+      ],
+      "queryFrom": [
+        "trackingNumber",
+        "service",
+        "originCountryCode",
+        "requesterCountryCode",
+        "recipientPostalCode",
+        "language",
+        "offset",
+        "limit"
+      ],
+      "extraHeaders": {
+        "DHL-API-Key": "{tracking_api_key}",
+        "Authorization": "{tracking_api_key}"
+      }
+    },
+    "shipment_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/shipments",
+      "required": [
+        "plannedShippingDateAndTime",
+        "productCode",
+        "accounts",
+        "customerDetails",
+        "content"
+      ],
+      "bodyFrom": [
+        "plannedShippingDateAndTime",
+        "pickup",
+        "productCode",
+        "localProductCode",
+        "accounts",
+        "customerDetails",
+        "content",
+        "valueAddedServices",
+        "outputImageProperties",
+        "customerReferences",
+        "getRateEstimates",
+        "estimatedDeliveryDate"
+      ]
+    },
+    "rate_get": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/rates",
+      "required": [
+        "plannedShippingDateAndTime",
+        "accounts",
+        "customerDetails",
+        "productCode"
+      ],
+      "bodyFrom": [
+        "plannedShippingDateAndTime",
+        "accounts",
+        "customerDetails",
+        "productCode",
+        "localProductCode",
+        "unitOfMeasurement",
+        "packages",
+        "isCustomsDeclarable",
+        "nextBusinessDay",
+        "valueAddedServices"
+      ]
+    }
+  }
+}

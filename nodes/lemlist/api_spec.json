@@ -1,0 +1,182 @@
+{
+  "baseUrl": "https://api.lemlist.com/api",
+  "defaultTimeout": 30,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "lead.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/campaigns/{campaign_id}/leads/",
+      "queryFrom": [
+        "deduplicate",
+        "linkedinEnrichment",
+        "findEmail",
+        "verifyEmail",
+        "findPhone"
+      ],
+      "required": [
+        "campaign_id"
+      ],
+      "bodyFrom": [
+        "email",
+        "firstName",
+        "lastName",
+        "companyName",
+        "jobTitle",
+        "linkedinUrl",
+        "phone",
+        "companyDomain",
+        "timezone",
+        "custom_variables"
+      ]
+    },
+    "lead.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/leads/{email_or_id}",
+      "required": [
+        "email_or_id"
+      ]
+    },
+    "lead.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/campaigns/{campaign_id}/leads/{email_or_id}",
+      "queryFrom": [
+        "action"
+      ],
+      "required": [
+        "campaign_id",
+        "email_or_id"
+      ]
+    },
+    "lead.unsubscribe": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/campaigns/{campaign_id}/leads/{email}",
+      "required": [
+        "campaign_id",
+        "email"
+      ]
+    },
+    "campaign.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/campaigns",
+      "queryFrom": [
+        "version",
+        "page",
+        "limit"
+      ],
+      "required": []
+    },
+    "campaign.stats": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/campaigns/{campaign_id}/stats",
+      "required": [
+        "campaign_id"
+      ]
+    },
+    "activity.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/activities",
+      "queryFrom": [
+        "campaign_id",
+        "type",
+        "limit",
+        "offset"
+      ],
+      "required": []
+    },
+    "enrichment.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/enrich/{enrichment_id}",
+      "required": [
+        "enrichment_id"
+      ]
+    },
+    "enrichment.enrichLead": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/leads/{lead_id}/enrich",
+      "required": [
+        "lead_id"
+      ],
+      "queryFrom": [
+        "findEmail",
+        "verifyEmail",
+        "linkedinEnrichment",
+        "findPhone"
+      ]
+    },
+    "enrichment.enrichPerson": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/enrich",
+      "required": [],
+      "queryFrom": [
+        "findEmail",
+        "verifyEmail",
+        "linkedinEnrichment",
+        "findPhone",
+        "email",
+        "linkedinUrl",
+        "firstName",
+        "lastName",
+        "companyName",
+        "companyDomain",
+        "jobTitle"
+      ]
+    },
+    "team.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/team",
+      "required": []
+    },
+    "team.credits": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/team/credits",
+      "required": []
+    },
+    "unsubscribe.add": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/unsubscribes/variables/{value}",
+      "required": [
+        "value"
+      ]
+    },
+    "unsubscribe.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/v2/unsubscribes/variables/{value}",
+      "required": [
+        "value"
+      ]
+    },
+    "unsubscribe.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/unsubscribes/variables",
+      "queryFrom": [
+        "limit",
+        "offset"
+      ],
+      "required": []
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

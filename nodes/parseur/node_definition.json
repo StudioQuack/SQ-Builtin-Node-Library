@@ -1,0 +1,261 @@
+{
+  "_id": "a3eaf84f-971c-5664-ba9d-b34b0d2e4551",
+  "version": "1.0.0",
+  "name": "Parseur",
+  "label": "Parseur API — mailbox extraction",
+  "description": "Parseur API — mailbox extraction. Official API https://developer.parseur.com/. One node; pick operation. Downloaded payloads may appear as OUTPUT file. Handler: OfficialApiNode + api_spec.json. Email/PDF extraction. Data residency is in the vendor cloud. Auth: Authorization header (legacy `Token ` prefix still accepted).",
+  "icon": "description",
+  "tags": [
+    "parseur",
+    "parse",
+    "email"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "6d64bb0c-e976-5840-8132-3e8349ffd345",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port. File bytes are type file.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "mailbox_create",
+          "description": "Overrides config operation. Accepted: mailbox_create, mailbox_get, mailbox_list, mailbox_delete, document_get, document_delete, document_reprocess, document_search, listen.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "File, folder, bucket, or display name.",
+          "children": []
+        },
+        {
+          "shortCode": "parser_type",
+          "label": "parser_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "mailbox_create. Common: email | document. Example: email.",
+          "children": []
+        },
+        {
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "mailbox_create ISO 639-1. Example: en.",
+          "children": []
+        },
+        {
+          "shortCode": "mailbox_id",
+          "label": "Mailbox Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mailbox/parser id for mailbox_get/delete and document listing. Path /parser/{mailbox_id}.",
+          "children": []
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `search` for operation: document_search.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `offset` for operation: document_search.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: document_search.",
+          "children": []
+        },
+        {
+          "shortCode": "document_id",
+          "label": "Document Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document id for document_get/delete/reprocess. Path /document/{document_id}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9a48c574-5e30-5d26-b49a-3411384ff173",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4cab1235-3b86-5a25-a7bc-c9d9597ad99e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "mailbox_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "mailbox_create",
+        "mailbox_get",
+        "mailbox_list",
+        "mailbox_delete",
+        "document_get",
+        "document_delete",
+        "document_reprocess",
+        "document_search",
+        "listen"
+      ]
+    },
+    {
+      "_id": "25f7695a-a98d-5df2-a4ba-1ad6ba011b7b",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "Parseur API token. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3ca43722-d017-4770-bb94-3e0ad42b30a4",
+      "shortCode": "mailbox_id",
+      "label": "Mailbox Id",
+      "type": "string",
+      "description": "Mailbox/parser id for mailbox and document list/search ops.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "6a04c4c2-ba14-4295-9007-a0880d65c448",
+      "shortCode": "document_id",
+      "label": "Document Id",
+      "type": "string",
+      "description": "Document id for document_get/delete/reprocess.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "666a9cb7-4f66-52a7-a8c6-104b0b256f36",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

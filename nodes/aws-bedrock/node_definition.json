@@ -1,0 +1,456 @@
+{
+  "_id": "3d480760-86c9-4821-ab1d-0ae62723bb35",
+  "version": "1.0.0",
+  "name": "AWS Bedrock",
+  "label": "AWS Bedrock",
+  "description": "Official Amazon Bedrock Runtime REST (Converse + InvokeModel) and ListFoundationModels on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). Auth is AWS SigV4 (signing name bedrock) using config access_key + secret_access_key. Image/document parts use type file (platform ref-id). Docs: https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html. Terms: https://aws.amazon.com/agreement/. Never log access_key or secret_access_key. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "psychology",
+  "tags": [
+    "aws",
+    "bedrock",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3b433afd-8499-405f-8dbc-abe6df2a5a35",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, system?, inferenceConfig?, toolConfig?, file?}. Image/document use type file (platform ref-id). Do not put AWS keys here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Converse messages [{role, content}] for converse.",
+          "children": []
+        },
+        {
+          "shortCode": "system",
+          "label": "system",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Converse system prompts [{text}].",
+          "children": []
+        },
+        {
+          "shortCode": "inferenceConfig",
+          "label": "inferenceConfig",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Converse inferenceConfig (maxTokens, temperature, topP, stopSequences).",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for Converse image/document content blocks. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "additionalModelRequestFields",
+          "label": "additionalModelRequestFields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `additionalModelRequestFields` for operation: converse.",
+          "children": []
+        },
+        {
+          "shortCode": "toolConfig",
+          "label": "toolConfig",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `toolConfig` for operation: converse.",
+          "children": []
+        },
+        {
+          "shortCode": "guardrailConfig",
+          "label": "guardrailConfig",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `guardrailConfig` for operation: converse.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Raw InvokeModel body JSON for invoke_model when not using prompt/messages. Escape hatch. Example: {\"prompt\":\"Hello\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Text prompt for invoke_model (provider-specific body). Example: Summarize this.",
+          "children": []
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `input` for operation: invoke_model.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `max_tokens` for operation: invoke_model.",
+          "children": []
+        },
+        {
+          "shortCode": "temperature",
+          "label": "temperature",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `temperature` for operation: invoke_model.",
+          "children": []
+        },
+        {
+          "shortCode": "byProvider",
+          "label": "byProvider",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `byProvider` for operation: list_foundation_models.",
+          "children": []
+        },
+        {
+          "shortCode": "byOutputModality",
+          "label": "byOutputModality",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `byOutputModality` for operation: list_foundation_models.",
+          "children": []
+        },
+        {
+          "shortCode": "byInferenceType",
+          "label": "byInferenceType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `byInferenceType` for operation: list_foundation_models.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0f178688-bfbb-49d5-adc8-a6da320fdf28",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Bedrock JSON (Converse response, InvokeModel body, or foundation-model list).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2d169198-765c-40dc-a9c0-b6bb0f10f27e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Bedrock verb. EXACT values: converse | invoke_model | list_foundation_models. Default converse = POST /model/{model_id}/converse.",
+      "value": "converse",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "converse",
+        "invoke_model",
+        "list_foundation_models"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "1ff7b31b-2f25-4dca-8e35-58a206b765a9",
+      "shortCode": "access_key",
+      "label": "Access key",
+      "type": "password",
+      "description": "AWS access key id used as the SigV4 credential. OfficialApiNode signs with AWS4-HMAC-SHA256 (service bedrock). StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "87e65f3b-a331-4227-8b4f-a91cb8413fe5",
+      "shortCode": "secret_access_key",
+      "label": "Secret access key",
+      "type": "password",
+      "description": "AWS secret access key used to sign SigV4. OfficialApiNode reads this via auth.secretKeyConfigKey. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "00854e8a-3a71-4a0b-9316-7fa9f285d177",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "AWS region interpolated into the hostname (bedrock-runtime.{region}.amazonaws.com). Default us-east-1.",
+      "value": "us-east-1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1814e872-5f07-4eeb-b1ab-057725b70b73",
+      "shortCode": "model_id",
+      "label": "Model ID",
+      "type": "string",
+      "description": "Bedrock model id or ARN for converse/invoke_model (path). Colons are URL-encoded by OfficialApiNode. Current Claude-in-Bedrock converse ids: anthropic.claude-sonnet-5, anthropic.claude-opus-5, anthropic.claude-fable-5, anthropic.claude-haiku-4-5 (geo profiles us.anthropic.claude-sonnet-5 / global.anthropic.claude-sonnet-5). Previous: anthropic.claude-sonnet-4-6, anthropic.claude-sonnet-4-5-20250929-v1:0. Verify live list via list_foundation_models. Docs: https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5.html .",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "anthropic.claude-sonnet-5",
+        "anthropic.claude-opus-5",
+        "anthropic.claude-fable-5",
+        "anthropic.claude-haiku-4-5",
+        "us.anthropic.claude-sonnet-5",
+        "global.anthropic.claude-sonnet-5",
+        "anthropic.claude-sonnet-4-6",
+        "anthropic.claude-opus-4-8",
+        "anthropic.claude-sonnet-4-5-20250929-v1:0"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "d62de497-b5ff-48e9-9779-96156d8eae53",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

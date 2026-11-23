@@ -1,0 +1,216 @@
+{
+  "baseUrl": "https://api.stripe.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "configKey": "secret_key"
+  },
+  "extraHeaders": {
+    "Stripe-Version": "{api_version}"
+  },
+  "operations": {
+    "balance_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/balance"
+    },
+    "payment_intent_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/payment_intents",
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "bodyFrom": [
+        "amount",
+        "currency",
+        "payment_method",
+        "customer",
+        "confirm",
+        "description",
+        "receipt_email",
+        "metadata",
+        "automatic_payment_methods",
+        "capture_method"
+      ],
+      "contentType": "application/json"
+    },
+    "payment_intent_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/payment_intents/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "payment_intent_confirm": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/payment_intents/{id}/confirm",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "payment_method"
+      ],
+      "contentType": "application/json"
+    },
+    "customer_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/customers",
+      "bodyFrom": [
+        "email",
+        "name",
+        "description",
+        "phone",
+        "metadata"
+      ],
+      "contentType": "application/json"
+    },
+    "customer_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/customers/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "customer_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/customers",
+      "queryFrom": [
+        "limit",
+        "starting_after"
+      ]
+    },
+    "customer_update": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/customers/{id}",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "email",
+        "name",
+        "description",
+        "phone",
+        "metadata"
+      ],
+      "contentType": "application/json"
+    },
+    "customer_delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/v1/customers/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "coupon_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/coupons",
+      "bodyFrom": [
+        "percent_off",
+        "amount_off",
+        "currency",
+        "duration",
+        "name",
+        "duration_in_months"
+      ],
+      "contentType": "application/json"
+    },
+    "coupon_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/coupons",
+      "queryFrom": [
+        "limit"
+      ]
+    },
+    "meter_event_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/billing/meter_events",
+      "required": [
+        "event_name"
+      ],
+      "bodyFrom": [
+        "event_name",
+        "payload",
+        "identifier",
+        "timestamp"
+      ],
+      "contentType": "application/json"
+    },
+    "refund_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/refunds",
+      "bodyFrom": [
+        "payment_intent",
+        "charge",
+        "amount",
+        "reason",
+        "metadata"
+      ],
+      "contentType": "application/json"
+    },
+    "subscription_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/subscriptions",
+      "required": [
+        "customer"
+      ],
+      "bodyFrom": [
+        "customer",
+        "items",
+        "trial_period_days",
+        "metadata",
+        "default_payment_method"
+      ],
+      "contentType": "application/json"
+    },
+    "invoice_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/invoices/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "payout_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/payouts",
+      "queryFrom": [
+        "limit"
+      ]
+    },
+    "charge_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/charges/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "charge_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/charges",
+      "queryFrom": [
+        "limit"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

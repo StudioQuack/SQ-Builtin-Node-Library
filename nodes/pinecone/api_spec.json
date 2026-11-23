@@ -1,0 +1,117 @@
+{
+  "baseUrl": "https://api.pinecone.io",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "Api-Key",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "extraHeaders": {
+    "X-Pinecone-Api-Version": "2026-04"
+  },
+  "operations": {
+    "index.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/indexes"
+    },
+    "index.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/indexes",
+      "required": [
+        "name",
+        "spec"
+      ],
+      "bodyFrom": [
+        "name",
+        "dimension",
+        "metric",
+        "spec",
+        "vector_type",
+        "deletion_protection",
+        "tags"
+      ]
+    },
+    "index.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/indexes/{name}",
+      "required": [
+        "name"
+      ]
+    },
+    "vector.upsert": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/vectors/upsert",
+      "required": [
+        "vectors"
+      ],
+      "bodyFrom": [
+        "vectors",
+        "namespace"
+      ],
+      "baseUrl": "https://{host}"
+    },
+    "vector.query": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/query",
+      "bodyFrom": [
+        "vector",
+        "id",
+        "topK",
+        "namespace",
+        "filter",
+        "includeValues",
+        "includeMetadata",
+        "sparseVector"
+      ],
+      "baseUrl": "https://{host}"
+    },
+    "vector.fetch": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/vectors/fetch",
+      "required": [
+        "ids"
+      ],
+      "queryFrom": [
+        "ids",
+        "namespace"
+      ],
+      "baseUrl": "https://{host}"
+    },
+    "vector.delete": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/vectors/delete",
+      "bodyFrom": [
+        "ids",
+        "deleteAll",
+        "namespace",
+        "filter"
+      ],
+      "baseUrl": "https://{host}"
+    },
+    "vector.update": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/vectors/update",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "id",
+        "values",
+        "setMetadata",
+        "namespace",
+        "sparseValues"
+      ],
+      "baseUrl": "https://{host}"
+    }
+  }
+}

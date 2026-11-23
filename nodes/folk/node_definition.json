@@ -1,0 +1,374 @@
+{
+  "_id": "2658efe0-7750-4d33-a0e0-971f803c96c2",
+  "version": "1.0.0",
+  "name": "Folk",
+  "label": "Folk External API REST v1 — people, companies, notes",
+  "description": "Official Folk External API REST v1 at https://api.folk.app (OpenAPI 2025-06-09). NOT GraphQL. Handler: OfficialApiNode. Bearer workspace apiKey. Pin X-API-Version from config apiVersion (default 2025-06-09). People/companies/notes are PII. Customer owns the Folk workspace. trigger.listen is ingress (BPMN message event). apiKey is never logged or returned.",
+  "icon": "groups",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "da8c3b0f-64bf-4786-8aeb-c35af8b2d696",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Folk REST v1. Do not put apiKey here. Example: {\"operation\":\"person.get\",\"personId\":\"per_…\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "person.create",
+          "description": "Overrides config operation when non-blank. EXACT: 'person.create' | 'person.get' | 'person.update' | 'person.search' | 'company.create' | 'company.get' | 'company.update' | 'group.list' | 'note.create' | 'customField.set' | 'trigger.listen'. trigger.listen never opens a socket.",
+          "children": []
+        },
+        {
+          "shortCode": "personId",
+          "label": "personId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Folk person id (per_…) for person.get / person.update. Example: per_01HZX.",
+          "children": []
+        },
+        {
+          "shortCode": "companyId",
+          "label": "companyId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Folk company id (com_…) for company.get / company.update.",
+          "children": []
+        },
+        {
+          "shortCode": "entityCollection",
+          "label": "entityCollection",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customField.set path collection. EXACT: 'people' or 'companies'.",
+          "children": []
+        },
+        {
+          "shortCode": "entityId",
+          "label": "entityId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Target entity id: the person/company/object the note is linked to on note.create (sent as entity.id), or the record patched by customField.set. Example: per_55175e81-9a52-4ac3-930e-82792c23499b.",
+          "children": []
+        },
+        {
+          "shortCode": "firstName",
+          "label": "firstName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Given name for person.create / person.update. Max 500.",
+          "children": []
+        },
+        {
+          "shortCode": "lastName",
+          "label": "lastName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Family name for person.create / person.update. Max 500.",
+          "children": []
+        },
+        {
+          "shortCode": "fullName",
+          "label": "fullName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Combined name. Max 1000.",
+          "children": []
+        },
+        {
+          "shortCode": "emails",
+          "label": "emails",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Email strings; first is primary. PII — minimize.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Company name for company.create (required) / company.update.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "note.create markdown/plain content. Official Folk `content` (the note text). Required with entityId.",
+          "children": []
+        },
+        {
+          "shortCode": "customFieldValues",
+          "label": "customFieldValues",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Per-group custom values (Folk schema). Required for customField.set.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination cursor for person.search / group.list.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size. Honor provider max.",
+          "children": []
+        },
+        {
+          "shortCode": "groups",
+          "label": "groups",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "[{ \"id\": \"grp_…\" }] on create/update. Max 100.",
+          "children": []
+        },
+        {
+          "shortCode": "phones",
+          "label": "phones",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `phones` for operations: person.create, person.update, company.create, company.update.",
+          "children": []
+        },
+        {
+          "shortCode": "jobTitle",
+          "label": "jobTitle",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `jobTitle` for operations: person.create, person.update.",
+          "children": []
+        },
+        {
+          "shortCode": "companies",
+          "label": "companies",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `companies` for operations: person.create, person.update.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `description` for operations: person.create, person.update, company.create, company.update.",
+          "children": []
+        },
+        {
+          "shortCode": "combinator",
+          "label": "combinator",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `combinator` for operation: person.search.",
+          "children": []
+        },
+        {
+          "shortCode": "urls",
+          "label": "urls",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `urls` for operations: company.create, company.update.",
+          "children": []
+        },
+        {
+          "shortCode": "addresses",
+          "label": "addresses",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `addresses` for operations: company.create, company.update.",
+          "children": []
+        },
+        {
+          "shortCode": "industry",
+          "label": "industry",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `industry` for operations: company.create, company.update.",
+          "children": []
+        },
+        {
+          "shortCode": "visibility",
+          "label": "visibility",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note visibility on note.create (required there): public = visible to the whole workspace, private = only the API key owner. Also an optional group.list query filter. EXACT: public | private. Example: public.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "cb2a28f3-b7a3-4d6a-8424-7cd7fd5b44c6",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (people/companies/notes — PII, do not log bodies).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "7b5fa4c2-402d-49dc-8292-f63237bca01a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: person.create | person.get | person.update | person.search | company.create | company.get | company.update | group.list | note.create | customField.set | trigger.listen.",
+      "value": "person.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "person.create",
+        "person.get",
+        "person.update",
+        "person.search",
+        "company.create",
+        "company.get",
+        "company.update",
+        "group.list",
+        "note.create",
+        "customField.set",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "189f6147-5b0a-4f6c-8748-7c1ecf6b0488",
+      "shortCode": "apiKey",
+      "label": "API key",
+      "type": "password",
+      "description": "Folk workspace API key (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT. Paid-plan API access. Dashboard: https://app.folk.app",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "89ebf8ab-5627-4e17-8941-b0cc007466e9",
+      "shortCode": "apiVersion",
+      "label": "API version",
+      "type": "string",
+      "description": "Sent as X-API-Version. Official Folk date pin (default 2025-06-09). Invalid date → 400. Paths stay /v1/…",
+      "value": "2025-06-09",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "de945751-4063-4c9b-bc82-fb1b079bc0d3",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

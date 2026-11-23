@@ -1,0 +1,287 @@
+{
+  "_id": "78c5e830-1018-4704-8902-eb323d7404b1",
+  "version": "1.0.0",
+  "name": "Render",
+  "label": "Render API",
+  "description": "Render API via OfficialApiNode. Docs: https://api-docs.render.com/. Operations: service_get, service_list, deploy_trigger, deploy_get, env_get, env_set, listen. env_set PUT /services/{serviceId}/env-vars body is a JSON array of {key,value} or {key,generateValue} (bodyMap $; https://api-docs.render.com/reference/update-env-vars-for-service). Auth secret api_key is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event.",
+  "icon": "hub",
+  "tags": [
+    "render",
+    "deploy"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "fdfaf289-043c-46ad-8309-2621e793520d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "service_get",
+          "description": "Which official API call to run. EXACT values: service_get | service_list | deploy_trigger | deploy_get | env_get | env_set | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'service_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "serviceId",
+          "label": "serviceId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Render service id (srv-…). Path for service_get, deploy_*, env_*. Example: srv-abc123.",
+          "children": []
+        },
+        {
+          "shortCode": "deployId",
+          "label": "deployId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deploy id.",
+          "children": []
+        },
+        {
+          "shortCode": "envVars",
+          "label": "envVars",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "env_set whole-body JSON array for PUT /services/{serviceId}/env-vars. Each item is {key, value} or {key, generateValue:true}. PUT replaces ALL service env vars; omitted keys are deleted. Does not auto-deploy — call deploy_trigger after. Example: [{\"key\":\"NODE_ENV\",\"value\":\"production\"}]. https://api-docs.render.com/reference/update-env-vars-for-service",
+          "children": [
+            {
+              "shortCode": "key",
+              "label": "key",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Variable name. Example: DATABASE_URL.",
+              "children": []
+            },
+            {
+              "shortCode": "value",
+              "label": "value",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Variable value. Omit when generateValue is true.",
+              "children": []
+            },
+            {
+              "shortCode": "generateValue",
+              "label": "generateValue",
+              "type": "boolean",
+              "required": false,
+              "value": "false",
+              "description": "When true Render generates a secret value.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for service_list and env_get. 1–100. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination cursor from a previous service_list or env_get. Example: Y3Vyc29y.",
+          "children": []
+        },
+        {
+          "shortCode": "clearCache",
+          "label": "clearCache",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "deploy_trigger. EXACT: clear | do_not_clear. Default do_not_clear. Example: clear.",
+          "children": []
+        },
+        {
+          "shortCode": "commitId",
+          "label": "commitId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "deploy_trigger optional git SHA to deploy. Example: a1b2c3d.",
+          "children": []
+        },
+        {
+          "shortCode": "imageUrl",
+          "label": "imageUrl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "deploy_trigger optional image URL for image-backed services.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "service_list name filter. Example: api.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "service_list service type. EXACT: web_service | private_service | background_worker | static_site | cron_job. Example: web_service.",
+          "children": []
+        },
+        {
+          "shortCode": "env",
+          "label": "env",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "service_list runtime filter. EXACT: docker | elixir | go | node | python | ruby | rust | image. Example: node.",
+          "children": []
+        },
+        {
+          "shortCode": "suspended",
+          "label": "suspended",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "service_list. EXACT: suspended | not_suspended. Example: not_suspended.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "826c7edb-bba5-4bb3-a228-673be34eebd7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "9411ecf6-c13d-471b-a5b1-b8fdcc226c9d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: service_get, service_list, deploy_trigger, deploy_get, env_get, env_set, listen. listen is BPMN ingress, not a socket.",
+      "value": "service_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "service_get",
+        "service_list",
+        "deploy_trigger",
+        "deploy_get",
+        "env_get",
+        "env_set",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "b53b3543-be81-4484-b2c5-b0ea39a512f6",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Render API key. Authorization: Bearer.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f2865038-4b39-4c1b-bda5-a00032314afd",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,143 @@
+{
+  "baseUrl": "https://api.cloudflare.com/client/v4",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_token"
+  },
+  "operations": {
+    "dns_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/zones/{zoneId}/dns_records",
+      "required": [
+        "zoneId"
+      ],
+      "queryFrom": [
+        "name",
+        "type",
+        "page",
+        "per_page"
+      ]
+    },
+    "dns_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/zones/{zoneId}/dns_records",
+      "required": [
+        "zoneId",
+        "type",
+        "name"
+      ],
+      "bodyFrom": [
+        "type",
+        "name",
+        "content",
+        "ttl",
+        "proxied"
+      ],
+      "bodyDefaults": {
+        "ttl": 1
+      }
+    },
+    "dns_update": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/zones/{zoneId}/dns_records/{id}",
+      "required": [
+        "zoneId",
+        "id",
+        "type",
+        "name"
+      ],
+      "bodyFrom": [
+        "type",
+        "name",
+        "content",
+        "ttl",
+        "proxied"
+      ],
+      "bodyDefaults": {
+        "ttl": 1
+      }
+    },
+    "dns_delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/zones/{zoneId}/dns_records/{id}",
+      "required": [
+        "zoneId",
+        "id"
+      ]
+    },
+    "zone_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/zones/{zoneId}",
+      "required": [
+        "zoneId"
+      ]
+    },
+    "cache_purge": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/zones/{zoneId}/purge_cache",
+      "required": [
+        "zoneId"
+      ],
+      "bodyFrom": [
+        "purge_everything",
+        "files",
+        "tags",
+        "hosts",
+        "prefixes"
+      ]
+    },
+    "worker_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/accounts/{accountId}/workers/scripts",
+      "required": [
+        "accountId"
+      ]
+    },
+    "r2_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/accounts/{accountId}/r2/buckets/{bucket}/objects/{key}",
+      "required": [
+        "accountId",
+        "bucket",
+        "key"
+      ]
+    },
+    "cert_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/zones/{zoneId}/ssl/certificate_packs",
+      "required": [
+        "zoneId"
+      ]
+    },
+    "cert_upload": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/zones/{zoneId}/custom_certificates",
+      "required": [
+        "zoneId",
+        "certificate",
+        "private_key"
+      ],
+      "bodyFrom": [
+        "certificate",
+        "private_key"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

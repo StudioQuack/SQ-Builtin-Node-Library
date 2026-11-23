@@ -1,0 +1,243 @@
+{
+  "_id": "a31af373-a129-4161-be3b-d2202fe3efb4",
+  "version": "1.0.0",
+  "name": "Unbounce",
+  "label": "Unbounce — REST API v0.4 pages and leads",
+  "description": "Official Unbounce REST API v0.4 at https://api.unbounce.com. Handler: OfficialApiNode. HTTP Basic (api_key as username). Page leads are PII. Customer owns the Unbounce account. Minimize; never log api_key or form_data. v0.3 removed May 2018. trigger.listen is BPMN message-event ingress (Unbounce has no REST webhook register — paste the StudioQuack ingress URL in the product UI). Docs: https://developer.unbounce.com/api_reference/",
+  "icon": "web",
+  "tags": [
+    "forms"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "72f237bc-711e-44a7-aa09-635fd69facca",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. page_id may come from config. Do not put api_key here. Example: {\"operation\":\"page.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "page.list",
+          "description": "Overrides config operation when non-blank. EXACT: page.list | page.get | form.list | lead.list | lead.get | trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "page_id",
+          "label": "page_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Page UUID. Else config page_id.",
+          "children": []
+        },
+        {
+          "shortCode": "lead_id",
+          "label": "lead_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lead id for lead.get.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size. Provider default 50; max 1000.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Skip.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_order",
+          "label": "sort_order",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "asc | desc.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Created window lower bound (ISO-8601).",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Created window upper bound (ISO-8601).",
+          "children": []
+        },
+        {
+          "shortCode": "with_stats",
+          "label": "with_stats",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "page.list include A/B stats.",
+          "children": []
+        },
+        {
+          "shortCode": "include_sub_pages",
+          "label": "include_sub_pages",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "form.list include variant fields.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7e223588-fc80-4bc8-80c3-f1b36cafe73d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. May contain PII — never log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4d2cbac0-205d-4ba0-a15b-dcf6ce63ad4c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: page.list | page.get | form.list | lead.list | lead.get | trigger.listen. trigger.listen is ingress.",
+      "value": "page.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "page.list",
+        "page.get",
+        "form.list",
+        "lead.list",
+        "lead.get",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "8a503878-3eee-4623-a5fe-213fb2964b6c",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Unbounce API key (StudioQuack secret). HTTP Basic username. OfficialApiNode also sends the same value as the Basic password (empty password is not supported). Never log or place on INPUT. API Access is request-gated in Manage Account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "097b225f-02a8-4675-996e-ac8482d31bf4",
+      "shortCode": "page_id",
+      "label": "Page id",
+      "type": "string",
+      "description": "Default page UUID. Overridable on INPUT.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1814dc65-ab5c-4503-939e-f8af29e3ccb3",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

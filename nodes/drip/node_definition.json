@@ -1,0 +1,311 @@
+{
+  "_id": "920deff3-7954-4a54-86a8-ff91fc3d58b9",
+  "version": "1.0.0",
+  "name": "Drip",
+  "label": "Drip REST API v2 — subscribers, tags, campaigns, workflows",
+  "description": "Official Drip REST API v2 at https://api.getdrip.com/v2. Handler: OfficialApiNode. Personal API token as HTTP Basic username (engine encodes {api_token}:{api_token} because the password side cannot be empty). Every path includes {account_id}. trigger.listen is BPMN ingress. Customer owns the Drip account. Minimize subscriber fields. api_token is never logged or returned.",
+  "icon": "water_drop",
+  "tags": [
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3b8868e7-1e65-4524-becd-9218885a9b70",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example: {\"operation\":\"subscriber.upsert\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "subscriber.upsert",
+          "description": "Overrides config operation when non-blank. EXACT: subscriber.upsert | subscriber.get | subscriber.unsubscribe | subscriber.delete | tag.apply | tag.remove | event.record | campaign.subscribe | campaign.unsubscribe | workflow.activate | trigger.listen. trigger.listen is ingress (BPMN message event, no socket).",
+          "children": []
+        },
+        {
+          "shortCode": "account_id",
+          "label": "account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Drip account id. Required in path; config default allowed.",
+          "children": []
+        },
+        {
+          "shortCode": "id_or_email",
+          "label": "id_or_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subscriber id or email (path-encoded). Minimize.",
+          "children": []
+        },
+        {
+          "shortCode": "subscribers",
+          "label": "subscribers",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "One subscriber object escape hatch merged into subscribers[0] (subscriber.upsert / campaign.subscribe). Named email/first_name/last_name win.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "tag.apply one {email,tag} object escape hatch merged into tags[0]. Named email/tag win.",
+          "children": []
+        },
+        {
+          "shortCode": "tag",
+          "label": "tag",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tag name. tag.apply → tags[0].tag; tag.remove path {tag}.",
+          "children": []
+        },
+        {
+          "shortCode": "events",
+          "label": "events",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "event.record one {email,action,properties} object escape hatch merged into events[0].",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email series campaign id (path or query for unsubscribe).",
+          "children": []
+        },
+        {
+          "shortCode": "workflow_id",
+          "label": "workflow_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Workflow id for workflow.activate.",
+          "children": []
+        },
+        {
+          "shortCode": "_empty",
+          "label": "_empty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `_empty` for operations: subscriber.unsubscribe, campaign.unsubscribe, workflow.activate.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subscriber email. subscriber.upsert / campaign.subscribe → subscribers[0].email; tag.apply → tags[0].email; event.record → events[0].email. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "first_name",
+          "label": "first_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "subscriber.upsert first_name. Wired to subscribers[0].first_name.",
+          "children": []
+        },
+        {
+          "shortCode": "last_name",
+          "label": "last_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "subscriber.upsert last_name. Wired to subscribers[0].last_name.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_fields",
+          "label": "custom_fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "subscriber.upsert custom_fields object. Wired to subscribers[0].custom_fields.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "subscriber.upsert user_id. Wired to subscribers[0].user_id.",
+          "children": []
+        },
+        {
+          "shortCode": "action",
+          "label": "action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "event.record action name. Wired to events[0].action. Example: Purchased.",
+          "children": []
+        },
+        {
+          "shortCode": "properties",
+          "label": "properties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "event.record properties object. Wired to events[0].properties.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c941ad60-cc66-4633-bfb4-3afa33553665",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Log ids only — bodies may contain PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "57d55145-c68e-45ce-b9b2-9772e3ff1d5f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: subscriber.upsert, subscriber.get, subscriber.unsubscribe, subscriber.delete, tag.apply, tag.remove, event.record, campaign.subscribe, campaign.unsubscribe, workflow.activate, trigger.listen.",
+      "value": "subscriber.upsert",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "subscriber.upsert",
+        "subscriber.get",
+        "subscriber.unsubscribe",
+        "subscriber.delete",
+        "tag.apply",
+        "tag.remove",
+        "event.record",
+        "campaign.subscribe",
+        "campaign.unsubscribe",
+        "workflow.activate",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "92ccf123-681a-4cab-a18b-740f70af38a6",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "Drip personal API token (Settings → User Info → API Token). HTTP Basic username. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "aea33fbe-9a6f-4575-8f54-4873977b4fd4",
+      "shortCode": "account_id",
+      "label": "Account Id",
+      "type": "string",
+      "description": "Numeric Drip account id (path {account_id} on every call). Also accepted on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b18d6127-7444-422d-97b8-043ff09c0912",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

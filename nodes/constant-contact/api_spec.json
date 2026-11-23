@@ -1,0 +1,139 @@
+{
+  "baseUrl": "https://api.cc.email/v3",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "contact.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/contacts",
+      "bodyFrom": [
+        "email_address",
+        "first_name",
+        "last_name",
+        "job_title",
+        "company_name",
+        "create_source",
+        "list_memberships",
+        "custom_fields"
+      ]
+    },
+    "contact.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/contacts/{contact_id}",
+      "required": [
+        "contact_id"
+      ],
+      "queryFrom": [
+        "include"
+      ]
+    },
+    "contact.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/contacts",
+      "queryFrom": [
+        "status",
+        "updated_after",
+        "lists",
+        "limit",
+        "cursor",
+        "include"
+      ]
+    },
+    "contact.update": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/contacts/{contact_id}",
+      "required": [
+        "contact_id",
+        "update_source"
+      ],
+      "bodyFrom": [
+        "email_address",
+        "first_name",
+        "last_name",
+        "job_title",
+        "company_name",
+        "list_memberships",
+        "custom_fields",
+        "update_source"
+      ]
+    },
+    "contact.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/contacts/{contact_id}",
+      "required": [
+        "contact_id"
+      ]
+    },
+    "list.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/contact_lists",
+      "bodyFrom": [
+        "name",
+        "description"
+      ]
+    },
+    "list.add": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/activities/add_list_memberships",
+      "bodyFrom": [
+        "source",
+        "list_ids"
+      ]
+    },
+    "campaign.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/emails",
+      "bodyFrom": [
+        "name",
+        "email_campaign_activities"
+      ]
+    },
+    "campaign.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/emails/{campaign_id}",
+      "required": [
+        "campaign_id"
+      ]
+    },
+    "campaign.schedule": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/emails/activities/{campaign_activity_id}/schedules",
+      "required": [
+        "campaign_activity_id"
+      ],
+      "bodyFrom": [
+        "scheduled_date"
+      ]
+    },
+    "email.send": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/emails/activities/{campaign_activity_id}/tests",
+      "required": [
+        "campaign_activity_id"
+      ],
+      "bodyFrom": [
+        "email_addresses"
+      ]
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+    "baseUrl": "https://transcribe.{region}.amazonaws.com",
+    "defaultTimeout": 30,
+    "timeoutConfigKey": "timeout_seconds",
+    "auth": {
+        "type": "aws-sigv4",
+        "configKey": "access_key_id",
+        "secretKeyConfigKey": "secret_access_key"
+    },
+    "sigv4": {
+        "service": "transcribe",
+        "regionConfigKey": "region",
+        "sessionTokenConfigKey": "session_token"
+    },
+    "operations": {
+        "start_job": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/",
+            "required": [
+                "TranscriptionJobName",
+                "Media"
+            ],
+            "bodyFrom": [
+                "TranscriptionJobName",
+                "LanguageCode",
+                "Media",
+                "MediaFormat",
+                "MediaSampleRateHertz",
+                "OutputBucketName",
+                "OutputKey",
+                "IdentifyLanguage",
+                "IdentifyMultipleLanguages",
+                "Settings"
+            ],
+            "contentType": "application/x-amz-json-1.1",
+            "extraHeaders": {
+                "Content-Type": "application/x-amz-json-1.1",
+                "X-Amz-Target": "Transcribe.StartTranscriptionJob"
+            }
+        },
+        "get_job": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/",
+            "required": [
+                "TranscriptionJobName"
+            ],
+            "bodyFrom": [
+                "TranscriptionJobName"
+            ],
+            "contentType": "application/x-amz-json-1.1",
+            "extraHeaders": {
+                "Content-Type": "application/x-amz-json-1.1",
+                "X-Amz-Target": "Transcribe.GetTranscriptionJob"
+            }
+        },
+        "list_jobs": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/",
+            "required": [],
+            "bodyFrom": [
+                "Status",
+                "JobNameContains",
+                "MaxResults",
+                "NextToken"
+            ],
+            "contentType": "application/x-amz-json-1.1",
+            "extraHeaders": {
+                "Content-Type": "application/x-amz-json-1.1",
+                "X-Amz-Target": "Transcribe.ListTranscriptionJobs"
+            }
+        },
+        "delete_job": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/",
+            "required": [
+                "TranscriptionJobName"
+            ],
+            "bodyFrom": [
+                "TranscriptionJobName"
+            ],
+            "contentType": "application/x-amz-json-1.1",
+            "extraHeaders": {
+                "Content-Type": "application/x-amz-json-1.1",
+                "X-Amz-Target": "Transcribe.DeleteTranscriptionJob"
+            }
+        },
+        "listen": {
+            "kind": "ingress"
+        }
+    }
+}

@@ -1,0 +1,267 @@
+{
+  "_id": "2729136e-858d-45a4-8647-2d550f5a8a3d",
+  "version": "1.0.0",
+  "name": "Pinterest",
+  "label": "Pinterest — API v5 pins, boards, user",
+  "description": "Official Pinterest API v5 on https://api.pinterest.com/v5. Handler: OfficialApiNode. Organic pins, boards, and the authenticated user account. access_token is never logged or returned. Trial pins/boards are sandbox-only. Do not scrape pinterest.com. Customer owns the Pinterest app.",
+  "icon": "push_pin",
+  "tags": [
+    "pinterest",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4704c553-9f1d-4efa-ab31-3cf842d47c72",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_token here. Example: {\"operation\":\"pin_create\",\"board_id\":\"123\",\"title\":\"Idea\",\"link\":\"https://example.com\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "pin_create",
+          "description": "Overrides config operation when non-blank. EXACT: pin_create | pin_get | board_create | board_list | user_get | trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "board_id",
+          "label": "board_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pin_create destination board id (required).",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pin_create title.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pin_create or board_create description. May contain PII — do not log.",
+          "children": []
+        },
+        {
+          "shortCode": "link",
+          "label": "link",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pin_create destination URL.",
+          "children": []
+        },
+        {
+          "shortCode": "media_source",
+          "label": "media_source",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "pin_create required. {source_type, url} or {source_type, data, content_type}. source_type EXACT: image_url | image_base64 | video_id | multiple_image_urls | multiple_image_base64 | pin_url. Example: {\"source_type\":\"image_url\",\"url\":\"https://example.com/a.jpg\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "alt_text",
+          "label": "alt_text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pin_create alt text. Example: Red chair.",
+          "children": []
+        },
+        {
+          "shortCode": "board_section_id",
+          "label": "board_section_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pin_create optional board section id.",
+          "children": []
+        },
+        {
+          "shortCode": "dominant_color",
+          "label": "dominant_color",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pin_create dominant color hex. Example: #FFFFFF.",
+          "children": []
+        },
+        {
+          "shortCode": "pin_id",
+          "label": "pin_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pin_get path {pin_id}.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "board_create name (required).",
+          "children": []
+        },
+        {
+          "shortCode": "privacy",
+          "label": "privacy",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "board_create privacy as documented (PUBLIC / SECRET).",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "board_list query page_size.",
+          "children": []
+        },
+        {
+          "shortCode": "bookmark",
+          "label": "bookmark",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "board_list pagination cursor.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ee6c2cbf-9314-4ea5-b852-8e45ce78da31",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. trigger is ingress (poll via BPMN timer + pin list is not this HTTP map). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (pin, board, boards list, or user_account).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "8d1c8a34-0c67-4536-9873-f99c88c49eca",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. trigger does not open a socket.",
+      "value": "pin_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "pin_create",
+        "pin_get",
+        "board_create",
+        "board_list",
+        "user_get",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "60ed9041-8a9e-405c-8415-0bbbb2878457",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Pinterest OAuth 2 user token (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT. Empty → no HTTP.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "50498119-4c4b-41c2-bf7d-4e82c5dccce2",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

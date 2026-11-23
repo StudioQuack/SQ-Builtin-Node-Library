@@ -1,0 +1,172 @@
+{
+  "baseUrl": "https://api.{site}",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "DD-API-KEY",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "extraHeaders": {
+    "DD-APPLICATION-KEY": "{app_key}"
+  },
+  "operations": {
+    "metric_submit": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/series",
+      "bodyFrom": [
+        "series"
+      ],
+      "required": [
+        "series"
+      ]
+    },
+    "event_post": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v1/events",
+      "bodyFrom": [
+        "title",
+        "text",
+        "tags",
+        "alert_type",
+        "date_happened",
+        "priority",
+        "host",
+        "aggregation_key",
+        "source_type_name"
+      ],
+      "required": [
+        "title",
+        "text"
+      ]
+    },
+    "monitor_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v1/monitor/{monitor_id}",
+      "required": [
+        "monitor_id"
+      ]
+    },
+    "monitor_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v1/monitor",
+      "queryFrom": [
+        "name",
+        "tags",
+        "page",
+        "page_size"
+      ]
+    },
+    "monitor_mute": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v1/monitor/{monitor_id}/mute",
+      "required": [
+        "monitor_id"
+      ],
+      "bodyFrom": [
+        "end"
+      ]
+    },
+    "downtime_schedule": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/downtime",
+      "bodyFrom": [
+        "data",
+        "type",
+        "scope",
+        "message",
+        "monitor_id",
+        "monitor_tags",
+        "display_timezone",
+        "mute_first_recovery_notification",
+        "notify_end_states",
+        "notify_end_types",
+        "start",
+        "end",
+        "timezone",
+        "recurrences"
+      ],
+      "bodyMap": {
+        "type": "data.type",
+        "scope": "data.attributes.scope",
+        "message": "data.attributes.message",
+        "monitor_id": "data.attributes.monitor_identifier.monitor_id",
+        "monitor_tags": "data.attributes.monitor_identifier.monitor_tags",
+        "display_timezone": "data.attributes.display_timezone",
+        "mute_first_recovery_notification": "data.attributes.mute_first_recovery_notification",
+        "notify_end_states": "data.attributes.notify_end_states",
+        "notify_end_types": "data.attributes.notify_end_types",
+        "start": "data.attributes.schedule.start",
+        "end": "data.attributes.schedule.end",
+        "timezone": "data.attributes.schedule.timezone",
+        "recurrences": "data.attributes.schedule.recurrences"
+      }
+    },
+    "incident_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/incidents",
+      "bodyFrom": [
+        "data",
+        "type",
+        "title",
+        "customer_impacted",
+        "customer_impact_scope",
+        "fields",
+        "incident_type_uuid",
+        "initial_cells",
+        "is_test",
+        "notification_handles",
+        "commander_user_id"
+      ],
+      "bodyMap": {
+        "type": "data.type",
+        "title": "data.attributes.title",
+        "customer_impacted": "data.attributes.customer_impacted",
+        "customer_impact_scope": "data.attributes.customer_impact_scope",
+        "fields": "data.attributes.fields",
+        "incident_type_uuid": "data.attributes.incident_type_uuid",
+        "initial_cells": "data.attributes.initial_cells",
+        "is_test": "data.attributes.is_test",
+        "notification_handles": "data.attributes.notification_handles",
+        "commander_user_id": "data.relationships.commander_user.data.id"
+      }
+    },
+    "incident_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/incidents/{incident_id}",
+      "required": [
+        "incident_id"
+      ]
+    },
+    "log_search": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/logs/events/search",
+      "bodyFrom": [
+        "filter",
+        "page",
+        "sort",
+        "query",
+        "from",
+        "to"
+      ],
+      "bodyMap": {
+        "query": "filter.query",
+        "from": "filter.from",
+        "to": "filter.to"
+      }
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

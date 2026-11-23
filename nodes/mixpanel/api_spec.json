@@ -1,0 +1,124 @@
+{
+    "baseUrl": "https://api.mixpanel.com",
+    "defaultTimeout": 30,
+    "timeoutConfigKey": "timeout_seconds",
+    "auth": {
+        "type": "basic",
+        "header": "Authorization",
+        "prefix": "Basic ",
+        "configKey": "service_account_secret",
+        "userKey": "service_account_user"
+    },
+    "operations": {
+        "track": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/track?verbose=1",
+            "required": [
+                "events"
+            ],
+            "bodyFrom": [
+                "events"
+            ],
+            "bodyMap": {
+                "events": "$"
+            }
+        },
+        "import": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/import?strict=1",
+            "required": [
+                "events",
+                "project_id"
+            ],
+            "queryFrom": [
+                "project_id"
+            ],
+            "bodyFrom": [
+                "events"
+            ],
+            "bodyMap": {
+                "events": "$"
+            }
+        },
+        "engage.set": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/engage?verbose=1&ip=0",
+            "required": [
+                "distinct_id",
+                "properties"
+            ],
+            "bodyFrom": [
+                "payload"
+            ],
+            "bodyMap": {
+                "payload": "$"
+            }
+        },
+        "engage.unset": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/engage?verbose=1&ip=0",
+            "required": [
+                "distinct_id",
+                "properties"
+            ],
+            "bodyFrom": [
+                "payload"
+            ],
+            "bodyMap": {
+                "payload": "$"
+            }
+        },
+        "export": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/api/2.0/export",
+            "required": [
+                "project_id",
+                "from_date",
+                "to_date"
+            ],
+            "queryFrom": [
+                "project_id",
+                "from_date",
+                "to_date",
+                "where"
+            ],
+            "baseUrl": "https://data.mixpanel.com"
+        },
+        "insights.query": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/api/2.0/insights",
+            "required": [
+                "project_id",
+                "bookmark_id"
+            ],
+            "queryFrom": [
+                "project_id",
+                "bookmark_id",
+                "workspace_id"
+            ],
+            "baseUrl": "https://mixpanel.com"
+        },
+        "funnel.query": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/api/2.0/funnels",
+            "required": [
+                "project_id",
+                "funnel_id"
+            ],
+            "queryFrom": [
+                "project_id",
+                "funnel_id",
+                "from_date",
+                "to_date"
+            ],
+            "baseUrl": "https://mixpanel.com"
+        }
+    }
+}

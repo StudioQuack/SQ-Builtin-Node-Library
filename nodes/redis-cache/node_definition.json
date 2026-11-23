@@ -1,0 +1,268 @@
+{
+  "_id": "7c2e1a90-4b6d-4f11-9e3a-2d8c5f0a1b77",
+  "version": "1.0.0",
+  "name": "Redis Cache",
+  "label": "Redis Cache — generic key/value and lists",
+  "description": "Generic Redis cache node (RESP2). Operations: SET, GET, DEL, LPUSH, RPUSH, LRANGE, LTRIM, EXPIRE against a customer-owned Redis. Wire this to an AI Agent memory FUNCTION port — the agent emits RPUSH/LRANGE with key sq:memory:<uuid> and a JSON message value. Not a queue (see Queue) and not a vector store. Password and redis(s):// URL stay in configurationParameters and are never logged. jobType custom-script-executor.",
+  "icon": "memory",
+  "tags": [
+    "redis",
+    "cache",
+    "memory",
+    "key-value"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a11e4c8f-2b70-4d31-9e6a-7c0d1f2a3b44",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One cache operation. Secrets stay in configurationParameters. Example: {\"operation\":\"RPUSH\",\"key\":\"sq:memory:9f1c…\",\"value\":{\"role\":\"user\",\"content\":\"hi\"}}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "GET",
+          "description": "Cache verb. Purpose: overrides config operation when non-blank. EXACT accepted values (case-insensitive): SET (write string/JSON) | GET (read string or nil) | DEL (delete key) | LPUSH (prepend to list) | RPUSH (append to list) | LRANGE (read list slice) | LTRIM (trim list) | EXPIRE (set TTL). Any other token fails with error and does not talk to Redis. Example: 'RPUSH'. Example read: 'LRANGE'.",
+          "children": []
+        },
+        {
+          "shortCode": "key",
+          "label": "key",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Redis key. Purpose: names the string or list. REQUIRED. Empty/whitespace fails with 'key is required' (no command is sent). Accepted value: non-empty UTF-8 string. AI Agent memory uses 'sq:memory:<uuid>'. Example: 'sq:memory:9f1c6d2e-4a11-4b22-8c33-77aa00bbcc11'. Example session: 'user:42:prefs'.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Payload for SET / LPUSH / RPUSH. Purpose: stored as a Redis string. Accepted values: string (stored as-is), number/boolean (String.valueOf), object/array (JSON). Null/omit → empty string. Do not put secrets here. Example object: {\"role\":\"user\",\"content\":\"hi\"}. Example string: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Inclusive index for LRANGE / LTRIM. Purpose: Redis list window. Accepted values: integers (negative = from tail). Default 0. Example: 0. Example last 10: start=-10 with stop=-1.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "number",
+          "required": false,
+          "value": "-1",
+          "description": "Inclusive end index for LRANGE / LTRIM. Purpose: Redis list window. Accepted values: integers. Default -1 (last element). Example: -1.",
+          "children": []
+        },
+        {
+          "shortCode": "ttl_seconds",
+          "label": "ttl_seconds",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Optional TTL applied after SET/LPUSH/RPUSH, or the seconds for EXPIRE. Purpose: expire the key. Accepted values: integers ≥ 1. 0 / omit / negative → no EXPIRE. Example: 86400.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b22f5d90-3c81-4e42-8f7b-8d1e2f3a4c55",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', data:{value}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Success payload. Purpose: data.value is the GET string, LRANGE list, SET/PUSH status or integer, or null on GET miss. Never includes secrets. Example LRANGE: {\"value\":[\"{\\\"role\\\":\\\"user\\\"}\"]}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c33a6e01-4d92-4f53-9a8c-9e2f3a4b5d66",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb when input.operation is blank. Purpose: instance default. EXACT accepted values: SET | GET | DEL | LPUSH | RPUSH | LRANGE | LTRIM | EXPIRE. Required. Example: 'LRANGE'.",
+      "value": "GET",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "SET",
+        "GET",
+        "DEL",
+        "LPUSH",
+        "RPUSH",
+        "LRANGE",
+        "LTRIM",
+        "EXPIRE"
+      ]
+    },
+    {
+      "_id": "d44b7f12-5e03-4064-ab9d-0f3a4b5c6e77",
+      "shortCode": "url",
+      "label": "Url",
+      "type": "password",
+      "description": "Optional redis:// or rediss:// URL. Purpose: host/port/db/password in one field. Accepted schemes: redis (plain TCP), rediss (TLS). May embed :password@ — treat as secret. When set, host/port/db are taken from the URL. Blank → use host/port/db fields. Example: 'rediss://:s3cret@cache.internal:6379/0'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e55c8023-6f14-4175-bc0e-1a4b5c6d7f88",
+      "shortCode": "host",
+      "label": "Host",
+      "type": "string",
+      "description": "Redis hostname or IPv4/IPv6. Purpose: used when url is blank. Accepted value: non-empty host. Default 127.0.0.1. Customer owns this endpoint. Example: '127.0.0.1'. Example: 'redis.prod.svc'.",
+      "value": "127.0.0.1",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f66d9134-7025-4286-cd1f-2b5c6d7e8099",
+      "shortCode": "port",
+      "label": "Port",
+      "type": "number",
+      "description": "Redis TCP port when url is blank. Purpose: connect target. Accepted values: positive integers. Default 6379. ≤0 → 6379. Example: 6379.",
+      "value": "6379",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a77e0245-8136-4397-de20-3c6d7e8f91aa",
+      "shortCode": "db",
+      "label": "Db",
+      "type": "number",
+      "description": "Redis logical database index (SELECT). Purpose: isolate keys. Accepted values: integers ≥ 0. Default 0. Overridden by /N on the URL path. Example: 0.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b88f1356-9247-44a8-ef31-4d7e8f9022bb",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "AUTH password. Purpose: sent as AUTH <password> after connect when non-blank. StudioQuack secret. Never on INPUT, never logged, never returned. URL userinfo password is used when this is blank. Example: bind a secret reference, not a literal.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c9902467-a358-45b9-f042-5e8f901133cc",
+      "shortCode": "ttl_seconds",
+      "label": "Ttl Seconds",
+      "type": "number",
+      "description": "Default TTL applied after SET/LPUSH/RPUSH when input.ttl_seconds is not a positive integer. Purpose: expire keys. Accepted values: integers ≥ 1. 0 / blank → no default TTL. Example: 86400.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d0a13578-b469-46ca-0153-6f90112244dd",
+      "shortCode": "verify_tls",
+      "label": "Verify Tls",
+      "type": "string",
+      "description": "TLS certificate check for rediss://. Purpose: default true (HTTPS endpoint identification). EXACT accepted values: 'true' (verify) | 'false' (lab-only trust-all). Any other/blank → true. Never disable in production. Example: 'true'.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e1b24689-c57a-47db-1264-70a1223355ee",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect + read budget in seconds. Purpose: bound a hung Redis. Accepted values: positive integers. Blank/0/negative → 25. Capped at 60 so the invoke stays under the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-09-15T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-09-15T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

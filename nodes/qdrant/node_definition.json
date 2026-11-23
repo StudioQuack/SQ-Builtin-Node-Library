@@ -1,0 +1,231 @@
+{
+  "_id": "8040e64f-46d3-4886-85e7-c7050908f54f",
+  "version": "1.0.0",
+  "name": "Qdrant",
+  "label": "Qdrant — points REST (:6333)",
+  "description": "Official Qdrant REST at http://localhost:6333. Points upsert/query/get/scroll/delete. Auth header api-key from secret api_key (empty prefix). Customer owns the cluster. Never log api_key or vectors. Docs: https://qdrant.tech/documentation/ · OpenAPI https://api.qdrant.tech",
+  "icon": "storage",
+  "tags": [
+    "vector",
+    "storage",
+    "qdrant"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "51cebbfc-9df5-5466-b9a2-9f2f4dc949b8",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put api_key here. Example: {\"operation\":\"collection.search\",\"collection\":\"docs\",\"query\":[0.1,0.2],\"limit\":10}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "collection.upsert",
+          "description": "Overrides config operation when non-blank. EXACT: collection.upsert | collection.search | collection.get | collection.scroll | collection.delete. trigger.listen is ingress (BPMN message event), not HTTP. Do not put api_key here. Example: 'collection.search'.",
+          "children": []
+        },
+        {
+          "shortCode": "collection",
+          "label": "collection",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Collection name. Path {collection}.",
+          "children": []
+        },
+        {
+          "shortCode": "points",
+          "label": "points",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Upsert: {id, vector, payload?}[]. Delete: official id list field `points`.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official Query API `query` (dense vector, id, or formula). Prefer this over legacy /points/search.",
+          "children": []
+        },
+        {
+          "shortCode": "ids",
+          "label": "ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Point ids for collection.get (official body ids).",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "search/scroll page size.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Scroll offset (id or number as official).",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Qdrant filter. Delete requires points or filter.",
+          "children": []
+        },
+        {
+          "shortCode": "with_payload",
+          "label": "with_payload",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Include payload (default true server-side).",
+          "children": []
+        },
+        {
+          "shortCode": "with_vector",
+          "label": "with_vector",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Include vectors (default false). Do not log vectors.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "d626e6b8-7cff-55ad-88ab-8e20970a168c",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Never includes secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "659f4dcc-89c6-5163-a051-f5d23f4a04e3",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: collection.upsert | collection.search | collection.get | collection.scroll | collection.delete.",
+      "value": "collection.search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "collection.upsert",
+        "collection.search",
+        "collection.get",
+        "collection.scroll",
+        "collection.delete"
+      ]
+    },
+    {
+      "_id": "ede2d18e-9cf8-5a23-9649-a0573a7b9df7",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Qdrant API key. Sent as header api-key. StudioQuack secret. Never on INPUT. Cloud: cluster API keys.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9cfb5e80-6aeb-5e5a-952a-97b9421679d9",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

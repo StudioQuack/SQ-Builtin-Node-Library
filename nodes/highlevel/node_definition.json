@@ -1,0 +1,565 @@
+{
+  "_id": "1de41dc3-bbf6-4f10-b812-82b0f3929e92",
+  "version": "1.0.0",
+  "name": "HighLevel",
+  "label": "HighLevel — CRM contacts, opportunities, tasks, calendar",
+  "description": "Official HighLevel (LeadConnector) Public API at https://services.leadconnectorhq.com. Handler: OfficialApiNode. Bearer location PIT or OAuth location access token. API v1 reached end-of-support 2025-12-31 — not called. extraHeaders send Version: v3 (current named version; https://marketplace.gohighlevel.com/docs/ghl/contacts/get-contact/). Date version 2021-07-28 remains documented as legacy. Marketing/SMS sends are out of scope. trigger.listen is ingress. Customer owns the HighLevel sub-account. Never log access_token.",
+  "icon": "hub",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "9a0286ff-b34d-4484-b777-8a374f66e71d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields using HighLevel JSON keys (locationId, contactId, firstName, …). Config locationId fills body/query when INPUT locationId is blank. trigger.listen does not call HTTP. Do not put access_token here. Example: {\"operation\":\"contact.upsert\",\"email\":\"ada@example.com\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.upsert",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs including trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "locationId",
+          "label": "locationId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sub-account id. Required on upsert/list/create/book. Copy from config.",
+          "children": []
+        },
+        {
+          "shortCode": "contactId",
+          "label": "contactId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact id for get/update/delete/tasks/book.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact email (upsert duplicate-match key). PII — minimize.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact phone (upsert duplicate-match key).",
+          "children": []
+        },
+        {
+          "shortCode": "firstName",
+          "label": "firstName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Given name.",
+          "children": []
+        },
+        {
+          "shortCode": "lastName",
+          "label": "lastName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Family name.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Full name if not split.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Tag array. Upsert overwrites all tags if sent.",
+          "children": []
+        },
+        {
+          "shortCode": "customFields",
+          "label": "customFields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Array { id, field_value } as documented.",
+          "children": []
+        },
+        {
+          "shortCode": "createNewIfDuplicateAllowed",
+          "label": "createNewIfDuplicateAllowed",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Maps HighLevel createNewIfDuplicateAllowed.",
+          "children": []
+        },
+        {
+          "shortCode": "dnd",
+          "label": "dnd",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Do-not-disturb flag.",
+          "children": []
+        },
+        {
+          "shortCode": "source",
+          "label": "source",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lead source string.",
+          "children": []
+        },
+        {
+          "shortCode": "assignedTo",
+          "label": "assignedTo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User id.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Opportunity id for get/update/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "pipelineId",
+          "label": "pipelineId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Opportunity pipeline id.",
+          "children": []
+        },
+        {
+          "shortCode": "pipelineStageId",
+          "label": "pipelineStageId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Opportunity stage id.",
+          "children": []
+        },
+        {
+          "shortCode": "monetaryValue",
+          "label": "monetaryValue",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Opportunity value.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Opportunity status as documented.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.list search query.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "contact.list page.",
+          "children": []
+        },
+        {
+          "shortCode": "pageLimit",
+          "label": "pageLimit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "contact.list page size.",
+          "children": []
+        },
+        {
+          "shortCode": "filters",
+          "label": "filters",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official search filters only.",
+          "children": []
+        },
+        {
+          "shortCode": "taskId",
+          "label": "taskId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task id for get/update/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task or appointment title.",
+          "children": []
+        },
+        {
+          "shortCode": "dueDate",
+          "label": "dueDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task due date.",
+          "children": []
+        },
+        {
+          "shortCode": "completed",
+          "label": "completed",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Task completed flag.",
+          "children": []
+        },
+        {
+          "shortCode": "calendarId",
+          "label": "calendarId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Calendar id for free-slots and book.",
+          "children": []
+        },
+        {
+          "shortCode": "startDate",
+          "label": "startDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "calendar.freeSlots start (epoch or YYYY-MM-DD as documented).",
+          "children": []
+        },
+        {
+          "shortCode": "endDate",
+          "label": "endDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "calendar.freeSlots end.",
+          "children": []
+        },
+        {
+          "shortCode": "timezone",
+          "label": "timezone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IANA timezone for free-slots.",
+          "children": []
+        },
+        {
+          "shortCode": "userId",
+          "label": "userId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional user filter for free-slots.",
+          "children": []
+        },
+        {
+          "shortCode": "startTime",
+          "label": "startTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "calendar.book ISO-8601 start.",
+          "children": []
+        },
+        {
+          "shortCode": "endTime",
+          "label": "endTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "calendar.book ISO-8601 end.",
+          "children": []
+        },
+        {
+          "shortCode": "appointmentStatus",
+          "label": "appointmentStatus",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "e.g. confirmed.",
+          "children": []
+        },
+        {
+          "shortCode": "assignedUserId",
+          "label": "assignedUserId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "calendar.book assignee.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `q` for operation: opportunity.list.",
+          "children": []
+        },
+        {
+          "shortCode": "address1",
+          "label": "Address",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.upsert / contact.update address1. Example: 10 Main St.",
+          "children": []
+        },
+        {
+          "shortCode": "city",
+          "label": "City",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.upsert / contact.update city.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "State",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.upsert / contact.update state.",
+          "children": []
+        },
+        {
+          "shortCode": "postalCode",
+          "label": "Postal code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.upsert / contact.update postalCode.",
+          "children": []
+        },
+        {
+          "shortCode": "website",
+          "label": "Website",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.upsert / contact.update website.",
+          "children": []
+        },
+        {
+          "shortCode": "companyName",
+          "label": "Company name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.upsert / contact.update companyName.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9e9496d8-50d2-43f7-9334-b6f21cc002f2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). trigger.listen: use a BPMN message event — this op does not open a socket. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "43262da9-751a-4c87-9dc9-9d8403923fba",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank.",
+      "value": "contact.upsert",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "contact.upsert",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "contact.delete",
+        "opportunity.create",
+        "opportunity.get",
+        "opportunity.list",
+        "opportunity.update",
+        "opportunity.delete",
+        "task.create",
+        "task.get",
+        "task.list",
+        "task.update",
+        "task.delete",
+        "calendar.freeSlots",
+        "calendar.book",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "62bd0ab4-7d11-4afa-b83d-6c916020f4fe",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Location-scoped Private Integration Token (pit-…) or OAuth location access token. Sent as Authorization: Bearer. Agency tokens must not write contacts. Never log. Dashboard: HighLevel Marketplace / Private Integrations.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3cb7d2fe-1d75-4035-acb1-94c420b70c0a",
+      "shortCode": "locationId",
+      "label": "Location ID",
+      "type": "string",
+      "description": "Default sub-account id. OfficialApiNode sends it as JSON/query locationId when INPUT locationId is blank (contact.upsert/list, opportunity.create/list, calendar.book).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4f56e650-0878-44d7-a436-4888e96f3fe4",
+      "shortCode": "api_version",
+      "label": "API Version header",
+      "type": "string",
+      "description": "HighLevel Version header sent via extraHeaders. Current named version is v3 (https://marketplace.gohighlevel.com/docs/ghl/contacts/get-contact/). Date version 2021-07-28 remains documented as legacy.",
+      "value": "v3",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f7eedabb-8434-4acc-b2a1-e4f5cfdf9a7b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

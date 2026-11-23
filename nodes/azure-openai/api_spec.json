@@ -1,0 +1,53 @@
+{
+  "baseUrl": "https://",
+  "defaultTimeout": 300,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "api-key",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "chat": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{endpoint}/openai/deployments/{deployment}/chat/completions?api-version={api_version}",
+      "required": ["messages"],
+      "bodyFrom": ["messages", "tools", "tool_choice", "temperature", "top_p", "n", "stream", "stop", "max_completion_tokens", "max_tokens", "presence_penalty", "frequency_penalty", "logit_bias", "user", "seed", "response_format", "data_sources", "parallel_tool_calls"],
+      "stream": {
+        "format": "openai-sse"
+      }
+    },
+    "embeddings": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{endpoint}/openai/deployments/{deployment}/embeddings?api-version={api_version}",
+      "required": [],
+      "bodyFrom": ["input", "encoding_format", "dimensions", "user"]
+    },
+    "image_gen": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{endpoint}/openai/deployments/{deployment}/images/generations?api-version={api_version}",
+      "required": [],
+      "bodyFrom": ["prompt", "n", "size", "quality", "style", "response_format", "user"]
+    },
+    "stt": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{endpoint}/openai/deployments/{deployment}/audio/transcriptions?api-version={api_version}",
+      "required": ["file"],
+      "bodyFrom": ["file", "prompt", "response_format", "temperature", "language"],
+      "contentType": "multipart/form-data",
+      "bodyFormat": "multipart"
+    },
+    "tts": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{endpoint}/openai/deployments/{deployment}/audio/speech?api-version={api_version}",
+      "required": [],
+      "bodyFrom": ["input", "voice", "response_format", "speed"]
+    }
+  }
+}

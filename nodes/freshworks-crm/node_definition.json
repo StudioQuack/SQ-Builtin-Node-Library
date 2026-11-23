@@ -1,0 +1,303 @@
+{
+  "_id": "37bbd8de-6593-4e12-9bc8-80d01cf63dff",
+  "version": "1.0.0",
+  "name": "Freshworks CRM",
+  "label": "Freshworks CRM (Freshsales) REST — contacts, accounts, deals",
+  "description": "Official Freshsales / Freshworks CRM REST (unversioned) at https://{bundleAlias}.{hostSuffix}/crm/sales/api. Handler: OfficialApiNode. Auth: Authorization: Token token=<apiKey>. List endpoints need a saved view_id. trigger.listen is ingress — there is no REST webhook-subscribe; use Freshsales Workflow “Trigger webhook” into a BPMN message event. Customer owns the CRM tenant. Do not call Freshdesk/Freshservice from this node. apiKey is never logged or returned.",
+  "icon": "contacts",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "890719bd-8603-424c-8a21-65cc772aa646",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. JSON wrappers: contact, sales_account, deal, appointment, task, note. Do not put apiKey here. Example: {\"operation\":\"contact.get\",\"id\":\"123\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.create",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs: contact.* account.* deal.* appointment.* task.* note.* salesActivity.get | salesActivity.list | trigger.listen. trigger.listen never opens a socket.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Record id for get/update/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "view_id",
+          "label": "view_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Saved filter/view id required for contact.list / account.list / deal.list (not a bare collection GET).",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "1-based page. Default 25 rows/page on list views.",
+          "children": []
+        },
+        {
+          "shortCode": "include",
+          "label": "include",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Embed, e.g. owner on get.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official list query filter= for appointment.list / task.list / salesActivity.list.",
+          "children": []
+        },
+        {
+          "shortCode": "contact",
+          "label": "contact",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "contact.create / contact.update official {contact:{first_name, last_name, email, ...}} wrapper. Keep as the API object.",
+          "children": []
+        },
+        {
+          "shortCode": "sales_account",
+          "label": "sales_account",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "account.* official {sales_account:{name, ...}} wrapper.",
+          "children": []
+        },
+        {
+          "shortCode": "deal",
+          "label": "deal",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "deal.* official {deal:{name, amount, ...}} wrapper.",
+          "children": []
+        },
+        {
+          "shortCode": "appointment",
+          "label": "appointment",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official wrapper for appointment.create / appointment.update. title required.",
+          "children": []
+        },
+        {
+          "shortCode": "task",
+          "label": "task",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official wrapper for task.create / task.update. title required.",
+          "children": []
+        },
+        {
+          "shortCode": "note",
+          "label": "note",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official wrapper for note.create / note.update. description + targetable_type + targetable_id on create.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "db15c767-0c04-47e8-864a-205fd3ad24c5",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (PII — do not log).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "09b2d5a3-de4b-46a1-b5e6-5d8689d06fe9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank.",
+      "value": "contact.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "contact.create",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "contact.delete",
+        "account.create",
+        "account.get",
+        "account.list",
+        "account.update",
+        "account.delete",
+        "deal.create",
+        "deal.get",
+        "deal.list",
+        "deal.update",
+        "deal.delete",
+        "appointment.create",
+        "appointment.get",
+        "appointment.list",
+        "appointment.update",
+        "appointment.delete",
+        "task.create",
+        "task.get",
+        "task.list",
+        "task.update",
+        "task.delete",
+        "note.create",
+        "note.update",
+        "note.delete",
+        "salesActivity.get",
+        "salesActivity.list",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "d72f16ea-d4ee-4bcb-b159-8d5eab0849d0",
+      "shortCode": "apiKey",
+      "label": "API key",
+      "type": "password",
+      "description": "Per-user key from Profile → API Settings (StudioQuack secret). Sent as Authorization: Token token=<apiKey>. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5f16c7cf-15a0-4b39-a7c6-9ef0c7b71fdd",
+      "shortCode": "hostSuffix",
+      "label": "Host suffix",
+      "type": "select",
+      "description": "myfreshworks.com (default) or legacy freshworks.com.",
+      "value": "myfreshworks.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "myfreshworks.com",
+        "freshworks.com"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "a9e8496f-0571-4e34-9084-2457ac53e0df",
+      "shortCode": "bundleAlias",
+      "label": "Bundle alias",
+      "type": "string",
+      "description": "Freshworks bundle alias / subdomain only (acme in acme.myfreshworks.com). Substituted as baseUrl host. Hostname only — no scheme, no IPs. Profile → API Settings.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dbcbbf2d-d7b3-49be-b9c9-b51198aa7248",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

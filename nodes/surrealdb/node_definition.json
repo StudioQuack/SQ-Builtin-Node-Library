@@ -1,0 +1,226 @@
+{
+  "_id": "a84ac58d-296d-46ef-ad7f-4b090761592d",
+  "version": "1.0.0",
+  "name": "SurrealDB",
+  "label": "SurrealDB — official HTTP record API",
+  "description": "SurrealDB HTTP /key API at {surreal_url}. Docs: https://surrealdb.com/docs/surrealdb/integration/http. Headers Surreal-NS / Surreal-DB from config. Basic username/password. create/update send INPUT record as the raw JSON body. Handler: OfficialApiNode. Never log password.",
+  "icon": "storage",
+  "tags": [
+    "nosql"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1720c7b4-a9da-5328-bc26-13a9d07a5ac7",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put password here. Example: {\"operation\":\"record.select\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "record.select",
+          "description": "Overrides config. EXACT: record.select | record.create | record.update | record.delete.",
+          "children": []
+        },
+        {
+          "shortCode": "table",
+          "label": "table",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Table name. Path. Example: person.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Record id. Path.",
+          "children": []
+        },
+        {
+          "shortCode": "record",
+          "label": "record",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Record content merged as the JSON body for record.create (POST /key/{table}) and record.update (PUT /key/{table}/{id}). An object is one record; an array is bulk create. Example: {\"name\":\"Ada\",\"age\":36}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8b0b7c9b-8285-5d70-a19c-2b6efd80fced",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Secrets never copied here.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4bd45b76-e117-58e2-a829-22be10bb0dd8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: record.select | record.create | record.update | record.delete.",
+      "value": "record.select",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "record.select",
+        "record.create",
+        "record.update",
+        "record.delete"
+      ]
+    },
+    {
+      "_id": "42ce52f4-2392-5ac7-9b3b-d85df2b25d7b",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "Root or scoped password. HTTP Basic with `username`.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "74789e27-c87a-58ad-812f-e56e919cdb40",
+      "shortCode": "username",
+      "label": "Username",
+      "type": "string",
+      "description": "HTTP Basic username. Example: root.",
+      "value": "root",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c2f84208-6989-49b0-ad26-ebc0d1532c42",
+      "shortCode": "namespace",
+      "label": "Namespace",
+      "type": "string",
+      "description": "Surreal-NS header. Official HTTP namespace for queries (https://surrealdb.com/docs/reference/rest-api/http-protocol). Example: main. Blank omits the header.",
+      "value": "main",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ce097d5f-0f8f-4e5c-a4dc-12a80a43bfa2",
+      "shortCode": "database",
+      "label": "Database",
+      "type": "string",
+      "description": "Surreal-DB header. Official HTTP database for queries. Example: main. Blank omits the header.",
+      "value": "main",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "31cc2ecb-116d-5a4f-8c57-a1359205acfa",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "79c5d6b0-d5aa-4036-8090-80fd5b8fbbda",
+      "shortCode": "surreal_url",
+      "label": "SurrealDB URL",
+      "type": "string",
+      "description": "SurrealDB HTTP origin including scheme, e.g. http://127.0.0.1:8000 or https://db.example.com. Substituted as {surreal_url}.",
+      "value": "http://localhost:8000",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

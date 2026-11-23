@@ -1,0 +1,380 @@
+{
+  "_id": "f4dfd74c-9778-4db5-980c-5a02762500cc",
+  "version": "1.0.0",
+  "name": "SonarQube",
+  "label": "SonarQube Web API",
+  "description": "SonarQube Web API via OfficialApiNode. Docs: https://docs.sonarsource.com/sonarqube-server/latest/extension-guide/web-api/. Operations: project_get, project_create, issue_search, measures_get, qualitygate_get, qualitygate_status, listen. Auth secret token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "sonarqube",
+    "quality",
+    "sast"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3b86e9b5-7023-4b0b-8ec3-b8671d7f40b5",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "project_get",
+          "description": "Which official API call to run. EXACT values: project_get | project_create | issue_search | measures_get | qualitygate_get | qualitygate_status | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'project_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "component",
+          "label": "component",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project key.",
+          "children": []
+        },
+        {
+          "shortCode": "projectKey",
+          "label": "projectKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project key for QG status.",
+          "children": []
+        },
+        {
+          "shortCode": "impactSeverities",
+          "label": "impactSeverities",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional GET /issues/search query impactSeverities (INFO,LOW,MEDIUM,HIGH,BLOCKER). MQR filter; severities remains valid. https://docs.sonarsource.com/sonarqube-server/latest/extension-guide/web-api/",
+          "children": []
+        },
+        {
+          "shortCode": "metricKeys",
+          "label": "metricKeys",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated metric keys.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project display name for project_create (required) or quality gate name for qualitygate_get. Example: Payments Service.",
+          "children": []
+        },
+        {
+          "shortCode": "visibility",
+          "label": "visibility",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project visibility for project_create. EXACT: private | public. Empty uses the organization / instance default. Example: private.",
+          "children": []
+        },
+        {
+          "shortCode": "mainBranch",
+          "label": "mainBranch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Main branch name for project_create. Empty uses main. Example: master.",
+          "children": []
+        },
+        {
+          "shortCode": "project",
+          "label": "project",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project key for project_create (API query param `project`). Alias: projectKey.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Quality gate id for qualitygate_get.",
+          "children": []
+        },
+        {
+          "shortCode": "organization",
+          "label": "organization",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SonarCloud organization key for project_create and issue_search.",
+          "children": []
+        },
+        {
+          "shortCode": "projects",
+          "label": "projects",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated project keys for issue_search.",
+          "children": []
+        },
+        {
+          "shortCode": "projectKeys",
+          "label": "projectKeys",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deprecated issue_search filter (comma-separated keys). Prefer projects or componentKeys.",
+          "children": []
+        },
+        {
+          "shortCode": "assignees",
+          "label": "assignees",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated assignee logins for issue_search.",
+          "children": []
+        },
+        {
+          "shortCode": "issues",
+          "label": "issues",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated issue keys for issue_search.",
+          "children": []
+        },
+        {
+          "shortCode": "projectId",
+          "label": "projectId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project id for qualitygate_status (alternative to projectKey).",
+          "children": []
+        },
+        {
+          "shortCode": "analysisId",
+          "label": "analysisId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Analysis uuid for qualitygate_status.",
+          "children": []
+        },
+        {
+          "shortCode": "branch",
+          "label": "branch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional branch for qualitygate_status.",
+          "children": []
+        },
+        {
+          "shortCode": "componentKeys",
+          "label": "componentKeys",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `componentKeys` for operation: issue_search.",
+          "children": []
+        },
+        {
+          "shortCode": "severities",
+          "label": "severities",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `severities` for operation: issue_search.",
+          "children": []
+        },
+        {
+          "shortCode": "ps",
+          "label": "ps",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "issue_search page size (ps). Max 500. Omitted when blank.",
+          "children": []
+        },
+        {
+          "shortCode": "p",
+          "label": "p",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "issue_search page index (p). 1-based. Omitted when blank.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "07eb11ed-68b8-4da4-a165-bfe2cc4dface",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "04fa6450-a77b-41d5-8046-181c7f83d093",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: project_get, project_create, issue_search, measures_get, qualitygate_get, qualitygate_status, listen. listen is BPMN ingress, not a socket.",
+      "value": "project_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "project_get",
+        "project_create",
+        "issue_search",
+        "measures_get",
+        "qualitygate_get",
+        "qualitygate_status",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "51898277-8673-42c5-90ad-9f7b84e3b197",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "SonarQube / SonarCloud user token. Authorization: Bearer. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "65fc580e-8076-4d2f-872d-b9a59928d2d4",
+      "shortCode": "base_url",
+      "label": "Server URL",
+      "type": "string",
+      "description": "SonarQube Server URL (scheme + host[:port], no trailing slash, without /api). Empty uses SonarCloud https://sonarcloud.io. Example: https://sonar.example.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "shortCode": "component",
+      "label": "Default component key",
+      "type": "string",
+      "description": "Default project/component key for project_get and measures_get when INPUT omits component. Also available on INPUT as component.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "shortCode": "organization",
+      "label": "Default organization",
+      "type": "string",
+      "description": "Default SonarCloud organization for project_create / issue_search when INPUT omits organization.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "694b63fd-6665-4b36-8613-4431799e1f2f",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

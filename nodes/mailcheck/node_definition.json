@@ -1,0 +1,164 @@
+{
+  "_id": "a870d39e-18f4-4db2-b64b-acd4c09155d4",
+  "version": "1.0.0",
+  "name": "Mailcheck",
+  "label": "UserCheck (Mailcheck.ai) — disposable email / domain signals",
+  "description": "Official UserCheck REST (Mailcheck.ai rebrand). GET /email/{email} and GET /domain/{domain} at https://api.usercheck.com. Handler: OfficialApiNode. MX/disposable signals only — not a mailbox inbox. Customer owns the UserCheck account. Minimize: send only the address/domain being checked. api_key is never logged or returned.",
+  "icon": "mark_email_read",
+  "tags": [
+    "enrichment",
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "45b882d0-ab2b-4239-95eb-9f78e0f48d07",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. email.check requires email. domain.check requires domain. Do not put api_key here. Example: {\"operation\":\"email.check\",\"email\":\"ada@example.com\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "email.check",
+          "description": "Overrides config operation when non-blank. EXACT: 'email.check' | 'domain.check'.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email to verify for email.check. Path /email/{email}. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "domain",
+          "label": "domain",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Domain to verify for domain.check. Path /domain/{domain}. Example: example.com.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "64c5a00d-db35-41b5-ad54-14577440f909",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (disposable, mx, etc.).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b12542ab-3b26-4e28-aec4-603b96f4738f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: email.check | domain.check.",
+      "value": "email.check",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "email.check",
+        "domain.check"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "3093afc9-a733-4914-999f-ca57ad454168",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "UserCheck API key (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT. Dashboard: https://app.usercheck.com/",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "70b4dcf2-af5a-46f1-8f50-d13032f67119",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

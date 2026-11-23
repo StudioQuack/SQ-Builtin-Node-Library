@@ -1,0 +1,311 @@
+{
+  "baseUrl": "https://a.klaviyo.com",
+  "defaultTimeout": 30,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "Authorization",
+    "prefix": "Klaviyo-API-Key ",
+    "configKey": "private_api_key"
+  },
+  "operations": {
+    "profile.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/profiles/",
+      "required": [],
+      "bodyFrom": [
+        "type",
+        "email",
+        "phone_number",
+        "external_id",
+        "first_name",
+        "last_name",
+        "organization",
+        "title",
+        "image",
+        "location",
+        "properties"
+      ],
+      "contentType": "application/vnd.api+json",
+      "bodyMap": {
+        "type": "data.type",
+        "email": "data.attributes.email",
+        "phone_number": "data.attributes.phone_number",
+        "external_id": "data.attributes.external_id",
+        "first_name": "data.attributes.first_name",
+        "last_name": "data.attributes.last_name",
+        "organization": "data.attributes.organization",
+        "title": "data.attributes.title",
+        "image": "data.attributes.image",
+        "location": "data.attributes.location",
+        "properties": "data.attributes.properties"
+      }
+    },
+    "profile.upsert": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/profile-import/",
+      "required": [],
+      "bodyFrom": [
+        "type",
+        "email",
+        "phone_number",
+        "external_id",
+        "first_name",
+        "last_name",
+        "organization",
+        "title",
+        "image",
+        "location",
+        "properties",
+        "profile_id"
+      ],
+      "contentType": "application/vnd.api+json",
+      "bodyMap": {
+        "type": "data.type",
+        "email": "data.attributes.email",
+        "phone_number": "data.attributes.phone_number",
+        "external_id": "data.attributes.external_id",
+        "first_name": "data.attributes.first_name",
+        "last_name": "data.attributes.last_name",
+        "organization": "data.attributes.organization",
+        "title": "data.attributes.title",
+        "image": "data.attributes.image",
+        "location": "data.attributes.location",
+        "properties": "data.attributes.properties",
+        "profile_id": "data.id"
+      }
+    },
+    "profile.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/profiles/{profile_id}/",
+      "required": [
+        "profile_id"
+      ]
+    },
+    "profile.update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/api/profiles/{profile_id}/",
+      "required": [
+        "profile_id"
+      ],
+      "bodyFrom": [
+        "type",
+        "email",
+        "phone_number",
+        "external_id",
+        "first_name",
+        "last_name",
+        "organization",
+        "title",
+        "image",
+        "location",
+        "properties"
+      ],
+      "contentType": "application/vnd.api+json",
+      "bodyMap": {
+        "type": "data.type",
+        "email": "data.attributes.email",
+        "phone_number": "data.attributes.phone_number",
+        "external_id": "data.attributes.external_id",
+        "first_name": "data.attributes.first_name",
+        "last_name": "data.attributes.last_name",
+        "organization": "data.attributes.organization",
+        "title": "data.attributes.title",
+        "image": "data.attributes.image",
+        "location": "data.attributes.location",
+        "properties": "data.attributes.properties"
+      }
+    },
+    "profile.search": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/profiles/",
+      "queryFrom": [
+        "filter",
+        "page_cursor",
+        "page_size"
+      ],
+      "required": [],
+      "queryMap": {
+        "page_cursor": "page[cursor]",
+        "page_size": "page[size]"
+      }
+    },
+    "list.addProfiles": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/lists/{list_id}/relationships/profiles/",
+      "required": [
+        "list_id",
+        "profile_id"
+      ],
+      "bodyFrom": [
+        "data",
+        "type",
+        "profile_id"
+      ],
+      "contentType": "application/vnd.api+json",
+      "bodyMap": {
+        "data": "data[0]",
+        "type": "data[0].type",
+        "profile_id": "data[0].id"
+      }
+    },
+    "list.removeProfiles": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/api/lists/{list_id}/relationships/profiles/",
+      "required": [
+        "list_id",
+        "profile_id"
+      ],
+      "bodyFrom": [
+        "data",
+        "type",
+        "profile_id"
+      ],
+      "contentType": "application/vnd.api+json",
+      "bodyMap": {
+        "data": "data[0]",
+        "type": "data[0].type",
+        "profile_id": "data[0].id"
+      }
+    },
+    "list.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/lists/{list_id}/",
+      "required": [
+        "list_id"
+      ]
+    },
+    "event.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/events/",
+      "required": [],
+      "bodyFrom": [
+        "type",
+        "metric_name",
+        "email",
+        "phone_number",
+        "profile_id",
+        "properties",
+        "time",
+        "value",
+        "unique_id"
+      ],
+      "contentType": "application/vnd.api+json",
+      "bodyMap": {
+        "type": "data.type",
+        "metric_name": "data.attributes.metric.data.attributes.name",
+        "email": "data.attributes.profile.data.attributes.email",
+        "phone_number": "data.attributes.profile.data.attributes.phone_number",
+        "profile_id": "data.attributes.profile.data.id",
+        "properties": "data.attributes.properties",
+        "time": "data.attributes.time",
+        "value": "data.attributes.value",
+        "unique_id": "data.attributes.unique_id"
+      }
+    },
+    "campaign.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/campaigns/{campaign_id}/",
+      "required": [
+        "campaign_id"
+      ]
+    },
+    "campaign.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/campaigns/",
+      "queryFrom": [
+        "filter",
+        "page_cursor"
+      ],
+      "required": [],
+      "queryMap": {
+        "page_cursor": "page[cursor]"
+      }
+    },
+    "campaign.send": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/campaign-send-jobs/",
+      "required": [],
+      "bodyFrom": [
+        "type",
+        "campaign_id"
+      ],
+      "contentType": "application/vnd.api+json",
+      "bodyMap": {
+        "type": "data.type",
+        "campaign_id": "data.id"
+      }
+    },
+    "segment.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/segments/{segment_id}/",
+      "required": [
+        "segment_id"
+      ]
+    },
+    "template.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/templates/",
+      "queryFrom": [
+        "filter",
+        "page_cursor"
+      ],
+      "required": [],
+      "queryMap": {
+        "page_cursor": "page[cursor]"
+      }
+    },
+    "catalog.item.upsert": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/catalog-item-bulk-create-jobs/",
+      "required": [
+        "external_id",
+        "title"
+      ],
+      "bodyFrom": [
+        "data",
+        "type",
+        "external_id",
+        "title",
+        "description",
+        "url",
+        "image_full_url",
+        "price",
+        "published"
+      ],
+      "contentType": "application/vnd.api+json",
+      "bodyMap": {
+        "type": "data.type",
+        "external_id": "data.attributes.items.data[0].attributes.external_id",
+        "title": "data.attributes.items.data[0].attributes.title",
+        "description": "data.attributes.items.data[0].attributes.description",
+        "url": "data.attributes.items.data[0].attributes.url",
+        "image_full_url": "data.attributes.items.data[0].attributes.image_full_url",
+        "price": "data.attributes.items.data[0].attributes.price",
+        "published": "data.attributes.items.data[0].attributes.published"
+      }
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  },
+  "extraHeaders": {
+    "revision": "{revision}",
+    "Accept": "application/vnd.api+json"
+  }
+}

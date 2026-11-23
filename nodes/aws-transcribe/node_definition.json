@@ -1,0 +1,306 @@
+{
+  "_id": "43ec2978-d032-4a5e-bd29-89b586cac10a",
+  "version": "1.0.0",
+  "name": "AWS Transcribe",
+  "label": "AWS Transcribe",
+  "description": "Official Amazon Transcribe batch jobs (API 2017-10-26) on INPUT input → OUTPUT output. start_job / get_job / list_jobs / delete_job POST https://transcribe.{region}.amazonaws.com/ signed with AWS SigV4 (service transcribe). X-Amz-Target Transcribe.{Action} and Content-Type application/x-amz-json-1.1 are set per operation. listen = streaming ingress (no socket). IAM keys are StudioQuack secrets (access_key_id, secret_access_key, optional session_token). Media is an S3 URI. Docs: https://docs.aws.amazon.com/transcribe/latest/APIReference/API_StartTranscriptionJob.html. Terms: https://aws.amazon.com/agreement/. Never log credentials. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "settings_voice",
+  "tags": [
+    "aws",
+    "transcribe",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "43b9b743-5228-4c5a-a555-260d711d33f1",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. start_job requires TranscriptionJobName + Media (MediaFileUri S3). get_job / delete_job require TranscriptionJobName. list_jobs optional Status / NextToken. listen is ingress. Do not put AWS keys here. Example: {\"TranscriptionJobName\":\"job-1\",\"LanguageCode\":\"en-US\",\"Media\":{\"MediaFileUri\":\"s3://bucket/audio.flac\"}}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "TranscriptionJobName",
+          "label": "TranscriptionJobName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job name. Pattern ^[0-9a-zA-Z._-]+, length 1–200. Required for start/get/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "Media",
+          "label": "Media",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "start_job Media object. Required key MediaFileUri (s3://...).",
+          "children": []
+        },
+        {
+          "shortCode": "LanguageCode",
+          "label": "LanguageCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "e.g. en-US. Omit when IdentifyLanguage / IdentifyMultipleLanguages is true.",
+          "children": []
+        },
+        {
+          "shortCode": "IdentifyLanguage",
+          "label": "IdentifyLanguage",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Optional auto language id on start_job.",
+          "children": []
+        },
+        {
+          "shortCode": "OutputBucketName",
+          "label": "OutputBucketName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional S3 bucket for the transcript. Omit to use the Transcribe service bucket.",
+          "children": []
+        },
+        {
+          "shortCode": "Status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list_jobs filter. EXACT: QUEUED | IN_PROGRESS | FAILED | COMPLETED.",
+          "children": []
+        },
+        {
+          "shortCode": "NextToken",
+          "label": "NextToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list_jobs pagination token.",
+          "children": []
+        },
+        {
+          "shortCode": "MediaFormat",
+          "label": "MediaFormat",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `MediaFormat` for operation: start_job.",
+          "children": []
+        },
+        {
+          "shortCode": "MediaSampleRateHertz",
+          "label": "MediaSampleRateHertz",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `MediaSampleRateHertz` for operation: start_job.",
+          "children": []
+        },
+        {
+          "shortCode": "OutputKey",
+          "label": "OutputKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `OutputKey` for operation: start_job.",
+          "children": []
+        },
+        {
+          "shortCode": "IdentifyMultipleLanguages",
+          "label": "IdentifyMultipleLanguages",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `IdentifyMultipleLanguages` for operation: start_job.",
+          "children": []
+        },
+        {
+          "shortCode": "Settings",
+          "label": "Settings",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Settings` for operation: start_job.",
+          "children": []
+        },
+        {
+          "shortCode": "JobNameContains",
+          "label": "JobNameContains",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `JobNameContains` for operation: list_jobs.",
+          "children": []
+        },
+        {
+          "shortCode": "MaxResults",
+          "label": "MaxResults",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `MaxResults` for operation: list_jobs.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "cd844ec2-c542-4413-8542-650eeb92f641",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (TranscriptionJob JSON). Expect HTTP 403 until SigV4 + X-Amz-Target exist. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Transcribe JSON.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "31f8bcfa-9caf-4c18-850a-69ddfc17e5da",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Transcribe verb. EXACT: start_job | get_job | list_jobs | delete_job | listen. Batch ops POST / with X-Amz-Target Transcribe.{Action}. listen = streaming ingress (no socket).",
+      "value": "start_job",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "start_job",
+        "get_job",
+        "list_jobs",
+        "delete_job",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "afc54bd7-0cef-4a8b-a9ce-5130fe0f07ca",
+      "shortCode": "access_key_id",
+      "label": "AWS access key ID",
+      "type": "password",
+      "description": "IAM access key ID used as the SigV4 credential. StudioQuack secret. Never on INPUT. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f6cd1245-d35b-4a0d-9548-fac2fc85d5f8",
+      "shortCode": "secret_access_key",
+      "label": "AWS secret access key",
+      "type": "password",
+      "description": "IAM secret access key used to sign SigV4. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5da8f8a8-91b1-4992-9188-e9f830d67165",
+      "shortCode": "session_token",
+      "label": "AWS session token",
+      "type": "password",
+      "description": "Optional STS session token. When set, OfficialApiNode adds x-amz-security-token. Empty for long-lived keys. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4122d025-88e3-4892-a92b-83068bb5234a",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "AWS region for https://transcribe.{region}.amazonaws.com. Example: us-east-1. Required for SigV4.",
+      "value": "us-east-1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8909b128-5301-403f-ac04-025a5e2fb84e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 30. Floor 1.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

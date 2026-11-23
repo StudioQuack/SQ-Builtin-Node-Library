@@ -1,0 +1,317 @@
+{
+  "_id": "0ca29b89-278a-5b25-8f6b-a9e144d09d23",
+  "version": "1.0.0",
+  "name": "Stamped",
+  "label": "Stamped.io Reviews V2 + NPS",
+  "description": "Stamped.io reviews. Docs: https://developers.stamped.io/. review_create POST /api/reviews3 with email, reviewRating, reviewMessage (+ product fields). Dashboard list uses /api/v2/{store_hash}/dashboard/reviews. Basic api_key:api_secret. Handler: OfficialApiNode. Never log secrets or reviewer email.",
+  "icon": "rate_review",
+  "tags": [
+    "stamped",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "7eabe4ea-485a-5bca-9198-fc6d08a8292c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "review_list",
+          "description": "Official API verb. EXACT: review_list | review_create | nps. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `search` for operation: review_list.",
+          "children": []
+        },
+        {
+          "shortCode": "rating",
+          "label": "rating",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `rating` for operation: review_list.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `state` for operation: review_list.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page` for operation: review_list.",
+          "children": []
+        },
+        {
+          "shortCode": "apiKey",
+          "label": "apiKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Public storefront apiKey query on review_create. Prefer config api_key (same shortCode wins from input).",
+          "children": []
+        },
+        {
+          "shortCode": "sId",
+          "label": "sId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Store id query sId on review_create. Prefer config store_hash when that is your sId.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reviewer email for review_create. Required. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "author",
+          "label": "author",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reviewer display name for review_create. Example: Ada L.",
+          "children": []
+        },
+        {
+          "shortCode": "reviewRating",
+          "label": "reviewRating",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Star rating 1–5 for review_create. Required. Example: 5.",
+          "children": []
+        },
+        {
+          "shortCode": "reviewTitle",
+          "label": "reviewTitle",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Review title for review_create.",
+          "children": []
+        },
+        {
+          "shortCode": "reviewMessage",
+          "label": "reviewMessage",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Review body for review_create. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "productId",
+          "label": "productId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product id for review_create.",
+          "children": []
+        },
+        {
+          "shortCode": "productName",
+          "label": "productName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product name for review_create.",
+          "children": []
+        },
+        {
+          "shortCode": "productSKU",
+          "label": "productSKU",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product SKU for review_create.",
+          "children": []
+        },
+        {
+          "shortCode": "location",
+          "label": "location",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reviewer location for review_create.",
+          "children": []
+        },
+        {
+          "shortCode": "dateCreated",
+          "label": "dateCreated",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO datetime for review_create when backfilling. Example: 2026-01-15T12:00:00Z.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "efbea4af-98dd-5884-a5f3-ca581bdb4b4b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "d6093c5d-85bf-5604-a7da-52ec849548bd",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: review_list | review_create | nps. trigger does not open a socket.",
+      "value": "review_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "review_list",
+        "review_create",
+        "nps"
+      ]
+    },
+    {
+      "_id": "487c4727-ba62-5f75-a0b7-dbd291ba94c2",
+      "shortCode": "api_secret",
+      "label": "Api Secret",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type basic. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5c6bbcbd-eae7-5cd1-af93-b9a6e03c826d",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Auth username / companion key (api_key).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6357e3f4-fc39-5845-8691-469989f3649d",
+      "shortCode": "store_hash",
+      "label": "Store Hash",
+      "type": "string",
+      "description": "ShopId / store hash.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e5c19d91-6b1e-5eeb-8259-5334ccf316b6",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

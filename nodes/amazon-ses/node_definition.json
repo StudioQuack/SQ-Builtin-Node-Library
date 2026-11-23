@@ -1,0 +1,407 @@
+{
+  "_id": "d3f3870a-c90a-5384-a432-ec56565822c2",
+  "version": "1.0.0",
+  "name": "Amazon SES",
+  "label": "Amazon SES — AWS SESv2 SendEmail",
+  "description": "Amazon SES via the official AWS SESv2 REST API. Base https://email.{region}.amazonaws.com signed with AWS SigV4 (service ses). Docs: https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendEmail.html. Sandbox until production access. Auth secrets access_key_id, secret_access_key, optional session_token are instance config only. listen = SNS/configuration-set events as BPMN message events. Handler: OfficialApiNode (api_spec.json). Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "mail",
+  "tags": [
+    "email",
+    "aws"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "31de26b1-7bcf-5644-bfcd-bbabed97dfcf",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Amazon SES operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"send-email\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-email",
+          "description": "Which official call to run. EXACT values: send-email | send-templated-email | create-template | get-template | list-templates | update-template | delete-template | create-custom-verification-template | get-custom-verification-template | list-custom-verification-templates | update-custom-verification-template | delete-custom-verification-template | create-identity | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "FromEmailAddress",
+          "label": "FromEmailAddress",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Verified From identity for send-email / send-templated-email and custom verification templates. Example: Ada <ada@example.com>.",
+          "children": []
+        },
+        {
+          "shortCode": "Destination",
+          "label": "Destination",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "SESv2 Destination envelope escape hatch. Purpose fields ToAddresses/CcAddresses/BccAddresses merge as Destination.* via bodyMap. Example: {\"ToAddresses\":[\"ada@example.com\"]}.",
+          "children": []
+        },
+        {
+          "shortCode": "ToAddresses",
+          "label": "ToAddresses",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "To addresses on send-email / send-templated-email. Nested as Destination.ToAddresses. Example: [\"ada@example.com\"].",
+          "children": []
+        },
+        {
+          "shortCode": "CcAddresses",
+          "label": "CcAddresses",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Cc addresses on send-email / send-templated-email. Nested as Destination.CcAddresses. Example: [\"cc@example.com\"].",
+          "children": []
+        },
+        {
+          "shortCode": "BccAddresses",
+          "label": "BccAddresses",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Bcc addresses on send-email / send-templated-email. Nested as Destination.BccAddresses. Example: [\"bcc@example.com\"].",
+          "children": []
+        },
+        {
+          "shortCode": "Content",
+          "label": "Content",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "SES v2 Content for send-email (Simple) or send-templated-email (Template). Simple: {Simple:{Subject:{Data},Body:{Text:{Data},Html:{Data}}}}. Template: {Template:{TemplateName,TemplateData}} where TemplateData is a JSON-encoded STRING of variable values (send it here; TemplateName may come from the TemplateName field). Example Simple: {\"Simple\":{\"Subject\":{\"Data\":\"Hi\"},\"Body\":{\"Text\":{\"Data\":\"Hello\"}}}}. Example Template: {\"Template\":{\"TemplateData\":\"{\\\"name\\\":\\\"Ana\\\"}\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "TemplateName",
+          "label": "TemplateName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Template name for create/get/update/delete-template and send-templated-email (wired to Content.Template.TemplateName on send). Example: welcome.",
+          "children": []
+        },
+        {
+          "shortCode": "EmailIdentity",
+          "label": "EmailIdentity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Domain or email for create-identity. Example: example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "ConfigurationSetName",
+          "label": "ConfigurationSetName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional configuration set for send-email / send-templated-email. Example: transactional.",
+          "children": []
+        },
+        {
+          "shortCode": "TemplateContent",
+          "label": "TemplateContent",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Template content. create-template / update-template (required): object {Subject, Html, Text}, e.g. {\"Subject\":\"Hi\",\"Text\":\"Hello\",\"Html\":\"<p>Hello</p>\"}. create/update-custom-verification-template (required): the HTML body as a string, e.g. <p>Click to verify</p>.",
+          "children": []
+        },
+        {
+          "shortCode": "PageSize",
+          "label": "PageSize",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for list-templates / list-custom-verification-templates. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "NextToken",
+          "label": "NextToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination token for list-templates / list-custom-verification-templates.",
+          "children": []
+        },
+        {
+          "shortCode": "TemplateSubject",
+          "label": "TemplateSubject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subject line for create/update-custom-verification-template (required there). Example: Verify your email.",
+          "children": []
+        },
+        {
+          "shortCode": "SuccessRedirectionURL",
+          "label": "SuccessRedirectionURL",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL the recipient is redirected to after successful verification; required by create/update-custom-verification-template. Example: https://example.com/verified.",
+          "children": []
+        },
+        {
+          "shortCode": "FailureRedirectionURL",
+          "label": "FailureRedirectionURL",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL the recipient is redirected to when verification fails; required by create/update-custom-verification-template. Example: https://example.com/verify-failed.",
+          "children": []
+        },
+        {
+          "shortCode": "ReplyToAddresses",
+          "label": "ReplyToAddresses",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Top-level ReplyToAddresses for send-email / send-templated-email. JSON array of emails. Example: [\"noreply@example.com\"].",
+          "children": []
+        },
+        {
+          "shortCode": "FeedbackForwardingEmailAddress",
+          "label": "FeedbackForwardingEmailAddress",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Verified address that receives bounces/complaints for send-email / send-templated-email. Example: bounce@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "EmailTags",
+          "label": "EmailTags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "EmailTags [{Name,Value}] for send-email / send-templated-email. Example: [{\"Name\":\"campaign\",\"Value\":\"welcome\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "TemplateData",
+          "label": "TemplateData",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Template variable values JSON for send-templated-email. Wired to Content.Template.TemplateData. Example: {\"name\":\"Ada\"}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "bb0bfd17-524b-5bf3-8034-c2a774105887",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4fcea0e4-ee5d-5563-b126-b9af9520ef91",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-email, send-templated-email, create-template, get-template, list-templates, update-template, delete-template, create-custom-verification-template, get-custom-verification-template, list-custom-verification-templates, update-custom-verification-template, delete-custom-verification-template, create-identity, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-email",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-email",
+        "send-templated-email",
+        "create-template",
+        "get-template",
+        "list-templates",
+        "update-template",
+        "delete-template",
+        "create-custom-verification-template",
+        "get-custom-verification-template",
+        "list-custom-verification-templates",
+        "update-custom-verification-template",
+        "delete-custom-verification-template",
+        "create-identity",
+        "listen"
+      ]
+    },
+    {
+      "_id": "33ee3ff9-0e17-5345-accb-fa265d124126",
+      "shortCode": "access_key_id",
+      "label": "AWS access key",
+      "type": "password",
+      "description": "IAM access key ID used as the SigV4 credential. StudioQuack secret. Never log. Prefer IAM least privilege ses:SendEmail. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "abe0c8d6-70b7-5566-afb0-41aaaeaf8150",
+      "shortCode": "region",
+      "label": "region",
+      "type": "string",
+      "description": "AWS region for https://email.{region}.amazonaws.com (SESv2). Example: us-east-1. Required for SigV4.",
+      "value": "us-east-1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dfdb62c3-d112-4f5b-8d46-87176df15dae",
+      "shortCode": "aws_secret_access_key",
+      "label": "Aws Secret Access Key",
+      "type": "password",
+      "description": "IAM secret access key for SigV4 signing (StudioQuack secret). Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f3d591f7-5070-415d-93c8-5155bdd12da5",
+      "shortCode": "session_token",
+      "label": "AWS session token",
+      "type": "password",
+      "description": "Optional STS session token. When set, OfficialApiNode adds x-amz-security-token. Empty for long-lived keys. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "325866f0-fbb4-5fbd-8059-e8a254bb2035",
+      "shortCode": "ConfigurationSetName",
+      "label": "ConfigurationSetName",
+      "type": "string",
+      "description": "Default ConfigurationSetName on send-email / send-templated-email when INPUT omits it.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "77f40462-3259-42b6-9778-23354c3306f8",
+      "shortCode": "TemplateData",
+      "label": "Templatedata",
+      "type": "object",
+      "description": "Template variable values JSON for send-templated-email. Wired to Content.Template.TemplateData. Example: {\"name\":\"Ada\"}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "7022061a-b6b6-5d3c-a0ad-bf203ea2a696",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e163e0b8-72ca-43de-b954-d4a28f5e8e83",
+      "shortCode": "FromEmailAddress",
+      "label": "FromEmailAddress",
+      "type": "string",
+      "description": "Default verified sender when INPUT FromEmailAddress is empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

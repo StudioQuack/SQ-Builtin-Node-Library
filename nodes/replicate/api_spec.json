@@ -1,0 +1,47 @@
+{
+  "baseUrl": "https://api.replicate.com",
+  "defaultTimeout": 60,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_token"
+  },
+  "operations": {
+    "run": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/models/{owner}/{name}/predictions",
+      "required": ["owner", "name", "input"],
+      "bodyFrom": ["input", "webhook", "webhook_events_filter"]
+    },
+    "predict": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/predictions",
+      "required": ["version", "input"],
+      "bodyFrom": ["version", "input", "webhook", "webhook_events_filter", "stream"]
+    },
+    "get_prediction": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/predictions/{prediction_id}",
+      "required": ["prediction_id"]
+    },
+    "cancel": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/predictions/{prediction_id}/cancel",
+      "required": ["prediction_id"],
+      "bodyFrom": ["_omit"]
+    },
+    "list_models": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/models",
+      "queryFrom": ["cursor", "sort_by", "sort_direction"],
+      "required": []
+    }
+  }
+}

@@ -1,0 +1,285 @@
+{
+  "_id": "739f0702-afe2-40d3-b740-d3df7b84305d",
+  "version": "1.0.0",
+  "name": "Kit",
+  "label": "Kit API V4 — forms, sequences, tags, subscribers (ConvertKit rebrand)",
+  "description": "Official Kit API V4 at https://api.kit.com/v4 (ConvertKit rebrand). Handler: OfficialApiNode. Auth header X-Kit-Api-Key. V3 api_secret is not used. trigger.listen is ingress. Subscribers are PII; caller owns consent. Customer owns the Kit account. api_key is never logged or returned.",
+  "icon": "alternate_email",
+  "tags": [
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f44e7006-2053-411c-b38c-5c57619f648d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put api_key here. subscriber.addToForm requires form_id + email_address. Example: {\"operation\":\"form.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "subscriber.addToForm",
+          "description": "Overrides config operation when non-blank. EXACT V4 verbs including trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "form_id",
+          "label": "form_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Form id path for addToForm / listByForm.",
+          "children": []
+        },
+        {
+          "shortCode": "sequence_id",
+          "label": "sequence_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sequence id path for addToSequence / listBySequence.",
+          "children": []
+        },
+        {
+          "shortCode": "tag_id",
+          "label": "tag_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tag id path for tag subscriber ops.",
+          "children": []
+        },
+        {
+          "shortCode": "subscriber_id",
+          "label": "subscriber_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subscriber id for addToSequence / tag.add / tag.remove.",
+          "children": []
+        },
+        {
+          "shortCode": "email_address",
+          "label": "email_address",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subscriber email. Official email_address for addToForm / addToSequence / tag.add / tag.remove. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "first_name",
+          "label": "first_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official first_name for subscriber.addToForm.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Custom fields map for subscriber.addToForm.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "state",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subscriber state for addToForm. Typical: active | cancelled | bounced | complained.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cursor after for list operations.",
+          "children": []
+        },
+        {
+          "shortCode": "before",
+          "label": "before",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cursor before for list operations.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for list operations. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tag name for tag.create.",
+          "children": []
+        },
+        {
+          "shortCode": "label",
+          "label": "label",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Custom field label for customField.create / customField.update.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_field_id",
+          "label": "custom_field_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Custom field id path for update/delete.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "390c5d32-3741-4328-a223-2d4387933378",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Do not log emails, phones, or secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "043b2182-1360-4802-b1bc-63fe761c77d9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: Kit V4 verbs.",
+      "value": "form.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "subscriber.addToForm",
+        "subscriber.addToSequence",
+        "subscriber.tag.add",
+        "subscriber.tag.remove",
+        "subscriber.listByForm",
+        "subscriber.listBySequence",
+        "subscriber.listByTag",
+        "form.list",
+        "sequence.list",
+        "tag.create",
+        "tag.list",
+        "customField.create",
+        "customField.list",
+        "customField.update",
+        "customField.delete",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "211609c6-4ee6-4fa8-8e9a-ddaadd098f65",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Kit V4 API key (StudioQuack secret). Sent as X-Kit-Api-Key. Never log or place on INPUT. Dashboard: https://app.kit.com/",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f99f7667-0c2b-49a2-8765-4782fda4aaad",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

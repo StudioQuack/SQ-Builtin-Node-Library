@@ -1,0 +1,186 @@
+{
+  "_id": "b7482265-2fad-5b17-8851-e2d6a77ed817",
+  "version": "1.0.0",
+  "name": "Squarespace Commerce",
+  "label": "Squarespace Commerce APIs — Orders 1.0, Inventory 1.0, Products v2",
+  "description": "Squarespace Commerce Orders 1.0, Inventory 1.0, Products v2 (URI /v2/commerce/products, not /2.0), Webhook Subscriptions 1.0. Partner/plan gated. Bearer API key. trigger is ingress. Docs: https://developers.squarespace.com/commerce-apis/versioning",
+  "icon": "storefront",
+  "tags": [
+    "squarespace",
+    "commerce",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "207659ad-de66-5108-87fc-42ac1ea0f887",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "order_list",
+          "description": "Official API verb. EXACT: order_list | order_get | inventory_get | product_list | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id for get/update/delete path {id} when that operation needs it.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `cursor` for operations: order_list, inventory_get, product_list.",
+          "children": []
+        },
+        {
+          "shortCode": "modifiedAfter",
+          "label": "modifiedAfter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `modifiedAfter` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "modifiedBefore",
+          "label": "modifiedBefore",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `modifiedBefore` for operation: order_list.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5bd6fae2-2147-5354-91b9-41496ec64895",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "32741dcf-b7eb-5b23-aa87-aebaedd12c4f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: order_list | order_get | inventory_get | product_list | trigger. trigger does not open a socket.",
+      "value": "order_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "order_list",
+        "order_get",
+        "inventory_get",
+        "product_list",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "7ff920a2-a147-5ce0-b900-b639a9e1cc01",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type bearer. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7a3e9186-9e69-5f7c-859d-a1bfa94afbba",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

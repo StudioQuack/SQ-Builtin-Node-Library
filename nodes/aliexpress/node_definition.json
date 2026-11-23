@@ -1,0 +1,242 @@
+{
+  "_id": "d20140bd-e118-5632-9228-ff38648175e8",
+  "version": "1.0.0",
+  "name": "AliExpress",
+  "label": "AliExpress Open Platform TOP router (official only)",
+  "description": "Official Open Platform HTTPS router api.taobao.com/router/rest. HTML scrapers disallowed. TOP sign (hmac/md5) is not computed by OfficialApiNode — send pre-signed query fields on input (method, timestamp, sign, session). access_token maps to session when used as query. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "storefront",
+  "tags": [
+    "aliexpress",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "9b6524eb-232e-5118-9bda-91d1796c637a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "product_query",
+          "description": "Official API verb. EXACT: product_query | order_list | affiliate_link | tracking. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "method",
+          "label": "method",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Top-level API method name (official AliExpress gateway). Set only when overriding the op default.",
+          "children": []
+        },
+        {
+          "shortCode": "timestamp",
+          "label": "timestamp",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `timestamp` for operations: product_query, order_list, affiliate_link, tracking.",
+          "children": []
+        },
+        {
+          "shortCode": "sign",
+          "label": "sign",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sign` for operations: product_query, order_list, affiliate_link, tracking.",
+          "children": []
+        },
+        {
+          "shortCode": "sign_method",
+          "label": "sign_method",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sign_method` for operations: product_query, order_list, affiliate_link, tracking.",
+          "children": []
+        },
+        {
+          "shortCode": "v",
+          "label": "v",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `v` for operations: product_query, order_list, affiliate_link, tracking.",
+          "children": []
+        },
+        {
+          "shortCode": "format",
+          "label": "format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `format` for operations: product_query, order_list, affiliate_link, tracking.",
+          "children": []
+        },
+        {
+          "shortCode": "session",
+          "label": "session",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `session` for operations: product_query, order_list, affiliate_link, tracking.",
+          "children": []
+        },
+        {
+          "shortCode": "product_id",
+          "label": "product_id",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Product id for product_query. Example: 100500123.",
+          "children": []
+        },
+        {
+          "shortCode": "logistics_no",
+          "label": "logistics_no",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Logistics number for tracking.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "fb2050c0-17f1-5a51-a07e-cf60fd150655",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "370df9ec-8ffe-5749-bfb1-16888c1ec269",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: product_query | order_list | affiliate_link | tracking. trigger does not open a socket.",
+      "value": "product_query",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "product_query",
+        "order_list",
+        "affiliate_link",
+        "tracking"
+      ]
+    },
+    {
+      "_id": "15d1a699-46d3-52f9-8a90-b294e9efc5d6",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type query. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "970d55bd-b1d6-5fa5-87f0-a1a26e80ec86",
+      "shortCode": "app_key",
+      "label": "App Key",
+      "type": "string",
+      "description": "Open Platform app_key (query-string; input then config).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f53ecbd2-03e9-5e03-85a2-09b1f6e33c13",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

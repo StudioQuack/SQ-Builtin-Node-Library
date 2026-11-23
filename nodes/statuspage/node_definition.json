@@ -1,0 +1,349 @@
+{
+  "_id": "89064496-e856-450e-a03f-a2480829cb5a",
+  "version": "1.0.0",
+  "name": "Statuspage",
+  "label": "Statuspage REST API",
+  "description": "Statuspage API v1 at https://api.statuspage.io/v1. Docs: https://developer.statuspage.io/. Incident/component/subscriber fields nest under incident / component / subscriber. Auth: Authorization OAuth {api_key}. Handler: OfficialApiNode. Never log api_key.",
+  "icon": "hub",
+  "tags": [
+    "statuspage",
+    "incidents",
+    "atlassian"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ea266795-e72f-4541-9fd9-f6075fbdc0d2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "page_get",
+          "description": "Which official API call to run. EXACT values: page_get | incident_create | incident_update | incident_list | component_get | component_update | subscriber_add | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'page_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "incident_id",
+          "label": "incident_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Incident id.",
+          "children": []
+        },
+        {
+          "shortCode": "component_id",
+          "label": "component_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Component id.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Incident name (incident.name) on incident_create (required) / incident_update, or component.name on component_update. Example: Slow API responses.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "incident_create/update: investigating | identified | monitoring | resolved. component_update: operational | degraded_performance | partial_outage | major_outage | under_maintenance.",
+          "children": []
+        },
+        {
+          "shortCode": "impact_override",
+          "label": "impact_override",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "incident.impact_override on incident_create. none | minor | major | critical.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Incident message nested as incident.body on incident_create / incident_update (first/next update text).",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "subscriber.email on subscriber_add. Email or phone_number required.",
+          "children": []
+        },
+        {
+          "shortCode": "phone_number",
+          "label": "phone_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "subscriber.phone_number on subscriber_add (E.164).",
+          "children": []
+        },
+        {
+          "shortCode": "component_ids",
+          "label": "component_ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Affected component ids nested as incident.component_ids on incident_create / incident_update.",
+          "children": []
+        },
+        {
+          "shortCode": "components",
+          "label": "components",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Map of component_id → new status nested as incident.components, e.g. {\"abc\":\"degraded_performance\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "deliver_notifications",
+          "label": "deliver_notifications",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "incident.deliver_notifications on incident_create / incident_update. Default true.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "component.description on component_update.",
+          "children": []
+        },
+        {
+          "shortCode": "skip_confirmation_notification",
+          "label": "skip_confirmation_notification",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "subscriber.skip_confirmation_notification on subscriber_add.",
+          "children": []
+        },
+        {
+          "shortCode": "incident",
+          "label": "incident",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Incident object with name/status/body for incident_create/update. Example: {\"name\":\"Outage\",\"status\":\"investigating\",\"body\":\"Looking into it\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "component",
+          "label": "component",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Component object with status for component_update. Example: {\"status\":\"major_outage\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "subscriber",
+          "label": "subscriber",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Subscriber object with email for subscriber_add. Example: {\"email\":\"ops@example.com\"}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "42e23f27-d5d6-421f-a6b4-d187d1b7f376",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b04679a0-c3d7-41c6-be78-a987b9fd3f78",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: page_get, incident_create, incident_update, incident_list, component_get, component_update, subscriber_add, listen. listen is BPMN ingress, not a socket.",
+      "value": "page_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "page_get",
+        "incident_create",
+        "incident_update",
+        "incident_list",
+        "component_get",
+        "component_update",
+        "subscriber_add",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "6b6c0d23-8ec2-4e50-8875-e0e722e022a8",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Statuspage API key. Authorization: OAuth <key> (header only; query api_key retired 2026-05-15). Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8b9c1373-43d5-4314-a42d-2207fc54875e",
+      "shortCode": "pageId",
+      "label": "Pageid",
+      "type": "string",
+      "description": "Page id you own.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7bcfbc1e-3494-4aa9-b364-5e7a2d023cee",
+      "shortCode": "incident",
+      "label": "Incident",
+      "type": "object",
+      "description": "Incident object with name/status/body for incident_create/update. Example: {\"name\":\"Outage\",\"status\":\"investigating\",\"body\":\"Looking into it\"}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "d9587ae5-97df-4e27-ad43-af68f275f271",
+      "shortCode": "component",
+      "label": "Component",
+      "type": "object",
+      "description": "Component object with status for component_update. Example: {\"status\":\"major_outage\"}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "bbe8b67c-f4a5-43e0-822f-026c949f033c",
+      "shortCode": "subscriber",
+      "label": "Subscriber",
+      "type": "object",
+      "description": "Subscriber object with email for subscriber_add. Example: {\"email\":\"ops@example.com\"}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "a8029348-edc2-459c-9395-8607f4927301",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

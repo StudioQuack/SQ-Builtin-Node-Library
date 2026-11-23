@@ -1,0 +1,321 @@
+{
+  "_id": "40f489de-7da0-46c8-a871-8e23f2fae59e",
+  "version": "1.0.0",
+  "name": "QuestDB",
+  "label": "QuestDB REST — /exec and /imp",
+  "description": "Official QuestDB REST. GET /exec?query= and POST /imp. Default http://localhost:9000; edit api_spec.baseUrl for Cloud (engine cannot bind host). Handler: OfficialApiNode. HTTP Basic user+password (documented for OSS when enabled and for Cloud). import.csv POSTs multipart/form-data field data (CSV) as /imp requires (https://questdb.com/docs/query/rest-api/). password is never logged or returned. Customer owns the instance.",
+  "icon": "database",
+  "tags": [
+    "sql",
+    "tsdb"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1956f387-cac9-4bc2-ab1d-ca0a81b1292d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. execute.sql requires query. import.csv requires data (CSV) plus optional name, timestamp, partitionBy, overwrite (query params). Do not put password here. Example: {\"operation\":\"execute.sql\",\"query\":\"SELECT 1\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "execute.sql",
+          "description": "Overrides config operation when non-blank. EXACT: 'execute.sql' | 'import.csv'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SQL for execute.sql GET /exec?query=. Example: SELECT * FROM sensors LIMIT 10.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "import.csv table name query param. Defaults to the uploaded filename. Example: sensors.",
+          "children": []
+        },
+        {
+          "shortCode": "timestamp",
+          "label": "timestamp",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "import.csv designated timestamp column name. Example: ts.",
+          "children": []
+        },
+        {
+          "shortCode": "partitionBy",
+          "label": "partitionBy",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "import.csv partition. EXACT: NONE | HOUR | DAY | WEEK | MONTH | YEAR. Default NONE (DAY if timestamp is set). Example: DAY.",
+          "children": []
+        },
+        {
+          "shortCode": "overwrite",
+          "label": "overwrite",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "import.csv. true drops and recreates the table. Default false.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "import.csv official multipart part name data (curl -F data=@file.csv). CSV/TAB/pipe text, a platform file ContentBlock {mime_type, source, data, name}, or a file list. Example: ts,temp\\n2026-01-01T00:00:00.000000Z,21.5",
+          "children": []
+        },
+        {
+          "shortCode": "atomicity",
+          "label": "atomicity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "import.csv error mode. EXACT: abort | skipRow | skipCol. Default skipCol. Example: skipRow.",
+          "children": []
+        },
+        {
+          "shortCode": "delimiter",
+          "label": "delimiter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "import.csv delimiter when auto-detect is not enough. URL-encoded char. Example: , or %3B.",
+          "children": []
+        },
+        {
+          "shortCode": "fmt",
+          "label": "fmt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "import.csv response format. EXACT: tabular | json. Example: json.",
+          "children": []
+        },
+        {
+          "shortCode": "forceHeader",
+          "label": "forceHeader",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "import.csv. true treats the first line as the header. Default false.",
+          "children": []
+        },
+        {
+          "shortCode": "skipLev",
+          "label": "skipLev",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "import.csv. true ignores rows with extra columns. Default false.",
+          "children": []
+        },
+        {
+          "shortCode": "o3MaxLag",
+          "label": "o3MaxLag",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "import.csv out-of-order lag for the created table. Example: 10s.",
+          "children": []
+        },
+        {
+          "shortCode": "maxUncommittedRows",
+          "label": "maxUncommittedRows",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "import.csv max uncommitted rows before commit. Example: 10000.",
+          "children": []
+        },
+        {
+          "shortCode": "schema",
+          "label": "schema",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "import.csv optional multipart schema part: JSON array of {name, type, pattern}. Example: [{\"name\":\"ts\",\"type\":\"TIMESTAMP\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "execute.sql /exec row cap. Example: 1000.",
+          "children": []
+        },
+        {
+          "shortCode": "nm",
+          "label": "nm",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "execute.sql. true skips metadata in the JSON response.",
+          "children": []
+        },
+        {
+          "shortCode": "count",
+          "label": "count",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "execute.sql. true includes a count field.",
+          "children": []
+        },
+        {
+          "shortCode": "timings",
+          "label": "timings",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "execute.sql. true includes server timings.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a38fd9cc-232f-4510-abf7-a344abd0b080",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (dataset JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (columns, dataset, count, timings).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "f5d6b5a1-332e-4b9f-b323-978a3caa9093",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: execute.sql | import.csv.",
+      "value": "execute.sql",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "execute.sql",
+        "import.csv"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "90e5697b-f37b-4364-8af5-b3ff233c7867",
+      "shortCode": "user",
+      "label": "User",
+      "type": "string",
+      "description": "HTTP Basic username. Required by the handler. If OSS has auth disabled, still set a non-empty user; the server typically ignores Authorization.",
+      "value": "admin",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "96d5ed28-2d10-4f03-8f43-16bb00bdcfdb",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "HTTP Basic password (StudioQuack secret). Never log or place on INPUT. Must be non-empty. Cloud: real password. OSS with auth off: placeholder so the handler can send Basic.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "72c61a70-3108-4ccf-89fb-8950c7927f30",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

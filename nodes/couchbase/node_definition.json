@@ -1,0 +1,222 @@
+{
+  "_id": "e2d98d97-af7d-461f-bc9b-798dbae7ca67",
+  "version": "1.0.0",
+  "name": "Couchbase",
+  "label": "Couchbase — Query Service REST SQL++",
+  "description": "Couchbase — Query Service REST SQL++ (operation id query.n1ql kept for compatibility). Handler: OfficialApiNode. Official API: https://docs.couchbase.com/server/current/n1ql-rest-query/index.html. POST /query/service. Customer owns the database. Minimize payload. Secrets never logged or returned.",
+  "icon": "storage",
+  "tags": [
+    "nosql"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "92bc6b4d-defc-5470-8e10-75ab3dc9214c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put password here. Example: {\"operation\":\"query.n1ql\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "statement",
+          "label": "statement",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official N1QL `statement`. Example: SELECT * FROM `travel-sample` LIMIT 1.",
+          "children": []
+        },
+        {
+          "shortCode": "args",
+          "label": "args",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Positional or named N1QL `args`. Example: [\"SFO\"].",
+          "children": []
+        },
+        {
+          "shortCode": "timeout",
+          "label": "timeout",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-service `timeout` (e.g. 5s). Distinct from HTTP timeout_seconds.",
+          "children": []
+        },
+        {
+          "shortCode": "scan_consistency",
+          "label": "scan_consistency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official scan_consistency. EXACT: not_bounded | request_plus | statement_plus. Example: request_plus.",
+          "children": []
+        },
+        {
+          "shortCode": "query_context",
+          "label": "query_context",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official query_context `namespace:bucket.scope`. Example: default:travel-sample.inventory.",
+          "children": []
+        },
+        {
+          "shortCode": "client_context_id",
+          "label": "client_context_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official client_context_id for tracing.",
+          "children": []
+        },
+        {
+          "shortCode": "readonly",
+          "label": "readonly",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Official readonly flag. true rejects mutating statements.",
+          "children": []
+        },
+        {
+          "shortCode": "max_parallelism",
+          "label": "max_parallelism",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Official max_parallelism. Example: 4.",
+          "children": []
+        },
+        {
+          "shortCode": "pretty",
+          "label": "pretty",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Official pretty JSON formatting.",
+          "children": []
+        },
+        {
+          "shortCode": "metrics",
+          "label": "metrics",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Official metrics in the response.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a1582f15-66a5-5623-9f66-c3da003ab70e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Secrets never copied here.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "aca66ee6-2dc1-5e92-8aa8-c5bd30fdded6",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "Couchbase password. HTTP Basic with `username`.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e53bb11f-64f5-58e9-b985-13dc18001126",
+      "shortCode": "username",
+      "label": "Username",
+      "type": "string",
+      "description": "HTTP Basic username.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5e41a7a1-ba05-513f-9e50-246d5f1d210a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

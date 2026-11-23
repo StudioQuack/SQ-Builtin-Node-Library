@@ -1,0 +1,244 @@
+{
+  "_id": "e65969fa-14e7-5383-a64b-923e8fcb5312",
+  "version": "1.0.0",
+  "name": "Docparser",
+  "label": "Docparser API — inbox parsers",
+  "description": "Docparser API — inbox parsers. Official API https://docparser.com/api/. One node; pick operation. Handler: OfficialApiNode + api_spec.json. Documents are stored on Docparser — DPA. Parsed data is GET /v1/results/{parser_id}/{document_id}. listen is official webhooks → BPMN message event.",
+  "icon": "description",
+  "tags": [
+    "docparser",
+    "parse",
+    "pdf"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "8086256e-4e09-58de-b3ea-345968710347",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "document_upload",
+          "description": "Overrides config operation. Accepted: document_upload, document_get, parsed_data_get, parser_list, listen.",
+          "children": []
+        },
+        {
+          "shortCode": "document_id",
+          "label": "document_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `document_id` for operations: document_get, parsed_data_get. Required by: document_get, parsed_data_get.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "document_upload local file part. Official multipart field `file`. Platform file block.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "document_upload remote file URL instead of file. Official `url`. Example: https://example.com/invoice.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "remote_id",
+          "label": "remote_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "document_upload remote_id echoed back in webhooks.",
+          "children": []
+        },
+        {
+          "shortCode": "filename",
+          "label": "filename",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "document_upload filename override.",
+          "children": []
+        },
+        {
+          "shortCode": "parser_id",
+          "label": "parser_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Parser id path segment. Same shortCode as config.",
+          "children": []
+        },
+        {
+          "shortCode": "format",
+          "label": "format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "parsed_data_get format. EXACT: object | flat. Official format query.",
+          "children": []
+        },
+        {
+          "shortCode": "include_children",
+          "label": "include_children",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "parsed_data_get include_children.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e11a0089-a27c-59be-8022-3dd913cbb75a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2d9ed9de-9724-5d91-84c6-7bfc5b83f16d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "document_upload",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "document_upload",
+        "document_get",
+        "parsed_data_get",
+        "parser_list",
+        "listen"
+      ]
+    },
+    {
+      "_id": "2c211647-b26c-5a08-80f2-95864c4570b9",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Docparser API key. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d6af665a-d7d8-55fa-9721-16ee3cc82eea",
+      "shortCode": "parser_id",
+      "label": "Parser Id",
+      "type": "string",
+      "description": "Default parser / inbox id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6ad2827b-e0c2-5072-86e8-249980a75b1e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,386 @@
+{
+  "_id": "ca1f7f4e-e579-5521-9a94-ca47332fb1d5",
+  "version": "1.0.0",
+  "name": "Yotpo",
+  "label": "Yotpo Reviews v1 + Core v3 (Loyalty is a second host)",
+  "description": "Reviews/UGC on api.yotpo.com. Official review list wants query utoken (OAuth from POST /oauth/token minted outside StudioQuack). This node sends config utoken as query utoken. loyalty_adjust calls the Loyalty host https://loyalty.yotpo.com/api/v2/points/adjust with headers X-GUID / X-API-KEY from config loyalty_guid / loyalty_api_key. Moderate UGC before republish. Docs: https://apidocs.yotpo.com/reference/retrieve-all-reviews",
+  "icon": "rate_review",
+  "tags": [
+    "yotpo",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5247bb73-0210-59d6-b318-3d7c87b7ea4b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "review_list",
+          "description": "Official API verb. EXACT: review_list | review_create | order_send | loyalty_adjust | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "review_list page (1-based). Example: 1. Max 100 reviews per page via count.",
+          "children": []
+        },
+        {
+          "shortCode": "count",
+          "label": "count",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "review_list page size. Default 10, max 100. Example: 25.",
+          "children": []
+        },
+        {
+          "shortCode": "since_id",
+          "label": "since_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "review_list: return reviews after this review id. Example: 123456789.",
+          "children": []
+        },
+        {
+          "shortCode": "app_key",
+          "label": "app_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Yotpo store id (appkey). review_create body field appkey (config app_key is the fallback). Also the path {app_key} on review_list and order_send. Example: your store id.",
+          "children": []
+        },
+        {
+          "shortCode": "sku",
+          "label": "sku",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product id for review_create. Alphanumeric plus _ and -. Use yotpo_site_reviews for a site review. Required. Example: PHONE-1.",
+          "children": []
+        },
+        {
+          "shortCode": "product_title",
+          "label": "product_title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product title for review_create. Required by Yotpo widget docs. Example: Phone.",
+          "children": []
+        },
+        {
+          "shortCode": "product_url",
+          "label": "product_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product URL for review_create. Required by Yotpo widget docs. Example: https://shop.example/phone.",
+          "children": []
+        },
+        {
+          "shortCode": "product_description",
+          "label": "product_description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional product description for review_create.",
+          "children": []
+        },
+        {
+          "shortCode": "product_image_url",
+          "label": "product_image_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional product image URL for review_create.",
+          "children": []
+        },
+        {
+          "shortCode": "display_name",
+          "label": "display_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reviewer display name for review_create. Required unless a reviewer token is used. Example: John Smith.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reviewer email for review_create. Required unless a reviewer token is used. PII — do not log. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "review_title",
+          "label": "review_title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Review title for review_create. Example: Great Phone.",
+          "children": []
+        },
+        {
+          "shortCode": "review_content",
+          "label": "review_content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Review body for review_create. Required. Example: It's really good.",
+          "children": []
+        },
+        {
+          "shortCode": "review_score",
+          "label": "review_score",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Star score 1-5 for review_create. Required. Example: 5.",
+          "children": []
+        },
+        {
+          "shortCode": "domain",
+          "label": "domain",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Account domain for review_create. Example: shop.example.",
+          "children": []
+        },
+        {
+          "shortCode": "is_incentivized",
+          "label": "is_incentivized",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "review_create. true when the review came from a sample, coupon, or loyalty reward.",
+          "children": []
+        },
+        {
+          "shortCode": "incentive_type",
+          "label": "incentive_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "review_create when is_incentivized. EXACT: free_product | coupon | loyalty_points | paid_promotion | employee_review | other.",
+          "children": []
+        },
+        {
+          "shortCode": "orders",
+          "label": "orders",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Core v3 order array for order_send POST /core/v3/stores/{app_key}/orders. Each item: {order_id, order_date, customer:{email,first_name,last_name}, line_items:[{sku,name,quantity}]}. https://apidocs.yotpo.com/",
+          "children": []
+        },
+        {
+          "shortCode": "customer_email",
+          "label": "customer_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Loyalty points adjust: customer email. PII — do not log. Used on loyalty_adjust. Official Loyalty host is loyalty.yotpo.com (see LEFT).",
+          "children": []
+        },
+        {
+          "shortCode": "customer_id",
+          "label": "customer_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Loyalty points adjust: Yotpo customer id. loyalty_adjust.",
+          "children": []
+        },
+        {
+          "shortCode": "point_adjustment_amount",
+          "label": "point_adjustment_amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Signed point delta for loyalty_adjust. Example: 100 or -25.",
+          "children": []
+        },
+        {
+          "shortCode": "history_title",
+          "label": "history_title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Loyalty history title for loyalty_adjust. Example: Workflow bonus.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "28f8972b-ef79-5c93-9a09-fb184dd1ed72",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5f7183e8-e5ac-5ee7-b840-c0af8746b0d6",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: review_list | review_create | order_send | loyalty_adjust | trigger. trigger does not open a socket.",
+      "value": "review_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "review_list",
+        "review_create",
+        "order_send",
+        "loyalty_adjust",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "67c85176-c8c3-5276-9a05-3d76b49862dc",
+      "shortCode": "app_key",
+      "label": "App Key",
+      "type": "string",
+      "description": "Yotpo store / app key (path store_id).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "382dd1cb-6e08-4736-8552-556185e882b9",
+      "shortCode": "utoken",
+      "label": "Utoken",
+      "type": "password",
+      "description": "OAuth utoken minted outside StudioQuack via POST /oauth/token (app_key + store secret). Sent as query utoken on review_list (official). Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c261c61c-d461-47be-bf72-39eae7cb8761",
+      "shortCode": "loyalty_guid",
+      "label": "Loyalty GUID",
+      "type": "password",
+      "description": "Yotpo Loyalty & Referrals account GUID from Loyalty settings. Sent as header X-GUID on loyalty_adjust (loyalty.yotpo.com) only; Reviews operations ignore it. Example: aBcDeFgHiJkLmNoPqRsT12. Never log.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "22925608-90ab-47f6-973a-0972ee2360e2",
+      "shortCode": "loyalty_api_key",
+      "label": "Loyalty API Key",
+      "type": "password",
+      "description": "Yotpo Loyalty & Referrals API key from Loyalty settings (separate from the Reviews utoken). Sent as header X-API-KEY on loyalty_adjust only. Required for loyalty_adjust. Example: loyalty-api-key-placeholder. Never log.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6a4d7b73-a275-5804-9438-e0f9082de6e8",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

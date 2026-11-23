@@ -1,0 +1,301 @@
+{
+  "_id": "05078d5e-9e7c-566b-a0ed-d90ba1d68cdb",
+  "version": "1.0.0",
+  "name": "Tapfiliate",
+  "label": "Tapfiliate REST v1.6 — affiliates, clicks, conversions",
+  "description": "Tapfiliate REST 1.6 at https://api.tapfiliate.com/1.6. Docs: https://tapfiliate.com/docs/rest/. conversion_create requires external_id plus click_id or referral_code. Auth header X-Api-Key. Handler: OfficialApiNode. Never log api_key.",
+  "icon": "share",
+  "tags": [
+    "tapfiliate",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "72201901-55e9-5ca9-a73e-78627541c714",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "affiliate_create",
+          "description": "Official API verb. EXACT: affiliate_create | click_create | conversion_create | program_list. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "firstname",
+          "label": "firstname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Affiliate first name. Required on affiliate_create.",
+          "children": []
+        },
+        {
+          "shortCode": "lastname",
+          "label": "lastname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Affiliate last name. Required on affiliate_create.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Affiliate email. Required on affiliate_create.",
+          "children": []
+        },
+        {
+          "shortCode": "referral_code",
+          "label": "referral_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Referral code on click_create (required) and conversion_create (when click_id omitted).",
+          "children": []
+        },
+        {
+          "shortCode": "asset_id",
+          "label": "asset_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "program_list query asset_id to filter programs.",
+          "children": []
+        },
+        {
+          "shortCode": "company",
+          "label": "company",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Affiliate company on affiliate_create.",
+          "children": []
+        },
+        {
+          "shortCode": "address",
+          "label": "address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Affiliate address object on affiliate_create (address, city, country, zipcode).",
+          "children": []
+        },
+        {
+          "shortCode": "source_id",
+          "label": "source_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional source_id on click_create.",
+          "children": []
+        },
+        {
+          "shortCode": "referrer",
+          "label": "referrer",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Referrer URL on click_create.",
+          "children": []
+        },
+        {
+          "shortCode": "click_id",
+          "label": "click_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Existing click id on conversion_create. Alternative to referral_code.",
+          "children": []
+        },
+        {
+          "shortCode": "coupon",
+          "label": "coupon",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Coupon code on conversion_create.",
+          "children": []
+        },
+        {
+          "shortCode": "external_id",
+          "label": "external_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Your unique conversion id on conversion_create. Required. Used for idempotency. Example: order-1001.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Conversion amount on conversion_create. Example: 99.00.",
+          "children": []
+        },
+        {
+          "shortCode": "currency",
+          "label": "currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO currency on conversion_create. Example: EUR.",
+          "children": []
+        },
+        {
+          "shortCode": "commission_type",
+          "label": "commission_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "conversion_create commission_type. standard | first-promoter | recurring.",
+          "children": []
+        },
+        {
+          "shortCode": "customer_id",
+          "label": "customer_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Your customer id on conversion_create.",
+          "children": []
+        },
+        {
+          "shortCode": "meta_data",
+          "label": "meta_data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "conversion_create meta_data object.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "f604ce4d-d6de-5fb1-b8f6-a708be01d913",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a38f8097-d732-5659-9831-45d94fb6fbfc",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: affiliate_create | click_create | conversion_create | program_list. trigger does not open a socket.",
+      "value": "affiliate_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "affiliate_create",
+        "click_create",
+        "conversion_create",
+        "program_list"
+      ]
+    },
+    {
+      "_id": "6b27f693-e838-5a67-a3ae-8145b78ab415",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type header. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f15312f1-5d2b-53a6-8a4b-0cc612043aa9",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

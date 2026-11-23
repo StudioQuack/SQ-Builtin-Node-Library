@@ -1,0 +1,256 @@
+{
+  "_id": "24a7c5c6-9070-4d0b-91c4-2e386f1c8dee",
+  "version": "1.0.0",
+  "name": "Bluesky Search",
+  "label": "Bluesky AT Protocol - Social Search",
+  "description": "Read-only Bluesky AT Protocol search node. Calls XRPC GET endpoints: app.bsky.feed.searchPosts, app.bsky.actor.searchActors, and app.bsky.feed.getAuthorFeed. Auth is optional but recommended: when both bluesky_handle and bluesky_app_password are set, the node POSTs com.atproto.server.createSession to https://bsky.social/xrpc and uses Authorization Bearer accessJwt against https://api.bsky.app/xrpc (no public fallback). With neither credential, it uses https://public.api.bsky.app/xrpc and may receive HTTP 403 during Bluesky load-reduction. Default action is search_posts. Sort for post search is latest (default) or top. Date-only since/until values (YYYY-MM-DD) are expanded to UTC timestamps (until is exclusive end-of-day by adding 1 day). Pagination: pass output.cursor back as input.cursor until cursor is null. Does not post, like, or reply. Users must comply with Bluesky's Terms of Service and rate limits; the customer owns Bluesky credentials stored on their daemon. Example input: {\"action\":\"search_posts\",\"query\":\"workflow automation\",\"sort\":\"latest\",\"limit\":25}. Bluesky Terms of Service: https://bsky.social/about/support/tos.",
+  "icon": "cloud",
+  "tags": [
+    "bluesky",
+    "atprotocol",
+    "social",
+    "xrpc"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Bluesky search request. Required keys depend on action: search_posts and search_actors need query (alias q); get_author_feed needs actor. Optional: action, sort, since, until, lang, limit, cursor. The daemon delivers this object as inputVariables.input (or currentNode.inputList targetPortValue=input). Example: {\"action\":\"search_posts\",\"query\":\"workflow rate limit\",\"sort\":\"latest\",\"since\":\"2026-03-01\",\"until\":\"2026-03-15\",\"lang\":\"en\",\"limit\":50}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "action",
+          "label": "action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "XRPC operation to run. EXACT accepted values (case-sensitive): 'search_posts' (default when omitted or blank; GET app.bsky.feed.searchPosts; requires query or alias q), 'search_actors' (GET app.bsky.actor.searchActors; requires query or alias q), 'get_author_feed' (GET app.bsky.feed.getAuthorFeed; requires actor as handle or DID). Any other string sets output.error to 'Unknown action: {action}. Use search_posts, search_actors, or get_author_feed.' and does not call Bluesky. Example: 'search_posts'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search text for search_posts and search_actors. Sent as XRPC query parameter q. Alias: if query is blank, the node also reads input field q (same string; q is not a separate schema field). Required for those two actions; ignored by get_author_feed. Bluesky keyword/hashtag search; phrases such as 'workflow automation' are valid. Blank/omitted on search_posts → output.error 'query is required for search_posts action.'; on search_actors → 'query is required for search_actors action.'. Example: 'studioquack'.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Post ranking for search_posts only (ignored by search_actors and get_author_feed). EXACT accepted values passed through to app.bsky.feed.searchPosts: 'latest' (default when omitted or blank; reverse-chronological) | 'top' (engagement/popularity). Other strings are forwarded to Bluesky as-is and may be rejected by AppView. Example: 'latest'.",
+          "children": []
+        },
+        {
+          "shortCode": "since",
+          "label": "since",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Inclusive start of the post-search window (search_posts only). EXACT accepted shapes: blank/omitted → filter omitted; date-only YYYY-MM-DD → UTC midnight that day (example '2026-03-01' becomes '2026-03-01T00:00:00.000Z'); other ISO-8601 datetimes (with or without Z/offset; naive treated as UTC) → UTC with millisecond precision and Z suffix. Bluesky rejects bare YYYY-MM-DD on the live API, which is why date-only values are expanded. Example: '2026-03-01T00:00:00Z'.",
+          "children": []
+        },
+        {
+          "shortCode": "until",
+          "label": "until",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "End of the post-search window (search_posts only). EXACT accepted shapes: blank/omitted → filter omitted; date-only YYYY-MM-DD → UTC midnight of the NEXT calendar day so the named day is inclusive (example '2026-03-15' becomes '2026-03-16T00:00:00.000Z'); other ISO-8601 datetimes → UTC milliseconds + Z, no extra day. Use a full timestamp when you need an exclusive cutoff at a specific instant. Example: '2026-03-15T23:59:59.000Z'.",
+          "children": []
+        },
+        {
+          "shortCode": "lang",
+          "label": "lang",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Language filter for search_posts (ignored by other actions). EXACT accepted values: ISO 639-1 two-letter codes as understood by app.bsky.feed.searchPosts (example 'en', 'es', 'ja'). Blank/omitted → no lang parameter. Example: 'en'.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for the chosen action. EXACT accepted values: integers; omitted → configuration default_limit (default 50); values above 100 are capped at 100 (XRPC max). Applies to search_posts, search_actors, and get_author_feed. Example: 25.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Opaque Bluesky pagination cursor. EXACT accepted values: omit or blank on the first page; on later pages pass the previous output.cursor unchanged (do not invent or parse it). When output.cursor is null or absent, there is no further page. Works for search_posts, search_actors, and get_author_feed independently. Example: the string returned in output.cursor from the prior invoke.",
+          "children": []
+        },
+        {
+          "shortCode": "actor",
+          "label": "actor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Whose feed to read for get_author_feed (ignored by other actions). EXACT accepted values: a Bluesky handle (example 'jay.bsky.team' or a custom-domain handle) or a DID (example 'did:plc:ewvi7nxzyoun6zhxrhs64tht'). Blank/omitted → output.error 'actor (handle or DID) is required for get_author_feed.'. Example: 'user.bsky.social'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a2b3c4d5-e6f7-4a8b-9c0d-1e2f3a4b5c6d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Single output object. Success: status='ok' plus either posts[] (search_posts / get_author_feed) or actors[] (search_actors), a count field, and cursor (string or null for pagination). The handler never returns accessJwt or the app password. Example success: {\"status\":\"ok\",\"posts_returned\":2,\"cursor\":null,\"posts\":[{\"uri\":\"at://did:plc:…/app.bsky.feed.post/…\",\"text\":\"…\"}]}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Present on success only. EXACT accepted value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "posts_returned",
+          "label": "Posts Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Count of posts[] in this page (search_posts and get_author_feed). Integer, 0..limit. Absent on search_actors and on failure. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "actors_returned",
+          "label": "Actors Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Count of actors[] in this page (search_actors only). Integer, 0..limit. Absent on post actions and on failure. Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "Cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Bluesky pagination token for the next page of the same action. EXACT accepted values from the API: a non-empty opaque string (pass back as input.cursor) or null/absent when this is the last page. Do not mix cursors across actions. Example: 'abcdef0123456789'.",
+          "children": []
+        },
+        {
+          "shortCode": "posts",
+          "label": "Posts",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Normalized posts for search_posts and get_author_feed. search_posts item keys: uri, text, created_at, like_count, repost_count, reply_count, author_handle, author_display_name, indexed_at, embed (AT Protocol embed object or null). get_author_feed item keys: uri, text, created_at, like_count, repost_count, reply_count, author_handle only (no display name / indexed_at / embed). Counts are integers defaulting to 0. Absent on search_actors. Example: [{\"uri\":\"at://did:plc:abc/app.bsky.feed.post/xyz\",\"text\":\"hello\",\"author_handle\":\"user.bsky.social\",\"like_count\":3}].",
+          "children": []
+        },
+        {
+          "shortCode": "actors",
+          "label": "Actors",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Normalized profiles for search_actors only. EXACT item keys: handle, display_name, description, followers_count, follows_count, posts_count, avatar (CDN URL or empty string). Counts are integers defaulting to 0. Absent on post actions. Example: [{\"handle\":\"jay.bsky.team\",\"display_name\":\"Jay\",\"followers_count\":1000}].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b3c4d5e6-f7a8-4b9c-0d1e-2f3a4b5c6d7e",
+      "shortCode": "bluesky_handle",
+      "label": "Bluesky Handle",
+      "type": "string",
+      "description": "AT Protocol identifier used as createSession identifier (handle, custom-domain handle, or the email Bluesky accepts for login). Required together with bluesky_app_password for authenticated AppView calls. EXACT accepted values: non-blank string after trim; blank/omitted with a blank password → public API (https://public.api.bsky.app/xrpc). Example: 'yourname.bsky.social'. Setup: create a Bluesky account, put this handle here, then generate an App Password at https://bsky.app/settings/app-passwords.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+      "shortCode": "bluesky_app_password",
+      "label": "Bluesky App Password",
+      "type": "password",
+      "description": "Bluesky App Password exchanged for a short-lived accessJwt via POST https://bsky.social/xrpc/com.atproto.server.createSession with JSON {identifier, password}. EXACT accepted values: the generated app-password string (not the account login password); blank/omitted → skip session, use public API. HTTP 401 → output.error 'Bluesky Auth Error: Bluesky authentication failed (401). Check your handle ('{handle}') and app password. Generate an app password at: https://bsky.app/settings/app-passwords'. The JWT is used only for this invoke (never cached) as Authorization: Bearer and is never written to output or logs. Example: a password created at bsky.app → Settings → App Passwords → Add App Password.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout for createSession and each XRPC GET (connect+read via the shared client). EXACT accepted values: positive integers; omitted, 0, or non-numeric → 25. Retries on 429/403 sleep extra (2s, then 4s, then 6s) on top of this budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c4d5e6f7-a8b9-4c0d-1e2f-3a4b5c6d7e8f",
+      "shortCode": "default_limit",
+      "label": "Default Limit",
+      "type": "number",
+      "description": "Page size when input.limit is omitted. EXACT accepted values: integers; omitted or non-numeric → 50; the effective limit is still capped at 100. Applies to search_posts, search_actors, and get_author_feed. Example: 50.",
+      "value": "50",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

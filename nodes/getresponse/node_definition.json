@@ -1,0 +1,296 @@
+{
+  "_id": "ae8e8284-321c-491f-8b54-f7b60501aa0b",
+  "version": "1.0.0",
+  "name": "GetResponse",
+  "label": "GetResponse API 3.0 — contacts, lists, newsletters",
+  "description": "Official GetResponse API 3.0 at https://api.getresponse.com/v3. Handler: OfficialApiNode. Auth: X-Auth-Token: api-key <apiKey> (retail). In GetResponse a campaign is a list. Contacts are PII; newsletters are marketing messages — operator holds CAN-SPAM/CASL/GDPR consent. Customer owns the GetResponse account. Unused API keys expire after 90 days. trigger.listen is ingress. apiKey is never logged or returned.",
+  "icon": "email",
+  "tags": [
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a903bf9d-231d-41cd-acee-1c31be7f03fd",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. campaign is { campaignId } (list token, not the 8-digit UI number). Do not put apiKey here. Example: {\"operation\":\"contact.get\",\"contactId\":\"…\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.create",
+          "description": "Overrides config operation when non-blank. EXACT: 'contact.create' | 'contact.get' | 'contact.list' | 'contact.update' | 'contact.delete' | 'campaign.list' | 'newsletter.send' | 'tag.add' | 'trigger.listen'. trigger.listen never opens a socket.",
+          "children": []
+        },
+        {
+          "shortCode": "contactId",
+          "label": "contactId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact id for get/update/delete/tag.add.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact email for contact.create. PII. Operator must have consent.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign",
+          "label": "campaign",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Campaign reference {campaignId} for contact.create / newsletter.send.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Display name (contact) or internal newsletter name.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subject line for newsletter.send.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "newsletter.send content {html, plain}. Official GetResponse content (not a generic blob).",
+          "children": []
+        },
+        {
+          "shortCode": "fromField",
+          "label": "fromField",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Sender for newsletter.send (required): {fromFieldId} from GET /from-fields. Example: {\"fromFieldId\":\"V\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Tag ids for contact.create/update or tag.add.",
+          "children": []
+        },
+        {
+          "shortCode": "customFieldValues",
+          "label": "customFieldValues",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "[{ customFieldId, value[] }] on contact create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page for contact.list / campaign.list.",
+          "children": []
+        },
+        {
+          "shortCode": "perPage",
+          "label": "perPage",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for list operations.",
+          "children": []
+        },
+        {
+          "shortCode": "sendOn",
+          "label": "sendOn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 8601 datetime to schedule newsletter.send, sent as sendSettings.sendOn. Omit to send immediately. Example: 2026-12-01T09:00:00+0000.",
+          "children": []
+        },
+        {
+          "shortCode": "sendSettings",
+          "label": "sendSettings",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Audience for newsletter.send (required by GetResponse): selectedCampaigns, selectedSegments, selectedContacts, selectedSuppressions, excludedCampaigns, excludedSegments, timeTravel, perfectTiming. sendOn is merged in. Example: {\"selectedCampaigns\":[\"V\"],\"timeTravel\":\"false\",\"perfectTiming\":\"false\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "dayOfCycle",
+          "label": "dayOfCycle",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `dayOfCycle` for operation: contact.create.",
+          "children": []
+        },
+        {
+          "shortCode": "ipAddress",
+          "label": "ipAddress",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ipAddress` for operation: contact.create.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `fields` for operation: contact.list.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "301c4557-f535-4a7c-b2df-0dffe10ccd37",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. contact.create often returns 202 queued. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx (including 202).",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code. 202 means queued.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (PII — do not log).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "20eef644-30a1-4098-906b-4714f7d5652b",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: contact.create | contact.get | contact.list | contact.update | contact.delete | campaign.list | newsletter.send | tag.add | trigger.listen.",
+      "value": "contact.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "contact.create",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "contact.delete",
+        "campaign.list",
+        "newsletter.send",
+        "tag.add",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "78759054-8fc0-4b97-b866-28f57cd3730e",
+      "shortCode": "apiKey",
+      "label": "API key",
+      "type": "password",
+      "description": "GetResponse API key (StudioQuack secret). Sent as X-Auth-Token: api-key <key>. Unused keys expire after 90 days. Never log or place on INPUT. OAuth Bearer is an alternate official mode; this node uses api-key (one auth type).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ec7e43c1-c56f-4ba9-bbfd-8ee6e031f87d",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

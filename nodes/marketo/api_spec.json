@@ -1,0 +1,174 @@
+{
+  "baseUrl": "https://{munchkin_id}.mktorest.com/rest",
+  "defaultTimeout": 30,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "lead.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/leads.json",
+      "required": [
+        "munchkin_id",
+        "input"
+      ],
+      "bodyFrom": [
+        "action",
+        "lookupField",
+        "input"
+      ]
+    },
+    "lead.upsert": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/leads.json",
+      "required": [
+        "munchkin_id",
+        "input"
+      ],
+      "bodyFrom": [
+        "action",
+        "lookupField",
+        "input"
+      ]
+    },
+    "lead.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/leads.json",
+      "queryFrom": [
+        "filterType",
+        "filterValues",
+        "fields"
+      ],
+      "required": [
+        "munchkin_id",
+        "filterType",
+        "filterValues"
+      ]
+    },
+    "lead.describe": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/leads/describe.json",
+      "required": [
+        "munchkin_id"
+      ]
+    },
+    "list.add": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/lists/{list_id}/leads.json",
+      "required": [
+        "munchkin_id",
+        "list_id",
+        "input"
+      ],
+      "bodyFrom": [
+        "input"
+      ]
+    },
+    "list.remove": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/v1/lists/{list_id}/leads.json",
+      "queryFrom": [
+        "id"
+      ],
+      "required": [
+        "munchkin_id",
+        "list_id"
+      ]
+    },
+    "campaign.request": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/campaigns/{campaign_id}/trigger.json",
+      "required": [
+        "munchkin_id",
+        "campaign_id",
+        "input"
+      ],
+      "bodyFrom": [
+        "input",
+        "tokens"
+      ]
+    },
+    "activity.pagingToken": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/activities/pagingtoken.json",
+      "required": [
+        "munchkin_id",
+        "sinceDatetime"
+      ],
+      "queryFrom": [
+        "sinceDatetime"
+      ]
+    },
+    "activity.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/activities.json",
+      "queryFrom": [
+        "activityTypeIds",
+        "nextPageToken",
+        "listId",
+        "leadIds"
+      ],
+      "required": [
+        "munchkin_id",
+        "nextPageToken",
+        "activityTypeIds"
+      ]
+    },
+    "form.submit": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/leads/submitForm.json",
+      "required": [
+        "munchkin_id",
+        "formId",
+        "input"
+      ],
+      "bodyFrom": [
+        "formId",
+        "input",
+        "programId",
+        "cookie",
+        "visitorData"
+      ]
+    },
+    "email.sendSample": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/asset/v1/email/{email_id}/sendSample.json",
+      "required": [
+        "munchkin_id",
+        "email_id",
+        "emailAddress"
+      ],
+      "bodyFrom": [
+        "emailAddress",
+        "textOnly"
+      ]
+    },
+    "asset.email.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/asset/v1/email/{email_id}.json",
+      "required": [
+        "munchkin_id",
+        "email_id"
+      ]
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

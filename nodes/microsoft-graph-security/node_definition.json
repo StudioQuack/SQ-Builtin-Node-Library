@@ -1,0 +1,194 @@
+{
+  "_id": "0ccd92b5-9cd0-414d-9f1a-cc5fa72f134e",
+  "version": "1.0.0",
+  "name": "Microsoft Graph Security",
+  "label": "Microsoft Graph v1.0 — Secure Score",
+  "description": "Official Microsoft Graph REST v1.0 Secure Score APIs (commercial https://graph.microsoft.com/v1.0). Bearer access_token already minted. Handler: OfficialApiNode. Scores and control notes are tenant-sensitive — minimize. Never log access_token. Not available in China 21Vianet. update-control-profile requires vendorInformation.provider and vendor.",
+  "icon": "security",
+  "tags": [
+    "security",
+    "microsoft"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "decebee7-8a59-456a-a1fe-3798c7148096",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation Secure Score fields. Do not put access_token here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "get-secure-score",
+          "description": "Overrides config when non-blank. EXACT: get-secure-score | list-secure-scores | get-control-profile | list-control-profiles | update-control-profile.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "secureScore or secureScoreControlProfile id.",
+          "children": []
+        },
+        {
+          "shortCode": "vendorInformation",
+          "label": "vendorInformation",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "update-control-profile. Official {provider, vendor} of the control profile. Required by Graph.",
+          "children": []
+        },
+        {
+          "shortCode": "$top",
+          "label": "$top",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for list-secure-scores / list-control-profiles.",
+          "children": []
+        },
+        {
+          "shortCode": "$skip",
+          "label": "$skip",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Skip count for list ops.",
+          "children": []
+        },
+        {
+          "shortCode": "$filter",
+          "label": "$filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OData $filter for list ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b8aa9359-733a-43fa-88df-430dc27f66ca",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "2xx: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code (200, 204, 206 partial, 4xx, 5xx).",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Graph JSON (secureScore or control profile). Tenant-sensitive — do not log wholesale.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "fa204780-148e-40e1-a26c-f38c04f78790",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default Secure Score verb when input.operation is blank.",
+      "value": "list-secure-scores",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "get-secure-score",
+        "list-secure-scores",
+        "get-control-profile",
+        "list-control-profiles",
+        "update-control-profile"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "e923ff63-0a1e-4e25-b9e1-a66cbdad3a68",
+      "shortCode": "access_token",
+      "label": "Graph access token",
+      "type": "password",
+      "description": "Already-minted Microsoft Graph token (Authorization: Bearer). StudioQuack secret. Reads: SecurityEvents.Read.All. update-control-profile: SecurityEvents.ReadWrite.All. Personal accounts are not supported. Never on INPUT or in logs.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4e2cd3b4-4c38-4327-b11e-67c07c8e07db",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

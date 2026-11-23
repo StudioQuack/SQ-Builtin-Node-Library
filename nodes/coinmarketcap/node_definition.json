@@ -1,0 +1,192 @@
+{
+  "_id": "a3e65a93-f44d-5751-b91f-6e3d220988c3",
+  "version": "1.0.0",
+  "name": "CoinMarketCap",
+  "label": "CoinMarketCap",
+  "description": "CoinMarketCap official API via OfficialApiNode (api_spec.json). Operations: listings_latest, quotes_latest, info, global_metrics. Docs: https://coinmarketcap.com/api/documentation/guides/quick-start. CMC Professional API terms. Header X-CMC_PRO_API_KEY. Logo/data attribution required. Quick-start still documents GET /v1/cryptocurrency/listings/latest; reference also lists v3 listings/quotes. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "currency",
+  "tags": [
+    "crypto",
+    "coinmarketcap"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "777f42a0-c809-5b82-8d4b-7731b9ca8363",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One CoinMarketCap request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"listings_latest\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: listings_latest | quotes_latest | info | global_metrics. Default: first listed or instance operation. Example: 'listings_latest'.",
+          "children": [],
+          "_id": "8047db5d-10e3-58b4-b109-1591cca83e13"
+        },
+        {
+          "shortCode": "convert",
+          "label": "convert",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `convert` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "a4e26d17-c97a-55f4-977a-598f3ce9b148"
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `limit` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "01ba37b9-affe-539a-af62-6b0c37faeab5"
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `start` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "9dc99bc8-cd20-5602-ad9e-d3d96d15ec33"
+        },
+        {
+          "shortCode": "symbol",
+          "label": "symbol",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `symbol` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "d1e529a5-92f3-5543-a274-e71861123473"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0c948853-e502-5e31-95da-197b502c6755",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "da07a40d-3f48-50d3-9af4-5e9d81c5af4d"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "01f49c28-2b43-539c-8dcb-91c25577a3e7"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "7e06a093-1ca3-5caa-9aba-c2bd46dd2599"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a31ff63c-cdcf-5608-a769-84ae03b534c3",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: listings_latest, quotes_latest, info, global_metrics.",
+      "value": "listings_latest",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "listings_latest",
+        "quotes_latest",
+        "info",
+        "global_metrics"
+      ]
+    },
+    {
+      "_id": "bc2d81d1-cae1-5247-90fb-2afef73b32ad",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `header`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b047c525-d20c-5196-b1e9-1b595f920e1c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

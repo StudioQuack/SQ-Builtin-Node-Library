@@ -1,0 +1,322 @@
+{
+  "_id": "c76b7a85-f099-4000-83d9-8f67a9a29ca9",
+  "version": "1.0.0",
+  "name": "Paddle",
+  "label": "Paddle — Paddle Billing API v1 (Paddle-Version 1)",
+  "description": "Official Paddle Billing API v1 (Paddle-Version 1). Docs: https://developer.paddle.com/api-reference/about. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. DO NOT BUILD Paddle Classic (vendors.paddle.com, vendor_id, vendor_auth_code). Sandbox: sandbox-api.paddle.com. Merchant of record; tax is Paddle’s.",
+  "icon": "account_balance",
+  "tags": [
+    "paddle",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "33f8eb89-9e78-48d8-abeb-851e9f540fa5",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Paddle. Secrets never on this port. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "transaction_list",
+          "description": "Overrides config operation. EXACT: transaction_list | product_list | subscription_get | subscription_cancel | customer_list | discount_create | discount_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "Environment",
+          "type": "string",
+          "required": false,
+          "value": "api.paddle.com",
+          "description": "sandbox-api.paddle.com vs api.paddle.com (keys are env-specific). Substituted into baseUrl as https://{environment}.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id when the path uses {id}.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `after` for operation: transaction_list.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `per_page` for operations: transaction_list, product_list, customer_list, discount_list.",
+          "children": []
+        },
+        {
+          "shortCode": "effective_from",
+          "label": "effective_from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `effective_from` for operation: subscription_cancel.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `amount` for operation: discount_create.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `type` for operation: discount_create.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `description` for operation: discount_create.",
+          "children": []
+        },
+        {
+          "shortCode": "code",
+          "label": "code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "discount_create unique checkout code. Example: SAVE20.",
+          "children": []
+        },
+        {
+          "shortCode": "enabled_for_checkout",
+          "label": "enabled_for_checkout",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "discount_create. Whether the code can be entered at checkout. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "recur",
+          "label": "recur",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "discount_create. true applies to recurring prices. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "currency_code",
+          "label": "currency_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "discount_create ISO 4217 when type is flat (not percentage). Example: USD.",
+          "children": []
+        },
+        {
+          "shortCode": "expires_at",
+          "label": "expires_at",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "discount_create RFC 3339 expiry. Example: 2026-12-31T00:00:00Z.",
+          "children": []
+        },
+        {
+          "shortCode": "usage_limit",
+          "label": "usage_limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "discount_create max redemptions. Example: 100.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transaction_list / product_list filter. Transactions: draft|ready|billed|paid|completed|canceled|past_due. Products: active|archived. Example: paid.",
+          "children": []
+        },
+        {
+          "shortCode": "customer_id",
+          "label": "customer_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transaction_list filter. Example: ctm_01h.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_list filter (customer email). Example: ada@example.com.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0b65c124-c644-4e80-8bd2-11fc282577ae",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "10ddeac9-cbc7-42d3-872e-854eb02288f8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: transaction_list | product_list | subscription_get | subscription_cancel | customer_list | discount_create | discount_list | trigger. Default transaction_list. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "transaction_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "transaction_list",
+        "product_list",
+        "subscription_get",
+        "subscription_cancel",
+        "customer_list",
+        "discount_create",
+        "discount_list",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "67e6f854-20e8-4b2d-96db-cad791cb7eab",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Paddle credential (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d4cf6499-ed75-446f-97d7-0d4e931a78dc",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "sandbox-api.paddle.com vs api.paddle.com (keys are env-specific). Substituted into baseUrl as https://{environment}.",
+      "value": "api.paddle.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "api.paddle.com",
+        "sandbox-api.paddle.com"
+      ]
+    },
+    {
+      "_id": "1730419e-531d-413e-b326-efa9281aa976",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

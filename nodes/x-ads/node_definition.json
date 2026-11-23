@@ -1,0 +1,483 @@
+{
+  "_id": "5f3c3bba-ae7a-4f2d-a1bb-18ca21493675",
+  "version": "1.0.0",
+  "name": "X Ads",
+  "label": "X Ads — Ads API v12 (not organic search)",
+  "description": "WARNING: Official X Ads API authentication is OAuth 1.0a request signing (https://docs.x.com/x-ads-api/fundamentals/authentication). OfficialApiNode cannot sign OAuth 1.0a, so this node sends Bearer access_token only — writes (campaign.create, lineItem.create, promotedTweet.create, conversion.upload) may HTTP 401. Reads may work with an OAuth 2 bearer where X allows it. Official X Ads API v12 at https://ads-api.x.com/12. Separate from organic X/Twitter API v2 search. Ads conversion identifiers are PII. Never log tokens. Customer owns the X Ads account.",
+  "icon": "campaign",
+  "tags": [
+    "ads"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "42bc18b9-7c1f-45fc-8645-9885bce06ab6",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. account_id may come from config. Do not put access_token here. This is the Ads API, not organic tweet search. Example: {\"operation\":\"campaign.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "account.get",
+          "description": "Overrides config operation when non-blank. EXACT: account.get | campaign.create | campaign.list | lineItem.create | lineItem.list | promotedTweet.create | stats.get | targeting.criteria | conversion.upload.",
+          "children": []
+        },
+        {
+          "shortCode": "account_id",
+          "label": "account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Ads account id (path). Overrides config. Example: 18ce54d4x5t. https://developer.x.com/en/docs/x-ads-api",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign or line-item name. campaign.create / lineItem.create. Example: Spring sale.",
+          "children": []
+        },
+        {
+          "shortCode": "funding_instrument_id",
+          "label": "funding_instrument_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Funding instrument id. campaign.create. Required by X Ads.",
+          "children": []
+        },
+        {
+          "shortCode": "daily_budget_amount_local_micro",
+          "label": "daily_budget_amount_local_micro",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Daily budget in local micro units (1 unit = 1e6 micros). campaign.create. Example: 10000000 = 10.00.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Parent campaign for lineItem.create.",
+          "children": []
+        },
+        {
+          "shortCode": "line_item_id",
+          "label": "line_item_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Line item id (promotedTweet.create / targeting.criteria).",
+          "children": []
+        },
+        {
+          "shortCode": "tweet_id",
+          "label": "tweet_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tweet id for promotedTweet.create.",
+          "children": []
+        },
+        {
+          "shortCode": "entity",
+          "label": "entity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "stats.get entity. Example: CAMPAIGN | LINE_ITEM | PROMOTED_TWEET.",
+          "children": []
+        },
+        {
+          "shortCode": "entity_ids",
+          "label": "entity_ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "stats.get comma-separated entity ids.",
+          "children": []
+        },
+        {
+          "shortCode": "start_time",
+          "label": "start_time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "stats.get ISO-8601 (whole hours).",
+          "children": []
+        },
+        {
+          "shortCode": "end_time",
+          "label": "end_time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "stats.get ISO-8601 (whole hours).",
+          "children": []
+        },
+        {
+          "shortCode": "granularity",
+          "label": "granularity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "stats.get granularity as documented.",
+          "children": []
+        },
+        {
+          "shortCode": "metric_groups",
+          "label": "metric_groups",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "stats.get metric groups as documented.",
+          "children": []
+        },
+        {
+          "shortCode": "pixel_id",
+          "label": "pixel_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "conversion.upload pixel id.",
+          "children": []
+        },
+        {
+          "shortCode": "conversions",
+          "label": "conversions",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "conversion.upload events array. Each item: {conversion_time, event_id, identifiers}. Required on conversion.upload.",
+          "children": []
+        },
+        {
+          "shortCode": "count",
+          "label": "count",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size (max 1000).",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination cursor.",
+          "children": []
+        },
+        {
+          "shortCode": "total_budget_amount_local_micro",
+          "label": "total_budget_amount_local_micro",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `total_budget_amount_local_micro` for operation: campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "entity_status",
+          "label": "entity_status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `entity_status` for operations: campaign.create, lineItem.create.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_ids",
+          "label": "campaign_ids",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `campaign_ids` for operations: campaign.list, lineItem.list.",
+          "children": []
+        },
+        {
+          "shortCode": "with_deleted",
+          "label": "with_deleted",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `with_deleted` for operations: campaign.list, lineItem.list.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_by",
+          "label": "sort_by",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `sort_by` for operation: campaign.list.",
+          "children": []
+        },
+        {
+          "shortCode": "product_type",
+          "label": "product_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `product_type` for operation: lineItem.create.",
+          "children": []
+        },
+        {
+          "shortCode": "placements",
+          "label": "placements",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `placements` for operation: lineItem.create.",
+          "children": []
+        },
+        {
+          "shortCode": "objective",
+          "label": "objective",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `objective` for operation: lineItem.create.",
+          "children": []
+        },
+        {
+          "shortCode": "bid_amount_local_micro",
+          "label": "bid_amount_local_micro",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `bid_amount_local_micro` for operation: lineItem.create.",
+          "children": []
+        },
+        {
+          "shortCode": "line_item_ids",
+          "label": "line_item_ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `line_item_ids` for operation: lineItem.list.",
+          "children": []
+        },
+        {
+          "shortCode": "placement",
+          "label": "placement",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `placement` for operation: stats.get.",
+          "children": []
+        },
+        {
+          "shortCode": "targeting_type",
+          "label": "targeting_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Targeting type for targeting.criteria create (e.g. LOCATION, LANGUAGE, PLATFORM).",
+          "children": []
+        },
+        {
+          "shortCode": "targeting_value",
+          "label": "targeting_value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Targeting value for targeting.criteria create.",
+          "children": []
+        },
+        {
+          "shortCode": "operator_type",
+          "label": "operator_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Operator type for targeting.criteria (e.g. EQ, NE, GTE).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "f559b7ad-a7bd-4908-8813-9f355f0ddac7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. May contain PII — never log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "3a16437d-b2d5-4cbd-9760-c9eae4255116",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: account.get | campaign.create | campaign.list | lineItem.create | lineItem.list | promotedTweet.create | stats.get | targeting.criteria | conversion.upload.",
+      "value": "account.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "account.get",
+        "campaign.create",
+        "campaign.list",
+        "lineItem.create",
+        "lineItem.list",
+        "promotedTweet.create",
+        "stats.get",
+        "targeting.criteria",
+        "conversion.upload"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "f3419dc2-8f0a-4c86-814d-5b01ca596591",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "OAuth 2 access token from an Ads API-approved app (StudioQuack secret). Sent as Authorization: Bearer. OfficialApiNode cannot sign OAuth 1.0a. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "30d1b86b-2fe3-4fca-983d-699274d73ce6",
+      "shortCode": "account_id",
+      "label": "Ad account id",
+      "type": "string",
+      "description": "Default ads account id. Overridable on INPUT.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "36fd5769-8de6-43e5-8d8d-43cf81850beb",
+      "shortCode": "targeting_type",
+      "label": "Targeting Type",
+      "type": "string",
+      "description": "Targeting type for targeting.criteria create (e.g. LOCATION, LANGUAGE, PLATFORM).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "9f774211-90d8-4d67-b4cd-8c1c0bc7977a",
+      "shortCode": "targeting_value",
+      "label": "Targeting Value",
+      "type": "string",
+      "description": "Targeting value for targeting.criteria create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "c82c784d-fb6c-4073-b309-0a474718bd78",
+      "shortCode": "operator_type",
+      "label": "Operator Type",
+      "type": "string",
+      "description": "Operator type for targeting.criteria (e.g. EQ, NE, GTE).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "c0bb1bf2-bc89-47c2-83ea-742a45389372",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

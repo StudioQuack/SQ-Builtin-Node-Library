@@ -1,0 +1,276 @@
+{
+  "_id": "6ff576a4-6ece-4ab5-be7d-4fef33663a8b",
+  "version": "1.0.0",
+  "name": "Datamuse",
+  "label": "Datamuse Lexical API",
+  "description": "Official Datamuse API v1.1. words and suggest. Optional api_key sent as query param (required from 2027-01-01). Until then keyless still works (100k req/day). Attribution appreciated.",
+  "icon": "spellcheck",
+  "tags": [
+    "datamuse",
+    "news"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c62fb87a-8799-451a-9ef6-549c12949bd1",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-invoke fields for Datamuse. Do not put secrets here. Example: {\"operation\":\"words\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "words",
+          "description": "Overrides config operation. EXACT: words | suggest. Example: 'words'.",
+          "children": []
+        },
+        {
+          "shortCode": "ml",
+          "label": "ml",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Means-like. Example: ringing in the ears.",
+          "children": []
+        },
+        {
+          "shortCode": "sl",
+          "label": "sl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sounds-like. Example: jirraf.",
+          "children": []
+        },
+        {
+          "shortCode": "sp",
+          "label": "sp",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Spelled-like / wildcard. Example: t??k.",
+          "children": []
+        },
+        {
+          "shortCode": "rel_syn",
+          "label": "rel_syn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Synonyms of. Example: ocean.",
+          "children": []
+        },
+        {
+          "shortCode": "rel_ant",
+          "label": "rel_ant",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Antonyms of. Example: late.",
+          "children": []
+        },
+        {
+          "shortCode": "rel_trg",
+          "label": "rel_trg",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Triggers of. Example: cow.",
+          "children": []
+        },
+        {
+          "shortCode": "topics",
+          "label": "topics",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Topic hint. Example: temperature.",
+          "children": []
+        },
+        {
+          "shortCode": "lc",
+          "label": "lc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Left context word. Example: drink.",
+          "children": []
+        },
+        {
+          "shortCode": "rc",
+          "label": "rc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Right-context word (pair of lc). Example: milk.",
+          "children": []
+        },
+        {
+          "shortCode": "max",
+          "label": "max",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "1–1000. Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "md",
+          "label": "md",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Metadata flags d/p/s/r/f. Example: dp.",
+          "children": []
+        },
+        {
+          "shortCode": "s",
+          "label": "s",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "suggest REQUIRED prefix. Example: rawand.",
+          "children": []
+        },
+        {
+          "shortCode": "v",
+          "label": "v",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Vocabulary. es for Spanish. Example: es.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "05956b4f-ac9e-4e15-9365-86f8fa531569",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data} on 2xx. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT: 'ok'. Absent on failure. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status from the provider. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). OfficialApiNode places the provider payload here. Example: provider object.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "9a55b4b1-2ce4-41e0-8ed5-c6817bbcdbf5",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: words | suggest. Example: 'words'.",
+      "value": "words",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "words",
+        "suggest"
+      ]
+    },
+    {
+      "_id": "f2e03420-bb9d-4682-a5ce-66bc93d6af59",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Optional Datamuse API key sent as query param `api_key` (https://www.datamuse.com/api/). Required from 2027-01-01. Until then omit for keyless use (100k req/day). OfficialApiNode query-auth type rejects a blank secret, so this key is wired via queryFrom (present → ?api_key=; blank → omitted). Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8e396a5d-e271-442a-b823-7a02e8af1381",
+      "shortCode": "rc",
+      "label": "Rc",
+      "type": "string",
+      "description": "Default right-context word (rc) for words queries when INPUT rc is blank. Pair of lc.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "f2aa2348-8847-413e-865b-cacbc3ec33dd",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. <=0 falls back to 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

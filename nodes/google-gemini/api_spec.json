@@ -1,0 +1,54 @@
+{
+  "baseUrl": "https://generativelanguage.googleapis.com",
+  "defaultTimeout": 300,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "x-goog-api-key",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "chat": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1beta/models/{model}:generateContent",
+      "required": ["messages"],
+      "bodyFrom": ["contents", "messages", "systemInstruction", "generationConfig", "safetySettings", "tools", "toolConfig", "cachedContent"],
+      "stream": {
+        "format": "gemini-sse",
+        "path": "/v1beta/models/{model}:streamGenerateContent",
+        "query": {
+          "alt": "sse"
+        }
+      }
+    },
+    "generate_image": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1beta/models/{model}:generateContent",
+      "required": ["messages"],
+      "bodyFrom": ["contents", "messages", "generationConfig", "safetySettings"]
+    },
+    "generate_video": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1beta/models/{model}:predictLongRunning",
+      "required": [],
+      "bodyFrom": ["instances", "parameters", "prompt"]
+    },
+    "download_video": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1beta/{operation_name}",
+      "required": ["operation_name"]
+    },
+    "embeddings": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1beta/models/{model}:embedContent",
+      "required": [],
+      "bodyFrom": ["content", "model", "embedContentConfig"]
+    }
+  }
+}

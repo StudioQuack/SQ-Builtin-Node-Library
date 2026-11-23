@@ -1,0 +1,291 @@
+{
+  "_id": "c9a5ea8e-122c-428f-9045-b073df8e6a8e",
+  "version": "1.0.0",
+  "name": "Adyen",
+  "label": "Adyen — Adyen Checkout v72",
+  "description": "Official Adyen Checkout v72. Docs: https://docs.adyen.com/api-explorer/Checkout/72/overview. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. DO NOT BUILD catalog payout on this host (Transfers API is a different base). Live Checkout uses {PREFIX}-checkout-live.adyenpayments.com/checkout/v72. paymentMethod = encrypted card / token / storedPaymentMethodId only. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "account_balance",
+  "tags": [
+    "adyen",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "bda3b4ae-805e-4325-a95c-93286f10b44f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Adyen. Secrets never on this port. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "payment_create",
+          "description": "Overrides config operation. EXACT: payment_create | payment_capture | payment_refund | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Adyen Amount envelope escape hatch {value, currency}. Purpose fields value/currency merge as amount.* via bodyMap. Example: {\"value\":1000,\"currency\":\"USD\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Amount in minor units on payment_create/capture/refund. Nested as amount.value. Example: 1000 (=$10.00 USD).",
+          "children": []
+        },
+        {
+          "shortCode": "currency",
+          "label": "currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO-4217 currency on payment_create/capture/refund. Nested as amount.currency. Example: USD.",
+          "children": []
+        },
+        {
+          "shortCode": "reference",
+          "label": "reference",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Merchant reference for payment_create. Example: order-42.",
+          "children": []
+        },
+        {
+          "shortCode": "merchantAccount",
+          "label": "merchantAccount",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Adyen merchantAccount for payment_create / capture / refund. Example: YOUR_MERCHANT_ACCOUNT.",
+          "children": []
+        },
+        {
+          "shortCode": "paymentMethod",
+          "label": "paymentMethod",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "paymentMethod object for payment_create. Example: {\"type\":\"scheme\",\"encryptedCardNumber\":\"...\"}. Never log PAN/CVC.",
+          "children": []
+        },
+        {
+          "shortCode": "pspReference",
+          "label": "pspReference",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PSP reference path for payment_capture / payment_refund. Example: 8535296650153317.",
+          "children": []
+        },
+        {
+          "shortCode": "returnUrl",
+          "label": "returnUrl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL the shopper is redirected to after payment_create. Example: https://example.com/return.",
+          "children": []
+        },
+        {
+          "shortCode": "shopperReference",
+          "label": "shopperReference",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Your shopper id for payment_create (tokenisation / stored details). Example: shopper-42.",
+          "children": []
+        },
+        {
+          "shortCode": "shopperEmail",
+          "label": "shopperEmail",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Shopper email for payment_create. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "countryCode",
+          "label": "countryCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO-3166-1 alpha-2 shopper country for payment_create. Example: NL.",
+          "children": []
+        },
+        {
+          "shortCode": "channel",
+          "label": "channel",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create channel. EXACT: iOS | Android | Web. Example: Web.",
+          "children": []
+        },
+        {
+          "shortCode": "live_url_prefix",
+          "label": "Live Url Prefix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Company-specific live Checkout host prefix. Live base: https://{live_url_prefix}-checkout-live.adyenpayments.com/checkout/v72. Leave blank for test (checkout-test.adyen.com).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ffdcd781-496c-4693-8261-9646b473c45b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e0f973a0-13da-4428-a8c7-65a9dd6f0d95",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: payment_create | payment_capture | payment_refund | trigger. Default payment_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "payment_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "payment_create",
+        "payment_capture",
+        "payment_refund",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "447ef5e7-a18c-471a-8bf2-6e5c9d99dc91",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Adyen credential (header X-API-Key). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "257aa556-da04-419b-a042-8513e93570ca",
+      "shortCode": "merchantAccount",
+      "label": "Merchant Account",
+      "type": "string",
+      "description": "Default Adyen merchantAccount when INPUT merchantAccount is empty.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e0ad5a6b-f50e-445f-80c8-5d49cd207f18",
+      "shortCode": "live_url_prefix",
+      "label": "Live Url Prefix",
+      "type": "string",
+      "description": "Live Checkout URL prefix (company-specific). Empty = test endpoint checkout-test.adyen.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "52d98d98-de27-4ea2-b499-580020b46d19",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

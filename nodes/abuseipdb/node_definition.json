@@ -1,0 +1,264 @@
+{
+  "_id": "6f12226c-b9f5-44fa-8686-52a206969e53",
+  "version": "1.0.0",
+  "name": "AbuseIPDB",
+  "label": "AbuseIPDB APIv2 — IP reputation, report, blacklist",
+  "description": "Official AbuseIPDB APIv2 via OfficialApiNode. Docs: https://docs.abuseipdb.com/. Header Key. report submits an abuse report on the operator’s behalf — do not automate unverified reports. IPs may be personal data. api_key never on INPUT or in logs. check-block looks up a CIDR (query network). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "report",
+  "tags": [
+    "threat-intel"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b5868ece-d534-4870-9c52-b793b02e9ea2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path/query/body keys match api_spec.json.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "check",
+          "description": "Overrides config operation when non-blank. EXACT: check | report | blacklist | check-block.",
+          "children": []
+        },
+        {
+          "shortCode": "ipAddress",
+          "label": "ipAddress",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IPv4/IPv6 for check (query ipAddress).",
+          "children": []
+        },
+        {
+          "shortCode": "maxAgeInDays",
+          "label": "maxAgeInDays",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "check: 1–365. Else API default 30.",
+          "children": []
+        },
+        {
+          "shortCode": "verbose",
+          "label": "verbose",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "check: when true, include recent reports.",
+          "children": []
+        },
+        {
+          "shortCode": "ip",
+          "label": "ip",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IPv4/IPv6 for report.",
+          "children": []
+        },
+        {
+          "shortCode": "categories",
+          "label": "categories",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "report: comma-separated category IDs (https://www.abuseipdb.com/categories).",
+          "children": []
+        },
+        {
+          "shortCode": "comment",
+          "label": "comment",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "report: evidence. Minimize PII. Do not send credentials.",
+          "children": []
+        },
+        {
+          "shortCode": "timestamp",
+          "label": "timestamp",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "report: ISO-8601 abuse time. Omit → server now.",
+          "children": []
+        },
+        {
+          "shortCode": "confidenceMinimum",
+          "label": "confidenceMinimum",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "blacklist: 25–100. Default 100.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "blacklist page size. Plan-capped.",
+          "children": []
+        },
+        {
+          "shortCode": "network",
+          "label": "network",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "check-block: IPv4/IPv6 CIDR (query network). URL-encode the slash. Plan-capped max prefix.",
+          "children": []
+        },
+        {
+          "shortCode": "onlyCountries",
+          "label": "onlyCountries",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO-3166-1 alpha-2 country codes to include on blacklist (comma-separated). Example: US,DE.",
+          "children": []
+        },
+        {
+          "shortCode": "exceptCountries",
+          "label": "exceptCountries",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO-3166-1 alpha-2 country codes to exclude on blacklist. Example: RU.",
+          "children": []
+        },
+        {
+          "shortCode": "ipVersion",
+          "label": "ipVersion",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "blacklist IP version filter. EXACT: 4 | 6.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b08b37c0-b0f0-4d51-a8e5-ec34869459b7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "893f013a-960a-49c9-af95-05c954f2db46",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb when input.operation is blank.",
+      "value": "check",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "check",
+        "report",
+        "blacklist",
+        "check-block"
+      ]
+    },
+    {
+      "_id": "c8fbcb82-62db-46a2-bfb2-13fb0b530989",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "APIv2 key. Header Key (empty prefix). Never query-string. StudioQuack secret.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0e56de10-980d-4a25-9804-d34a8d05343f",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

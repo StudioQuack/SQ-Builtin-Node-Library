@@ -1,0 +1,371 @@
+{
+  "_id": "09956668-478b-4f5a-b0e9-2f09344d4844",
+  "version": "1.0.0",
+  "name": "Mailchimp",
+  "label": "Mailchimp Marketing API 3.0 — audiences, tags, campaigns (not Mandrill)",
+  "description": "Official Mailchimp Marketing API 3.0 at https://{dc}.api.mailchimp.com/3.0/. Handler: OfficialApiNode. Authorization: Bearer {api_key}. Mandrill transactional is not this node. subscriber_hash = MD5(lowercase email); pass the hash. trigger.listen is ingress. Consent required before status=subscribed. Customer owns the Mailchimp account. api_key is never logged or returned.",
+  "icon": "mail",
+  "tags": [
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "9da80b78-7b74-41dc-a6a5-beef0498dd21",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put api_key here. dc and list_id required for member ops. subscriber_hash is MD5 of lowercase email. Example: {\"operation\":\"member.list\",\"list_id\":\"abc\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "member.create",
+          "description": "Overrides config. EXACT Marketing API verbs including trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "dc",
+          "label": "dc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mailchimp data center from the API key suffix. Path {dc}.api.mailchimp.com. Also config. Example: us21. All HTTP operations.",
+          "children": []
+        },
+        {
+          "shortCode": "list_id",
+          "label": "list_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Audience list id. Path for member.* ; campaign.create wires it to recipients.list_id. Example: a1b2c3d4e5.",
+          "children": []
+        },
+        {
+          "shortCode": "subscriber_hash",
+          "label": "subscriber_hash",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "MD5 of the lowercase email. Path for member.get/update/delete/tags.",
+          "children": []
+        },
+        {
+          "shortCode": "email_address",
+          "label": "email_address",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Member email for member.create / member.update. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Member status. EXACT: subscribed | pending | unsubscribed | cleaned. member.create required; also member.list filter and member.update.",
+          "children": []
+        },
+        {
+          "shortCode": "merge_fields",
+          "label": "merge_fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Merge-field map (FNAME, LNAME, …) for member.create / member.update.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Tags for member.create (strings) or memberTag.add/remove ([{name, status}]).",
+          "children": []
+        },
+        {
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO language for member.create / member.update. Example: en.",
+          "children": []
+        },
+        {
+          "shortCode": "ip_signup",
+          "label": "ip_signup",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Signup IP for member.create. Official ip_signup.",
+          "children": []
+        },
+        {
+          "shortCode": "count",
+          "label": "count",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for member.list, campaign.list, template.list. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Offset for list operations. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated response fields for member.list.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign id for get/send/replicate/resend/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign type for campaign.create / campaign.list. EXACT: regular | plaintext | absplit | rss | variate. Example: regular.",
+          "children": []
+        },
+        {
+          "shortCode": "recipients",
+          "label": "recipients",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Campaign recipients envelope escape hatch for campaign.create. Purpose field list_id merges as recipients.list_id via bodyMap. Example: {\"segment_opts\":{\"saved_segment_id\":1}}.",
+          "children": []
+        },
+        {
+          "shortCode": "settings",
+          "label": "settings",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Campaign settings envelope escape hatch for campaign.create. Purpose fields subject_line/from_name/reply_to/title/template_id merge as settings.* via bodyMap. Example: {\"auto_footer\":true}.",
+          "children": []
+        },
+        {
+          "shortCode": "subject_line",
+          "label": "subject_line",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign subject. Wired to settings.subject_line on campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "from_name",
+          "label": "from_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "From name. Wired to settings.from_name on campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "reply_to",
+          "label": "reply_to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reply-To address. Wired to settings.reply_to on campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Internal campaign title. Wired to settings.title on campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "template_id",
+          "label": "template_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Template id. Wired to settings.template_id on campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "__omit",
+          "label": "__omit",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Placeholder so action POSTs (campaign.send / replicate / resendNonOpeners) send an empty JSON object. Leave blank.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "00c3831d-1361-4bb8-a81c-60e9cc7f6cf5",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Do not log emails, phones, or secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2f4cca6e-1511-430f-9149-e65de9b33855",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT Marketing API verbs.",
+      "value": "member.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "member.create",
+        "member.get",
+        "member.list",
+        "member.update",
+        "member.delete",
+        "memberTag.add",
+        "memberTag.remove",
+        "list.group.list",
+        "campaign.get",
+        "campaign.list",
+        "campaign.send",
+        "campaign.replicate",
+        "campaign.resendNonOpeners",
+        "campaign.delete",
+        "campaign.create",
+        "template.list",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "8655c760-7924-4433-8a8b-98453c961daa",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Marketing API key (StudioQuack secret), form key-usX. Sent as Authorization: Bearer {api_key}. Never log or place on INPUT. Not a Mandrill key.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7248e410-d19d-4172-94d4-431efce9d7fc",
+      "shortCode": "dc",
+      "label": "Data center",
+      "type": "string",
+      "description": "Host prefix us1…usX matching the API key suffix. Required for every call.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "062f6c07-d9cf-43ec-9584-f890e659117f",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Provider cap 120 s.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,139 @@
+{
+  "baseUrl": "https://api.pagerduty.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "Authorization",
+    "prefix": "Token token=",
+    "configKey": "api_token"
+  },
+  "extraHeaders": {
+    "Accept": "application/vnd.pagerduty+json;version=2",
+    "From": "{from_email}"
+  },
+  "operations": {
+    "incident_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/incidents",
+      "bodyFrom": [
+        "incident",
+        "type",
+        "title",
+        "service_id",
+        "service_type",
+        "urgency",
+        "incident_key",
+        "details"
+      ],
+      "required": [],
+      "bodyMap": {
+        "type": "incident.type",
+        "title": "incident.title",
+        "service_id": "incident.service.id",
+        "service_type": "incident.service.type",
+        "urgency": "incident.urgency",
+        "incident_key": "incident.incident_key",
+        "details": "incident.body.details"
+      }
+    },
+    "incident_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/incidents/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "incident_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/incidents",
+      "queryFrom": [
+        "limit",
+        "offset",
+        "statuses[]",
+        "service_ids[]",
+        "urgencies[]",
+        "user_ids[]",
+        "since",
+        "until"
+      ]
+    },
+    "incident_update": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/incidents/{id}",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "incident",
+        "type",
+        "title",
+        "status",
+        "resolution",
+        "urgency"
+      ],
+      "bodyMap": {
+        "type": "incident.type",
+        "title": "incident.title",
+        "status": "incident.status",
+        "resolution": "incident.resolution",
+        "urgency": "incident.urgency"
+      }
+    },
+    "note_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/incidents/{id}/notes",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "note",
+        "content"
+      ],
+      "bodyMap": {
+        "content": "note.content"
+      }
+    },
+    "note_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/incidents/{id}/notes",
+      "required": [
+        "id"
+      ]
+    },
+    "log_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/incidents/{id}/log_entries",
+      "required": [
+        "id"
+      ]
+    },
+    "user_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/users/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "oncall_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/oncalls",
+      "queryFrom": [
+        "schedule_ids[]",
+        "user_ids[]"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

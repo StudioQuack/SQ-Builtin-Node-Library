@@ -1,0 +1,45 @@
+{
+  "baseUrl": "https://api.groq.com",
+  "defaultTimeout": 300,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "chat": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/openai/v1/chat/completions",
+      "required": ["messages"],
+      "bodyFrom": ["model", "messages", "temperature", "top_p", "max_tokens", "max_completion_tokens", "stream", "stop", "n", "presence_penalty", "frequency_penalty", "logit_bias", "user", "seed", "tools", "tool_choice", "response_format", "parallel_tool_calls", "reasoning_effort", "reasoning_format", "include_reasoning"],
+      "stream": {
+        "format": "openai-sse"
+      }
+    },
+    "stt": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/openai/v1/audio/transcriptions",
+      "required": [],
+      "bodyFrom": ["model", "file", "url", "language", "prompt", "response_format", "temperature"],
+      "contentType": "multipart/form-data",
+      "bodyFormat": "multipart"
+    },
+    "tts": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/openai/v1/audio/speech",
+      "required": ["input", "voice"],
+      "bodyFrom": ["model", "input", "voice", "response_format", "sample_rate", "speed"]
+    },
+    "list_models": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/openai/v1/models",
+      "required": []
+    }
+  }
+}

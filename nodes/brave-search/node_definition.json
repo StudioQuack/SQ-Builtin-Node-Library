@@ -1,0 +1,215 @@
+{
+  "_id": "846bbff8-7e46-57bd-9ee2-68ac3c47fe7e",
+  "version": "1.0.0",
+  "name": "Brave Search",
+  "label": "Brave Search",
+  "description": "Brave Search official API via OfficialApiNode (api_spec.json). Operations: web_search, news_search, image_search, video_search, suggest, spellcheck, llm_context. Docs: https://api-dashboard.search.brave.com/documentation/quickstart. Brave Search API terms in the dashboard. Header X-Subscription-Token. Independent index. Do not scrape search.brave.com. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "search",
+  "tags": [
+    "search",
+    "brave"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "8d2df06a-7a80-5ec2-8038-7535d8f52da6",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Brave Search request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"web_search\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: web_search | news_search | image_search | video_search | suggest | spellcheck | llm_context. Default: first listed or instance operation. Example: 'web_search'.",
+          "children": [],
+          "_id": "31451987-11a7-5249-83c2-aecee30c3dab"
+        },
+        {
+          "shortCode": "count",
+          "label": "count",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `count` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "fa8d00d6-b007-5a3a-88a1-4a7f5ec9fcfc"
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `country` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "ef8e21a3-8aa2-5715-b013-55c2d166e74a"
+        },
+        {
+          "shortCode": "freshness",
+          "label": "freshness",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `freshness` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "89068056-628b-584a-baf9-a50ed57373b6"
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `q` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "83f8bfb3-f969-5e5b-8e04-db74d301fac8"
+        },
+        {
+          "shortCode": "safesearch",
+          "label": "safesearch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `safesearch` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "f8e1f022-2b6a-5968-bd97-c2fc2d66e9ad"
+        },
+        {
+          "shortCode": "search_lang",
+          "label": "search_lang",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `search_lang` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "9892afe0-87ed-5cd7-abd5-a2de8e541fc5"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "99e4421f-7ec4-51c5-a474-aebe25822da4",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "7222b4a1-78ca-5fed-bf15-b5b6ba4e3736"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "cb6538f6-605d-5be4-aa80-6b6a55514519"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "e628bb8c-3d39-5185-9424-6834947b4f1c"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2c8b20b1-8318-52ac-b8c2-3e7c6f309cac",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: web_search, news_search, image_search, video_search, suggest, spellcheck, llm_context.",
+      "value": "web_search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "web_search",
+        "news_search",
+        "image_search",
+        "video_search",
+        "suggest",
+        "spellcheck",
+        "llm_context"
+      ]
+    },
+    {
+      "_id": "ee3f1623-b08e-5e2e-bce7-404e27de946c",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `header`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c539dcc1-ab08-5c18-b04a-8a11c9e6bd1d",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

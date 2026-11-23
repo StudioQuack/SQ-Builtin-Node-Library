@@ -1,0 +1,116 @@
+{
+  "baseUrl": "https://",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "create-user": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{domain}/api/v2/users",
+      "required": ["connection"],
+      "bodyFrom": [
+        "email",
+        "connection",
+        "password",
+        "name",
+        "given_name",
+        "family_name",
+        "nickname",
+        "username",
+        "picture",
+        "user_metadata",
+        "app_metadata",
+        "email_verified",
+        "verify_email",
+        "phone_number",
+        "blocked"
+      ]
+    },
+    "get-user": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{domain}/api/v2/users/{id}",
+      "required": ["id"]
+    },
+    "list-users": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{domain}/api/v2/users",
+      "queryFrom": ["q", "search_engine", "page", "per_page", "include_totals", "sort", "connection", "fields"]
+    },
+    "update-user": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "{domain}/api/v2/users/{id}",
+      "required": ["id"],
+      "bodyFrom": [
+        "email",
+        "name",
+        "given_name",
+        "family_name",
+        "nickname",
+        "picture",
+        "user_metadata",
+        "app_metadata",
+        "email_verified",
+        "phone_number",
+        "blocked",
+        "password",
+        "connection"
+      ]
+    },
+    "delete-user": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "{domain}/api/v2/users/{id}",
+      "required": ["id"]
+    },
+    "create-role": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{domain}/api/v2/roles",
+      "required": ["name"],
+      "bodyFrom": ["name", "description"]
+    },
+    "list-roles": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{domain}/api/v2/roles",
+      "queryFrom": ["name_filter", "page", "per_page", "include_totals"]
+    },
+    "assign-role": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{domain}/api/v2/users/{id}/roles",
+      "required": ["id", "roles"],
+      "bodyFrom": ["roles"]
+    },
+    "list-clients": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{domain}/api/v2/clients",
+      "queryFrom": ["fields", "include_fields", "page", "per_page", "include_totals"]
+    },
+    "get-log": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{domain}/api/v2/logs/{id}",
+      "required": ["id"]
+    },
+    "list-logs": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{domain}/api/v2/logs",
+      "queryFrom": ["q", "page", "per_page", "sort", "fields", "include_fields", "from", "take"]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

@@ -1,0 +1,325 @@
+{
+  "_id": "51e04965-2cd6-4de3-807d-6087e3c6c936",
+  "version": "1.0.0",
+  "name": "Notion",
+  "label": "Notion API 2026-03-11",
+  "description": "Notion API 2026-03-11 via OfficialApiNode. Base https://api.notion.com/v1. Docs: https://developers.notion.com/reference/patch-page. Sends Notion-Version: 2026-03-11. Pages must be shared with the integration. Use in_trash not archived. page_update/database_page_update take properties plus icon and cover. OUTPUT is {status,http_status,data}.",
+  "icon": "article",
+  "tags": [
+    "notion",
+    "wiki",
+    "database"
+  ],
+  "category": "Productivity & Collaboration",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b20881c2-5b4e-4f72-8dac-a193457ef4d9",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Notion official API call. Delivered as inputVariables.input. Set operation plus the path/query/body fields that operation lists in api_spec.json. Do not put secrets on this port. Example: {\"operation\":\"page_create\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "page_create",
+          "description": "Which official Notion call to run. EXACT: page_create | page_archive | page_get | page_update | page_search | database_get | database_page_create | database_page_get | database_page_list | database_page_update | block_append | block_list | block_get | user_get | user_list | data_source_get | data_source_search | listen. Example: page_update.",
+          "children": []
+        },
+        {
+          "shortCode": "parent",
+          "label": "parent",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parent for page_create / database_page_create. Official: {\"page_id\":\"...\"} | {\"database_id\":\"...\"} | {\"data_source_id\":\"...\"}. Example: {\"data_source_id\":\"21d2e8c9-54d4-80e5-bb5f-c0d7d4b3c4e1\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "properties",
+          "label": "properties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Page properties map keyed by property name or id (official PATCH/POST /pages). Values follow the property type (title, rich_text, select, date, …). Used by page_create, page_update, database_page_create, database_page_update. Example: {\"Name\":{\"title\":[{\"text\":{\"content\":\"Launch\"}}]}}.",
+          "children": []
+        },
+        {
+          "shortCode": "icon",
+          "label": "icon",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Page icon for page_create/update and database_page_create/update. Official: {\"type\":\"emoji\",\"emoji\":\"🚀\"} or {\"type\":\"external\",\"external\":{\"url\":\"https://...\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "cover",
+          "label": "cover",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Page cover for page_create/update and database_page_create/update. Official: {\"type\":\"external\",\"external\":{\"url\":\"https://...\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "children",
+          "label": "children",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Block objects to create (page_create) or append (block_append). Official block list. Example: [{\"object\":\"block\",\"type\":\"paragraph\",\"paragraph\":{\"rich_text\":[{\"text\":{\"content\":\"Hi\"}}]}}].",
+          "children": []
+        },
+        {
+          "shortCode": "page_id",
+          "label": "page_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Notion page id (dashed UUID) for page_get/update/archive and database_page_*. Example: 59833787-2cf9-4fdf-8782-e53db20768a5.",
+          "children": []
+        },
+        {
+          "shortCode": "in_trash",
+          "label": "in_trash",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Trash or restore a page (page_archive, page_update, database_page_update). Official 2026-03-11 field; do not send archived. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search text for page_search and data_source_search. Example: launch plan.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Filter object for page_search ({\"value\":\"page\",\"property\":\"object\"}), data_source_search, or database_page_list (property filter). Example: {\"property\":\"Status\",\"select\":{\"equals\":\"Done\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Single sort for page_search. Official: {\"direction\":\"ascending\",\"timestamp\":\"last_edited_time\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "database_id",
+          "label": "database_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Database id for database_get. Example: 668d7974-90ed-4996-8e42-c3aa47dc27b0.",
+          "children": []
+        },
+        {
+          "shortCode": "data_source_id",
+          "label": "data_source_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Data source id for database_page_list and data_source_get (Notion 2026-03-11). Example: 21d2e8c9-54d4-80e5-bb5f-c0d7d4b3c4e1.",
+          "children": []
+        },
+        {
+          "shortCode": "sorts",
+          "label": "sorts",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Sorts array for database_page_list. Example: [{\"property\":\"Name\",\"direction\":\"ascending\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "start_cursor",
+          "label": "start_cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination cursor from a previous list/query (block_list, user_list, database_page_list).",
+          "children": []
+        },
+        {
+          "shortCode": "block_id",
+          "label": "block_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Block id for block_get, block_list, block_append. Example: 1a2b3c4d-....",
+          "children": []
+        },
+        {
+          "shortCode": "position",
+          "label": "position",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "block_append insert position. Official: {\"type\":\"end\"} or after a block id. Sent as JSON string or object.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for block_list, user_list (query) and database_page_list (body). Max 100. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User id for user_get. Example: 2b1c3d4e-....",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "2741429f-d66a-4847-856f-9856e0f22b6d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or the raw string when not JSON. Example: {}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "02f1a970-7ef8-4596-a59c-ad334b413ed5",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: page_create, page_archive, page_get, page_update, page_search, database_get, database_page_create, database_page_get, database_page_list, database_page_update, block_append, block_list, block_get, user_get, user_list, data_source_get, data_source_search, listen. Default: page_create. Example: page_create.",
+      "value": "page_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "page_create",
+        "page_archive",
+        "page_get",
+        "page_update",
+        "page_search",
+        "database_get",
+        "database_page_create",
+        "database_page_get",
+        "database_page_list",
+        "database_page_update",
+        "block_append",
+        "block_list",
+        "block_get",
+        "user_get",
+        "user_list",
+        "data_source_get",
+        "data_source_search",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "9b1a303b-8eca-4ce0-ae8c-6c2ac81bbf63",
+      "shortCode": "integration_token",
+      "label": "Integration Token",
+      "type": "password",
+      "description": "Provider credential for auth.type=bearer (configKey integration_token). REQUIRED secret — StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f88edacb-266a-4673-bc8d-c9ecb8cf6866",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative → 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

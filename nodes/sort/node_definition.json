@@ -1,0 +1,194 @@
+{
+  "_id": "80136193-861d-442d-bc39-bfe3674e2c68",
+  "version": "1.0.0",
+  "name": "Sort",
+  "label": "Sort a JSON array",
+  "description": "In-process sort of a JSON array by keys. type=random uses CSPRNG. type=code is a sandbox expression (entitlement), not a host eval.",
+  "icon": "",
+  "tags": [
+    "sort",
+    "transform"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "892269f6-2152-4f98-b203-f1eef14b812f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Sort operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'sort'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "items",
+          "label": "items",
+          "type": "list",
+          "required": true,
+          "value": "[]",
+          "description": "Array to sort. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "keys",
+          "label": "keys",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Sort keys. Ignored when type=random.",
+          "children": []
+        },
+        {
+          "shortCode": "code",
+          "label": "code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sandbox sort expression required when type=code. Example: 'a.score - b.score'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "13d77e3c-5c5f-464f-8236-6e496dc9537d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "eb501fcc-3298-487b-b690-f5471fd018f0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: sort. Required. Example: 'sort'.",
+      "value": "sort",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "sort"
+      ]
+    },
+    {
+      "_id": "f0b56298-a131-4b93-bbaf-1d163b25bc07",
+      "shortCode": "keys",
+      "label": "Keys",
+      "type": "string",
+      "description": "JSON array of {path, direction}. Example: '[{\"path\":\"name\",\"direction\":\"asc\"}]'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "71b4d399-38c3-465e-920c-827ea677a8e5",
+      "shortCode": "type",
+      "label": "Type",
+      "type": "select",
+      "description": "simple | random | code. Default simple.",
+      "value": "simple",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "simple",
+        "random",
+        "code"
+      ]
+    },
+    {
+      "_id": "ad45f802-08c6-4c5e-8956-74af0359b8b0",
+      "shortCode": "code",
+      "label": "Code",
+      "type": "string",
+      "description": "Sandbox sort expression required when type=code. Example: 'a.score - b.score'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "b4f5b002-963f-47f3-8403-c7b3531005ae",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

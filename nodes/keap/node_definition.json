@@ -1,0 +1,541 @@
+{
+  "_id": "143407c4-f002-4d22-ae47-58b88a3a82aa",
+  "version": "1.0.0",
+  "name": "Keap",
+  "label": "Keap REST v2 — contacts, companies, notes, tags, ecommerce, email",
+  "description": "Official Keap REST v2 at https://api.infusionsoft.com. Handler: OfficialApiNode. Bearer access_token (customer-supplied; node does not refresh OAuth). trigger.listen is ingress (BPMN message event). Contacts/emails are PII. Consent required before email.send. Customer owns the Keap account. access_token is never logged or returned.",
+  "icon": "contacts",
+  "tags": [
+    "crm",
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f3e493f3-0993-4ed2-83f8-592bbe61d581",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_token here. Nested Keap arrays (email_addresses, phone_numbers, order_items, contact_ids) as documented. file.upload uses type file (ref-id). Example: {\"operation\":\"contact.get\",\"contact_id\":\"123\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.upsert",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs including trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "contact_id",
+          "label": "contact_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path id for contact / note / order parent.",
+          "children": []
+        },
+        {
+          "shortCode": "given_name",
+          "label": "given_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official given_name for contact.upsert. Example: Ada.",
+          "children": []
+        },
+        {
+          "shortCode": "family_name",
+          "label": "family_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official family_name for contact.upsert.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.upsert email. Wired to email_addresses[0].email. field EMAIL1 comes from config email_field. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "email_field",
+          "label": "email_field",
+          "type": "string",
+          "required": false,
+          "value": "EMAIL1",
+          "description": "contact.upsert email_addresses[0].field. EXACT: EMAIL1 | EMAIL2 | EMAIL3. Config default EMAIL1.",
+          "children": []
+        },
+        {
+          "shortCode": "email_addresses",
+          "label": "email_addresses",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "contact.upsert one email_addresses object escape hatch {email, field, opt_in_reason} merged into [0]. Named email/email_field win. Docs require field (EMAIL1–EMAIL3).",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.upsert phone. Wired to phone_numbers[0].number. field PHONE1 comes from config phone_field.",
+          "children": []
+        },
+        {
+          "shortCode": "phone_field",
+          "label": "phone_field",
+          "type": "string",
+          "required": false,
+          "value": "PHONE1",
+          "description": "contact.upsert phone_numbers[0].field. EXACT: PHONE1 | PHONE2 | PHONE3 | PHONE4 | PHONE5. Config default PHONE1.",
+          "children": []
+        },
+        {
+          "shortCode": "phone_numbers",
+          "label": "phone_numbers",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "contact.upsert one phone_numbers object escape hatch {number, field} merged into [0]. Named phone/phone_field win. Docs require field (PHONE1–PHONE5).",
+          "children": []
+        },
+        {
+          "shortCode": "company_id",
+          "label": "company_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Existing company id.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_fields",
+          "label": "custom_fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Extra Contact JSON fields.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page size. Clamp 1–1000.",
+          "children": []
+        },
+        {
+          "shortCode": "page_token",
+          "label": "page_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Next-page token.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Provider filter expression.",
+          "children": []
+        },
+        {
+          "shortCode": "company_name",
+          "label": "company_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required for company.create.",
+          "children": []
+        },
+        {
+          "shortCode": "note_id",
+          "label": "note_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note path id.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note or order title.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note body (PII — do not log).",
+          "children": []
+        },
+        {
+          "shortCode": "tag_id",
+          "label": "tag_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tag path id.",
+          "children": []
+        },
+        {
+          "shortCode": "contact_ids",
+          "label": "contact_ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Contact ids for email.send and contactTag.add/remove.",
+          "children": []
+        },
+        {
+          "shortCode": "order_id",
+          "label": "order_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Order path id.",
+          "children": []
+        },
+        {
+          "shortCode": "order_date",
+          "label": "order_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO date as documented.",
+          "children": []
+        },
+        {
+          "shortCode": "order_items",
+          "label": "order_items",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Line items (product id, qty, price).",
+          "children": []
+        },
+        {
+          "shortCode": "order_title",
+          "label": "order_title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Order title.",
+          "children": []
+        },
+        {
+          "shortCode": "order_type",
+          "label": "order_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Order type for ecommerce.order.create (Keap requires it on order creation). EXACT: Online | Offline. Example: Offline.",
+          "children": []
+        },
+        {
+          "shortCode": "product_id",
+          "label": "product_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Product path id.",
+          "children": []
+        },
+        {
+          "shortCode": "product_name",
+          "label": "product_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required for product.create.",
+          "children": []
+        },
+        {
+          "shortCode": "product_price",
+          "label": "product_price",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Price.",
+          "children": []
+        },
+        {
+          "shortCode": "product_short_desc",
+          "label": "product_short_desc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Description.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email subject for email.send / email.record.",
+          "children": []
+        },
+        {
+          "shortCode": "html_body",
+          "label": "html_body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTML body for email.send / email.record. Official html_content is not used; this API accepts html_body on emails:send.",
+          "children": []
+        },
+        {
+          "shortCode": "plain_text_body",
+          "label": "plain_text_body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Plain text for email.send. Official plain_text_body.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Keap user id the email is sent from on email.send (the sender; Keap requires it to send). Find it via GET /crm/rest/v2/users. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "File payload for file.upload.",
+          "children": []
+        },
+        {
+          "shortCode": "file_name",
+          "label": "file_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Filename for upload.",
+          "children": []
+        },
+        {
+          "shortCode": "file_association",
+          "label": "file_association",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "e.g. CONTACT.",
+          "children": []
+        },
+        {
+          "shortCode": "is_public",
+          "label": "is_public",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Default false.",
+          "children": []
+        },
+        {
+          "shortCode": "file_id",
+          "label": "file_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path id for file.delete.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5e94850f-098e-4ce8-b496-2c08d1a727b7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Do not log emails, phones, or secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2e3c6f32-be9b-4406-99ea-bb07632c492e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT catalog verbs.",
+      "value": "contact.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "contact.upsert",
+        "contact.get",
+        "contact.list",
+        "contact.delete",
+        "company.create",
+        "company.list",
+        "contactNote.create",
+        "contactNote.get",
+        "contactNote.list",
+        "contactNote.update",
+        "contactNote.delete",
+        "contactTag.add",
+        "contactTag.remove",
+        "contactTag.list",
+        "ecommerce.order.create",
+        "ecommerce.order.get",
+        "ecommerce.order.list",
+        "ecommerce.order.delete",
+        "ecommerce.product.create",
+        "ecommerce.product.get",
+        "ecommerce.product.list",
+        "ecommerce.product.delete",
+        "email.send",
+        "email.listSent",
+        "email.record",
+        "file.upload",
+        "file.list",
+        "file.delete",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "eb25df25-2519-4076-bc63-8bd4923ca219",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Keap OAuth access token (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT. Token URL: https://api.infusionsoft.com/token.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "92514e74-d7fa-4c00-89e6-0bbcaee1649a",
+      "shortCode": "email_field",
+      "label": "Email field",
+      "type": "string",
+      "description": "Default email_addresses[0].field for contact.upsert. EXACT EMAIL1 | EMAIL2 | EMAIL3.",
+      "value": "EMAIL1",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e55b42e1-b56e-45ec-afed-73c79af54508",
+      "shortCode": "phone_field",
+      "label": "Phone field",
+      "type": "string",
+      "description": "Default phone_numbers[0].field for contact.upsert. EXACT PHONE1–PHONE5.",
+      "value": "PHONE1",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f23f5f36-5772-4266-b56c-c6b3cdd367c2",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,521 @@
+{
+  "_id": "cec55124-0040-46b8-b7de-f1ed2f28bf38",
+  "version": "1.0.0",
+  "name": "xAI Grok",
+  "label": "xAI Grok",
+  "description": "Official xAI Grok Inference API (OpenAI-compat Chat Completions + Imagine image generation) on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). operation selects chat (POST /v1/chat/completions) or image_gen (POST /v1/images/generations). Auth is StudioQuack secret api_key sent as Authorization Bearer. Image payloads use type file (platform ref-id). Docs: https://docs.x.ai/developers/quickstart. Terms: https://x.ai/legal/terms-of-service-enterprise. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "xai",
+    "grok",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "886b5aaa-b9fc-483c-ac07-4a7cf244591f",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, stream?, model?, prompt?, file?, n?, aspect_ratio?}. Image sources use type file (platform ref-id), never inline bytes. Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Conversation for operation=chat. List of {role, content}. content is string or typed blocks (text / image). Image sources use type file (platform ref-id). Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional OpenAI-style tools for chat (max 128 functions per xAI docs). Omit or [] sends no tools.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Text prompt for operation=image_gen. Required by POST /v1/images/generations.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for chat image content (jpg/jpeg/png, max 20 MiB per xAI models page). Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "tool_choice",
+          "label": "tool_choice",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tool_choice` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_p` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "max_completion_tokens",
+          "label": "max_completion_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_completion_tokens` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "n",
+          "label": "n",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `n` for operations: chat, image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `stop` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "stream_options",
+          "label": "stream_options",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `stream_options` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "presence_penalty",
+          "label": "presence_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `presence_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "frequency_penalty",
+          "label": "frequency_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `frequency_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `seed` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operations: chat, image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "reasoning_effort",
+          "label": "reasoning_effort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `reasoning_effort` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "search_parameters",
+          "label": "search_parameters",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `search_parameters` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "parallel_tool_calls",
+          "label": "parallel_tool_calls",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `parallel_tool_calls` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "prompt_cache_key",
+          "label": "prompt_cache_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `prompt_cache_key` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "user",
+          "label": "user",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `user` for operations: chat, image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "aspect_ratio",
+          "label": "aspect_ratio",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `aspect_ratio` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "resolution",
+          "label": "resolution",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `resolution` for operation: image_gen.",
+          "children": []
+        },
+        {
+          "shortCode": "quality",
+          "label": "quality",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `quality` for operation: image_gen.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0328385c-934d-4984-a70c-2b7737b3c01f",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed xAI JSON (chat completion or image generation data[] URLs).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "38e9c7d5-f576-45c0-af3f-d60100064772",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official xAI verb. EXACT values: chat | image_gen. Default chat = POST /v1/chat/completions. image_gen = POST /v1/images/generations.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "image_gen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "c4d43aaf-6cba-4d2d-b045-fd1535e09a54",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "xAI Console API key (console.x.ai). Sent as Authorization: Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "10628b1a-f92d-4868-8d32-3d915019dcf7",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Chat default grok-4.6 (current flagship). Also grok-4.5, grok-4.3, grok-build-0.1, grok-4.20-0309-reasoning / grok-4.20-0309-non-reasoning / grok-4.20-multi-agent-0309. Image: grok-imagine-image-2.0. Verify live list via GET /v1/models. Also send on llm_input so OfficialApiNode includes it in the JSON body. Docs: https://docs.x.ai/developers/models .",
+      "value": "grok-4.6",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "grok-4.6",
+        "grok-4.5",
+        "grok-4.3",
+        "grok-build-0.1",
+        "grok-4.20-0309-reasoning",
+        "grok-4.20-0309-non-reasoning",
+        "grok-4.20-multi-agent-0309",
+        "grok-imagine-image-2.0"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "9e41e072-9083-4631-b918-dc8e8ef6af44",
+      "shortCode": "temperature",
+      "label": "Temperature",
+      "type": "number",
+      "description": "Chat temperature 0–2. Empty → omitted. Also send on llm_input to include in the body.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "757a9615-a4b5-4188-a371-ba92f73c31af",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ebbaf751-7513-4c29-9f9a-2fab32939950",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether xAI Grok requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,558 @@
+{
+  "_id": "fdbff05e-d6b3-54e8-83a1-14949fbcb841",
+  "version": "1.0.0",
+  "name": "Walmart Marketplace",
+  "label": "Walmart Marketplace US v3 — orders, items, inventory",
+  "description": "US Marketplace host marketplace.walmartapis.com/v3. Header WM_SEC.ACCESS_TOKEN (not Authorization Bearer; refresh out of band). extraHeaders send required WM_QOS.CORRELATION_ID, WM_SVC.NAME, and optional WM_CONSUMER.CHANNEL.TYPE from config/input. CA/MX hosts differ. Acknowledge within 4 hours. Never log buyer email. Docs: https://developer.walmart.com/us-marketplace/docs/lag-time-api-overview",
+  "icon": "storefront",
+  "tags": [
+    "walmart",
+    "marketplace",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a294d224-9ff9-538b-abaf-b99b977b6848",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "order_list",
+          "description": "Official API verb. EXACT: order_list | order_ack | item_get | inventory_update | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "correlation_id",
+          "label": "correlation_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "WM_QOS.CORRELATION_ID. Prefer a new GUID per request. Overrides config correlation_id. Omitted when blank (Walmart may 400).",
+          "children": []
+        },
+        {
+          "shortCode": "createdStartDate",
+          "label": "createdStartDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `createdStartDate` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "createdEndDate",
+          "label": "createdEndDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `createdEndDate` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `status` for operation: order_list.",
+          "children": []
+        },
+        {
+          "shortCode": "purchaseOrderId",
+          "label": "purchaseOrderId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `purchaseOrderId` for operation: order_ack. Required by: order_ack.",
+          "children": []
+        },
+        {
+          "shortCode": "sku",
+          "label": "sku",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Seller SKU. Path/query for item_get and inventory_update (required query). Also sent in the inventory_update body. Encode special characters. Example: SKU_0001.",
+          "children": []
+        },
+        {
+          "shortCode": "shipNode",
+          "label": "shipNode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Fulfillment ship node for inventory_update (query). Omit to use the default node.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Inventory count for inventory_update. Nested as quantity.amount. Example: 10. https://developer.walmart.com/us-marketplace/docs/update-single-item-inventory",
+          "children": []
+        },
+        {
+          "shortCode": "unit",
+          "label": "unit",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Inventory unit for inventory_update. Official value: EACH. Nested as quantity.unit. Default EACH.",
+          "children": []
+        },
+        {
+          "shortCode": "inventoryAvailableDate",
+          "label": "inventoryAvailableDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "US inventory available date YYYY-MM-DD for inventory_update. Example: 2026-01-15.",
+          "children": []
+        },
+        {
+          "shortCode": "nextCursor",
+          "label": "nextCursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "order_list pagination cursor from the previous response.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "155a43bb-e079-56fb-8d0e-93b1d4c487e2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "42e75833-aae0-599c-8f30-54cd0acb8995",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: order_list | order_ack | item_get | inventory_update | trigger. trigger does not open a socket.",
+      "value": "order_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "order_list",
+        "order_ack",
+        "item_get",
+        "inventory_update",
+        "trigger"
+      ],
+      "filterRules": [
+        {
+          "when": "order_list",
+          "targets": [
+            {
+              "param": "channel_type",
+              "visible": true
+            },
+            {
+              "param": "correlation_id",
+              "visible": true
+            },
+            {
+              "param": "svc_name",
+              "visible": true
+            },
+            {
+              "param": "createdStartDate",
+              "visible": true
+            },
+            {
+              "param": "createdEndDate",
+              "visible": true
+            },
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "status",
+              "visible": true
+            },
+            {
+              "param": "nextCursor",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "order_ack",
+          "targets": [
+            {
+              "param": "channel_type",
+              "visible": true
+            },
+            {
+              "param": "correlation_id",
+              "visible": true
+            },
+            {
+              "param": "svc_name",
+              "visible": true
+            },
+            {
+              "param": "purchaseOrderId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "item_get",
+          "targets": [
+            {
+              "param": "channel_type",
+              "visible": true
+            },
+            {
+              "param": "correlation_id",
+              "visible": true
+            },
+            {
+              "param": "svc_name",
+              "visible": true
+            },
+            {
+              "param": "sku",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "inventory_update",
+          "targets": [
+            {
+              "param": "channel_type",
+              "visible": true
+            },
+            {
+              "param": "correlation_id",
+              "visible": true
+            },
+            {
+              "param": "svc_name",
+              "visible": true
+            },
+            {
+              "param": "sku",
+              "visible": true
+            },
+            {
+              "param": "shipNode",
+              "visible": true
+            },
+            {
+              "param": "amount",
+              "visible": true
+            },
+            {
+              "param": "inventoryAvailableDate",
+              "visible": true
+            },
+            {
+              "param": "unit",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "655faf50-baea-5b2f-8391-50e54a7f2e44",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "WM_SEC.ACCESS_TOKEN. OAuth access token minted outside StudioQuack (Client ID/Secret → POST /v3/token). Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7d34ed1c-e071-543a-be70-55e81752d484",
+      "shortCode": "channel_type",
+      "label": "Channel Type",
+      "type": "string",
+      "description": "WM_CONSUMER.CHANNEL.TYPE as documented for the seller. Sent as extraHeader when set; omitted when blank.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fa541e28-7490-4eaf-b3b8-cbc3e52a9cd0",
+      "shortCode": "correlation_id",
+      "label": "Correlation Id",
+      "type": "string",
+      "description": "WM_QOS.CORRELATION_ID. Official requires a unique GUID per request. Set on INPUT for each call (or here as a fallback). Header omitted if blank.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "899de25b-0308-4db0-86fc-be0c2e94d30f",
+      "shortCode": "svc_name",
+      "label": "Svc Name",
+      "type": "string",
+      "description": "WM_SVC.NAME. Official required header. Default Walmart Marketplace.",
+      "value": "Walmart Marketplace",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cd7ee989-e6e2-4935-ae80-a766cf83f78d",
+      "shortCode": "createdStartDate",
+      "label": "Createdstartdate",
+      "type": "string",
+      "description": "Query-string parameter `createdStartDate` for operation: order_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f426fbda-f2ca-4fdf-aa25-7d464b3c2c5a",
+      "shortCode": "createdEndDate",
+      "label": "Createdenddate",
+      "type": "string",
+      "description": "Query-string parameter `createdEndDate` for operation: order_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ba7ab2e5-7739-4b75-9b77-af6b93fbd9c0",
+      "shortCode": "limit",
+      "label": "Limit",
+      "type": "number",
+      "description": "Query-string parameter `limit` for operation: order_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "508c3a80-2cd2-42d4-b810-31068044bdae",
+      "shortCode": "status",
+      "label": "Status",
+      "type": "string",
+      "description": "Query-string parameter `status` for operation: order_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0bbe37d4-bbc0-408c-813e-429663cf60eb",
+      "shortCode": "nextCursor",
+      "label": "Nextcursor",
+      "type": "string",
+      "description": "order_list pagination cursor from the previous response.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7f5163f7-25e8-4ff2-9864-16139266458b",
+      "shortCode": "purchaseOrderId",
+      "label": "Purchaseorderid",
+      "type": "string",
+      "description": "URL path parameter `purchaseOrderId` for operation: order_ack. Required by: order_ack.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ca582087-e7e6-4245-85b1-b0ad9bab5624",
+      "shortCode": "sku",
+      "label": "Sku",
+      "type": "string",
+      "description": "Seller SKU. Path/query for item_get and inventory_update (required query). Also sent in the inventory_update body. Encode special characters. Example: SKU_0001.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5f969c63-a757-4ef1-9fb3-22f6669ec03f",
+      "shortCode": "shipNode",
+      "label": "Shipnode",
+      "type": "string",
+      "description": "Fulfillment ship node for inventory_update (query). Omit to use the default node.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c1060857-270b-465d-8f00-0024efca4154",
+      "shortCode": "amount",
+      "label": "Amount",
+      "type": "number",
+      "description": "Inventory count for inventory_update. Nested as quantity.amount. Example: 10. https://developer.walmart.com/us-marketplace/docs/update-single-item-inventory",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "76915edc-0f24-433a-bde2-ce16c5ef1ebd",
+      "shortCode": "inventoryAvailableDate",
+      "label": "Inventoryavailabledate",
+      "type": "string",
+      "description": "US inventory available date YYYY-MM-DD for inventory_update. Example: 2026-01-15.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5acd92e9-1ca7-4d39-a227-0a0b464293e2",
+      "shortCode": "unit",
+      "label": "Unit",
+      "type": "string",
+      "description": "Inventory unit for inventory_update. Official value: EACH. Nested as quantity.unit. Default EACH.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9e7864f7-c10d-54c7-b70e-c06e244fb4b4",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

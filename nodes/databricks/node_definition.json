@@ -1,0 +1,210 @@
+{
+  "_id": "99f203b7-2351-44c5-bbb7-b1e1adc67cc6",
+  "version": "1.0.0",
+  "name": "Databricks",
+  "label": "Databricks SQL Statement Execution API 2.0",
+  "description": "Official Databricks SQL Statement Execution API 2.0. POST /api/2.0/sql/statements, GET /api/2.0/sql/statements/{statement_id}, POST …/cancel. Placeholder baseUrl https://dbc-xxxxxxxx-xxxx.cloud.databricks.com — edit api_spec.baseUrl to the workspace origin (engine cannot bind host). Handler: OfficialApiNode. Bearer access_token (PAT or OAuth). Customer owns the workspace. access_token is never logged or returned.",
+  "icon": "database",
+  "tags": [
+    "sql",
+    "warehouse"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4bcec1cf-baf4-480e-8b73-f9f40eaf027a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. execute.sql requires warehouse_id and statement; optional wait_timeout, catalog, schema, parameters. statement.get / statement.cancel require statement_id. statement.cancel POST body is empty (warehouse_id is not sent). Do not put access_token here. Example: {\"operation\":\"execute.sql\",\"warehouse_id\":\"abc\",\"statement\":\"SELECT 1\",\"wait_timeout\":\"10s\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "execute.sql",
+          "description": "Overrides config operation when non-blank. EXACT: 'execute.sql' | 'statement.get' | 'statement.cancel'.",
+          "children": []
+        },
+        {
+          "shortCode": "warehouse_id",
+          "label": "warehouse_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SQL warehouse id for execute.sql. Warehouse must be running. CAN USE required.",
+          "children": []
+        },
+        {
+          "shortCode": "statement",
+          "label": "statement",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SQL text for execute.sql. Official JSON key statement. Prefer :name placeholders with parameters[].",
+          "children": []
+        },
+        {
+          "shortCode": "wait_timeout",
+          "label": "wait_timeout",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official string, e.g. 10s (0s or 5s–50s). This node does not auto-poll after CONTINUE.",
+          "children": []
+        },
+        {
+          "shortCode": "catalog",
+          "label": "catalog",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Default catalog (USE CATALOG).",
+          "children": []
+        },
+        {
+          "shortCode": "schema",
+          "label": "schema",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Default schema.",
+          "children": []
+        },
+        {
+          "shortCode": "parameters",
+          "label": "parameters",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Named SQL parameters for execute.sql. Official array of {name, value, type}. Docs: https://docs.databricks.com/api/workspace/statementexecution/executestatement",
+          "children": []
+        },
+        {
+          "shortCode": "statement_id",
+          "label": "statement_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path id for statement.get and statement.cancel.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "02fcc161-1eaf-4e32-afdd-633844908611",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (statement_id, status.state, manifest). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (statement_id, status, manifest, result).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "8e025750-4442-43ce-96e8-9cc70d8cebf7",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: execute.sql | statement.get | statement.cancel.",
+      "value": "execute.sql",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "execute.sql",
+        "statement.get",
+        "statement.cancel"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "10587a43-fa3f-429f-b6f3-4b3fc9f2a51b",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Bearer PAT or OAuth access token (StudioQuack secret). Never log or place on INPUT. OAuth M2M exchange is not performed by this node.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b9756a84-0858-458f-b3c7-296766be0f44",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 60. Keep at or above wait_timeout when waiting synchronously.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

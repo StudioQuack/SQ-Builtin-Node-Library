@@ -1,0 +1,281 @@
+{
+  "_id": "0704b29c-9bcf-42b0-be82-0de3e5cce127",
+  "version": "1.0.0",
+  "name": "Plaid",
+  "label": "Plaid — Plaid API 2020-09-14",
+  "description": "Official Plaid API 2020-09-14. Docs: https://plaid.com/docs/api/. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. No screen-scraping. End-user consent via Plaid Link (this node only creates link_token). access_token is a secret — prefer config, never logs. Sandbox: sandbox.plaid.com. processor_token is for Stripe/Adyen — not bank passwords.",
+  "icon": "account_balance",
+  "tags": [
+    "plaid",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "70bc0754-2886-41ec-ac52-954138af8b4a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Plaid. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "link_token_create",
+          "description": "Overrides config operation. EXACT: link_token_create | item_public_token_exchange | accounts_get | transactions_sync | auth_get | identity_get | processor_token_create | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "Environment",
+          "type": "string",
+          "required": false,
+          "value": "production.plaid.com",
+          "description": "sandbox.plaid.com vs production.plaid.com. Substituted into baseUrl as https://{environment}.",
+          "children": []
+        },
+        {
+          "shortCode": "user",
+          "label": "user",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `user` for operation: link_token_create.",
+          "children": []
+        },
+        {
+          "shortCode": "client_name",
+          "label": "client_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `client_name` for operation: link_token_create.",
+          "children": []
+        },
+        {
+          "shortCode": "products",
+          "label": "products",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `products` for operation: link_token_create.",
+          "children": []
+        },
+        {
+          "shortCode": "country_codes",
+          "label": "country_codes",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `country_codes` for operation: link_token_create.",
+          "children": []
+        },
+        {
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `language` for operation: link_token_create.",
+          "children": []
+        },
+        {
+          "shortCode": "public_token",
+          "label": "public_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `public_token` for operation: item_public_token_exchange. Required by: item_public_token_exchange.",
+          "children": []
+        },
+        {
+          "shortCode": "access_token",
+          "label": "access_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `access_token` for operations: accounts_get, transactions_sync, auth_get, identity_get, processor_token_create. Required by: accounts_get, transactions_sync, auth_get, identity_get, processor_token_create.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `cursor` for operation: transactions_sync.",
+          "children": []
+        },
+        {
+          "shortCode": "account_id",
+          "label": "account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `account_id` for operation: processor_token_create. Required by: processor_token_create.",
+          "children": []
+        },
+        {
+          "shortCode": "processor",
+          "label": "processor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `processor` for operation: processor_token_create. Required by: processor_token_create.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "f0128ac3-0e98-4edc-8b1a-16e955a8aeb7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e07200e7-e2d2-40dd-a611-a59060280ba1",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: link_token_create | item_public_token_exchange | accounts_get | transactions_sync | auth_get | identity_get | processor_token_create | trigger. Default link_token_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "link_token_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "link_token_create",
+        "item_public_token_exchange",
+        "accounts_get",
+        "transactions_sync",
+        "auth_get",
+        "identity_get",
+        "processor_token_create",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "3749ee66-c4cf-4e93-9565-2ceaeab1dee7",
+      "shortCode": "secret",
+      "label": "Secret",
+      "type": "password",
+      "description": "Plaid credential (header Plaid-Secret). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6ef9d2ad-b212-4311-a866-8679e4741228",
+      "shortCode": "client_id",
+      "label": "Client Id",
+      "type": "string",
+      "description": "Plaid client_id (also send on JSON body). Not a bank password.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f924ad85-9819-44c1-8b59-13fee03f035a",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "sandbox.plaid.com vs production.plaid.com. Substituted into baseUrl as https://{environment}.",
+      "value": "production.plaid.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "production.plaid.com",
+        "sandbox.plaid.com"
+      ]
+    },
+    {
+      "_id": "a29c65d2-8806-4a67-a3ef-c1bbcfad0e04",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

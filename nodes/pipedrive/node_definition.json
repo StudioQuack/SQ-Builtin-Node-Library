@@ -1,0 +1,836 @@
+{
+  "_id": "3e5d4a4a-1d59-45a8-ba8e-6d9093a3f90a",
+  "version": "1.0.0",
+  "name": "Pipedrive",
+  "label": "Pipedrive REST v1/v2 — deals, people, orgs, activities, leads",
+  "description": "Official Pipedrive REST: v2 for deals/persons/orgs/activities/products/search (v1 twins of those are out of support since 2026-08-01). v1 remains the official surface for notes, files, and leads (no v2). Handler: OfficialApiNode. Base https://api.pipedrive.com. Auth: OAuth Bearer access_token minted outside StudioQuack. trigger.listen requires OAuth scope webhooks:full and is BPMN ingress (no socket). Customer owns the Pipedrive company. CRM records are PII. Never log tokens or note HTML.",
+  "icon": "handshake",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "80cf6b02-755c-4633-a621-10e115c20d96",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example keys match api_spec.json required/queryFrom/bodyFrom.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "activity.create",
+          "description": "Overrides config operation when non-blank. EXACT: activity.create | activity.get | activity.list | activity.update | activity.delete | deal.create | deal.get | deal.list | deal.search | deal.update | deal.delete | deal.duplicate | deal.activity.list | dealProduct.add | dealProduct.list | dealProduct.update | dealProduct.remove | person.create | person.get | person.list | person.search | person.update | person.delete | org.create | org.get | org.list | org.search | org.update | org.delete | lead.create | lead.get | lead.list | lead.update | lead.delete | note.create | note.get | note.list | note.update | note.delete | file.create | file.get | file.download | file.delete | product.list | trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Entity id for get/update/delete and deal-scoped product/file paths.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Escape hatch: custom-field hashes merged at the JSON root (bodyMap $) on activity/deal/person/org/lead/note create and update. Named keys (title, name, …) win on conflict. Official v2 custom fields belong in custom_fields. Example: {\"hash40\":\"value\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Activity subject for activity.create and activity.update. Example: Follow-up call.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Activity type key for activity.create/update. EXACT common: call | meeting | task | deadline | email | lunch. Custom types allowed. Example: call.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deal or lead title. Required on deal.create and lead.create. Example: Q4 renewal.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Person or organization name. Required on person.create and org.create. Example: Ada Lovelace.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note HTML for note.create (required) and note.update. Example: <p>Intro call notes</p>. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "owner_id",
+          "label": "owner_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Owner user id for create/update of activity, deal, person, org, lead; also list filters. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "lead_id",
+          "label": "lead_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lead uuid. activity.create/update and note.create/update body; activity.list / note.list filter. Example: 1d2f3e4a-....",
+          "children": []
+        },
+        {
+          "shortCode": "project_id",
+          "label": "project_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Project id on activity.create/update and note.create/update. Example: 9.",
+          "children": []
+        },
+        {
+          "shortCode": "task_id",
+          "label": "task_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Task id on note.create/update. Example: 3.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "user_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Note author user id (admin only) on note.create/update. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "pipeline_id",
+          "label": "pipeline_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Deal pipeline id for deal.create/update. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "stage_id",
+          "label": "stage_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Deal stage id for deal.create/update. Example: 2.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deal monetary value (number) on deal.create/update, or lead value object {amount, currency} on lead.create/update. Example deal: 15000. Example lead: {\"amount\":15000,\"currency\":\"USD\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "currency",
+          "label": "currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 4217 currency for deal.create/update when value is a number. Example: USD.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deal status for deal.create/update and deal.list filter. EXACT: open | won | lost | deleted. Example: open.",
+          "children": []
+        },
+        {
+          "shortCode": "probability",
+          "label": "probability",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Deal win probability 0–100 on deal.create/update. Example: 40.",
+          "children": []
+        },
+        {
+          "shortCode": "lost_reason",
+          "label": "lost_reason",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reason when deal status is lost. deal.create/update. Example: Budget.",
+          "children": []
+        },
+        {
+          "shortCode": "visible_to",
+          "label": "visible_to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Visibility. v2 deals/persons/orgs: integer 1|3|5|7. v1 leads: string \"1\"|\"3\"|\"5\"|\"7\". 1=owner, 3=group, 7=entire company. Example: 3.",
+          "children": []
+        },
+        {
+          "shortCode": "expected_close_date",
+          "label": "expected_close_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Expected close date YYYY-MM-DD for deal.create/update and lead.create/update. Example: 2026-12-31.",
+          "children": []
+        },
+        {
+          "shortCode": "label_ids",
+          "label": "label_ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Label ids for deal/person/org/lead create and update. JSON array of integers (or lead-label uuids). Example: [1,2].",
+          "children": []
+        },
+        {
+          "shortCode": "custom_fields",
+          "label": "custom_fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official v2 custom-field map keyed by 40-char hash. deal/person/org create and update. Clear with null (not []). Example: {\"0123…abcd\":\"Enterprise\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "emails",
+          "label": "emails",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Person emails for person.create/update. [{value, primary, label}]. label: work|home|mobile|other. Example: [{\"value\":\"ada@example.com\",\"primary\":true,\"label\":\"work\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "phones",
+          "label": "phones",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Person phones for person.create/update. [{value, primary, label}]. Example: [{\"value\":\"+1-202-555-0100\",\"primary\":true,\"label\":\"work\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "marketing_status",
+          "label": "marketing_status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Person marketing status when Campaigns is enabled. EXACT: no_consent | unsubscribed | subscribed | archived. person.create/update. Example: subscribed.",
+          "children": []
+        },
+        {
+          "shortCode": "organization_id",
+          "label": "organization_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Lead organization id (v1 name; not org_id) for lead.create/update. Required on create unless person_id is set. Example: 45.",
+          "children": []
+        },
+        {
+          "shortCode": "was_seen",
+          "label": "was_seen",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Whether the lead was seen in the UI. lead.create/update. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "origin_id",
+          "label": "origin_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional origin discriminator for lead.create/update. Example: inbound-form.",
+          "children": []
+        },
+        {
+          "shortCode": "channel",
+          "label": "channel",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Marketing channel id from deal fields. lead.create/update. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "channel_id",
+          "label": "channel_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional channel discriminator. lead.create/update. Example: newsletter-oct.",
+          "children": []
+        },
+        {
+          "shortCode": "due_date",
+          "label": "due_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Activity due date YYYY-MM-DD. activity.create/update. Example: 2026-11-04.",
+          "children": []
+        },
+        {
+          "shortCode": "due_time",
+          "label": "due_time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Activity due time HH:MM (24h). activity.create/update. Example: 14:30.",
+          "children": []
+        },
+        {
+          "shortCode": "duration",
+          "label": "duration",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Activity duration HH:MM. activity.create/update. Example: 01:00.",
+          "children": []
+        },
+        {
+          "shortCode": "busy",
+          "label": "busy",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Mark assignee busy on the calendar. activity.create/update. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "done",
+          "label": "done",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Activity done flag; also activity.list filter. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "location",
+          "label": "location",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Activity location {value, country, locality, …}. activity.create/update. Example: {\"value\":\"1 Market St, San Francisco\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "participants",
+          "label": "participants",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Activity participants. Use [{person_id, primary:true}] to link a person (v2 does not accept person_id on the activity). activity.create/update. Example: [{\"person_id\":123,\"primary\":true}].",
+          "children": []
+        },
+        {
+          "shortCode": "attendees",
+          "label": "attendees",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Activity attendees [{email, name, status, is_organizer, person_id, user_id}]. activity.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "public_description",
+          "label": "public_description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Public activity description. activity.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "priority",
+          "label": "priority",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Activity priority id from activity fields. activity.create/update. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "outcome",
+          "label": "outcome",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Activity outcome id from activity fields. activity.create/update. Example: 2.",
+          "children": []
+        },
+        {
+          "shortCode": "note",
+          "label": "note",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Activity note (not the Notes API). activity.create/update. Example: Asked for a proposal.",
+          "children": []
+        },
+        {
+          "shortCode": "address",
+          "label": "address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Organization address {value, country, locality, postal_code, …}. org.create/update. Example: {\"value\":\"1 Market St\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "website",
+          "label": "website",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Organization website. org.create/update. Example: https://example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "linkedin",
+          "label": "linkedin",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Organization LinkedIn URL. org.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "industry",
+          "label": "industry",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Organization industry id. org.create/update. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "annual_revenue",
+          "label": "annual_revenue",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Organization annual revenue. org.create/update. Example: 5000000.",
+          "children": []
+        },
+        {
+          "shortCode": "employee_count",
+          "label": "employee_count",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Organization employee count. org.create/update. Example: 120.",
+          "children": []
+        },
+        {
+          "shortCode": "pinned_to_deal_flag",
+          "label": "pinned_to_deal_flag",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Pin note to deal. 0 or 1. note.create/update. Requires deal_id.",
+          "children": []
+        },
+        {
+          "shortCode": "pinned_to_person_flag",
+          "label": "pinned_to_person_flag",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Pin note to person. 0 or 1. note.create/update. Requires person_id.",
+          "children": []
+        },
+        {
+          "shortCode": "pinned_to_organization_flag",
+          "label": "pinned_to_organization_flag",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Pin note to org. 0 or 1. note.create/update. Requires org_id.",
+          "children": []
+        },
+        {
+          "shortCode": "pinned_to_lead_flag",
+          "label": "pinned_to_lead_flag",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Pin note to lead. 0 or 1. note.create/update. Requires lead_id.",
+          "children": []
+        },
+        {
+          "shortCode": "filter_id",
+          "label": "filter_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Saved filter id for activity/deal/person/org list. Example: 12.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_by",
+          "label": "sort_by",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List sort field. Activities: id|update_time|add_time|due_date. Deals/persons/orgs: id|update_time|add_time. Example: update_time.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_direction",
+          "label": "sort_direction",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List sort direction. EXACT: asc | desc. Example: desc.",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "v1 pagination offset for lead.list and note.list. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "discount",
+          "label": "discount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Deal-product discount percent for dealProduct.add/update. Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "comments",
+          "label": "comments",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deal-product comments for dealProduct.add/update.",
+          "children": []
+        },
+        {
+          "shortCode": "tax",
+          "label": "tax",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Deal-product tax percent for dealProduct.add. Example: 8.5.",
+          "children": []
+        },
+        {
+          "shortCode": "term",
+          "label": "term",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search term for deal/person/org search.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size; cap 500.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "v2 pagination cursor.",
+          "children": []
+        },
+        {
+          "shortCode": "deal_id",
+          "label": "deal_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deal id. activity.create/update and note.create/update body; activity.list / note.list / deal.activity.list filter. Example: 88.",
+          "children": []
+        },
+        {
+          "shortCode": "person_id",
+          "label": "person_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Person id. deal.create/update and lead.create/update body; note.create/update and file.create association; activity.list / note.list / deal.search filter. Activity person link uses participants, not this field. Example: 123.",
+          "children": []
+        },
+        {
+          "shortCode": "org_id",
+          "label": "org_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Organization id. deal/person/activity/note create-update body and list filters. Example: 45.",
+          "children": []
+        },
+        {
+          "shortCode": "activity_id",
+          "label": "activity_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "file.create association.",
+          "children": []
+        },
+        {
+          "shortCode": "product_id",
+          "label": "product_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "dealProduct.add product id.",
+          "children": []
+        },
+        {
+          "shortCode": "product_attachment_id",
+          "label": "product_attachment_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "dealProduct.update/remove attachment id.",
+          "children": []
+        },
+        {
+          "shortCode": "item_price",
+          "label": "item_price",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Deal product line price.",
+          "children": []
+        },
+        {
+          "shortCode": "quantity",
+          "label": "quantity",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Deal product quantity.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "file.create platform file ref-id. Never inline bytes. OfficialApiNode JSON body cannot do true multipart — see README.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b3964d09-00e2-40c7-b2b5-d7aff8d9a83c",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Size-capped. Never log secrets or raw PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2d81b320-563d-4d5a-b9c6-d62dfa334c8b",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: activity.create | activity.get | activity.list | activity.update | activity.delete | deal.create | deal.get | deal.list | deal.search | deal.update | deal.delete | deal.duplicate | deal.activity.list | dealProduct.add | dealProduct.list | dealProduct.update | dealProduct.remove | person.create | person.get | person.list | person.search | person.update | person.delete | org.create | org.get | org.list | org.search | org.update | org.delete | lead.create | lead.get | lead.list | lead.update | lead.delete | note.create | note.get | note.list | note.update | note.delete | file.create | file.get | file.download | file.delete | product.list | trigger.listen.",
+      "value": "deal.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "activity.create",
+        "activity.get",
+        "activity.list",
+        "activity.update",
+        "activity.delete",
+        "deal.create",
+        "deal.get",
+        "deal.list",
+        "deal.search",
+        "deal.update",
+        "deal.delete",
+        "deal.duplicate",
+        "deal.activity.list",
+        "dealProduct.add",
+        "dealProduct.list",
+        "dealProduct.update",
+        "dealProduct.remove",
+        "person.create",
+        "person.get",
+        "person.list",
+        "person.search",
+        "person.update",
+        "person.delete",
+        "org.create",
+        "org.get",
+        "org.list",
+        "org.search",
+        "org.update",
+        "org.delete",
+        "lead.create",
+        "lead.get",
+        "lead.list",
+        "lead.update",
+        "lead.delete",
+        "note.create",
+        "note.get",
+        "note.list",
+        "note.update",
+        "note.delete",
+        "file.create",
+        "file.get",
+        "file.download",
+        "file.delete",
+        "product.list",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "430a8617-c39f-4571-9cdc-9ea77e874302",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "OAuth access token minted outside StudioQuack (StudioQuack secret). Authorization: Bearer. Marketplace apps. webhooks:full required for trigger.listen. Never on INPUT. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "80efe7b5-b624-4bc9-89e8-4fa541d95665",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

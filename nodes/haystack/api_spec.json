@@ -1,0 +1,57 @@
+{
+  "baseUrl": "https://api.cloud.deepset.ai",
+  "placeholderDefaults": {
+    "hayhooks_url": "http://localhost:1416"
+  },
+  "defaultTimeout": 120,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "run_pipeline": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v1/workspaces/{workspace}/pipelines/{pipeline}/search",
+      "required": ["workspace", "pipeline"],
+      "bodyFrom": ["queries", "query", "filters", "params"]
+    },
+    "query": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v1/workspaces/{workspace}/pipelines/{pipeline}/search",
+      "required": ["workspace", "pipeline"],
+      "bodyFrom": ["queries", "query", "filters", "params"]
+    },
+    "index": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v1/workspaces/{workspace}/files",
+      "required": ["workspace"],
+      "bodyFrom": ["files", "filename", "text", "metadata"],
+      "contentType": "multipart/form-data",
+      "bodyFormat": "multipart"
+    },
+    "hayhooks_run": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "{hayhooks_url}",
+      "path": "/{pipeline}/run",
+      "required": ["pipeline"],
+      "bodyFrom": ["query", "queries", "params", "body"]
+    },
+    "hayhooks_index": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "{hayhooks_url}",
+      "path": "/{index_pipeline}/run",
+      "required": ["index_pipeline"],
+      "bodyFrom": ["files", "query", "params"],
+      "contentType": "multipart/form-data",
+      "bodyFormat": "multipart"
+    }
+  }
+}

@@ -1,0 +1,334 @@
+{
+  "_id": "5153f586-d42c-4f27-94d3-acde1018e3e5",
+  "version": "1.0.0",
+  "name": "Kubernetes",
+  "label": "Kubernetes kube-apiserver REST",
+  "description": "Kubernetes API via OfficialApiNode. Docs: https://kubernetes.io/docs/reference/kubernetes-api/. Operations: get, list, apply, delete, patch (core /api/v1 only — pods/services/configmaps, not apps/v1 Deployments), scale (/apis/apps/v1 .../scale), logs (GET .../pods/{name}/log), job_create (/apis/batch/v1/namespaces/{namespace}/jobs), listen. Auth secret token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "kubernetes",
+    "k8s",
+    "pods"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d29b3a17-e15e-41dc-ac53-b533daea2f2e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "get",
+          "description": "Which official API call to run. EXACT values: get | list | apply | delete | patch | scale | logs | job_create | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'get'.",
+          "children": []
+        },
+        {
+          "shortCode": "resource",
+          "label": "resource",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource plural for core v1 (pods, services, configmaps) or apps (deployments, statefulsets). Path {resource}.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Object name. Path {name} for get/delete/patch/scale/logs. Example: web-7d9f.",
+          "children": []
+        },
+        {
+          "shortCode": "metadata",
+          "label": "metadata",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Kubernetes ObjectMeta for apply / job_create. Official metadata {name, labels, annotations}.",
+          "children": []
+        },
+        {
+          "shortCode": "spec",
+          "label": "spec",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Kubernetes spec for apply / patch / scale / job_create. Official spec.",
+          "children": []
+        },
+        {
+          "shortCode": "kind",
+          "label": "kind",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Kind for apply / job_create. Example: Deployment | Job.",
+          "children": []
+        },
+        {
+          "shortCode": "apiVersion",
+          "label": "apiVersion",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "apiVersion for apply / job_create. Example: apps/v1 | batch/v1.",
+          "children": []
+        },
+        {
+          "shortCode": "container",
+          "label": "container",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Container name query for logs.",
+          "children": []
+        },
+        {
+          "shortCode": "tailLines",
+          "label": "tailLines",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "tailLines query for logs. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "replicas",
+          "label": "replicas",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Desired replica count for scale. Wired to spec.replicas. Example: 3.",
+          "children": []
+        },
+        {
+          "shortCode": "manifest",
+          "label": "manifest",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Full Kubernetes resource manifest for apply / job_create (apiVersion, kind, metadata, spec). Example: {\"apiVersion\":\"v1\",\"kind\":\"ConfigMap\",\"metadata\":{\"name\":\"app\"},\"data\":{\"k\":\"v}}.",
+          "children": []
+        },
+        {
+          "shortCode": "patch",
+          "label": "patch",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JSON merge-patch body for patch operation. Example: {\"spec\":{\"replicas\":3}}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "31cbef18-7f61-4c87-9875-637f07150824",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "f6bc58d7-cab0-494d-a26d-9952b3bacf92",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: get, list, apply, delete, patch, scale, logs, job_create, listen. listen is BPMN ingress, not a socket.",
+      "value": "get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "get",
+        "list",
+        "apply",
+        "delete",
+        "patch",
+        "scale",
+        "logs",
+        "job_create",
+        "listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "apply",
+          "targets": [
+            {
+              "param": "manifest",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "job_create",
+          "targets": [
+            {
+              "param": "manifest",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "patch",
+          "targets": [
+            {
+              "param": "patch",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "90cdb4c8-4b9f-427e-898f-ea6f3e03f659",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "Service-account or user bearer token. Never log. Do not mount host kubeconfig paths into the sandbox.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6c92d7a4-1eb1-4480-9f51-ab8572704d35",
+      "shortCode": "api_server",
+      "label": "API Server",
+      "type": "string",
+      "description": "Kubernetes API server origin (scheme + host[:port], no trailing slash). Empty uses the in-cluster address https://kubernetes.default.svc. The server certificate must be trusted by the default JDK trust store. Example: https://k8s.example.com:6443.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "06423147-3c2c-4c7b-b70f-3f50239ba28a",
+      "shortCode": "namespace",
+      "label": "Namespace",
+      "type": "string",
+      "description": "Default namespace (also path {namespace}).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "177b6852-9db5-4b6b-b832-32324f2fab3a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7a41f6f3-0a07-4029-9b3b-66e138db5597",
+      "shortCode": "manifest",
+      "label": "Manifest",
+      "type": "object",
+      "description": "Full Kubernetes resource manifest for apply / job_create (apiVersion, kind, metadata, spec). Example: {\"apiVersion\":\"v1\",\"kind\":\"ConfigMap\",\"metadata\":{\"name\":\"app\"},\"data\":{\"k\":\"v}}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "a163213f-39d2-4ec1-94bf-4bc83b2bd25d",
+      "shortCode": "patch",
+      "label": "Patch",
+      "type": "object",
+      "description": "JSON merge-patch body for patch operation. Example: {\"spec\":{\"replicas\":3}}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

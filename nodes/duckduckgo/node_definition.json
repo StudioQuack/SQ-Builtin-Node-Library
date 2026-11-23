@@ -1,0 +1,176 @@
+{
+  "_id": "22b23ed6-59bb-581d-a142-32b1e26aa7e8",
+  "version": "1.0.0",
+  "name": "DuckDuckGo",
+  "label": "DuckDuckGo",
+  "description": "DuckDuckGo official API via OfficialApiNode (api_spec.json). Operations: instant_answer. Docs: https://duckduckgo.com/api. Instant Answer API only — not a full SERP. Attribution when displayed. Do not scrape duckduckgo.com HTML. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "search",
+  "tags": [
+    "search",
+    "duckduckgo"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "28c15e7c-94c7-5ec5-808c-75586309d867",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One DuckDuckGo request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"instant_answer\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: instant_answer. Default: first listed or instance operation. Example: 'instant_answer'.",
+          "children": [],
+          "_id": "27af8b24-01de-5dca-9b91-9f59e9f24b56"
+        },
+        {
+          "shortCode": "no_html",
+          "label": "no_html",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `no_html` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "5c1dc8f0-9027-54b7-a574-d7e1fe63d734"
+        },
+        {
+          "shortCode": "no_redirect",
+          "label": "no_redirect",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `no_redirect` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "782b7423-ad35-5771-a600-99f88987a522"
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `q` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "f19fbb54-bd85-58c1-b490-55f032bf084c"
+        },
+        {
+          "shortCode": "skip_disambig",
+          "label": "skip_disambig",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `skip_disambig` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "afce6a45-b7b0-52c0-9c2c-c5e348742b6b"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7b1c794e-5ed1-5d9c-8485-78ad6154659b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "2ca6867f-ad59-54d6-8fd8-2bde18d9052a"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "35959b96-2ed6-584a-87a3-3102bd696fde"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "d479e92d-ce2c-56e0-b95b-765c1e250db5"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c3a2b829-8cc7-53f4-8bcb-4ddebd359ab1",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: instant_answer.",
+      "value": "instant_answer",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "instant_answer"
+      ]
+    },
+    {
+      "_id": "ead77f17-ab3e-5114-8f71-93cd6d685101",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 20. Keep under the daemon sandbox request budget.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

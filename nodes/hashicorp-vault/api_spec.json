@@ -1,0 +1,122 @@
+{
+  "baseUrl": "https://",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "X-Vault-Token",
+    "prefix": "",
+    "configKey": "vault_token"
+  },
+  "extraHeaders": {
+    "X-Vault-Namespace": "{namespace}"
+  },
+  "operations": {
+    "kv-get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{vaultHost}/v1/{kvMount}/data/{secretPath}",
+      "required": [
+        "vaultHost",
+        "kvMount",
+        "secretPath"
+      ],
+      "queryFrom": [
+        "version"
+      ]
+    },
+    "kv-put": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{vaultHost}/v1/{kvMount}/data/{secretPath}",
+      "required": [
+        "vaultHost",
+        "kvMount",
+        "secretPath"
+      ],
+      "bodyFrom": [
+        "data",
+        "options"
+      ]
+    },
+    "kv-delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "{vaultHost}/v1/{kvMount}/data/{secretPath}",
+      "required": [
+        "vaultHost",
+        "kvMount",
+        "secretPath"
+      ]
+    },
+    "kv-list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{vaultHost}/v1/{kvMount}/metadata/{secretPath}?list=true",
+      "required": [
+        "vaultHost",
+        "kvMount",
+        "secretPath"
+      ],
+      "queryFrom": [
+        "exclude_deleted"
+      ]
+    },
+    "transit-encrypt": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{vaultHost}/v1/{transitMount}/encrypt/{keyName}",
+      "required": [
+        "vaultHost",
+        "transitMount",
+        "keyName"
+      ],
+      "bodyFrom": [
+        "plaintext",
+        "context",
+        "key_version",
+        "nonce",
+        "associated_data"
+      ]
+    },
+    "transit-decrypt": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{vaultHost}/v1/{transitMount}/decrypt/{keyName}",
+      "required": [
+        "vaultHost",
+        "transitMount",
+        "keyName"
+      ],
+      "bodyFrom": [
+        "ciphertext",
+        "context",
+        "nonce",
+        "associated_data"
+      ]
+    },
+    "token-lookup": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{vaultHost}/v1/auth/token/lookup-self",
+      "required": [
+        "vaultHost"
+      ]
+    },
+    "renew-lease": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{vaultHost}/v1/sys/leases/renew",
+      "required": [
+        "vaultHost"
+      ],
+      "bodyFrom": [
+        "lease_id",
+        "increment"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

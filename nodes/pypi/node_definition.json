@@ -1,0 +1,301 @@
+{
+  "_id": "bec4bec1-70b2-418c-9ad7-d07ea83efad7",
+  "version": "1.0.0",
+  "name": "PyPI",
+  "label": "PyPI Warehouse JSON API",
+  "description": "PyPI Warehouse JSON / upload via OfficialApiNode. Docs: https://docs.pypi.org/api/. Operations: project_get, version_get, files_list, upload. search is removed: XML-RPC search is permanently disabled (https://warehouse.pypa.io/api-reference/xml-rpc/); use project_get or https://pypi.org/search in a browser. Auth secret token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "pypi",
+    "python",
+    "packages"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c192d2a0-324f-425a-bb70-06055a3655e0",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "project_get",
+          "description": "Which official API call to run. EXACT values: project_get | version_get | files_list | upload. search was removed (XML-RPC search retired). Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'project_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project/distribution name.",
+          "children": []
+        },
+        {
+          "shortCode": "version",
+          "label": "version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Version string.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "upload wheel/sdist file (Warehouse multipart part content). Required on upload. Example: a platform file block.",
+          "children": []
+        },
+        {
+          "shortCode": "filetype",
+          "label": "filetype",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "upload. EXACT: sdist | bdist_wheel. Example: bdist_wheel.",
+          "children": []
+        },
+        {
+          "shortCode": "pyversion",
+          "label": "pyversion",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "upload Python tag, e.g. py3 or source. Example: py3.",
+          "children": []
+        },
+        {
+          "shortCode": "md5_digest",
+          "label": "md5_digest",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "upload hex MD5 of the file. Example: d41d8cd98f00b204e9800998ecf8427e.",
+          "children": []
+        },
+        {
+          "shortCode": "sha256_digest",
+          "label": "sha256_digest",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "upload hex SHA-256 of the file (preferred).",
+          "children": []
+        },
+        {
+          "shortCode": "metadata_version",
+          "label": "metadata_version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "upload Metadata-Version. Common: 2.1 | 2.3. Example: 2.3.",
+          "children": []
+        },
+        {
+          "shortCode": "summary",
+          "label": "summary",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "upload one-line summary.",
+          "children": []
+        },
+        {
+          "shortCode": "author",
+          "label": "author",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "upload author name.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "upload long description (README).",
+          "children": []
+        },
+        {
+          "shortCode": "action",
+          "label": "action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "upload form :action. Default file_upload. Example: file_upload.",
+          "children": []
+        },
+        {
+          "shortCode": "protocol_version",
+          "label": "protocol_version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "upload protocol_version. Default 1. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Distribution content for PyPI upload (multipart). Example: platform file ref.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "1745f999-0581-40cf-bcd1-064324f4134d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "221f2ca8-31a7-4a4a-a3a3-899914c880f9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: project_get, version_get, files_list, upload. search was removed (XML-RPC search retired). listen is BPMN ingress, not a socket.",
+      "value": "project_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "project_get",
+        "version_get",
+        "files_list",
+        "upload"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "b8b64ad3-cca0-4ca5-acc5-ae0ec15554d7",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "PyPI API token for upload (__token__ as username). Public JSON GET does not need it.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9bd58853-1785-4dbf-a15a-b74c6f692392",
+      "shortCode": "file",
+      "label": "File",
+      "type": "file",
+      "description": "Distribution content for PyPI upload (multipart). Example: platform file ref.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6525dbdc-e1ce-4692-b21c-0c3c555bd3c7",
+      "shortCode": "pypi_basic_user",
+      "label": "PyPI Basic User",
+      "type": "string",
+      "description": "Fixed Warehouse basic-auth username for API tokens. Always __token__. Not user-facing.",
+      "value": "__token__",
+      "required": false,
+      "instanceEditable": false,
+      "visible": false,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8c6c67d4-cbf6-42db-a16f-ba0415edb7ac",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

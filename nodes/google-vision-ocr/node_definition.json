@@ -1,0 +1,193 @@
+{
+  "_id": "f23b162f-3d3b-5a66-bb87-6203bee047ba",
+  "version": "1.0.0",
+  "name": "Google Vision OCR",
+  "label": "Cloud Vision API v1 — OCR",
+  "description": "Cloud Vision API v1 — OCR. Official API https://cloud.google.com/vision/docs/ocr. One node; pick operation. Upload/download/convert/sign payloads use type file (Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.) Handler: OfficialApiNode + api_spec.json. Images leave the daemon to Google. DPA/BAA if PHI. StudioQuack stored type is file; Vision's JSON content field is wire encoding only. Multi-page PDF/TIFF uses files:asyncBatchAnnotate + GCS — not a silent scrape.",
+  "icon": "visibility",
+  "tags": [
+    "google",
+    "vision",
+    "ocr"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "38971822-a6df-5cea-9467-ba5b0cdd5a1a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields (operation, requests). Do not put secrets on this port. Images go in requests[].image (gs:// or Vision content).",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "text_detection",
+          "description": "Overrides config operation. Accepted: text_detection, document_text_detection, label_detection.",
+          "children": []
+        },
+        {
+          "shortCode": "requests",
+          "label": "requests",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "One AnnotateImageRequest object escape hatch merged into requests[0]. Named content/imageUri/type win. Example: {\"image\":{\"content\":\"<base64>\"},\"features\":[{\"type\":\"TEXT_DETECTION\"}]}.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "images:annotate image.content (base64). Wired to requests[0].image.content. Prefer a platform file elsewhere; this is Vision's wire encoding.",
+          "children": []
+        },
+        {
+          "shortCode": "imageUri",
+          "label": "imageUri",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "images:annotate image.source.imageUri (gs:// or https). Wired to requests[0].image.source.imageUri. Example: gs://bucket/img.jpg.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "images:annotate features[0].type. EXACT: TEXT_DETECTION | DOCUMENT_TEXT_DETECTION | LABEL_DETECTION. Match the operation. Example: TEXT_DETECTION.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "1401596f-b78e-51f2-bca6-c526feb91070",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b35bd1cf-f3df-5fc6-905f-aba9474a084c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "text_detection",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "text_detection",
+        "document_text_detection",
+        "label_detection"
+      ]
+    },
+    {
+      "_id": "85792fdc-aa22-536e-a350-2914ff94b6d0",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "OAuth access token minted outside StudioQuack (cloud-platform scope). StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3ba64725-cb9c-5923-8800-2a4a62e5b3a5",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,90 @@
+{
+  "baseUrl": "https://app.launchdarkly.com/api/v2",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "api_token"
+  },
+  "extraHeaders": {
+    "LD-API-Version": "20240415"
+  },
+  "operations": {
+    "flag_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/flags/{projectKey}/{featureKey}",
+      "required": [
+        "projectKey",
+        "featureKey"
+      ]
+    },
+    "flag_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/flags/{projectKey}",
+      "required": [
+        "projectKey"
+      ],
+      "queryFrom": [
+        "limit",
+        "offset"
+      ]
+    },
+    "flag_toggle": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/flags/{projectKey}/{featureKey}",
+      "required": [
+        "projectKey",
+        "featureKey",
+        "patch"
+      ],
+      "bodyFrom": [
+        "patch"
+      ],
+      "bodyMap": {
+        "patch": "$"
+      }
+    },
+    "flag_patch": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/flags/{projectKey}/{featureKey}",
+      "required": [
+        "projectKey",
+        "featureKey",
+        "patch"
+      ],
+      "bodyFrom": [
+        "patch"
+      ],
+      "bodyMap": {
+        "patch": "$"
+      }
+    },
+    "segment_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/segments/{projectKey}/{environmentKey}/{segmentKey}",
+      "required": [
+        "projectKey",
+        "environmentKey",
+        "segmentKey"
+      ]
+    },
+    "environment_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/projects/{projectKey}/environments",
+      "required": [
+        "projectKey"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

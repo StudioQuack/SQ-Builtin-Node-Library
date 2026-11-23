@@ -1,0 +1,188 @@
+{
+  "_id": "e34418d8-00fa-44bf-8975-e42488fd1b37",
+  "version": "1.0.0",
+  "name": "Netlify",
+  "label": "Netlify API",
+  "description": "Netlify API via OfficialApiNode. Docs: https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/. Operations: deploy_create, deploy_get, deploy_list, deploy_cancel, site_get, site_list, site_delete, listen. Auth secret token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "netlify",
+    "deploy"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "49dec081-7c53-4264-92c2-fe5559ca36e4",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "deploy_create",
+          "description": "Which official API call to run. EXACT values: deploy_create | deploy_get | deploy_list | deploy_cancel | site_get | site_list | site_delete | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'deploy_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "site_id",
+          "label": "site_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Netlify site id for deploy_* and site_*. Example: 1d01c82b-xxxx.",
+          "children": []
+        },
+        {
+          "shortCode": "deploy_id",
+          "label": "deploy_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deploy id for deploy_get / deploy_cancel.",
+          "children": []
+        },
+        {
+          "shortCode": "files",
+          "label": "files",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "deploy_create files map {path: sha1}. Official digest deploy.",
+          "children": []
+        },
+        {
+          "shortCode": "draft",
+          "label": "draft",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "deploy_create draft flag. Example: true.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "bd44978e-3644-4047-9e77-45fcb735cdd7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "8dc34b02-a1ec-4c50-ae5a-ffb7b66828b5",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: deploy_create, deploy_get, deploy_list, deploy_cancel, site_get, site_list, site_delete, listen. listen is BPMN ingress, not a socket.",
+      "value": "deploy_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "deploy_create",
+        "deploy_get",
+        "deploy_list",
+        "deploy_cancel",
+        "site_get",
+        "site_list",
+        "site_delete",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "d5e6cb15-51be-447d-90ee-abc29156484f",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "Netlify personal access token. Authorization: Bearer.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bcbe1d46-d760-4390-8d48-bdb9e1dedcb7",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

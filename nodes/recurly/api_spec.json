@@ -1,0 +1,71 @@
+{
+  "baseUrl": "https://{region}",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "Authorization",
+    "prefix": "Basic ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "account_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/accounts",
+      "bodyFrom": [
+        "code",
+        "email",
+        "first_name",
+        "last_name",
+        "company",
+        "billing_info"
+      ],
+      "required": [
+        "code"
+      ]
+    },
+    "subscription_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/subscriptions",
+      "bodyFrom": [
+        "plan_code",
+        "account_code",
+        "currency",
+        "unit_amount",
+        "quantity"
+      ],
+      "required": [
+        "plan_code",
+        "currency"
+      ],
+      "bodyMap": {
+        "account_code": "account.code"
+      }
+    },
+    "subscription_cancel": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/subscriptions/{id}/cancel",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "timeframe"
+      ]
+    },
+    "invoice_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/invoices",
+      "queryFrom": [
+        "limit",
+        "state"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

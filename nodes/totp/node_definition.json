@@ -1,0 +1,189 @@
+{
+  "_id": "e19a4703-bc1c-4741-be40-861fbcac98ee",
+  "version": "1.0.0",
+  "name": "TOTP",
+  "label": "RFC 6238 one-time password",
+  "description": "Generates an RFC 6238 TOTP. The shared secret is a credential. Never log codes or the secret.",
+  "icon": "",
+  "tags": [
+    "totp",
+    "2fa",
+    "otp"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "8157af97-a269-40f2-9a30-6e0984aaf086",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One TOTP operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'generate'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "timestamp",
+          "label": "timestamp",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Unix seconds override for tests. Default daemon now.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9f30e805-3101-47a4-b1b7-d289361a2e29",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4e8b1ddf-78a4-4793-96b9-7fb8511a56b9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: generate. Required. Example: 'generate'.",
+      "value": "generate",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "generate"
+      ]
+    },
+    {
+      "_id": "d6c5da1b-a92c-4976-b4e7-a054f6e93456",
+      "shortCode": "secret",
+      "label": "Secret",
+      "type": "password",
+      "description": "Base32 shared secret. Required. Secret.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "70b3af3d-4eb8-4049-868f-d5a5a6017913",
+      "shortCode": "algorithm",
+      "label": "Algorithm",
+      "type": "select",
+      "description": "sha1 | sha256. Default sha1 (RFC 6238 HMAC-SHA-1 for authenticator interop). Prefer sha256 for new issuers.",
+      "value": "sha1",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "sha1",
+        "sha256"
+      ]
+    },
+    {
+      "_id": "3684fec8-8919-4888-9fb2-9793d6f14129",
+      "shortCode": "digits",
+      "label": "Digits",
+      "type": "number",
+      "description": "Code length 6 or 8. Default 6.",
+      "value": "6",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "178fb799-693d-48da-aef4-1569e4886918",
+      "shortCode": "period",
+      "label": "Period",
+      "type": "number",
+      "description": "Time step seconds. Default 30.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "64758d81-f5a8-4396-bb44-9fd8b3989e09",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

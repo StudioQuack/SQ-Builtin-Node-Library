@@ -1,0 +1,193 @@
+{
+  "_id": "7c7a05ac-8df6-5149-9569-528cf5dba554",
+  "version": "1.0.0",
+  "name": "Mailparser",
+  "label": "Mailparser.io API",
+  "description": "Mailparser.io API. Official API https://app.mailparser.io/mailparser-api. One node; pick operation. Downloaded payloads may appear as OUTPUT file. Handler: OfficialApiNode + api_spec.json. Inbound email parsing SaaS. Contents stored on Mailparser. webhook_listen is ingress (BPMN), not a Webhook node.",
+  "icon": "email",
+  "tags": [
+    "mailparser",
+    "email",
+    "parse"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1b0fbf39-3f8a-59fc-8723-426e05ddc13a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port. File bytes are type file.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "inbox_list",
+          "description": "Overrides config operation. Accepted: inbox_list, webhook_listen, parsed_mail_get, parsed_mail_list.",
+          "children": []
+        },
+        {
+          "shortCode": "parsed_email_id",
+          "label": "Parsed Email Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Parsed email id for parsed_mail_get (/inbox/{inbox_id}/parsed_mails/{parsed_email_id}).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8c20a655-b217-562f-ad0e-b0283005c76b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b4f8a023-6be1-5aac-a768-d926b54e811c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "inbox_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "inbox_list",
+        "webhook_listen",
+        "parsed_mail_get",
+        "parsed_mail_list"
+      ]
+    },
+    {
+      "_id": "d2fe33d0-9025-5c96-9111-47b745a9c6dd",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Mailparser API key (query auth). StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "80e64869-1f53-5cb2-9e44-ac7185d6a350",
+      "shortCode": "inbox_id",
+      "label": "Inbox Id",
+      "type": "string",
+      "description": "Default inbox id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "96b5e1cf-d607-459c-ae07-6272288d5207",
+      "shortCode": "parsed_email_id",
+      "label": "Parsed Email Id",
+      "type": "string",
+      "description": "Parsed email id for parsed_mail_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "1a3d46ef-81cf-505c-9d83-fcf499b1f1a0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

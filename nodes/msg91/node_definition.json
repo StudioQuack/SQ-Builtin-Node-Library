@@ -1,0 +1,155 @@
+{
+  "_id": "2377dbb2-24e6-5e7b-88d3-ae33780dd58d",
+  "version": "1.0.0",
+  "name": "MSG91",
+  "label": "MSG91 — MSG91 Flow / SMS API",
+  "description": "MSG91 via the official MSG91 Flow / SMS API. Base https://control.msg91.com/api/v5. Docs: https://docs.msg91.com/reference/send-sms. India DLT / sender-ID rules. Use Flow API (v5), not retired query-string sendhttp.php. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data}. Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "sms",
+  "tags": [
+    "sms"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "bf661f9c-d872-5634-9a99-3355bcb9048c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One MSG91 operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"send-sms\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "template_id",
+          "label": "template_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DLT/flow template id for send-sms POST /flow. Example: 6e0b3xxxx.",
+          "children": []
+        },
+        {
+          "shortCode": "recipients",
+          "label": "recipients",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Recipients list [{mobiles, VAR1, …}] matching the template variables.",
+          "children": []
+        },
+        {
+          "shortCode": "short_url",
+          "label": "short_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Whether to shorten URLs in the template. Example: 0 or 1.",
+          "children": []
+        },
+        {
+          "shortCode": "realTimeResponse",
+          "label": "realTimeResponse",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "1 to wait for the provider response. Example: 1.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a5466a59-efd4-5dce-a1ba-f2ece375953a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "1285f767-ae44-5356-8c78-d41ce9834917",
+      "shortCode": "authkey",
+      "label": "Auth key",
+      "type": "password",
+      "description": "MSG91 authkey header. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "057d6893-8fa4-540b-957b-b8fd313d28ee",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

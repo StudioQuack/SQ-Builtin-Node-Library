@@ -1,0 +1,593 @@
+{
+  "_id": "feb86d16-dbeb-4424-acac-c897dee68132",
+  "version": "1.0.0",
+  "name": "Microsoft Dynamics 365",
+  "label": "Dataverse Web API v9.2 — Dynamics 365 Sales tables",
+  "description": "Official Microsoft Dataverse Web API v9.2 (OData 4.0) for Dynamics 365 Sales. Creates/updates post official logical names (name, emailaddress1, firstname, …) at the JSON root; lookups use *_bind → @odata.bind. Docs: https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/create-table-row. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "business",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a3a92c3d-847d-49ef-8af6-2419d0aa8e07",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example keys match api_spec.json required/queryFrom/bodyFrom.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "account.create",
+          "description": "Overrides config operation when non-blank. EXACT: account.create | account.get | account.list | account.update | account.delete | contact.create | contact.get | contact.list | contact.update | contact.delete | lead.create | lead.get | lead.list | lead.update | lead.convert | opportunity.create | opportunity.get | opportunity.list | opportunity.update | opportunity.delete | incident.create | incident.get | incident.list | incident.update | activity.create | whoami | fetchXml.query | trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "org_host",
+          "label": "org_host",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Dataverse hostname only (no scheme). Example: contoso.crm.dynamics.com. All HTTP operations; also a config default.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Entity GUID (braces optional) for get/update/delete/convert. Path accounts({id}) etc. Example: 11bb11bb-cc22-dd33-ee44-55ff55ff55ff.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Escape-hatch column map sent as JSON key fields (Dataverse ignores unknown keys — prefer the purpose fields which are posted at the JSON root). Extra custom columns go here only if you accept that wrap.",
+          "children": []
+        },
+        {
+          "shortCode": "activity_set",
+          "label": "activity_set",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "activity.create entity set. EXACT: tasks | emails | phonecalls | appointments.",
+          "children": []
+        },
+        {
+          "shortCode": "entity_set",
+          "label": "entity_set",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "fetchXml.query entity-set name. Example: accounts.",
+          "children": []
+        },
+        {
+          "shortCode": "fetch_xml",
+          "label": "fetch_xml",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "FetchXML query for fetchXml.query. Wired as query fetchXml. Example: <fetch>...</fetch>.",
+          "children": []
+        },
+        {
+          "shortCode": "CreateAccount",
+          "label": "CreateAccount",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "QualifyLead CreateAccount. lead.convert. Official PascalCase body field.",
+          "children": []
+        },
+        {
+          "shortCode": "CreateContact",
+          "label": "CreateContact",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "QualifyLead CreateContact. lead.convert.",
+          "children": []
+        },
+        {
+          "shortCode": "CreateOpportunity",
+          "label": "CreateOpportunity",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "QualifyLead CreateOpportunity. lead.convert.",
+          "children": []
+        },
+        {
+          "shortCode": "Status",
+          "label": "Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "QualifyLead Status option-set. lead.convert. Typical 3 = Qualified.",
+          "children": []
+        },
+        {
+          "shortCode": "create_account",
+          "label": "create_account",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Legacy alias for lead.convert (kept). Prefer CreateAccount.",
+          "children": []
+        },
+        {
+          "shortCode": "create_contact",
+          "label": "create_contact",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Legacy alias for lead.convert (kept). Prefer CreateContact.",
+          "children": []
+        },
+        {
+          "shortCode": "create_opportunity",
+          "label": "create_opportunity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Legacy alias for lead.convert (kept). Prefer CreateOpportunity.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Legacy alias for lead.convert Status (kept). Prefer Status.",
+          "children": []
+        },
+        {
+          "shortCode": "$select",
+          "label": "$select",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OData $select for get/list. Comma-separated logical names. Example: name,emailaddress1.",
+          "children": []
+        },
+        {
+          "shortCode": "$filter",
+          "label": "$filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OData $filter for list. Example: name eq 'Contoso'.",
+          "children": []
+        },
+        {
+          "shortCode": "$orderby",
+          "label": "$orderby",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OData $orderby for list. Example: createdon desc.",
+          "children": []
+        },
+        {
+          "shortCode": "$top",
+          "label": "$top",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OData $top page size for list. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "account.name / opportunity.name. Official logical name. Example: Contoso Ltd. Used by account.create/update, opportunity.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "telephone1",
+          "label": "telephone1",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Primary phone. Official telephone1. account/contact/lead create and update. Example: +1-425-555-0100.",
+          "children": []
+        },
+        {
+          "shortCode": "emailaddress1",
+          "label": "emailaddress1",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Primary email. Official emailaddress1. account/contact/lead create and update. Example: ada@contoso.com.",
+          "children": []
+        },
+        {
+          "shortCode": "websiteurl",
+          "label": "websiteurl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Website URL. Official websiteurl. account create/update. Example: https://contoso.com.",
+          "children": []
+        },
+        {
+          "shortCode": "address1_line1",
+          "label": "address1_line1",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Street line 1. Official address1_line1. account/contact/lead create and update.",
+          "children": []
+        },
+        {
+          "shortCode": "address1_city",
+          "label": "address1_city",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "City. Official address1_city.",
+          "children": []
+        },
+        {
+          "shortCode": "address1_stateorprovince",
+          "label": "address1_stateorprovince",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "State or province. Official address1_stateorprovince. Example: WA.",
+          "children": []
+        },
+        {
+          "shortCode": "address1_postalcode",
+          "label": "address1_postalcode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Postal code. Official address1_postalcode.",
+          "children": []
+        },
+        {
+          "shortCode": "address1_country",
+          "label": "address1_country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Country. Official address1_country. Example: United States.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Description / notes. Official description. account/contact/lead/opportunity/incident/activity.",
+          "children": []
+        },
+        {
+          "shortCode": "firstname",
+          "label": "firstname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact/lead first name. Official firstname. Example: Ada.",
+          "children": []
+        },
+        {
+          "shortCode": "lastname",
+          "label": "lastname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact/lead last name. Official lastname. Example: Lovelace.",
+          "children": []
+        },
+        {
+          "shortCode": "jobtitle",
+          "label": "jobtitle",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact/lead job title. Official jobtitle.",
+          "children": []
+        },
+        {
+          "shortCode": "mobilephone",
+          "label": "mobilephone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mobile phone. Official mobilephone. contact/lead.",
+          "children": []
+        },
+        {
+          "shortCode": "uma.s@example.org",
+          "label": "uma.s@example.org",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact parent customer lookup. Official @odata.bind URL. Example: /accounts(guid). contact.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "companyname",
+          "label": "companyname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lead company name. Official companyname. lead.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lead topic or activity subject. Official subject. lead.* and activity.create.",
+          "children": []
+        },
+        {
+          "shortCode": "estimatedvalue",
+          "label": "estimatedvalue",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Opportunity estimated value. Official estimatedvalue. Example: 25000.",
+          "children": []
+        },
+        {
+          "shortCode": "estimatedclosedate",
+          "label": "estimatedclosedate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Opportunity estimated close date YYYY-MM-DD. Official estimatedclosedate.",
+          "children": []
+        },
+        {
+          "shortCode": "diana.k@example.org",
+          "label": "diana.k@example.org",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Opportunity parent account lookup. Official @odata.bind URL. Example: /accounts(guid).",
+          "children": []
+        },
+        {
+          "shortCode": "yosef.c@example.com",
+          "label": "yosef.c@example.com",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Opportunity parent contact lookup. Official @odata.bind URL. Example: /contacts(guid).",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Case title. Official title. incident.create/update. Example: Cannot sign in.",
+          "children": []
+        },
+        {
+          "shortCode": "nathan.k@example.net",
+          "label": "nathan.k@example.net",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Case customer lookup. Official @odata.bind URL. Example: /contacts(guid) or /accounts(guid).",
+          "children": []
+        },
+        {
+          "shortCode": "prioritycode",
+          "label": "prioritycode",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Case priority option-set. Official prioritycode. Typical: 1 High, 2 Normal, 3 Low.",
+          "children": []
+        },
+        {
+          "shortCode": "scheduledend",
+          "label": "scheduledend",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Activity due datetime. Official scheduledend. activity.create. Example: 2026-11-01T17:00:00Z.",
+          "children": []
+        },
+        {
+          "shortCode": "carol.w@example.org",
+          "label": "carol.w@example.org",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Activity regarding lookup. Official @odata.bind URL. Example: /accounts(guid).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "487de182-f805-4741-8a28-40db89683464",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Size-capped. Never log secrets or raw PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0ff152ea-f2ee-43e8-95e6-5a6f75af84af",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: account.create | account.get | account.list | account.update | account.delete | contact.create | contact.get | contact.list | contact.update | contact.delete | lead.create | lead.get | lead.list | lead.update | lead.convert | opportunity.create | opportunity.get | opportunity.list | opportunity.update | opportunity.delete | incident.create | incident.get | incident.list | incident.update | activity.create | whoami | fetchXml.query | trigger.listen.",
+      "value": "whoami",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "account.create",
+        "account.get",
+        "account.list",
+        "account.update",
+        "account.delete",
+        "contact.create",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "contact.delete",
+        "lead.create",
+        "lead.get",
+        "lead.list",
+        "lead.update",
+        "lead.convert",
+        "opportunity.create",
+        "opportunity.get",
+        "opportunity.list",
+        "opportunity.update",
+        "opportunity.delete",
+        "incident.create",
+        "incident.get",
+        "incident.list",
+        "incident.update",
+        "activity.create",
+        "whoami",
+        "fetchXml.query",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "7fdf16f4-8bc0-48ad-8182-90966bd87405",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Entra Bearer (StudioQuack secret). OAuth access token minted outside StudioQuack. Scope {orgUrl}/.default. Never on INPUT. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "99244d9e-c3d6-4066-9b69-b793ca01d225",
+      "shortCode": "org_host",
+      "label": "Organization host",
+      "type": "string",
+      "description": "Dataverse hostname only, no scheme or path. Documented pattern: {org}.crm.dynamics.com or {org}.api.crm.dynamics.com (plus published sovereign hosts). HTTPS is applied by the spec (baseUrl https: + //{org_host}/api/data/v9.2). Reject IP literals in the operator runbook.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "90bbeba2-905c-4274-9d2c-cea6887041cc",
+      "shortCode": "api_version",
+      "label": "API version",
+      "type": "string",
+      "description": "Dataverse Web API version path segment, e.g. v9.2. Interpolated into baseUrl /api/data/{api_version}.",
+      "value": "v9.2",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0b804ded-0ed0-411a-ba7d-1c7fd0825fd0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

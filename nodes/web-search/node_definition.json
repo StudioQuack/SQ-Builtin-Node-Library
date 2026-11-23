@@ -1,0 +1,156 @@
+{
+  "_id": "e154fd82-f17e-4a8e-a457-7334cee69d24",
+  "version": "1",
+  "name": "Web Search / DataForSEO SERP Context",
+  "label": "Web Search / DataForSEO SERP Context",
+  "description": "Run a Tavily-compatible web search (POST {baseUrl}/search) and return numbered title/URL/snippet lines for downstream reading or a Web Browser fetch. Use this when you have a search query and need public URLs; do not pass a known URL here. HTTP 429, 5xx, timeout, and other failures raise a BPMN error (retry hint stays in the message). include_answer is accepted on the input schema but is unused — the Java handler never sends it (Python never did either). timeout_seconds IS read by the Java handler (connect+request). api_key is required, is sent only in the outbound JSON body, and is never logged or returned.",
+  "icon": "",
+  "tags": [
+    "search",
+    "tavily",
+    "serp",
+    "query"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f07c0b78-28b9-4b34-b228-5e81ebd4ef80",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One search request delivered as inputVariables.input (or currentNode.inputList targetPortValue=input). Required field: query (non-empty string). Optional: max_results (positive integer; overrides configuration maxResultsDefault). Optional: include_answer (boolean; accepted by the schema, ignored by the Java handler — not sent to the API). The daemon wraps this object; the handler reads those three shortCodes only.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "_id": "001d9dd6-2fc8-4938-b5cb-d6562a65a52e",
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Search query sent as Tavily JSON field `query` on POST {baseUrl}/search. Purpose: the only required per-call input; this is what the provider ranks. REQUIRED. Empty, missing, or whitespace-only raises INVALID_INPUT 'Query is missing' (no HTTP call). EXACT accepted values: any non-empty Unicode string (keywords, a question, or an operator string the provider understands). Not a URL fetch — use Web Browser for a known URL. Do not put the Tavily api_key here. Examples: 'BPMN exclusive gateway semantics', 'site:docs.python.org urllib.robotparser', 'Accept-Language header country codes'.",
+          "children": []
+        },
+        {
+          "_id": "3f5c1985-b951-42c7-808f-4ffe27e36aff",
+          "shortCode": "max_results",
+          "label": "max_results",
+          "type": "number",
+          "required": false,
+          "value": 0,
+          "description": "Per-call cap on how many organic hits to format into output.result. Purpose: bound payload size and override the instance default for this invoke only. Optional. EXACT accepted values: positive integers (1, 2, 3, …). JSON numbers and numeric strings are parsed; empty/missing/non-numeric uses configuration maxResultsDefault (default 5). Parsed values <= 0 also fall back to maxResultsDefault (the Java handler does this; the schema value 0 means 'use default', not 'return zero hits'). The handler then slices results to this many items. Examples: 3 (short list), 5 (default), 10 (broader recall). Keep small — each hit is '{n}. {title} - {url}\\n{snippet}'.",
+          "children": []
+        },
+        {
+          "_id": "34ce6f18-faa8-4be7-913f-c8eed933ecf5",
+          "shortCode": "include_answer",
+          "label": "include_answer",
+          "type": "boolean",
+          "required": false,
+          "value": false,
+          "description": "Whether a Tavily-compatible API should return a generated answer/summary in addition to organic hits, when the provider supports `include_answer`. Purpose: reserved schema field for a future provider flag. EXACT accepted values: true | false (JSON boolean or boolean-like). Default: false. Example: false. ACCEPTED BUT UNUSED: the Java handler does not read this field and does not send `include_answer` in the POST body (the Python tool never sent it either). On success output.result is numbered title/url/snippet lines or the literal 'No results found.'. Leave false unless a future revision honors it.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e3ecb24b-d225-41d6-a07f-0afb15d74028",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Single OUTPUT port. Success is {\"output\": {\"result\": <string>}} — numbered title/url/snippet lines or 'No results found.'. result never contains api_key. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": false,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "_id": "64e63cfa-dc26-4748-934e-de249d037c0c",
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Search outcome on success: numbered lines '{n}. {title or url} - {url}\\n{snippet}' joined by a blank line, or the literal 'No results found.' when the provider returned no organic hits. Example success: '1. Example Domain - https://example.com\\nExample snippet'. The api_key is never present (redacted from exception/body snippets if a provider echoed it).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b2a7e911-874b-431b-a7e4-ea5afca0d50b",
+      "shortCode": "api_key",
+      "label": "Tavily API Key",
+      "type": "password",
+      "description": "Tavily-compatible provider secret. Purpose: authenticates POST {baseUrl}/search; the handler puts it only in the outbound JSON field `api_key` (not in headers, logs, or output.result). REQUIRED. EXACT accepted values: the provider secret string (Tavily `tvly-…` key, or a compatible proxy key). Empty/missing/whitespace-only raises INVALID_INPUT 'Missing Tavily API Key. Provide it in node parameters (apiKey).' and does not call the network. Bind a StudioQuack secret; do not commit a literal. Example format: 'tvly-xxxxxxxxxxxxxxxxxxxxxxxx'. NEVER log, NEVER echo, NEVER return this value — exception/body snippets that contain it are redacted to '***'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "229bf86c-0703-424e-827b-d7de634b8e4c",
+      "shortCode": "baseUrl",
+      "label": "Base URL",
+      "type": "string",
+      "description": "Search API origin. Purpose: the handler POSTs to `{baseUrl}/search` after stripping trailing slashes. Optional. EXACT accepted values: absolute http or https origin URLs (scheme MUST be 'http' or 'https'; ftp, file, data, javascript, and schemeless strings raise INVALID_INPUT 'baseUrl must be http or https'). Default when empty/missing: 'https://api.tavily.com'. Trailing '/' characters are stripped (so 'https://api.tavily.com/' equals the default). Must be reachable from the sandbox. Example (Tavily): 'https://api.tavily.com'. Example (self-hosted compatible proxy): 'https://search-proxy.example.com'. Do not append `/search` yourself — the handler adds it.",
+      "value": "https://api.tavily.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "4c1be2e5-0644-4acc-adf2-d26a70f9cb8a",
+      "shortCode": "maxResultsDefault",
+      "label": "Default Max Results",
+      "type": "number",
+      "description": "Instance default for how many organic hits to format when input.max_results is omitted, empty, non-numeric, or <= 0. Purpose: keep per-call input small while still bounding payload size. EXACT accepted values: positive integers. Default: 5. 0, negative, empty, or non-numeric fall back to 5. Example: 5. Example for broader recall: 10. input.max_results overrides this per invoke when it parses to an integer > 0. Keep small — each result is title + url + snippet text and the HTTP body is capped at ~1_000_000 bytes.",
+      "value": "5",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    },
+    {
+      "_id": "8bbfd9f2-aed2-42fa-85fa-27f12d78dc42",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect + request timeout in seconds for POST {baseUrl}/search. Purpose: bound how long this node waits on the provider (DoS/cost control). The JAVA handler DOES honor this parameter: it is passed to the HTTP client as both connectTimeout and request timeout (the Python tool hardcoded 25 and ignored this field). EXACT accepted values: positive integers. Default: 25. 0, negative, empty, or non-numeric fall back to 25. The HTTP client also floors at 1 second. Example: 25. Example for a slow proxy: 40. Keep this at or below the daemon sandbox request budget (sqs.sandbox.oci.requestTimeoutMs, default 300000 ms / 300 s) or the daemon fails the node first. On expiry the node raises REQUEST_FAILED whose message mentions 'timed out' and a 30s retry hint.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-12T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-12T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

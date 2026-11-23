@@ -1,0 +1,239 @@
+{
+  "_id": "1f9ed89c-4af7-419f-bcb4-3bb88e3efdcb",
+  "version": "1.0.0",
+  "name": "Mercury",
+  "label": "Mercury — Mercury API v1",
+  "description": "Official Mercury API v1. Docs: https://docs.mercury.com. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. US business banking. Webhooks exist in live only (not sandbox). Prefer recipientId over raw routing numbers. payment_create requires recipientId, amount, paymentMethod (ach|check|domesticWire), and idempotencyKey.",
+  "icon": "account_balance",
+  "tags": [
+    "mercury",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f2caeef7-3710-4cd5-8a21-24230abd0823",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Mercury. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "account_list",
+          "description": "Overrides config operation. EXACT: account_list | transaction_list | recipient_create | payment_create | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Account id for transaction_list / payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "transaction_list page size.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "transaction_list offset.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipient legal name for recipient_create.",
+          "children": []
+        },
+        {
+          "shortCode": "emails",
+          "label": "emails",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Recipient emails for recipient_create.",
+          "children": []
+        },
+        {
+          "shortCode": "electronicRoutingInfo",
+          "label": "electronicRoutingInfo",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official electronicRoutingInfo {accountNumber, routingNumber, electronicAccountType} for recipient_create.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Payment amount for payment_create. Example: 25.5.",
+          "children": []
+        },
+        {
+          "shortCode": "recipientId",
+          "label": "recipientId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipient id for payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "paymentMethod",
+          "label": "paymentMethod",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create paymentMethod. Typical: ach | check | domesticWire.",
+          "children": []
+        },
+        {
+          "shortCode": "idempotencyKey",
+          "label": "idempotencyKey",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official idempotencyKey for payment_create.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3b3bf530-3b50-4bd3-a834-a36ec5150dfa",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b71ddcc8-9f5b-4b77-bd57-c85eef73817a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: account_list | transaction_list | recipient_create | payment_create | trigger. Default account_list. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "account_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "account_list",
+        "transaction_list",
+        "recipient_create",
+        "payment_create",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "8df68af8-ed6b-485b-828d-1607012f7ecc",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "Mercury credential (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2cdd3da4-c35c-4f50-8bf2-fb2d493db7c1",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

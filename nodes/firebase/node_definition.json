@@ -1,0 +1,273 @@
+{
+  "_id": "4a4017fc-95b5-4d4e-901f-49d4bb76dc32",
+  "version": "1.0.0",
+  "name": "Firebase",
+  "label": "Firebase — Firestore REST v1",
+  "description": "Firebase — Firestore REST v1. Handler: OfficialApiNode. Official API: https://firebase.google.com/docs/firestore/reference/rest. Customer owns the database. Minimize payload. Secrets never logged or returned.",
+  "icon": "storage",
+  "tags": [
+    "nosql"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5d33f9ce-8e98-5782-a7c5-370355af565b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put oauth_access_token here. Example: {\"operation\":\"firestore.document.get\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "firestore.document.get",
+          "description": "Overrides config. EXACT: firestore.document.get | firestore.document.create | firestore.document.delete | firestore.document.list | trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "projectId",
+          "label": "projectId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GCP project id in the documents path. Same shortCode as config. Example: my-project.",
+          "children": []
+        },
+        {
+          "shortCode": "databaseId",
+          "label": "databaseId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Firestore database id. Default (default). Same shortCode as config.",
+          "children": []
+        },
+        {
+          "shortCode": "collectionId",
+          "label": "collectionId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Collection id. Path.",
+          "children": []
+        },
+        {
+          "shortCode": "documentId",
+          "label": "documentId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Client-assigned document id query for firestore.document.create, and path id for get/delete. Optional on create (Firestore generates one). Example: user_123.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Firestore Document.fields map for firestore.document.create. Each key is a field name; each value is a Firestore Value object (stringValue, integerValue, booleanValue, timestampValue, mapValue, arrayValue, nullValue, doubleValue, bytesValue, referenceValue, geoPointValue). Example: {\"name\":{\"stringValue\":\"Ada\"},\"age\":{\"integerValue\":\"36\"}}. Official name; not a generic blob.",
+          "children": []
+        },
+        {
+          "shortCode": "pageSize",
+          "label": "pageSize",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `pageSize` for operation: firestore.document.list.",
+          "children": []
+        },
+        {
+          "shortCode": "pageToken",
+          "label": "pageToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `pageToken` for operation: firestore.document.list.",
+          "children": []
+        },
+        {
+          "shortCode": "mask",
+          "label": "mask",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DocumentMask fieldPaths for create/get, comma-separated. Query name mask.fieldPaths is not used; send a JSON object {\"fieldPaths\":[\"name\"]} or a comma list name,age. Example: name,age. Omit to return all fields.",
+          "children": []
+        },
+        {
+          "shortCode": "orderBy",
+          "label": "orderBy",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Order-by field for firestore.document.list. Example: name. Official query orderBy.",
+          "children": []
+        },
+        {
+          "shortCode": "readTime",
+          "label": "readTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "RFC3339 read timestamp for firestore.document.list. Example: 2026-01-01T00:00:00Z.",
+          "children": []
+        },
+        {
+          "shortCode": "showMissing",
+          "label": "showMissing",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "When true, list returns missing documents with a key but no fields. firestore.document.list only.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ae7f2c7b-0484-5e33-8389-d6dd0a22feed",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Secrets never copied here.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "f4d7640b-fa81-51e5-a327-9dc2b87ecc0b",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: firestore.document.get | firestore.document.create | firestore.document.delete | firestore.document.list | trigger.listen.",
+      "value": "firestore.document.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "firestore.document.get",
+        "firestore.document.create",
+        "firestore.document.delete",
+        "firestore.document.list",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "4d7922f5-f31e-580f-a5e8-ceb782dd659c",
+      "shortCode": "oauth_access_token",
+      "label": "Oauth Access Token",
+      "type": "password",
+      "description": "Google OAuth access token (secret). Bearer. Never a host path to a service-account file.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e9002f0b-6725-4db2-b60e-6ef7ecac2f4b",
+      "shortCode": "projectId",
+      "label": "projectId",
+      "type": "string",
+      "description": "GCP project id used when INPUT projectId is empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bd3b2efb-6676-463f-bbe0-94b2c02e254c",
+      "shortCode": "databaseId",
+      "label": "databaseId",
+      "type": "string",
+      "description": "Firestore database id used when INPUT databaseId is empty. Example: (default).",
+      "value": "(default)",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c700b6bb-a453-53ed-95ca-9e57c7302122",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,411 @@
+{
+  "_id": "8010fe7d-bf3a-4e68-be97-37f6041867dc",
+  "version": "1.0.0",
+  "name": "Microsoft SQL Server",
+  "label": "Microsoft SQL Server — query and write",
+  "description": "Run SQL against a customer-owned Microsoft SQL Server database. Handler: SqlDatabaseNode with the Microsoft JDBC Driver for SQL Server. Operations: query (rows), execute (affected_rows), insert (batch insert in one transaction). Values bind as ? parameters; the connection URL is built from validated host/port/database so driver options cannot be injected. Password is a secret and is redacted from errors. Docs: https://learn.microsoft.com/sql/connect/jdbc/",
+  "icon": "storage",
+  "tags": [
+    "mssql",
+    "sql-server",
+    "azure-sql",
+    "sql",
+    "database"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "9a09ba75-2d4a-407f-babc-8ab5917c2139",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One SQL call. Non-blank fields override the node configuration. Do not put the password here. Example: {\"operation\":\"query\",\"query\":\"SELECT * FROM orders WHERE id = ?\",\"parameters\":[42]}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Overrides config operation when non-blank. EXACT: query | execute | insert.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SQL for query/execute with ? placeholders. Alias: sql.",
+          "children": []
+        },
+        {
+          "shortCode": "parameters",
+          "label": "parameters",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Positional values for the ? placeholders. Alias: params.",
+          "children": []
+        },
+        {
+          "shortCode": "table",
+          "label": "table",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Target table for insert.",
+          "children": []
+        },
+        {
+          "shortCode": "rows",
+          "label": "rows",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Array of column → value objects for insert.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "aec0150f-d078-47b7-99f2-d0cd290d19ae",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', operation, rows?, columns?, row_count?, truncated?, affected_rows?, data:{value}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, REQUEST_FAILED) with data {sql_state, vendor_code} for SQL errors; secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "The operation that ran.",
+          "children": []
+        },
+        {
+          "shortCode": "rows",
+          "label": "rows",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Result rows as column → value objects (query, or execute with a result set). Binary values are base64; LOBs are capped at 1 MiB.",
+          "children": []
+        },
+        {
+          "shortCode": "columns",
+          "label": "columns",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Column labels in result order (insert: the inserted columns).",
+          "children": []
+        },
+        {
+          "shortCode": "row_count",
+          "label": "row_count",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Number of rows returned.",
+          "children": []
+        },
+        {
+          "shortCode": "truncated",
+          "label": "truncated",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "true when max_rows cut the result set.",
+          "children": []
+        },
+        {
+          "shortCode": "affected_rows",
+          "label": "affected_rows",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Rows changed by execute or insert.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "data.value = rows for queries, affected_rows otherwise. Never includes secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0fc6da56-e863-4bb6-a692-1bcf3cf8dee9",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "What to run. EXACT: query (SELECT, returns rows) | execute (INSERT/UPDATE/DELETE/DDL or a call; returns affected_rows, plus rows when the statement returns a result set) | insert (batch-insert input rows into one table in one transaction). Input operation overrides this when non-blank.",
+      "value": "query",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "query",
+        "execute",
+        "insert"
+      ],
+      "filterRules": [
+        {
+          "when": "query",
+          "targets": [
+            {
+              "param": "query",
+              "visible": true
+            },
+            {
+              "param": "parameters",
+              "visible": true
+            },
+            {
+              "param": "max_rows",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "execute",
+          "targets": [
+            {
+              "param": "query",
+              "visible": true
+            },
+            {
+              "param": "parameters",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "insert",
+          "targets": [
+            {
+              "param": "table",
+              "visible": true
+            },
+            {
+              "param": "rows",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "3f4b1fc5-fa6f-47b1-bee8-a23b7d9d41d7",
+      "shortCode": "host",
+      "label": "Host",
+      "type": "string",
+      "description": "Database server hostname or IP. Purpose: TCP target. Accepted: hostname, IPv4 or [IPv6]; no scheme, port, path or ?options. Example: 'db.internal.example.com'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bc84cf42-7da2-48bc-bc0c-8fa1d3f5395e",
+      "shortCode": "port",
+      "label": "Port",
+      "type": "number",
+      "description": "TCP port. Default 1433. Accepted: 1–65535.",
+      "value": "1433",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5f939b9a-7cb9-408d-afbc-0f0f973284a5",
+      "shortCode": "database",
+      "label": "Database",
+      "type": "string",
+      "description": "Initial database (databaseName). Purpose: unqualified table names resolve here. Accepted: letters, digits, _ $ # . - (max 128); blank = the login's default database. Example: 'Sales'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ad5c7650-3949-45cd-adc9-d8a68e94b810",
+      "shortCode": "user",
+      "label": "User",
+      "type": "string",
+      "description": "Database login name. Purpose: authenticates the session. Use a least-privilege account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5e242e50-d458-41db-b207-28a289d020b4",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "Database password. Stored as a secret; never logged or returned. Redacted from error messages.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ef0dc5b5-5293-4ab1-8f93-9a45fb05cbe4",
+      "shortCode": "ssl_mode",
+      "label": "SSL Mode",
+      "type": "select",
+      "description": "Transport encryption. EXACT: disable (plain TCP — loopback or private network only) | require (TLS, server certificate not verified) | verify-full (TLS, certificate chain verified against the JVM trust store and hostname checked). Default require.",
+      "value": "require",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "disable",
+        "require",
+        "verify-full"
+      ]
+    },
+    {
+      "_id": "28d0813f-7c6a-46af-b4fc-e30a2e914ab2",
+      "shortCode": "query",
+      "label": "SQL",
+      "type": "longtext",
+      "description": "SQL statement for query and execute. Purpose: one statement; use ? placeholders for values and put them in parameters — never concatenate input into SQL. Example: SELECT id, total FROM [orders] WHERE customer_id = ? AND total > ?.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4211e667-2424-45e7-90ee-2658af755433",
+      "shortCode": "parameters",
+      "label": "Parameters",
+      "type": "list",
+      "description": "Positional values for the ? placeholders, in order. Accepted: JSON array of strings, numbers, booleans or null; objects/arrays are sent as JSON text. Example: [42, 100.5].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "38a6dffd-47e7-49e9-81c8-7b0fdb2d0125",
+      "shortCode": "max_rows",
+      "label": "Max Rows",
+      "type": "number",
+      "description": "Row cap for returned result sets. Purpose: bound memory and output size. Default 1000, max 10000. truncated=true when more rows existed.",
+      "value": "1000",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "17f6af26-a8df-4d78-93a3-778180a45c48",
+      "shortCode": "table",
+      "label": "Table",
+      "type": "string",
+      "description": "Target table for insert: table, schema.table or database.schema.table. Accepted: identifiers [A-Za-z_][A-Za-z0-9_$#]*; each part is quoted. Example: 'sales.orders'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ebbec124-d7ca-4690-aea7-7cb454d57cde",
+      "shortCode": "rows",
+      "label": "Rows",
+      "type": "list",
+      "description": "Rows for insert. Accepted: JSON array of objects (column → value), up to 10000. Columns are the union of all keys; a missing key inserts NULL. All rows commit together or roll back together. Example: [{\"id\":1,\"total\":9.5}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e5c10c43-8747-40ea-b26d-1b155e00a963",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect, login and statement timeout. Default 30, max 300.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-11-10T18:30:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-10T18:30:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

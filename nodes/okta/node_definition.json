@@ -1,0 +1,732 @@
+{
+  "_id": "5526730f-17d1-4205-8138-446d5d5e1ee8",
+  "version": "1.0.0",
+  "name": "Okta",
+  "label": "Okta Management API — users, groups, apps, factors",
+  "description": "Official Okta Admin Management API (/api/v1) on the operator org. Auth: Authorization SSWS {ssws_token} (still valid). Okta recommends scoped OAuth 2.0 Bearer for new integrations — this node does not send Bearer. orgUrl is the org host without scheme and without -admin (example.okta.com). Handler: OfficialApiNode. Directory data is personal data — minimize. Never log ssws_token or passwords. listen is BPMN message-event ingress, not an Event Hook HTTP subscribe.",
+  "icon": "verified_user",
+  "tags": [
+    "iam",
+    "idp"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1cbc9a00-7407-4f1b-86d5-2c171bd6b557",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Path vars userId/groupId from here or config. Do not put ssws_token here. Example: {\"operation\":\"get-user\",\"userId\":\"00u…\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "create-user",
+          "description": "Overrides config when non-blank. EXACT: create-user | get-user | list-users | update-user | delete-user | create-group | list-groups | add-user-to-group | remove-user-from-group | list-apps | list-factors | listen.",
+          "children": []
+        },
+        {
+          "shortCode": "userId",
+          "label": "userId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Okta user id for get/update/delete-user, group membership, list-factors. Example: 00u1abc...",
+          "children": []
+        },
+        {
+          "shortCode": "groupId",
+          "label": "groupId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Okta group id for create-group membership and list. Example: 00g1abc...",
+          "children": []
+        },
+        {
+          "shortCode": "profile",
+          "label": "profile",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Okta user or group profile object. User: {firstName, lastName, email, login}. Group: {name, description}.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Simple search query for list-users / list-groups / list-apps.",
+          "children": []
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SCIM filter search for list-users / list-groups. Example: profile.email eq \"ada@example.com\".",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List filter expression for list-users / list-groups / list-apps.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for list ops. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination cursor from a previous Link header.",
+          "children": []
+        },
+        {
+          "shortCode": "activate",
+          "label": "activate",
+          "type": "boolean",
+          "required": false,
+          "value": "true",
+          "description": "create-user query. true = activate immediately. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "nextLogin",
+          "label": "nextLogin",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-user query. EXACT: changePassword to force password change.",
+          "children": []
+        },
+        {
+          "shortCode": "sendEmail",
+          "label": "sendEmail",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "delete-user query. Whether to send a deactivation email. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "provider",
+          "label": "provider",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "create-user query. true when credentials.provider is set.",
+          "children": []
+        },
+        {
+          "shortCode": "credentials",
+          "label": "credentials",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "create-user / update-user credentials {password:{value}, provider?}. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "groupIds",
+          "label": "groupIds",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "create-user group ids to join. Example: [\"00g1abc\"].",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "create-user type object {id} for a custom user type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7c60f48f-0f77-4d4b-93dd-928c125bc776",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "2xx: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code (200, 201, 204, 4xx, 5xx).",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Okta JSON. Do not log profile or credentials.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a44c78f5-80b8-4bc8-b815-18169470f7f0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb when input.operation is blank. EXACT values match api_spec operations. listen is ingress (BPMN message event).",
+      "value": "get-user",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "create-user",
+        "get-user",
+        "list-users",
+        "update-user",
+        "delete-user",
+        "create-group",
+        "list-groups",
+        "add-user-to-group",
+        "remove-user-from-group",
+        "list-apps",
+        "list-factors",
+        "listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "create-user",
+          "targets": [
+            {
+              "param": "orgUrl",
+              "visible": true
+            },
+            {
+              "param": "profile",
+              "visible": true
+            },
+            {
+              "param": "activate",
+              "visible": true
+            },
+            {
+              "param": "credentials",
+              "visible": true
+            },
+            {
+              "param": "provider",
+              "visible": true
+            },
+            {
+              "param": "nextLogin",
+              "visible": true
+            },
+            {
+              "param": "groupIds",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-user",
+          "targets": [
+            {
+              "param": "orgUrl",
+              "visible": true
+            },
+            {
+              "param": "userId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-users",
+          "targets": [
+            {
+              "param": "orgUrl",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            },
+            {
+              "param": "q",
+              "visible": true
+            },
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "after",
+              "visible": true
+            },
+            {
+              "param": "search",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "update-user",
+          "targets": [
+            {
+              "param": "orgUrl",
+              "visible": true
+            },
+            {
+              "param": "profile",
+              "visible": true
+            },
+            {
+              "param": "credentials",
+              "visible": true
+            },
+            {
+              "param": "userId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "delete-user",
+          "targets": [
+            {
+              "param": "orgUrl",
+              "visible": true
+            },
+            {
+              "param": "userId",
+              "visible": true
+            },
+            {
+              "param": "sendEmail",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "create-group",
+          "targets": [
+            {
+              "param": "orgUrl",
+              "visible": true
+            },
+            {
+              "param": "profile",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-groups",
+          "targets": [
+            {
+              "param": "orgUrl",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            },
+            {
+              "param": "q",
+              "visible": true
+            },
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "after",
+              "visible": true
+            },
+            {
+              "param": "search",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "add-user-to-group",
+          "targets": [
+            {
+              "param": "orgUrl",
+              "visible": true
+            },
+            {
+              "param": "userId",
+              "visible": true
+            },
+            {
+              "param": "groupId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "remove-user-from-group",
+          "targets": [
+            {
+              "param": "orgUrl",
+              "visible": true
+            },
+            {
+              "param": "userId",
+              "visible": true
+            },
+            {
+              "param": "groupId",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-apps",
+          "targets": [
+            {
+              "param": "orgUrl",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            },
+            {
+              "param": "q",
+              "visible": true
+            },
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "after",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-factors",
+          "targets": [
+            {
+              "param": "orgUrl",
+              "visible": true
+            },
+            {
+              "param": "userId",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "f3725bdd-8cf1-41fb-974b-63da12eda8c9",
+      "shortCode": "ssws_token",
+      "label": "SSWS API token",
+      "type": "password",
+      "description": "Okta API token. Sent as Authorization: SSWS {token} (https://developer.okta.com/docs/api/openapi/okta-management/guides/overview). Okta recommends OAuth 2.0 Bearer instead of unscoped SSWS for new production use — this node cannot send Bearer. StudioQuack secret only. Org-admin equivalent — rotate and least-privilege. Never on INPUT or in logs.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d7ae2980-6abc-4ac6-af6b-6613b9d10718",
+      "shortCode": "orgUrl",
+      "label": "Org host",
+      "type": "string",
+      "description": "Org host only, no scheme, no trailing slash, never *-admin.okta.com. Example: example.okta.com or example.oktapreview.com.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "73e2b558-8947-4147-af77-0c11a9eae8fc",
+      "shortCode": "profile",
+      "label": "Profile",
+      "type": "object",
+      "description": "Okta user or group profile object. User: {firstName, lastName, email, login}. Group: {name, description}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "47d49838-d29b-4564-a2b8-ea8c34a2782b",
+      "shortCode": "activate",
+      "label": "Activate",
+      "type": "boolean",
+      "description": "create-user query. true = activate immediately. Example: true.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3b080d84-f49d-4218-981b-7963b4d4b1f4",
+      "shortCode": "credentials",
+      "label": "Credentials",
+      "type": "object",
+      "description": "create-user / update-user credentials {password:{value}, provider?}. Never log.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0ef52c6d-dd9d-47a0-9e2c-e72858227b7f",
+      "shortCode": "provider",
+      "label": "Provider",
+      "type": "boolean",
+      "description": "create-user query. true when credentials.provider is set.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f249c29f-7511-4200-aa31-ae51fa161726",
+      "shortCode": "nextLogin",
+      "label": "Nextlogin",
+      "type": "string",
+      "description": "create-user query. EXACT: changePassword to force password change.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "19c1c521-2483-451e-8170-85c8d852833e",
+      "shortCode": "groupIds",
+      "label": "Groupids",
+      "type": "list",
+      "description": "create-user group ids to join. Example: [\"00g1abc\"].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "13a4ad1f-fa49-47ba-a6a6-04fc090c85f1",
+      "shortCode": "type",
+      "label": "Type",
+      "type": "object",
+      "description": "create-user type object {id} for a custom user type.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a9ab7c0b-3a84-4f3d-a724-086da0c6d123",
+      "shortCode": "userId",
+      "label": "Userid",
+      "type": "string",
+      "description": "Okta user id for get/update/delete-user, group membership, list-factors. Example: 00u1abc...",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5b86d22b-e004-41f5-8c61-3f9a4b598ffe",
+      "shortCode": "filter",
+      "label": "Filter",
+      "type": "string",
+      "description": "List filter expression for list-users / list-groups / list-apps.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "164aabd0-b03a-4b95-b1f3-947516ec79f7",
+      "shortCode": "q",
+      "label": "Q",
+      "type": "string",
+      "description": "Simple search query for list-users / list-groups / list-apps.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d775f3c1-3c12-49d9-a424-5c44ef48840a",
+      "shortCode": "limit",
+      "label": "Limit",
+      "type": "number",
+      "description": "Page size for list ops. Example: 50.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "78bef7f9-3c3f-4494-8689-de52dae4c12b",
+      "shortCode": "after",
+      "label": "After",
+      "type": "string",
+      "description": "Pagination cursor from a previous Link header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e861ece9-7439-450a-aae7-ca129c379438",
+      "shortCode": "search",
+      "label": "Search",
+      "type": "string",
+      "description": "SCIM filter search for list-users / list-groups. Example: profile.email eq \"ada@example.com\".",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "484455aa-c193-4b6e-95dc-b23032477f40",
+      "shortCode": "sendEmail",
+      "label": "Sendemail",
+      "type": "boolean",
+      "description": "delete-user query. Whether to send a deactivation email. Example: false.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0d1f04b7-5110-47bf-9454-e8403a2b5845",
+      "shortCode": "groupId",
+      "label": "Groupid",
+      "type": "string",
+      "description": "Okta group id for create-group membership and list. Example: 00g1abc...",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "85cca443-5bd4-4807-861a-ac2fd98d1671",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

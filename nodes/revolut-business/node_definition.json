@@ -1,0 +1,404 @@
+{
+  "_id": "95c96b55-35d2-4d27-a252-7e5c104ac516",
+  "version": "1.0.0",
+  "name": "Revolut Business",
+  "label": "Revolut Business — Revolut Business API 1.0",
+  "description": "Official Revolut Business API 1.0. Docs: https://developer.revolut.com/docs/guides/manage-accounts/introduction. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. Business accounts only (Grow+). No personal API. Prefer saved counterparty ids over raw account numbers on the graph.",
+  "icon": "account_balance",
+  "tags": [
+    "revolut",
+    "business",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "36ca7cdb-9605-4e8d-8209-6c414ea3af79",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Revolut Business. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "account_list",
+          "description": "Overrides config operation. EXACT: account_list | counterparty_create | payment_create | transaction_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "Environment",
+          "type": "string",
+          "required": false,
+          "value": "b2b.revolut.com",
+          "description": "sandbox-b2b.revolut.com vs b2b.revolut.com. Substituted into baseUrl as https://{environment}/api/1.0.",
+          "children": []
+        },
+        {
+          "shortCode": "jwt_issuer",
+          "label": "Jwt Issuer",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Redirect URI domain used as JWT iss for client_assertion. Example: https://example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "refresh_token",
+          "label": "Refresh Token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OAuth refresh token (access token valid ~40 min). StudioQuack secret. Prefer config; never log.",
+          "children": []
+        },
+        {
+          "shortCode": "client_id",
+          "label": "Client Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "JWT sub for client_assertion when minting access tokens. Example: your Revolut Business API client id.",
+          "children": []
+        },
+        {
+          "shortCode": "company_name",
+          "label": "company_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `company_name` for operation: counterparty_create.",
+          "children": []
+        },
+        {
+          "shortCode": "bank_country",
+          "label": "bank_country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `bank_country` for operation: counterparty_create.",
+          "children": []
+        },
+        {
+          "shortCode": "currency",
+          "label": "currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `currency` for operations: counterparty_create, payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "account_no",
+          "label": "account_no",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `account_no` for operation: counterparty_create.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_code",
+          "label": "sort_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `sort_code` for operation: counterparty_create.",
+          "children": []
+        },
+        {
+          "shortCode": "request_id",
+          "label": "request_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `request_id` for operation: payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "account_id",
+          "label": "account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `account_id` for operation: payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "receiver",
+          "label": "receiver",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `receiver` for operation: payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `amount` for operation: payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "individual_name",
+          "label": "individual_name",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "counterparty_create for individuals {first_name, last_name}.",
+          "children": []
+        },
+        {
+          "shortCode": "iban",
+          "label": "iban",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "counterparty_create IBAN. Example: GB29NWBK60161331926819.",
+          "children": []
+        },
+        {
+          "shortCode": "bic",
+          "label": "bic",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "counterparty_create BIC/SWIFT.",
+          "children": []
+        },
+        {
+          "shortCode": "profile_type",
+          "label": "profile_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "counterparty_create. EXACT: personal | business. Example: business.",
+          "children": []
+        },
+        {
+          "shortCode": "reference",
+          "label": "reference",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create payment reference. Example: Invoice 1001.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transaction_list type filter. Example: transfer.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `from` for operation: transaction_list.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `to` for operation: transaction_list.",
+          "children": []
+        },
+        {
+          "shortCode": "count",
+          "label": "count",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `count` for operation: transaction_list.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "507b54e2-0311-475b-8e27-4abdf46c8b0a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "adb9f6d1-359b-4a21-a61e-7c988068b9ea",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: account_list | counterparty_create | payment_create | transaction_list | trigger. Default account_list. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "account_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "account_list",
+        "counterparty_create",
+        "payment_create",
+        "transaction_list",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "414e4a22-68f0-4c60-8379-6ddf6b867ee3",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Revolut Business OAuth access token minted outside StudioQuack (JWT client assertion happens elsewhere). Bearer Authorization. StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1865854a-b03a-40a7-af21-6156dbd9de2b",
+      "shortCode": "client_id",
+      "label": "Client Id",
+      "type": "string",
+      "description": "JWT sub for client_assertion when minting access tokens. Example: your Revolut Business API client id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e927ed4b-4c32-4cae-b057-6b663219942e",
+      "shortCode": "refresh_token",
+      "label": "Refresh Token",
+      "type": "password",
+      "description": "OAuth refresh token (access token valid ~40 min). StudioQuack secret. Prefer config; never log.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "116845f4-decd-4dc8-9dc8-73c86fe43d56",
+      "shortCode": "jwt_issuer",
+      "label": "Jwt Issuer",
+      "type": "string",
+      "description": "Redirect URI domain used as JWT iss for client_assertion. Example: https://example.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4adef240-1093-4683-9ae4-ce1f3c98ab60",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "sandbox-b2b.revolut.com vs b2b.revolut.com. Substituted into baseUrl as https://{environment}/api/1.0.",
+      "value": "b2b.revolut.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "b2b.revolut.com",
+        "sandbox-b2b.revolut.com"
+      ]
+    },
+    {
+      "_id": "63a7c6b1-e505-4e44-8c59-4dc3a15c565b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,68 @@
+{
+  "baseUrl": "https://{account}.documents.azure.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "extraHeaders": {
+    "x-ms-version": "2018-12-31",
+    "x-ms-date": "{$now:rfc1123}"
+  },
+  "operations": {
+    "item.get": {
+      "method": "GET",
+      "path": "/dbs/{db}/colls/{coll}/docs/{id}",
+      "required": [
+        "db",
+        "coll",
+        "id"
+      ],
+      "kind": "http",
+      "extraHeaders": {
+        "x-ms-documentdb-partitionkey": "{partition_key}"
+      }
+    },
+    "item.create": {
+      "method": "POST",
+      "path": "/dbs/{db}/colls/{coll}/docs",
+      "required": [
+        "db",
+        "coll",
+        "document"
+      ],
+      "kind": "http",
+      "bodyFrom": [
+        "document"
+      ],
+      "bodyMap": {
+        "document": "$"
+      },
+      "extraHeaders": {
+        "x-ms-documentdb-partitionkey": "{partition_key}"
+      }
+    },
+    "item.query": {
+      "method": "POST",
+      "path": "/dbs/{db}/colls/{coll}/docs",
+      "bodyFrom": [
+        "query",
+        "parameters"
+      ],
+      "required": [
+        "db",
+        "coll",
+        "query"
+      ],
+      "kind": "http",
+      "contentType": "application/query+json",
+      "extraHeaders": {
+        "x-ms-documentdb-isquery": "True",
+        "x-ms-documentdb-partitionkey": "{partition_key}"
+      }
+    }
+  }
+}

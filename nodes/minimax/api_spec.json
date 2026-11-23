@@ -1,0 +1,44 @@
+{
+  "baseUrl": "https://api.minimax.io",
+  "defaultTimeout": 300,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "chat": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "required": ["messages"],
+      "bodyFrom": ["model", "messages", "tools", "tool_choice", "temperature", "top_p", "max_completion_tokens", "max_tokens", "stream", "thinking", "reasoning_split"],
+      "stream": {
+        "format": "openai-sse"
+      }
+    },
+    "generate_image": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/image_generation",
+      "required": ["prompt"],
+      "bodyFrom": ["model", "prompt", "aspect_ratio", "width", "height", "n", "response_format", "seed", "prompt_optimizer", "subject_reference"]
+    },
+    "tts": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/t2a_v2",
+      "required": ["text"],
+      "bodyFrom": ["model", "text", "stream", "voice_setting", "audio_setting", "pronunciation_dict", "language_boost", "output_format", "voice_modify"]
+    },
+    "generate_video": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/video_generation",
+      "required": ["model"],
+      "bodyFrom": ["model", "content", "prompt", "resolution", "duration", "ratio"]
+    }
+  }
+}

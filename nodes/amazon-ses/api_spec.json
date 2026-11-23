@@ -1,0 +1,208 @@
+{
+  "baseUrl": "https://email.{region}.amazonaws.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "aws-sigv4",
+    "configKey": "access_key_id",
+    "secretKeyConfigKey": "aws_secret_access_key"
+  },
+  "sigv4": {
+    "service": "ses",
+    "regionConfigKey": "region",
+    "sessionTokenConfigKey": "session_token"
+  },
+  "operations": {
+    "send-email": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/email/outbound-emails",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "FromEmailAddress",
+        "Destination",
+        "Content",
+        "ConfigurationSetName",
+        "ReplyToAddresses",
+        "FeedbackForwardingEmailAddress",
+        "EmailTags",
+        "ToAddresses",
+        "CcAddresses",
+        "BccAddresses"
+      ],
+      "bodyMap": {
+        "ToAddresses": "Destination.ToAddresses",
+        "CcAddresses": "Destination.CcAddresses",
+        "BccAddresses": "Destination.BccAddresses"
+      }
+    },
+    "send-templated-email": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/email/outbound-emails",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "FromEmailAddress",
+        "Destination",
+        "Content",
+        "ConfigurationSetName",
+        "ReplyToAddresses",
+        "FeedbackForwardingEmailAddress",
+        "EmailTags",
+        "ToAddresses",
+        "CcAddresses",
+        "BccAddresses",
+        "TemplateName",
+        "TemplateData"
+      ],
+      "bodyMap": {
+        "ToAddresses": "Destination.ToAddresses",
+        "CcAddresses": "Destination.CcAddresses",
+        "BccAddresses": "Destination.BccAddresses",
+        "TemplateName": "Content.Template.TemplateName",
+        "TemplateData": "Content.Template.TemplateData"
+      }
+    },
+    "create-template": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/email/templates",
+      "contentType": "application/json",
+      "required": [
+        "TemplateName",
+        "TemplateContent"
+      ],
+      "bodyFrom": [
+        "TemplateName",
+        "TemplateContent"
+      ]
+    },
+    "get-template": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/email/templates/{TemplateName}",
+      "contentType": "application/json",
+      "required": [
+        "TemplateName"
+      ]
+    },
+    "list-templates": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/email/templates",
+      "contentType": "application/json",
+      "queryFrom": [
+        "PageSize",
+        "NextToken"
+      ]
+    },
+    "update-template": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/v2/email/templates/{TemplateName}",
+      "contentType": "application/json",
+      "required": [
+        "TemplateName",
+        "TemplateContent"
+      ],
+      "bodyFrom": [
+        "TemplateContent"
+      ]
+    },
+    "delete-template": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/v2/email/templates/{TemplateName}",
+      "contentType": "application/json",
+      "required": [
+        "TemplateName"
+      ]
+    },
+    "create-custom-verification-template": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/email/custom-verification-email-templates",
+      "contentType": "application/json",
+      "required": [
+        "TemplateName",
+        "FromEmailAddress",
+        "TemplateSubject",
+        "TemplateContent",
+        "SuccessRedirectionURL",
+        "FailureRedirectionURL"
+      ],
+      "bodyFrom": [
+        "TemplateName",
+        "FromEmailAddress",
+        "TemplateSubject",
+        "TemplateContent",
+        "SuccessRedirectionURL",
+        "FailureRedirectionURL"
+      ]
+    },
+    "get-custom-verification-template": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/email/custom-verification-email-templates/{TemplateName}",
+      "contentType": "application/json",
+      "required": [
+        "TemplateName"
+      ]
+    },
+    "list-custom-verification-templates": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/email/custom-verification-email-templates",
+      "contentType": "application/json",
+      "queryFrom": [
+        "PageSize",
+        "NextToken"
+      ]
+    },
+    "update-custom-verification-template": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/v2/email/custom-verification-email-templates/{TemplateName}",
+      "contentType": "application/json",
+      "required": [
+        "TemplateName",
+        "FromEmailAddress",
+        "TemplateSubject",
+        "TemplateContent",
+        "SuccessRedirectionURL",
+        "FailureRedirectionURL"
+      ],
+      "bodyFrom": [
+        "FromEmailAddress",
+        "TemplateSubject",
+        "TemplateContent",
+        "SuccessRedirectionURL",
+        "FailureRedirectionURL"
+      ]
+    },
+    "delete-custom-verification-template": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/v2/email/custom-verification-email-templates/{TemplateName}",
+      "contentType": "application/json",
+      "required": [
+        "TemplateName"
+      ]
+    },
+    "create-identity": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/email/identities",
+      "contentType": "application/json",
+      "required": [
+        "EmailIdentity"
+      ],
+      "bodyFrom": [
+        "EmailIdentity"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

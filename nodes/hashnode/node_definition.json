@@ -1,0 +1,242 @@
+{
+  "_id": "d217ccec-7247-496d-b258-0f9e4934165a",
+  "version": "1.0.0",
+  "name": "Hashnode",
+  "label": "Hashnode Public GraphQL API",
+  "description": "Official Hashnode GraphQL at https://gql.hashnode.com via OfficialApiNode. POST entire input JSON (query + variables). Bearer personal_access_token. As of 2026-05-13, GraphQL queries and mutations against a publication require Hashnode Pro (https://hashnode.com/changelog/2026-05-13-graphql-api-paid-access). Never log the PAT. Official API only.",
+  "icon": "article",
+  "tags": [
+    "hashnode",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "e24f0ce2-4652-45b8-9812-b172e7cffb0d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Hashnode GraphQL POST. Send query plus publicationId/title/contentMarkdown (mapped into variables.input) or a variables object. Do not put personal_access_token here. Example: {\"operation\":\"post_publish\",\"query\":\"mutation …\",\"publicationId\":\"…\",\"title\":\"Hi\",\"contentMarkdown\":\"# Hi\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "post_publish",
+          "description": "Overrides config operation when non-blank. EXACT: post_publish | post_get | draft_create | publication_get. Same HTTP path for all.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Non-empty GraphQL document (query / mutation / subscription). Optional variables object may ride alongside bodyMap fields. Cover images: set coverImageOptions inside variables (no cover_image INPUT field). Example: query { __typename }.",
+          "children": []
+        },
+        {
+          "shortCode": "publicationId",
+          "label": "Publication id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PublishPostInput / CreateDraftInput publicationId (ObjectId). post_publish / draft_create. Example: 65a8e6b1c2d3e4f5a6b7c8d9.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "Title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Post or draft title. post_publish / draft_create. Example: Shipping GraphQL in production.",
+          "children": []
+        },
+        {
+          "shortCode": "contentMarkdown",
+          "label": "Markdown",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Post body as Markdown (contentMarkdown). post_publish / draft_create.",
+          "children": []
+        },
+        {
+          "shortCode": "subtitle",
+          "label": "Subtitle",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional subtitle / brief. post_publish / draft_create.",
+          "children": []
+        },
+        {
+          "shortCode": "slug",
+          "label": "Slug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL slug. post_publish / draft_create / post_get. Generated from title when omitted on publish.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "Tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "PublishPostInput.tags — list of {slug, name?} (max 15). post_publish / draft_create. Example: [{\"slug\":\"graphql\",\"name\":\"GraphQL\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Post / publication id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GraphQL id for post_get (variables.id) or publication_get (variables.id).",
+          "children": []
+        },
+        {
+          "shortCode": "host",
+          "label": "Publication host",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Publication host without scheme. post_get / publication_get. Example: blog.example.com.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "00c54415-bcbb-4774-b455-b296fbec93ab",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (GraphQL JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "db36d553-a4e2-4adf-a884-9464cc02b6cc",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Catalog verb. All four POST / on gql.hashnode.com.",
+      "value": "post_publish",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "post_publish",
+        "post_get",
+        "draft_create",
+        "publication_get"
+      ]
+    },
+    {
+      "_id": "6715602a-1005-405b-b118-0d2ed129f382",
+      "shortCode": "personal_access_token",
+      "label": "Personal access token",
+      "type": "password",
+      "description": "Hashnode PAT. Sent as Authorization: Bearer. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fa63c17a-6090-46dc-a707-8dbc0ef40963",
+      "shortCode": "publicationId",
+      "label": "Default publication id",
+      "type": "string",
+      "description": "Default Hashnode publication ObjectId when INPUT publicationId is empty. Used by post_publish / draft_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "671eed5d-6fc9-45f2-a9b0-5e7c1ad7cc05",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,380 @@
+{
+  "_id": "ff7aa88f-d2a4-4c14-b107-7f7103129b61",
+  "version": "1.0.0",
+  "name": "Constant Contact",
+  "label": "Constant Contact V3 REST — contacts, lists, email campaigns",
+  "description": "Official Constant Contact V3 REST at https://api.cc.email/v3. Handler: OfficialApiNode. OAuth access token as Bearer (customer supplies the token). API-key auth is retired. email.send is campaign activity test-send; production send is campaign.schedule. trigger.listen is BPMN ingress (V3 partner webhooks are billing topics only). Customer owns the account. access_token is never logged or returned.",
+  "icon": "contact_mail",
+  "tags": [
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "8503a75a-d35b-4eeb-861d-e765dbd5dd82",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example: {\"operation\":\"contact.create\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.create",
+          "description": "Overrides config operation when non-blank. EXACT: contact.create | contact.get | contact.list | contact.update | contact.delete | list.create | list.add | campaign.create | campaign.get | campaign.schedule | email.send | trigger.listen. trigger.listen is ingress (BPMN message event, no socket).",
+          "children": []
+        },
+        {
+          "shortCode": "contact_id",
+          "label": "contact_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact UUID for get/update/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "email_address",
+          "label": "email_address",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Primary email object or address per current POST /contacts schema. Minimize.",
+          "children": []
+        },
+        {
+          "shortCode": "first_name",
+          "label": "first_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Given name.",
+          "children": []
+        },
+        {
+          "shortCode": "last_name",
+          "label": "last_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Family name.",
+          "children": []
+        },
+        {
+          "shortCode": "create_source",
+          "label": "create_source",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.create source (e.g. Account).",
+          "children": []
+        },
+        {
+          "shortCode": "list_memberships",
+          "label": "list_memberships",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Up to 50 list UUIDs.",
+          "children": []
+        },
+        {
+          "shortCode": "include",
+          "label": "include",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact subresources (custom_fields,list_memberships,…). Minimize.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.list filter (active, unsubscribed, …).",
+          "children": []
+        },
+        {
+          "shortCode": "updated_after",
+          "label": "updated_after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO-8601. Use for polling; V3 has no contact-open webhooks.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Next-page token from _links.next.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List or campaign name.",
+          "children": []
+        },
+        {
+          "shortCode": "source",
+          "label": "source",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "list.add bulk source object (contact ids / list ids) per current activity schema.",
+          "children": []
+        },
+        {
+          "shortCode": "list_ids",
+          "label": "list_ids",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Destination list UUIDs for list.add.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email campaign UUID.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_activity_id",
+          "label": "campaign_activity_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign activity UUID for schedule/test-send.",
+          "children": []
+        },
+        {
+          "shortCode": "scheduled_date",
+          "label": "scheduled_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO-8601 UTC send time.",
+          "children": []
+        },
+        {
+          "shortCode": "email_addresses",
+          "label": "email_addresses",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "email.send test recipients (personal addresses only). Not production send.",
+          "children": []
+        },
+        {
+          "shortCode": "email_campaign_activities",
+          "label": "email_campaign_activities",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "campaign.create activities (from, subject, html) per POST /emails.",
+          "children": []
+        },
+        {
+          "shortCode": "job_title",
+          "label": "job_title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `job_title` for operations: contact.create, contact.update.",
+          "children": []
+        },
+        {
+          "shortCode": "company_name",
+          "label": "company_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `company_name` for operations: contact.create, contact.update.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_fields",
+          "label": "custom_fields",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `custom_fields` for operations: contact.create, contact.update.",
+          "children": []
+        },
+        {
+          "shortCode": "lists",
+          "label": "lists",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `lists` for operation: contact.list.",
+          "children": []
+        },
+        {
+          "shortCode": "update_source",
+          "label": "update_source",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Who is updating the contact on contact.update; required by the PUT /contacts/{contact_id} endpoint. EXACT: Account | Contact. Example: Account.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `description` for operation: list.create.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6ffeeacf-ccd5-4369-aa50-d74515fad9e7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Log ids only — bodies may contain PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "69b25615-8459-44b9-9cb4-f04d2d89f0c8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: contact.create, contact.get, contact.list, contact.update, contact.delete, list.create, list.add, campaign.create, campaign.get, campaign.schedule, email.send, trigger.listen.",
+      "value": "contact.create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "contact.create",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "contact.delete",
+        "list.create",
+        "list.add",
+        "campaign.create",
+        "campaign.get",
+        "campaign.schedule",
+        "email.send",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "67afbc9b-22d3-46bc-b7dc-ff9a0e4805e0",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Constant Contact V3 OAuth access token. Bearer. Refresh via authz.constantcontact.com outside this node. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "62acaeaa-1146-45c4-902c-67434b0b7f7f",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

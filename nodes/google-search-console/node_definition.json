@@ -1,0 +1,288 @@
+{
+  "_id": "71fa122e-7742-4645-9835-48b0254b486a",
+  "version": "1.0.0",
+  "name": "Google Search Console",
+  "label": "Search Console API — Webmasters v3 + URL Inspection v1",
+  "description": "Official Search Console API: Webmasters v3 (www.googleapis.com/webmasters/v3) for sites, sitemaps, searchAnalytics; Search Console v1 URL Inspection (searchconsole.googleapis.com). Handler: OfficialApiNode. Auth: OAuth access token as Bearer (customer supplies a current token). Scope webmasters.readonly or webmasters. site.add adds the property to the user’s list — it does not complete verification. Customer owns the Search Console property. Not a general web-search API; do not scrape SERPs. Query dimension values can be personal — minimize logging.",
+  "icon": "search",
+  "tags": [
+    "seo"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "2b8152d7-06ec-4aad-8110-f0d9adb77276",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. siteUrl is URL-prefix (https://www.example.com/) or sc-domain:example.com; path-encoded. Do not put access_token here. Example: {\"operation\":\"site.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "site.list",
+          "description": "Overrides config operation when non-blank. EXACT: 'site.list' | 'site.add' | 'searchAnalytics.query' | 'sitemap.list' | 'sitemap.submit' | 'urlInspection.inspect'.",
+          "children": []
+        },
+        {
+          "shortCode": "siteUrl",
+          "label": "siteUrl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Verified property string. Path-encoded. Falls back to config siteUrl.",
+          "children": []
+        },
+        {
+          "shortCode": "startDate",
+          "label": "startDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "searchAnalytics.query start YYYY-MM-DD (Pacific Time).",
+          "children": []
+        },
+        {
+          "shortCode": "endDate",
+          "label": "endDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "searchAnalytics.query end YYYY-MM-DD inclusive.",
+          "children": []
+        },
+        {
+          "shortCode": "dimensions",
+          "label": "dimensions",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "date, query, page, country, device, searchAppearance, hour.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "web (default), image, video, news, discover, googleNews.",
+          "children": []
+        },
+        {
+          "shortCode": "rowLimit",
+          "label": "rowLimit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "1–25000; default 1000; cap 5000 in this node.",
+          "children": []
+        },
+        {
+          "shortCode": "startRow",
+          "label": "startRow",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Offset for searchAnalytics.query.",
+          "children": []
+        },
+        {
+          "shortCode": "dataState",
+          "label": "dataState",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "final (default), all, hourly_all.",
+          "children": []
+        },
+        {
+          "shortCode": "feedpath",
+          "label": "feedpath",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Full sitemap URL for sitemap.submit (path-encoded).",
+          "children": []
+        },
+        {
+          "shortCode": "sitemapIndex",
+          "label": "sitemapIndex",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional parent sitemap index when listing children.",
+          "children": []
+        },
+        {
+          "shortCode": "inspectionUrl",
+          "label": "inspectionUrl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Absolute URL for urlInspection.inspect. Must belong to siteUrl.",
+          "children": []
+        },
+        {
+          "shortCode": "languageCode",
+          "label": "languageCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional inspect language, e.g. en-US.",
+          "children": []
+        },
+        {
+          "shortCode": "dimensionFilterGroups",
+          "label": "dimensionFilterGroups",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "[{ groupType: \"and\", filters: [{ dimension, operator, expression }] }].",
+          "children": []
+        },
+        {
+          "shortCode": "aggregationType",
+          "label": "aggregationType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "auto, byPage, byProperty, byNewsShowcasePanel.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3eeaf94e-030a-49ac-9950-cd4d5e28dfd7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. HTTP 403 often means site not verified. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Search Analytics query strings can be personal — do not log row keys.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "7a9437d1-dc8e-4b5a-88a8-7834a2ce0b86",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank.",
+      "value": "site.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "site.list",
+        "site.add",
+        "searchAnalytics.query",
+        "sitemap.list",
+        "sitemap.submit",
+        "urlInspection.inspect"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "5aa05241-ee22-4472-ab7d-03e898a0b969",
+      "shortCode": "access_token",
+      "label": "OAuth access token",
+      "type": "password",
+      "description": "Google OAuth access token (StudioQuack secret). Scope https://www.googleapis.com/auth/webmasters.readonly or webmasters. Customer supplies a current token. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d7048a29-7c9e-4c1b-8ceb-7847afe343e1",
+      "shortCode": "siteUrl",
+      "label": "Site URL",
+      "type": "string",
+      "description": "Default property URL or sc-domain: when INPUT omits siteUrl.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "80d05129-7cac-46f1-bfaa-84caf1e98245",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 60 (searchAnalytics). Keep below the daemon invoke budget.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

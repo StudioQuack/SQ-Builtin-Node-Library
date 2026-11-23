@@ -1,0 +1,204 @@
+{
+  "_id": "834eb306-193c-4974-8a32-280990c6c427",
+  "version": "1.0.0",
+  "name": "VirusTotal",
+  "label": "VirusTotal API v3 — URL/file/IP/domain reputation",
+  "description": "Official VirusTotal API v3 via OfficialApiNode. Docs: https://docs.virustotal.com/reference/overview. scan-file uploads a platform file ref-id and shares the sample with VirusTotal (vendor analysis + Community). POST /files admits files up to 32MB; larger files need /files/upload_url (not in this node). Prefer get-file-report by hash. api_key is header x-apikey. Never log the key or file bytes.",
+  "icon": "security",
+  "tags": [
+    "threat-intel"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4b7871ff-f698-45e3-bbef-0d70ce906148",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path/query/body keys match api_spec.json.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "scan-url",
+          "description": "Overrides config operation when non-blank. EXACT: scan-url | scan-file | get-file-report | get-url-report | get-ip-report | get-domain-report | search.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL to scan. Required on scan-url. Example: https://example.com. https://docs.virustotal.com/reference/scan-url",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "File to scan. Required on scan-file. Platform file block. POST /files is multipart.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "File hash (MD5/SHA-1/SHA-256) or URL id for report ops.",
+          "children": []
+        },
+        {
+          "shortCode": "ip",
+          "label": "ip",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IPv4 or IPv6 for get-ip-report.",
+          "children": []
+        },
+        {
+          "shortCode": "domain",
+          "label": "domain",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "FQDN for get-domain-report. No scheme.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Public GET /search query (hash, URL, domain, IP, or comment tag). Not Premium intelligence search.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "181b13e6-6674-4c85-95bc-334c49854541",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c81b8256-3604-4b64-97df-af5ebf23aa55",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb when input.operation is blank.",
+      "value": "get-file-report",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "scan-url",
+        "scan-file",
+        "get-file-report",
+        "get-url-report",
+        "get-ip-report",
+        "get-domain-report",
+        "search"
+      ]
+    },
+    {
+      "_id": "b190bf3b-f605-44b4-9310-54c3d2894199",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "VirusTotal API key. Header x-apikey (empty prefix). StudioQuack secret. Never on INPUT or in logs.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8f98a335-26f8-4c04-aee8-57a5b8167113",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive; <=0 → 25. Use 120 for large scan-file.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

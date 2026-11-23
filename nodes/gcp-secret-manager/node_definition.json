@@ -1,0 +1,304 @@
+{
+  "_id": "b70ddff8-4d5a-4b28-9faf-28ffa3603840",
+  "version": "1.0.0",
+  "name": "GCP Secret Manager",
+  "label": "Google Secret Manager API v1",
+  "description": "Secret Manager API v1 via OfficialApiNode. Docs: https://cloud.google.com/secret-manager/docs/reference/rest. Operations: access-secret-version, add-secret-version, create-secret, get-secret, list-secrets, destroy-secret-version, delete-secret, listen. Auth secret access_token is instance config only (never on INPUT, never logged). GET/access operations still call the official GET (or access) HTTP method. Retrieved secret material must not be logged and should stay in StudioQuack secret bindings (bind OUTPUT `data` into a secret; do not print it, persist it in engine variables, or leave it on a logged edge). listen is kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only.",
+  "icon": "lock",
+  "tags": [
+    "secrets",
+    "gcp"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a323ae4e-36ad-43b8-b8d0-516e26c06382",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_token here. Path params match api_spec.json placeholders. Example: {\"operation\":\"access-secret-version\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "access-secret-version",
+          "description": "Which official API call to run. EXACT values: access-secret-version | add-secret-version | create-secret | get-secret | list-secrets | destroy-secret-version | delete-secret | listen. Prefer the instance config operation select. listen is ingress: no HTTP — use a BPMN message event. Example: 'access-secret-version'.",
+          "children": []
+        },
+        {
+          "shortCode": "secretId",
+          "label": "secretId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Secret id path segment (not the payload).",
+          "children": []
+        },
+        {
+          "shortCode": "version",
+          "label": "version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Version id or latest for access/destroy.",
+          "children": []
+        },
+        {
+          "shortCode": "payload",
+          "label": "payload",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Full SecretPayload escape hatch for add-secret-version: {data, dataCrc32c}. Used when INPUT data is empty. Official request.payload.",
+          "children": []
+        },
+        {
+          "shortCode": "replication",
+          "label": "replication",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "create-secret replication policy. Official: {\"automatic\":{}} or {\"userManaged\":{\"replicas\":[{\"location\":\"us-central1\"}]}}. Required by the API for create-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "labels",
+          "label": "labels",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "create-secret labels map. Example: {\"env\":\"prod\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "expireTime",
+          "label": "expireTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `expireTime` for operation: create-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "pageSize",
+          "label": "pageSize",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `pageSize` for operation: list-secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "pageToken",
+          "label": "pageToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `pageToken` for operation: list-secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `filter` for operation: list-secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "etag",
+          "label": "etag",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string/request-body parameter `etag` for operations: destroy-secret-version, delete-secret.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "password",
+          "required": false,
+          "value": "",
+          "description": "Secret bytes for add-secret-version, base64-encoded, max 64 KiB. Nested to payload.data. Official SecretPayload.data. Example: c2VjcmV0. Keep payload as the full SecretPayload object when you already have one.",
+          "children": []
+        },
+        {
+          "shortCode": "dataCrc32c",
+          "label": "dataCrc32c",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional CRC32C of the raw (not base64) secret bytes, decimal int64 string. Nested to payload.dataCrc32c. Example: 163439259.",
+          "children": []
+        },
+        {
+          "shortCode": "ttl",
+          "label": "ttl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-secret time-to-live duration (e.g. 86400s). Official Secret.ttl. Mutually exclusive with expireTime.",
+          "children": []
+        },
+        {
+          "shortCode": "annotations",
+          "label": "annotations",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "create-secret annotations map. Official Secret.annotations.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "3294b451-d2ec-4ee9-a982-e71d0702e8ff",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Secret bytes in data must not be logged; bind them into StudioQuack secrets. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON from the official API. May contain secret material — never log; bind into StudioQuack secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "20883a04-5398-4142-afd6-614c01a1558f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: access-secret-version, add-secret-version, create-secret, get-secret, list-secrets, destroy-secret-version, delete-secret, listen. listen is BPMN ingress, not a socket.",
+      "value": "access-secret-version",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "access-secret-version",
+        "add-secret-version",
+        "create-secret",
+        "get-secret",
+        "list-secrets",
+        "destroy-secret-version",
+        "delete-secret",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "0d5f0317-860b-4c85-ac38-0684a8e8c93b",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "OAuth 2.0 access token (cloud-platform scope). Sent as Authorization: Bearer. StudioQuack secret. Never logged. OfficialApiNode does not mint tokens from a service-account JSON.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "891cc2e0-c08c-48ec-a7d3-f77a8bc4aa38",
+      "shortCode": "projectId",
+      "label": "Project ID",
+      "type": "string",
+      "description": "GCP project id (path projects/{projectId}).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ccec5503-8901-4f17-8b64-8c4f778dd099",
+      "shortCode": "version",
+      "label": "Version",
+      "type": "string",
+      "description": "Default version id for access-secret-version. Default latest.",
+      "value": "latest",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e6be87b1-20e4-420b-9f7e-bd2a22d8341f",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon invoke budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,281 @@
+{
+  "_id": "8fe57d0b-2bfb-5f58-8d50-9e4ca6ba6d68",
+  "version": "1.0.0",
+  "name": "Narvar",
+  "label": "Narvar Hub Orders API v1 (enterprise)",
+  "description": "Enterprise/partner-gated. Default host api.narvar.com/api/v1 overridable via store_host path prefix. Basic account_id:api_key. return_create uses customer returns_path only — unverified public Returns URL.",
+  "icon": "assignment_return",
+  "tags": [
+    "narvar",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "48b80fd3-14b0-51cf-86f8-3227a4757d8c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "order_push",
+          "description": "Official API verb. EXACT: order_push | shipment_push | return_create. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "order_number",
+          "label": "order_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Narvar order number (primary id). Path for shipment_push; nested as order_info.order_number on order_push. Example: SO-1042.",
+          "children": []
+        },
+        {
+          "shortCode": "returns_path",
+          "label": "returns_path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer-specific returns path segment for return_create POST /{returns_path}. Not a public URL. Example: returns/v1/orders.",
+          "children": []
+        },
+        {
+          "shortCode": "order_info",
+          "label": "order_info",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Full official order_info object for order_push. Escape hatch when you already have the payload. Prefer the flat order_* fields. Example: {\"order_number\":\"SO-1042\",\"order_date\":\"2026-10-31\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "order_date",
+          "label": "order_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Order placement date for order_push (→ order_info.order_date). ISO date. Example: 2026-10-31.",
+          "children": []
+        },
+        {
+          "shortCode": "order_items",
+          "label": "order_items",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Order items for order_push (→ order_info.order_items). Official: [{sku, name, quantity, item_id, item_image}].",
+          "children": []
+        },
+        {
+          "shortCode": "shipments",
+          "label": "shipments",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Shipments array for order_push (→ order_info.shipments) and shipment_push. Official: [{carrier, tracking_number, ship_date, items_info, shipped_to}].",
+          "children": []
+        },
+        {
+          "shortCode": "billing",
+          "label": "billing",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Billing object for order_push (→ order_info.billing). Official: {amount, tax_amount}.",
+          "children": []
+        },
+        {
+          "shortCode": "customer",
+          "label": "customer",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Customer object for order_push (→ order_info.customer). Official: {first_name, last_name, email, phone, address}.",
+          "children": []
+        },
+        {
+          "shortCode": "carrier",
+          "label": "carrier",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "shipment_push carrier moniker when not wrapping a shipments array. EXACT common: ups | fedex | usps | lasership | ontrac. Prefer shipments.",
+          "children": []
+        },
+        {
+          "shortCode": "tracking_number",
+          "label": "tracking_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "shipment_push tracking number when not wrapping a shipments array. Example: 1Z999... Prefer shipments.",
+          "children": []
+        },
+        {
+          "shortCode": "ship_date",
+          "label": "ship_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "shipment_push ship date when not wrapping a shipments array. ISO date. Prefer shipments.",
+          "children": []
+        },
+        {
+          "shortCode": "items_info",
+          "label": "items_info",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "shipment_push items when not wrapping a shipments array. Official item shape: [{sku, quantity, item_id}]. Prefer shipments.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c3ce6d53-b104-56ec-9461-04291fd7285e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "bf8755bc-cb33-5972-9bf5-c0d47cfb89fa",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: order_push | shipment_push | return_create. trigger does not open a socket.",
+      "value": "order_push",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "order_push",
+        "shipment_push",
+        "return_create"
+      ]
+    },
+    {
+      "_id": "ad7ff09b-f25b-5edd-8141-c53fbf9f97ce",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type basic. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "16b87445-4a5b-5f6c-a829-bd655774a9d3",
+      "shortCode": "account_id",
+      "label": "Account Id",
+      "type": "string",
+      "description": "Auth username / companion key (account_id).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "67ff1699-13dc-5c13-b1d6-5da448196c7d",
+      "shortCode": "retailer_moniker",
+      "label": "Retailer Moniker",
+      "type": "string",
+      "description": "Hub retailer slug.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9ef861c1-3f7f-5f62-94bb-4ea4587a4e96",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

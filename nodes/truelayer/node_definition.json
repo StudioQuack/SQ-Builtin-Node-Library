@@ -1,0 +1,377 @@
+{
+  "_id": "0eb5f7dc-ab2a-41b5-b318-feb5c7bda529",
+  "version": "1.0.0",
+  "name": "TrueLayer",
+  "label": "TrueLayer — Payments API v3 + Data API v3",
+  "description": "Official TrueLayer Payments API v3 + Data API v3 (recommended for new data integrations; Data v1 remains documented separately). Docs: https://docs.truelayer.com/docs/enable-your-users-to-connect-their-bank-account. auth_link = POST /v3/data-connections. accounts_list = GET /v3/connected-accounts with Connection-Id. transactions_list = GET /v3/connected-accounts/{account_id}/transactions/requests/{request_id} (v3 is async; pass request_id from a prior create-request). Payments stay /v3/payments. UK only for Data v3. Consent receipts required. Verify Tl-Signature on BPMN ingress. Sandbox: api.truelayer-sandbox.com.",
+  "icon": "account_balance",
+  "tags": [
+    "truelayer",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "822a1e35-1d98-47df-983c-481d38cb6329",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for TrueLayer. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "auth_link",
+          "description": "Overrides config operation. EXACT: auth_link | accounts_list | transactions_list | payment_create | payment_get | trigger. Data ops are Data API v3. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id when the path uses {id}.",
+          "children": []
+        },
+        {
+          "shortCode": "connection_id",
+          "label": "Connection Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Data API v3 Connection-Id header. Overrides config connection_id for accounts_list / transactions_list.",
+          "children": []
+        },
+        {
+          "shortCode": "request_id",
+          "label": "Request Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Data API v3 transactions request id. Required for transactions_list GET .../transactions/requests/{request_id}.",
+          "children": []
+        },
+        {
+          "shortCode": "account_id",
+          "label": "Account Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Connected-account id for transactions_list path {account_id}.",
+          "children": []
+        },
+        {
+          "shortCode": "user",
+          "label": "user",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Data API v3 user {id} for auth_link POST /v3/data-connections. Example: {\"id\":\"user-123\"}. https://docs.truelayer.com/docs/create-a-data-connection",
+          "children": []
+        },
+        {
+          "shortCode": "user_consent",
+          "label": "user_consent",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "auth_link user_consent {agreed, timestamp}. Example: {\"agreed\":true}.",
+          "children": []
+        },
+        {
+          "shortCode": "hosted_page",
+          "label": "hosted_page",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "auth_link hosted_page {return_uri, language}. Example: {\"return_uri\":\"https://example.com/cb\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "authorization_flow",
+          "label": "authorization_flow",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "auth_link authorization_flow {provider_selection, redirect}. Official Data Connections body.",
+          "children": []
+        },
+        {
+          "shortCode": "provider_selection",
+          "label": "provider_selection",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "auth_link provider_selection {type, filter}. Example: {\"type\":\"user_selected\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "data_access_type",
+          "label": "data_access_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "auth_link. EXACT: ONETIME | RECURRING. Example: ONETIME.",
+          "children": []
+        },
+        {
+          "shortCode": "scopes",
+          "label": "scopes",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "auth_link scopes. Example: [\"accounts\",\"transactions\",\"balance\"].",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `cursor` for operation: accounts_list.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `type` for operation: accounts_list.",
+          "children": []
+        },
+        {
+          "shortCode": "amount_in_minor",
+          "label": "amount_in_minor",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "payment_create amount in minor units. Example: 100 = 1.00 GBP.",
+          "children": []
+        },
+        {
+          "shortCode": "currency",
+          "label": "currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create ISO 4217. Example: GBP.",
+          "children": []
+        },
+        {
+          "shortCode": "payment_method",
+          "label": "payment_method",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "payment_create payment_method {type, provider_selection, beneficiary}. Required. https://docs.truelayer.com/docs/create-a-payment",
+          "children": []
+        },
+        {
+          "shortCode": "signing_key_id",
+          "label": "signing_key_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "KID for Tl-Signature on Payments v3 POSTs. Example: key-id-from-console.",
+          "children": []
+        },
+        {
+          "shortCode": "signing_private_key",
+          "label": "signing_private_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ES512 private key PEM used to sign Payments v3 POSTs (Tl-Signature). Prefer config secret. Example: -----BEGIN EC PRIVATE KEY-----…",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "environment",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "API host environment. EXACT: sandbox | production. sandbox→api.truelayer-sandbox.com; production→api.truelayer.com. Example: sandbox.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "98ab974b-05a7-4944-90e5-50bb82ec4e91",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "72b8faf8-d22d-4f45-919f-ed272a816569",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: auth_link | accounts_list | transactions_list | payment_create | payment_get | trigger. Default auth_link = POST /v3/data-connections. Data list ops require config/input connection_id (Connection-Id header). operation=trigger is kind:ingress — it does not open a socket.",
+      "value": "auth_link",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "auth_link",
+        "accounts_list",
+        "transactions_list",
+        "payment_create",
+        "payment_get",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "643c7a88-5fe9-46d6-9b33-721a6ae3890d",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "TrueLayer bearer access token minted outside StudioQuack (Console client_id/client_secret). Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "27f62092-7f07-466b-9932-47a794427120",
+      "shortCode": "signing_key_id",
+      "label": "Signing Key Id",
+      "type": "string",
+      "description": "KID required in Tl-Signature for Payments v3. From TrueLayer Console signing keys.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "66fbf255-1525-4afa-9edc-58d8968db652",
+      "shortCode": "signing_private_key",
+      "label": "Signing Private Key",
+      "type": "password",
+      "description": "ES512 private key to sign all Payments v3 POSTs (Tl-Signature). Never log.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "73e39bde-f119-4afd-a98a-9e16ddffba9c",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "api.truelayer-sandbox.com (sandbox) vs api.truelayer.com (production). Select host environment; set matching access_token.",
+      "value": "production",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "sandbox",
+        "production"
+      ]
+    },
+    {
+      "_id": "380af3e6-dc84-4046-b61f-358749f7e7e0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "70c555d2-01b7-42be-892b-c9d0523c9723",
+      "shortCode": "connection_id",
+      "label": "Connection Id",
+      "type": "string",
+      "description": "Data API v3 Connection-Id header. Returned by POST /v3/data-connections after the user authorises. Required for accounts_list and transactions_list. Overridable on INPUT.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

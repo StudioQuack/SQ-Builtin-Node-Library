@@ -1,0 +1,764 @@
+{
+  "_id": "941e1208-4304-4069-a0f4-5d7c0c1f3444",
+  "version": "1.0.0",
+  "name": "Ollama",
+  "label": "Ollama",
+  "description": "Official Ollama native HTTP API on the customer host (INPUT llm_input → OUTPUT llm_output). Default base http://127.0.0.1:11434. operation selects chat (POST /api/chat), generate (POST /api/generate), embed (POST /api/embed), list_models (GET /api/tags), or pull (POST /api/pull). Optional api_key (Bearer) when the operator enabled auth; local loopback needs none. Dedicated node for native extras (list/pull/embed/generate) — not a replacement for shipped Local LLM chat. Customer-host only; do not point at ollama.com. Docs: https://docs.ollama.com/api/introduction. File/image use type file. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "ollama",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "431ba271-f3f2-4722-a8d4-9abb4ef9499b",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request / native Ollama fields. Shape: {messages, prompt?, input?, model?, tools?, stream?, file?}. Image sources use type file (platform ref-id). Do not put api_key here. Send stream=false so OfficialApiNode can parse a single JSON object.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "chat",
+          "description": "Which official call to run. EXACT: chat | generate | embed | list_models | pull. Example: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Chat messages for operation=chat. List of {role, content}. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prompt for operation=generate (POST /api/generate). Required for generate.",
+          "children": []
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "String or string[] for operation=embed (POST /api/embed). Required for embed.",
+          "children": []
+        },
+        {
+          "shortCode": "model",
+          "label": "model",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Local model name (e.g. llama3.1). Required for pull; required at runtime for chat/generate/embed. Overrides config when set.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for multimodal generate/chat images. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tools` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "format",
+          "label": "format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `format` for operations: chat, generate.",
+          "children": []
+        },
+        {
+          "shortCode": "options",
+          "label": "options",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `options` for operations: chat, generate, embed.",
+          "children": []
+        },
+        {
+          "shortCode": "think",
+          "label": "think",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `think` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "keep_alive",
+          "label": "keep_alive",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `keep_alive` for operations: chat, generate, embed.",
+          "children": []
+        },
+        {
+          "shortCode": "suffix",
+          "label": "suffix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `suffix` for operation: generate.",
+          "children": []
+        },
+        {
+          "shortCode": "images",
+          "label": "images",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `images` for operation: generate.",
+          "children": []
+        },
+        {
+          "shortCode": "system",
+          "label": "system",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `system` for operation: generate.",
+          "children": []
+        },
+        {
+          "shortCode": "raw",
+          "label": "raw",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `raw` for operation: generate.",
+          "children": []
+        },
+        {
+          "shortCode": "truncate",
+          "label": "truncate",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `truncate` for operation: embed.",
+          "children": []
+        },
+        {
+          "shortCode": "insecure",
+          "label": "insecure",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `insecure` for operation: pull.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "1f60cbfa-2f26-4224-baae-6b67ad36169b",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Ollama JSON (chat message, generate response, embeddings, tags list, or pull status).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a78d3772-bd87-436b-9e12-0f0d2360c067",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Ollama native verb. EXACT values: chat | generate | embed | list_models | pull. Default chat = POST /api/chat.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "generate",
+        "embed",
+        "list_models",
+        "pull"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "chat",
+          "targets": [
+            {
+              "param": "model",
+              "visible": true
+            },
+            {
+              "param": "messages",
+              "visible": true
+            },
+            {
+              "param": "format",
+              "visible": true
+            },
+            {
+              "param": "think",
+              "visible": true
+            },
+            {
+              "param": "options",
+              "visible": true
+            },
+            {
+              "param": "tools",
+              "visible": true
+            },
+            {
+              "param": "keep_alive",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "generate",
+          "targets": [
+            {
+              "param": "model",
+              "visible": true
+            },
+            {
+              "param": "format",
+              "visible": true
+            },
+            {
+              "param": "options",
+              "visible": true
+            },
+            {
+              "param": "keep_alive",
+              "visible": true
+            },
+            {
+              "param": "raw",
+              "visible": true
+            },
+            {
+              "param": "suffix",
+              "visible": true
+            },
+            {
+              "param": "system",
+              "visible": true
+            },
+            {
+              "param": "images",
+              "visible": true
+            },
+            {
+              "param": "prompt",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "embed",
+          "targets": [
+            {
+              "param": "model",
+              "visible": true
+            },
+            {
+              "param": "options",
+              "visible": true
+            },
+            {
+              "param": "keep_alive",
+              "visible": true
+            },
+            {
+              "param": "input",
+              "visible": true
+            },
+            {
+              "param": "truncate",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "pull",
+          "targets": [
+            {
+              "param": "model",
+              "visible": true
+            },
+            {
+              "param": "insecure",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "47c83920-4c24-4e82-a997-8d4c16940840",
+      "shortCode": "base_url",
+      "label": "Base URL",
+      "type": "string",
+      "description": "Customer-host Ollama origin, no path suffix. Default http://127.0.0.1:11434. Interpolated as api_spec baseUrl. Do not use https://ollama.com (cloud is out of scope).",
+      "value": "http://127.0.0.1:11434",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b72ed3ce-40b7-422f-bb99-9433c2b7c240",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Optional Bearer token if the operator enabled Ollama API auth. Local 127.0.0.1:11434 needs none. Sent as Authorization: Bearer when set; omitted when blank. StudioQuack secret. Never logged. Never on INPUT.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7cab8f7f-a192-47a6-b4ab-a20c3ba8c6de",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Local model name already pulled (or to pull). Example llama3.1. Also send on llm_input so OfficialApiNode includes it in the JSON body.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "37466021-b258-47b7-8b06-deda5434e617",
+      "shortCode": "messages",
+      "label": "Messages",
+      "type": "object",
+      "description": "Chat messages for operation=chat. List of {role, content}. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e91f74a2-5887-44f1-a0b3-abb00a701d19",
+      "shortCode": "format",
+      "label": "Format",
+      "type": "string",
+      "description": "Request-body parameter `format` for operations: chat, generate.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "47b50d68-5a63-4235-b429-791e0b6cb065",
+      "shortCode": "think",
+      "label": "Think",
+      "type": "string",
+      "description": "Request-body parameter `think` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "76c8bb7f-ba1a-408e-85ef-f389d8400a00",
+      "shortCode": "options",
+      "label": "Options",
+      "type": "object",
+      "description": "Request-body parameter `options` for operations: chat, generate, embed.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "584907ab-fc29-457b-a587-4095f73cad9d",
+      "shortCode": "tools",
+      "label": "Tools",
+      "type": "list",
+      "description": "Request-body parameter `tools` for operation: chat.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "00a8a6d1-f44f-405d-8e67-206ec876db49",
+      "shortCode": "keep_alive",
+      "label": "Keep Alive",
+      "type": "string",
+      "description": "Request-body parameter `keep_alive` for operations: chat, generate, embed.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ede028f8-d3d3-4b4f-aff9-54ed88bf92fe",
+      "shortCode": "raw",
+      "label": "Raw",
+      "type": "string",
+      "description": "Request-body parameter `raw` for operation: generate.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d4c267e5-40a9-4d66-a5e8-18197cb01708",
+      "shortCode": "suffix",
+      "label": "Suffix",
+      "type": "string",
+      "description": "Request-body parameter `suffix` for operation: generate.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "963f5102-1872-4bde-8cc8-368b96aa2116",
+      "shortCode": "system",
+      "label": "System",
+      "type": "list",
+      "description": "Request-body parameter `system` for operation: generate.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6940c7dd-bf39-4e66-bc27-d5e89d991d60",
+      "shortCode": "images",
+      "label": "Images",
+      "type": "string",
+      "description": "Request-body parameter `images` for operation: generate.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7b8063cc-e7d4-4d79-9b5f-4ebec64cccd0",
+      "shortCode": "prompt",
+      "label": "Prompt",
+      "type": "string",
+      "description": "Prompt for operation=generate (POST /api/generate). Required for generate.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9bbc7192-bacf-4e01-9885-608107e13f9a",
+      "shortCode": "input",
+      "label": "Input",
+      "type": "string",
+      "description": "String or string[] for operation=embed (POST /api/embed). Required for embed.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8c23e817-2e81-45b6-82bc-5205f9a03d4b",
+      "shortCode": "truncate",
+      "label": "Truncate",
+      "type": "number",
+      "description": "Request-body parameter `truncate` for operation: embed.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "78e8a3fb-9397-474b-888d-03befcaf3e0f",
+      "shortCode": "insecure",
+      "label": "Insecure",
+      "type": "string",
+      "description": "Request-body parameter `insecure` for operation: pull.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3a233112-bf5d-4aeb-8e05-65431ed481ee",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Raise for pull of large weights. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0ee0faa6-944c-442e-9203-395276b94fb1",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether Ollama requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

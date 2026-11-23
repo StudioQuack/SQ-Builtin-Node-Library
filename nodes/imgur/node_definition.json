@@ -1,0 +1,268 @@
+{
+  "_id": "39524c78-1990-4206-aac5-0cdb2e23adac",
+  "version": "1.0.0",
+  "name": "Imgur",
+  "label": "Imgur API v3",
+  "description": "Official Imgur API v3. Client-ID header for anonymous. image_upload accepts an image URL (not multipart file — OfficialApiNode JSON/URL). image_get, album_get, gallery_search. Commercial use requires RapidAPI routing per Imgur docs.",
+  "icon": "image",
+  "tags": [
+    "imgur",
+    "news"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c81a3f8b-4dca-4f6b-aec4-dc5a63fb30b3",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-invoke fields for Imgur. Do not put secrets here. Example: {\"operation\":\"image_upload\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "image_upload",
+          "description": "Overrides config operation. EXACT: image_upload | image_get | album_get | gallery_search. Example: 'image_upload'.",
+          "children": []
+        },
+        {
+          "shortCode": "image",
+          "label": "image",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "image_upload REQUIRED. HTTPS image URL (not inline bytes). Example: https://example.com/pic.png.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "url when sending a URL. Example: url.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional title. Example: diagram.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional description.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "image_get / album_get REQUIRED. Example: abc123.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "gallery_search REQUIRED. Example: cats.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "time | viral | top. Default via path. Example: time.",
+          "children": []
+        },
+        {
+          "shortCode": "window",
+          "label": "window",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "day | week | month | year | all. Example: week.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Page index. Example: 0.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "152e1d2d-1d66-4de4-baa0-ee056a1e97e5",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data} on 2xx. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT: 'ok'. Absent on failure. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status from the provider. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). OfficialApiNode places the provider payload here. Example: provider object.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "006d3ebe-a43a-49dc-a5ca-2753f58ec4db",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: image_upload | image_get | album_get | gallery_search. Example: 'image_upload'.",
+      "value": "image_upload",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "image_upload",
+        "image_get",
+        "album_get",
+        "gallery_search"
+      ]
+    },
+    {
+      "_id": "ea08ec10-e3be-448f-9b2f-7e80c282fe04",
+      "shortCode": "client_id",
+      "label": "Client Id",
+      "type": "password",
+      "description": "Imgur client_id. Header Authorization: Client-ID. Free tier non-commercial. Commercial: RapidAPI https://apidocs.imgur.com/",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7c2a91e4-0d55-4b1a-9f3e-2b8c1d4e6a70",
+      "shortCode": "sort",
+      "label": "Gallery sort",
+      "type": "string",
+      "description": "Path default for gallery_search. EXACT: time | viral | top. Overridable from input.sort. Example: time.",
+      "value": "time",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8d3b02f5-1e66-4c2b-a04f-3c9d2e5f7b81",
+      "shortCode": "window",
+      "label": "Gallery window",
+      "type": "string",
+      "description": "Path default for gallery_search when sort=top. EXACT: day | week | month | year | all. Overridable from input.window. Example: all.",
+      "value": "all",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9e4c13a6-2f77-4d3c-b15a-4dae3f608c92",
+      "shortCode": "page",
+      "label": "Gallery page",
+      "type": "number",
+      "description": "Path default for gallery_search. 0-based page. Overridable from input.page. Example: 0.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1f3e368f-d7ba-4a68-ab3f-85a60c0e9f5c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. <=0 falls back to 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

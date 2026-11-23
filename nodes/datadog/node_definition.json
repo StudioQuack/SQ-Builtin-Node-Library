@@ -1,0 +1,1398 @@
+{
+  "_id": "a8d52591-498b-4cfa-81da-b5a7c490fd28",
+  "version": "1.0.0",
+  "name": "Datadog",
+  "label": "Datadog HTTP API",
+  "description": "Datadog HTTP API via OfficialApiNode. Docs: https://docs.datadoghq.com/api/latest/. Host https://api.{site} (config site, default datadoghq.com). Auth: DD-API-KEY (api_key) and DD-APPLICATION-KEY (app_key). downtime_schedule and incident_create take purpose-oriented JSON:API fields (scope, title, customer_impacted, …) nested via bodyMap; `data` remains an escape hatch. listen is kind:ingress — use a BPMN message event.",
+  "icon": "hub",
+  "tags": [
+    "datadog",
+    "metrics",
+    "monitors"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "cd632f16-e630-4bd2-ba42-ad5b0eec145a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. downtime_schedule takes scope/message/monitor_id/monitor_tags/schedule. incident_create takes title/customer_impacted/fields. Do not put api_key or app_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which official Datadog call to run. EXACT: metric_submit | event_post | monitor_get | monitor_list | monitor_mute | downtime_schedule | incident_create | incident_get | log_search | listen. monitor_mute is deprecated; prefer downtime_schedule. listen is ingress (BPMN message event). Example: event_post.",
+          "children": []
+        },
+        {
+          "shortCode": "monitor_id",
+          "label": "monitor_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Monitor id. Path for monitor_get / monitor_mute. downtime_schedule: nests as data.attributes.monitor_identifier.monitor_id (alternative to monitor_tags). Example: 123456.",
+          "children": []
+        },
+        {
+          "shortCode": "incident_id",
+          "label": "incident_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Incident UUID for incident_get path. Example: 00000000-0000-0000-0000-000000000000.",
+          "children": []
+        },
+        {
+          "shortCode": "series",
+          "label": "series",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "metric_submit official v2 body `series`: list of {metric, type, points[[ts,value]], tags, resources}. Docs: https://docs.datadoghq.com/api/latest/metrics/ Example: [{\"metric\":\"app.latency\",\"type\":3,\"points\":[[1710000000,12]]}].",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "event_post: event title (required). incident_create: data.attributes.title (required). Example: Checkout 5xx spike.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "event_post body `text` (required). Event message body. Example: p95 latency 2.4s.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "event_post body `tags` (comma-separated or JSON array). monitor_list query `tags`. Example: env:prod,service:checkout.",
+          "children": []
+        },
+        {
+          "shortCode": "alert_type",
+          "label": "alert_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "event_post body `alert_type`. EXACT: error | warning | info | success | user_update | recommendation | snapshot. Example: error.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "monitor_list query `name` filter (substring). Example: checkout latency.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "monitor_list query `page` (0-based). log_search: page object or cursor size via body. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "monitor_list query `page_size` (1–100). Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JSON:API `data` envelope escape hatch for downtime_schedule and incident_create. Purpose fields merge into data.attributes / data.relationships via bodyMap and win on conflict.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Log search filter envelope escape hatch for log_search. Purpose fields query/from/to merge as filter.* via bodyMap.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "log_search body `sort`. Example: -timestamp.",
+          "children": []
+        },
+        {
+          "shortCode": "date_happened",
+          "label": "date_happened",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "event_post body `date_happened`: POSIX seconds. Defaults to now. Example: 1710000000.",
+          "children": []
+        },
+        {
+          "shortCode": "priority",
+          "label": "priority",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "event_post body `priority`. EXACT: normal | low. Example: normal.",
+          "children": []
+        },
+        {
+          "shortCode": "host",
+          "label": "host",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "event_post body `host` associated with the event. Example: i-0abc.",
+          "children": []
+        },
+        {
+          "shortCode": "aggregation_key",
+          "label": "aggregation_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "event_post body `aggregation_key` to group events. Max 100 chars.",
+          "children": []
+        },
+        {
+          "shortCode": "source_type_name",
+          "label": "source_type_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "event_post body `source_type_name`. Example: my_apps.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "JSON:API resource type nested at data.type. downtime_schedule: downtime. incident_create: incidents. Example: downtime.",
+          "children": []
+        },
+        {
+          "shortCode": "scope",
+          "label": "scope",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "downtime_schedule required data.attributes.scope (monitor search syntax). Example: env:prod.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "downtime_schedule data.attributes.message (supports @handles). Example: overnight deploy.",
+          "children": []
+        },
+        {
+          "shortCode": "monitor_tags",
+          "label": "monitor_tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "downtime_schedule data.attributes.monitor_identifier.monitor_tags. Use [\"*\"] to mute all monitors in scope. Example: [\"*\"].",
+          "children": []
+        },
+        {
+          "shortCode": "display_timezone",
+          "label": "display_timezone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "downtime_schedule data.attributes.display_timezone (IANA). Example: America/New_York.",
+          "children": []
+        },
+        {
+          "shortCode": "mute_first_recovery_notification",
+          "label": "mute_first_recovery_notification",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "downtime_schedule data.attributes.mute_first_recovery_notification. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "notify_end_states",
+          "label": "notify_end_states",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "downtime_schedule data.attributes.notify_end_states. EXACT values: alert | warn | no data. Example: [\"alert\",\"warn\"].",
+          "children": []
+        },
+        {
+          "shortCode": "notify_end_types",
+          "label": "notify_end_types",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "downtime_schedule data.attributes.notify_end_types. EXACT: expired | canceled. Example: [\"expired\"].",
+          "children": []
+        },
+        {
+          "shortCode": "start",
+          "label": "start",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "downtime_schedule one-time schedule.start (ISO-8601 with UTC offset +00:00). Example: 2026-11-01T00:00:00+00:00.",
+          "children": []
+        },
+        {
+          "shortCode": "end",
+          "label": "end",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "downtime_schedule one-time schedule.end (ISO-8601 +00:00). monitor_mute body `end` is POSIX seconds. Example: 2026-11-01T06:00:00+00:00.",
+          "children": []
+        },
+        {
+          "shortCode": "timezone",
+          "label": "timezone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "downtime_schedule schedule.timezone for recurring downtimes (IANA). Example: Europe/Berlin.",
+          "children": []
+        },
+        {
+          "shortCode": "recurrences",
+          "label": "recurrences",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "downtime_schedule schedule.recurrences: [{start, duration, rrule}]. duration like 24h; rrule e.g. FREQ=WEEKLY;BYDAY=SA,SU.",
+          "children": []
+        },
+        {
+          "shortCode": "customer_impacted",
+          "label": "customer_impacted",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "incident_create required data.attributes.customer_impacted. If true, set customer_impact_scope. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "customer_impact_scope",
+          "label": "customer_impact_scope",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "incident_create data.attributes.customer_impact_scope. Required when customer_impacted is true.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "incident_create data.attributes.fields: map of field name → {type, value}. Types: dropdown | textbox | multiselect | textarray | metrictag | autocomplete.",
+          "children": []
+        },
+        {
+          "shortCode": "incident_type_uuid",
+          "label": "incident_type_uuid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "incident_create data.attributes.incident_type_uuid. Default type used when empty.",
+          "children": []
+        },
+        {
+          "shortCode": "initial_cells",
+          "label": "initial_cells",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "incident_create data.attributes.initial_cells (markdown timeline cells).",
+          "children": []
+        },
+        {
+          "shortCode": "is_test",
+          "label": "is_test",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "incident_create data.attributes.is_test. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "notification_handles",
+          "label": "notification_handles",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "incident_create data.attributes.notification_handles: [{handle, display_name}].",
+          "children": []
+        },
+        {
+          "shortCode": "commander_user_id",
+          "label": "commander_user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "incident_create data.relationships.commander_user.data.id (Datadog user id).",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "log_search filter.query. Datadog log query syntax. Example: service:api status:error.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "log_search filter.from. ISO-8601 or now-15m. Example: now-1h.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "log_search filter.to. ISO-8601 or now. Example: now.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "261bc875-5d93-417b-a501-3fb1752062af",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "571be5a0-ffc5-46fe-9805-28950e9c0094",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: metric_submit, event_post, monitor_get, monitor_list, monitor_mute, downtime_schedule, incident_create, incident_get, log_search, listen. monitor_mute is deprecated (prefer downtime_schedule / v2 downtimes). listen is BPMN ingress, not a socket.",
+      "value": "metric_submit",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "metric_submit",
+        "event_post",
+        "monitor_get",
+        "monitor_list",
+        "monitor_mute",
+        "downtime_schedule",
+        "incident_create",
+        "incident_get",
+        "log_search",
+        "listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "metric_submit",
+          "targets": [
+            {
+              "param": "app_key",
+              "visible": true
+            },
+            {
+              "param": "site",
+              "visible": true
+            },
+            {
+              "param": "series",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "event_post",
+          "targets": [
+            {
+              "param": "app_key",
+              "visible": true
+            },
+            {
+              "param": "site",
+              "visible": true
+            },
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "source_type_name",
+              "visible": true
+            },
+            {
+              "param": "aggregation_key",
+              "visible": true
+            },
+            {
+              "param": "priority",
+              "visible": true
+            },
+            {
+              "param": "title",
+              "visible": true
+            },
+            {
+              "param": "host",
+              "visible": true
+            },
+            {
+              "param": "date_happened",
+              "visible": true
+            },
+            {
+              "param": "alert_type",
+              "visible": true
+            },
+            {
+              "param": "text",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "monitor_get",
+          "targets": [
+            {
+              "param": "app_key",
+              "visible": true
+            },
+            {
+              "param": "site",
+              "visible": true
+            },
+            {
+              "param": "monitor_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "monitor_list",
+          "targets": [
+            {
+              "param": "app_key",
+              "visible": true
+            },
+            {
+              "param": "site",
+              "visible": true
+            },
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "page_size",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "monitor_mute",
+          "targets": [
+            {
+              "param": "app_key",
+              "visible": true
+            },
+            {
+              "param": "site",
+              "visible": true
+            },
+            {
+              "param": "monitor_id",
+              "visible": true
+            },
+            {
+              "param": "end",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "downtime_schedule",
+          "targets": [
+            {
+              "param": "app_key",
+              "visible": true
+            },
+            {
+              "param": "site",
+              "visible": true
+            },
+            {
+              "param": "monitor_id",
+              "visible": true
+            },
+            {
+              "param": "end",
+              "visible": true
+            },
+            {
+              "param": "monitor_tags",
+              "visible": true
+            },
+            {
+              "param": "message",
+              "visible": true
+            },
+            {
+              "param": "display_timezone",
+              "visible": true
+            },
+            {
+              "param": "timezone",
+              "visible": true
+            },
+            {
+              "param": "scope",
+              "visible": true
+            },
+            {
+              "param": "recurrences",
+              "visible": true
+            },
+            {
+              "param": "notify_end_types",
+              "visible": true
+            },
+            {
+              "param": "start",
+              "visible": true
+            },
+            {
+              "param": "notify_end_states",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "mute_first_recovery_notification",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "incident_create",
+          "targets": [
+            {
+              "param": "app_key",
+              "visible": true
+            },
+            {
+              "param": "site",
+              "visible": true
+            },
+            {
+              "param": "title",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "notification_handles",
+              "visible": true
+            },
+            {
+              "param": "incident_type_uuid",
+              "visible": true
+            },
+            {
+              "param": "customer_impacted",
+              "visible": true
+            },
+            {
+              "param": "customer_impact_scope",
+              "visible": true
+            },
+            {
+              "param": "initial_cells",
+              "visible": true
+            },
+            {
+              "param": "is_test",
+              "visible": true
+            },
+            {
+              "param": "commander_user_id",
+              "visible": true
+            },
+            {
+              "param": "fields",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "incident_get",
+          "targets": [
+            {
+              "param": "app_key",
+              "visible": true
+            },
+            {
+              "param": "site",
+              "visible": true
+            },
+            {
+              "param": "incident_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "log_search",
+          "targets": [
+            {
+              "param": "app_key",
+              "visible": true
+            },
+            {
+              "param": "site",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            },
+            {
+              "param": "sort",
+              "visible": true
+            },
+            {
+              "param": "to",
+              "visible": true
+            },
+            {
+              "param": "from",
+              "visible": true
+            },
+            {
+              "param": "query",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "e3454712-6ef2-4bde-a820-bb78c68353bc",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Datadog API key (DD-API-KEY). Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4d9fb23c-470c-43ed-8631-573145a38980",
+      "shortCode": "app_key",
+      "label": "Application Key",
+      "type": "password",
+      "description": "Datadog application key (DD-APPLICATION-KEY). Sent via extraHeaders when set; omitted if blank. Required for most read/management endpoints. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a9df147d-f425-4bd8-baa5-c0369016c913",
+      "shortCode": "site",
+      "label": "Site",
+      "type": "string",
+      "description": "Datadog site host suffix interpolated as https://api.{site}. US: datadoghq.com. EU: datadoghq.eu. Also us3.datadoghq.com, us5.datadoghq.com, ap1.datadoghq.com, datadoghq.eu.",
+      "value": "datadoghq.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "30a99811-6f88-4af0-b0f7-b3d4de168f38",
+      "shortCode": "series",
+      "label": "Series",
+      "type": "list",
+      "description": "metric_submit official v2 body `series`: list of {metric, type, points[[ts,value]], tags, resources}. Docs: https://docs.datadoghq.com/api/latest/metrics/ Example: [{\"metric\":\"app.latency\",\"type\":3,\"points\":[[1710000000,12]]}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bdff95c7-8430-489d-935a-ac8f1345fb30",
+      "shortCode": "tags",
+      "label": "Tags",
+      "type": "string",
+      "description": "event_post body `tags` (comma-separated or JSON array). monitor_list query `tags`. Example: env:prod,service:checkout.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5c8a4b0c-fd18-4b94-ab72-12dbf1dce600",
+      "shortCode": "source_type_name",
+      "label": "Source Type Name",
+      "type": "string",
+      "description": "event_post body `source_type_name`. Example: my_apps.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "93042884-b8a0-45e2-835e-182912d2b9b4",
+      "shortCode": "aggregation_key",
+      "label": "Aggregation Key",
+      "type": "string",
+      "description": "event_post body `aggregation_key` to group events. Max 100 chars.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "94ea4a71-efec-4940-b73b-8fcc66710c72",
+      "shortCode": "priority",
+      "label": "Priority",
+      "type": "string",
+      "description": "event_post body `priority`. EXACT: normal | low. Example: normal.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c93706cd-cbc3-4624-be62-2add8769555c",
+      "shortCode": "title",
+      "label": "Title",
+      "type": "string",
+      "description": "event_post: event title (required). incident_create: data.attributes.title (required). Example: Checkout 5xx spike.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e80a0b50-20d8-4c32-b177-e681e9105e7b",
+      "shortCode": "host",
+      "label": "Host",
+      "type": "string",
+      "description": "event_post body `host` associated with the event. Example: i-0abc.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ba8a8180-390f-48ef-9541-0eda9cd24989",
+      "shortCode": "date_happened",
+      "label": "Date Happened",
+      "type": "number",
+      "description": "event_post body `date_happened`: POSIX seconds. Defaults to now. Example: 1710000000.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "86194de4-7099-4c5c-a44a-1b1c31c14740",
+      "shortCode": "alert_type",
+      "label": "Alert Type",
+      "type": "string",
+      "description": "event_post body `alert_type`. EXACT: error | warning | info | success | user_update | recommendation | snapshot. Example: error.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c1ffe28f-45cc-4a7d-bec0-ef79eac38735",
+      "shortCode": "text",
+      "label": "Text",
+      "type": "string",
+      "description": "event_post body `text` (required). Event message body. Example: p95 latency 2.4s.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cbd01e1b-4f39-4e30-8f3b-8aa289207c42",
+      "shortCode": "monitor_id",
+      "label": "Monitor ID",
+      "type": "string",
+      "description": "Monitor id. Path for monitor_get / monitor_mute. downtime_schedule: nests as data.attributes.monitor_identifier.monitor_id (alternative to monitor_tags). Example: 123456.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ecc1bca8-3bc9-46ed-a82f-57f93ecae6f6",
+      "shortCode": "page",
+      "label": "Page",
+      "type": "number",
+      "description": "monitor_list query `page` (0-based). log_search: page object or cursor size via body. Example: 0.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8ea08024-4345-4367-840f-9ecad3e6698c",
+      "shortCode": "name",
+      "label": "Name",
+      "type": "string",
+      "description": "monitor_list query `name` filter (substring). Example: checkout latency.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "47f21e28-60ef-4e9b-b216-5fd655fc611b",
+      "shortCode": "page_size",
+      "label": "Page Size",
+      "type": "number",
+      "description": "monitor_list query `page_size` (1–100). Example: 20.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c767e52a-cf53-40f3-a4c2-4dfe556c1d04",
+      "shortCode": "end",
+      "label": "End",
+      "type": "string",
+      "description": "downtime_schedule one-time schedule.end (ISO-8601 +00:00). monitor_mute body `end` is POSIX seconds. Example: 2026-11-01T06:00:00+00:00.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "150fcebe-d509-41ca-8736-833d7898a637",
+      "shortCode": "monitor_tags",
+      "label": "Monitor Tags",
+      "type": "list",
+      "description": "downtime_schedule data.attributes.monitor_identifier.monitor_tags. Use [\"*\"] to mute all monitors in scope. Example: [\"*\"].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b93fc2f3-1f1a-436a-9179-86d8d9cb9e9f",
+      "shortCode": "message",
+      "label": "Message",
+      "type": "string",
+      "description": "downtime_schedule data.attributes.message (supports @handles). Example: overnight deploy.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d871c54e-1d09-4c42-9faf-f96b8c573ff4",
+      "shortCode": "display_timezone",
+      "label": "Display Timezone",
+      "type": "string",
+      "description": "downtime_schedule data.attributes.display_timezone (IANA). Example: America/New_York.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b7364bfb-b24f-4c7a-a11b-f4e666f0bb47",
+      "shortCode": "timezone",
+      "label": "Timezone",
+      "type": "string",
+      "description": "downtime_schedule schedule.timezone for recurring downtimes (IANA). Example: Europe/Berlin.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8efb064f-ee6b-45ba-be43-6f2bfbf7ae6a",
+      "shortCode": "scope",
+      "label": "Scope",
+      "type": "string",
+      "description": "downtime_schedule required data.attributes.scope (monitor search syntax). Example: env:prod.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8309302b-facb-4620-b5d3-a4f1b4b00c0d",
+      "shortCode": "recurrences",
+      "label": "Recurrences",
+      "type": "list",
+      "description": "downtime_schedule schedule.recurrences: [{start, duration, rrule}]. duration like 24h; rrule e.g. FREQ=WEEKLY;BYDAY=SA,SU.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "01a8a3a3-b2d1-4459-8145-47976ea599b5",
+      "shortCode": "notify_end_types",
+      "label": "Notify End Types",
+      "type": "list",
+      "description": "downtime_schedule data.attributes.notify_end_types. EXACT: expired | canceled. Example: [\"expired\"].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "42a2f0a1-3a52-43b6-808c-cdd89a08736e",
+      "shortCode": "start",
+      "label": "Start",
+      "type": "string",
+      "description": "downtime_schedule one-time schedule.start (ISO-8601 with UTC offset +00:00). Example: 2026-11-01T00:00:00+00:00.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "29f5ee99-bae5-4c93-9442-83d749522aed",
+      "shortCode": "notify_end_states",
+      "label": "Notify End States",
+      "type": "list",
+      "description": "downtime_schedule data.attributes.notify_end_states. EXACT values: alert | warn | no data. Example: [\"alert\",\"warn\"].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f6ae0a70-6d2b-4e46-ba3a-0b6efb4cac5a",
+      "shortCode": "data",
+      "label": "Data",
+      "type": "object",
+      "description": "JSON:API `data` envelope escape hatch for downtime_schedule and incident_create. Purpose fields merge into data.attributes / data.relationships via bodyMap and win on conflict.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "02d83923-206b-4828-bcbe-b68ba675fac0",
+      "shortCode": "mute_first_recovery_notification",
+      "label": "Mute First Recovery Notification",
+      "type": "boolean",
+      "description": "downtime_schedule data.attributes.mute_first_recovery_notification. Example: true.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f109d22c-5955-4449-ab27-7781779a3d80",
+      "shortCode": "type",
+      "label": "Type",
+      "type": "string",
+      "description": "JSON:API resource type nested at data.type. downtime_schedule: downtime. incident_create: incidents. Example: downtime.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8db35172-8a92-4901-9c56-fd566589799d",
+      "shortCode": "notification_handles",
+      "label": "Notification Handles",
+      "type": "list",
+      "description": "incident_create data.attributes.notification_handles: [{handle, display_name}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7fa4bb09-40e9-4d38-8ba8-e6814f237656",
+      "shortCode": "incident_type_uuid",
+      "label": "Incident Type Uuid",
+      "type": "string",
+      "description": "incident_create data.attributes.incident_type_uuid. Default type used when empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1f551fc5-f05a-487c-8e8c-4261eb1ca3a1",
+      "shortCode": "customer_impacted",
+      "label": "Customer Impacted",
+      "type": "boolean",
+      "description": "incident_create required data.attributes.customer_impacted. If true, set customer_impact_scope. Example: false.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3593fda3-c6e4-4cc8-b4c0-5d617bae90aa",
+      "shortCode": "customer_impact_scope",
+      "label": "Customer Impact Scope",
+      "type": "string",
+      "description": "incident_create data.attributes.customer_impact_scope. Required when customer_impacted is true.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "faa32a7d-2db5-43e1-bba6-6bae4da48717",
+      "shortCode": "initial_cells",
+      "label": "Initial Cells",
+      "type": "list",
+      "description": "incident_create data.attributes.initial_cells (markdown timeline cells).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4b303bec-26ae-4fec-8ce7-a6085ab5dddf",
+      "shortCode": "is_test",
+      "label": "Is Test",
+      "type": "boolean",
+      "description": "incident_create data.attributes.is_test. Example: false.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "99ab2b1d-4f99-40be-8db7-fa0f00ca1959",
+      "shortCode": "commander_user_id",
+      "label": "Commander User ID",
+      "type": "string",
+      "description": "incident_create data.relationships.commander_user.data.id (Datadog user id).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dc03abf2-d97f-4d7e-8185-e0933ebb5df2",
+      "shortCode": "fields",
+      "label": "Fields",
+      "type": "object",
+      "description": "incident_create data.attributes.fields: map of field name → {type, value}. Types: dropdown | textbox | multiselect | textarray | metrictag | autocomplete.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1fdf32b8-4d64-4aab-ac22-b766fcaae812",
+      "shortCode": "incident_id",
+      "label": "Incident ID",
+      "type": "string",
+      "description": "Incident UUID for incident_get path. Example: 00000000-0000-0000-0000-000000000000.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "09d3b8eb-66cc-4cd3-8870-51d2d025a230",
+      "shortCode": "filter",
+      "label": "Filter",
+      "type": "object",
+      "description": "Log search filter envelope escape hatch for log_search. Purpose fields query/from/to merge as filter.* via bodyMap.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "93565e4c-43e0-4bd2-9de9-39e4c87630ab",
+      "shortCode": "sort",
+      "label": "Sort",
+      "type": "string",
+      "description": "log_search body `sort`. Example: -timestamp.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ec32dc57-4227-4762-9436-ffe60d153bef",
+      "shortCode": "to",
+      "label": "to",
+      "type": "string",
+      "description": "log_search filter.to. ISO-8601 or now. Example: now.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b329d468-d552-45e8-ba86-1fa778f2f493",
+      "shortCode": "from",
+      "label": "From",
+      "type": "string",
+      "description": "log_search filter.from. ISO-8601 or now-15m. Example: now-1h.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "58aed6b8-6c7d-4457-baa6-0b4bdb9170a5",
+      "shortCode": "query",
+      "label": "Query",
+      "type": "string",
+      "description": "log_search filter.query. Datadog log query syntax. Example: service:api status:error.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "52fdbc82-567e-46fe-980b-6404b6b7a6e8",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

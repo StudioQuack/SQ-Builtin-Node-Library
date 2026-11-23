@@ -1,0 +1,274 @@
+{
+  "_id": "4e6c6ef5-8782-4e0c-91a1-d6917e318071",
+  "version": "1.0.0",
+  "name": "Miro",
+  "label": "Miro REST API",
+  "description": "Miro REST API via OfficialApiNode (nodes/miro/api_spec.json). Official Miro REST v2. App review for production OAuth. Board export may be restricted. Official docs: https://developers.miro.com/reference/api-reference. OUTPUT is {status, http_status, data}. Secrets never appear on OUTPUT.",
+  "icon": "dashboard",
+  "tags": [
+    "miro",
+    "whiteboard"
+  ],
+  "category": "Productivity & Collaboration",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "e1b16770-2be3-4626-aea1-d532290f97bf",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Miro official API call. Delivered as inputVariables.input. Set operation plus the path/query/body fields that operation lists in api_spec.json. Do not put secrets on this port. Example: {\"operation\":\"board_create\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "board_create",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'board_create', 'board_get', 'board_update', 'board_copy', 'board_list', 'item_create_shape', 'item_get', 'item_list', 'listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'board_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Board name for board_create / board_update / board_copy. Example: Sprint board.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Board description for board_create / board_update.",
+          "children": []
+        },
+        {
+          "shortCode": "policy",
+          "label": "policy",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "board_create sharing policy object. Official: {\"sharingPolicy\":{\"access\":\"private\",\"inviteToAccountAndBoardLinkAccess\":\"no_access\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "board_id",
+          "label": "board_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Miro board id for board_* and item_*. Example: uXjVPxxxx=",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for board_list and item_list. Positive integer, max 50. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "board_list offset. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "item_create_shape data object. Official: {\"shape\":\"rectangle\",\"content\":\"Hello\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "position",
+          "label": "position",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "item_create_shape position. Official: {\"x\":0,\"y\":0,\"origin\":\"center\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "geometry",
+          "label": "geometry",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "item_create_shape geometry. Official: {\"width\":200,\"height\":100}.",
+          "children": []
+        },
+        {
+          "shortCode": "item_id",
+          "label": "item_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Board item id for item_get. Example: 3458764512345678901.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "item_list pagination cursor from a previous response.",
+          "children": []
+        },
+        {
+          "shortCode": "copy_from",
+          "label": "Copy From",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Source board id for board_copy (PUT /boards?copy_from=<id>). Example: 'uXjVOabc'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "dfc39fd0-b8fc-49a8-b354-aa9801804333",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or the raw string when not JSON. Example: {}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2e085d9b-0579-4160-938c-8d9f19f01ae8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: board_create, board_get, board_update, board_copy, board_list, item_create_shape, item_get, item_list, listen. Default: board_create. Example: board_create.",
+      "value": "board_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "board_create",
+        "board_get",
+        "board_update",
+        "board_copy",
+        "board_list",
+        "item_create_shape",
+        "item_get",
+        "item_list",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "2cfb953c-e64d-4de5-b793-1cc029cc5d93",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Provider credential for auth.type=bearer (configKey access_token). REQUIRED secret — StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c532753e-1169-46fa-9bba-e1eacc75c932",
+      "shortCode": "copy_from",
+      "label": "Copy From",
+      "type": "string",
+      "description": "Source board id for board_copy (PUT /boards?copy_from=<id>). Example: 'uXjVOabc'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "f768e359-9e69-4607-9463-033192e31c10",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative → 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

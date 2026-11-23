@@ -1,0 +1,63 @@
+{
+  "baseUrl": "http://localhost:15672",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "password",
+    "userKey": "user"
+  },
+  "operations": {
+    "exchange.send": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/api/exchanges/{vhost}/{name}/publish",
+      "required": [
+        "payload"
+      ],
+      "bodyFrom": [
+        "routing_key",
+        "payload",
+        "payload_encoding",
+        "properties"
+      ]
+    },
+    "queue.send": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/api/exchanges/{vhost}/amq.default/publish",
+      "required": [
+        "payload"
+      ],
+      "bodyFrom": [
+        "routing_key",
+        "payload",
+        "payload_encoding",
+        "properties"
+      ]
+    },
+    "queue.get": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/queues/{vhost}/{name}/get",
+      "required": [
+        "vhost",
+        "name",
+        "count",
+        "ackmode",
+        "encoding"
+      ],
+      "bodyFrom": [
+        "count",
+        "ackmode",
+        "encoding",
+        "truncate"
+      ]
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

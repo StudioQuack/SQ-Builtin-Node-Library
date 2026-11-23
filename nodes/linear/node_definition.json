@@ -1,0 +1,278 @@
+{
+  "_id": "b27c9664-aca9-497c-8977-01e667df5da5",
+  "version": "1.0.0",
+  "name": "Linear",
+  "label": "Linear GraphQL API",
+  "description": "Linear GraphQL at https://api.linear.app/graphql. POST query + variables. issue_create/update take title, teamId, description, assigneeId, priority (nested under variables.input). Docs: https://developers.linear.app/docs/graphql/working-with-the-graphql-api. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "bug_report",
+  "tags": [
+    "linear",
+    "issues"
+  ],
+  "category": "Productivity & Collaboration",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "eacd0901-ad50-4426-8217-a23fd03d19b3",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Linear official API call. Delivered as inputVariables.input. Set operation plus the path/query/body fields that operation lists in api_spec.json. Do not put secrets on this port. Example: {\"operation\":\"issue_create\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "issue_create",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'issue_create', 'issue_get', 'issue_list', 'issue_update', 'issue_delete', 'issue_add_link', 'comment_add', 'listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'issue_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GraphQL query or mutation document (required). issue_create example: mutation($input: IssueCreateInput!){ issueCreate(input:$input){ success issue{ id identifier title url } } }.",
+          "children": []
+        },
+        {
+          "shortCode": "variables",
+          "label": "variables",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "GraphQL variables object escape hatch. Purpose fields nest into variables.input (or variables.id for issueId).",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Issue title. Wired to variables.input.title on issue_create / issue_update. Example: Checkout 500.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Markdown description. Wired to variables.input.description on issue_create / issue_update.",
+          "children": []
+        },
+        {
+          "shortCode": "teamId",
+          "label": "teamId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Linear team UUID. Wired to variables.input.teamId. Required by IssueCreateInput. Example: a UUID.",
+          "children": []
+        },
+        {
+          "shortCode": "assigneeId",
+          "label": "assigneeId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Assignee user UUID. Wired to variables.input.assigneeId.",
+          "children": []
+        },
+        {
+          "shortCode": "stateId",
+          "label": "stateId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Workflow state UUID. Wired to variables.input.stateId.",
+          "children": []
+        },
+        {
+          "shortCode": "priority",
+          "label": "priority",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Priority 0–4 (0 none … 1 urgent). Wired to variables.input.priority.",
+          "children": []
+        },
+        {
+          "shortCode": "labelIds",
+          "label": "labelIds",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Label UUIDs. Wired to variables.input.labelIds.",
+          "children": []
+        },
+        {
+          "shortCode": "projectId",
+          "label": "projectId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project UUID. Wired to variables.input.projectId.",
+          "children": []
+        },
+        {
+          "shortCode": "issueId",
+          "label": "issueId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Issue id for get/update/delete/comment/link. Wired to variables.id. Example: ENG-123 id UUID.",
+          "children": []
+        },
+        {
+          "shortCode": "parentId",
+          "label": "parentId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Parent issue id. Wired to variables.input.parentId on issue_create / issue_update.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Attachment URL for issue_add_link. Wired to variables.input.url.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comment markdown for comment_add. Wired to variables.input.body.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "bde6c176-5835-4ea8-9551-86b7b5964f9e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or the raw string when not JSON. Example: {}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "885f71e2-dc6f-4db1-b3bf-4983cca68fd0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: issue_create, issue_get, issue_list, issue_update, issue_delete, issue_add_link, comment_add, listen. Default: issue_create. Example: issue_create.",
+      "value": "issue_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "issue_create",
+        "issue_get",
+        "issue_list",
+        "issue_update",
+        "issue_delete",
+        "issue_add_link",
+        "comment_add",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "04b78710-4205-4210-a76c-67dda3d2ecf3",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Provider credential for auth.type=bearer (configKey api_key). REQUIRED secret — StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "eda1e1c7-3a1a-4c1f-a908-c44f0d69c0f0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative → 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

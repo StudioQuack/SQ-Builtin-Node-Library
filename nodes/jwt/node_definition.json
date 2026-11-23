@@ -1,0 +1,246 @@
+{
+  "_id": "2285af36-2355-4afe-966f-8200e7df362a",
+  "version": "1.0.0",
+  "name": "JWT",
+  "label": "JWS sign / verify / decode",
+  "description": "RFC 7519 JWT (JWS). Keys only from the secret manager. decode without verify is marked unsafe.",
+  "icon": "",
+  "tags": [
+    "jwt",
+    "auth"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "745b9aad-4a12-4343-aaca-e0507a1ee901",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One JWT operation. INPUT operation or infer: claims alone → sign; token alone → verify/decode. Bind secret in config for HS* sign/verify. Example operation: 'sign'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "select",
+          "required": false,
+          "value": "",
+          "description": "sign | verify | decode — overrides instance config when set. Omit to infer from claims vs token.",
+          "children": []
+        },
+        {
+          "shortCode": "claims",
+          "label": "claims",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JWT claims for sign. Example: {\"sub\":\"user-1\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "token",
+          "label": "token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Compact JWS for verify/decode.",
+          "children": []
+        },
+        {
+          "shortCode": "audience",
+          "label": "audience",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Expected aud claim for verify; reject when mismatched (RFC 7519 s4.1.3). Example: 'api.example.com'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8a87dd65-dcc2-4c94-9a78-f9cb4652561f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b3e67c47-a093-45ff-a6d5-3e1ceb4153df",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: sign | verify | decode. Required. Example: 'sign'.",
+      "value": "sign",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "sign",
+        "verify",
+        "decode"
+      ]
+    },
+    {
+      "_id": "1207e059-8b2d-4bdb-a843-752e2aaa76a1",
+      "shortCode": "alg",
+      "label": "Alg",
+      "type": "select",
+      "description": "HS256 | HS384 | HS512 | RS256 | ES256 (RFC 7518). Default HS256. `none` is not offered (RFC 8725).",
+      "value": "HS256",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "HS256",
+        "HS384",
+        "HS512",
+        "RS256",
+        "ES256"
+      ]
+    },
+    {
+      "_id": "25ba09c0-c827-44ed-bdf9-bb6d9e1ea5e5",
+      "shortCode": "secret",
+      "label": "Secret",
+      "type": "password",
+      "description": "HMAC secret. Secret.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2069c46d-17a2-42d1-9e8f-42ebb578e3ad",
+      "shortCode": "private_key",
+      "label": "Private Key",
+      "type": "password",
+      "description": "PEM private key for RS/ES sign. Secret.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ada9053c-f14e-4138-96d3-1f5cb82ec172",
+      "shortCode": "public_key",
+      "label": "Public Key",
+      "type": "password",
+      "description": "PEM public key for RS/ES verify. Secret.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2fbb040d-ee9d-41b7-a2ed-5d4d95f1b68d",
+      "shortCode": "clock_skew_seconds",
+      "label": "Clock Skew Seconds",
+      "type": "number",
+      "description": "Allowed skew for exp/nbf. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5a626b1c-b13a-4eed-93f8-4bfd3bc87cc6",
+      "shortCode": "audience",
+      "label": "Audience",
+      "type": "string",
+      "description": "Expected aud claim for verify; reject when mismatched (RFC 7519 s4.1.3). Example: 'api.example.com'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "f606f515-8b74-4919-ab0c-5215488a8534",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

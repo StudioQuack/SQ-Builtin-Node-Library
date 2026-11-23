@@ -1,0 +1,486 @@
+{
+  "_id": "cbad184c-fbda-5c16-86de-9e4ebf38f93e",
+  "version": "1.0.0",
+  "name": "Zendesk Chat",
+  "label": "Zendesk Chat — Zendesk Sunshine Conversations API",
+  "description": "Zendesk Chat via the official Zendesk Sunshine Conversations API. Base https://api.smooch.io/v2. Docs: https://developer.zendesk.com/api-reference/conversations/introduction/. This is Zendesk Messaging / Sunshine Conversations — not the Support ticketing API (other category). The Zendesk Chat product sunsets 2028-01-31 (announced 2026-08-04: https://support.zendesk.com/hc/en-us/articles/4408843026714). Legacy Chat REST is retired; this host is api.smooch.io/v2. listen = webhooks as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "support_agent",
+  "tags": [
+    "chat"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3e4a73fd-e7f7-538c-b341-cf92e27f0151",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Zendesk Chat operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"send-message\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-message",
+          "description": "Which official call to run. EXACT values: send-message | get-conversation | list-conversations | update-visitor | list-agents | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "conversation_id",
+          "label": "conversation_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sunshine conversation id. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User id for update-visitor. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "author",
+          "label": "author",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message author {type, userId?}. send-message. Example: {\"type\":\"business\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `filter` for operation: list-conversations.",
+          "children": []
+        },
+        {
+          "shortCode": "page[size]",
+          "label": "page[size]",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page[size]` for operation: list-conversations.",
+          "children": []
+        },
+        {
+          "shortCode": "givenName",
+          "label": "givenName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `givenName` for operation: update-visitor.",
+          "children": []
+        },
+        {
+          "shortCode": "surname",
+          "label": "surname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `surname` for operation: update-visitor.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `email` for operation: update-visitor.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message text for send-message. Nested as content.text. Example: Hello. https://developer.zendesk.com/api-reference/conversations/conversations-api/messages/",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sunshine content type for send-message. EXACT: text | image | file | location | carousel | list | form | formResponse. Nested as content.type. Default text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "54f15aed-4859-5c59-ad7a-c5750e8111a2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "8b75b880-4c1b-55fb-9bc3-c112cdd52c82",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-message, get-conversation, list-conversations, update-visitor, list-agents, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-message",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-message",
+        "get-conversation",
+        "list-conversations",
+        "update-visitor",
+        "list-agents",
+        "listen"
+      ],
+      "filterRules": [
+        {
+          "when": "send-message",
+          "targets": [
+            {
+              "param": "app_id",
+              "visible": true
+            },
+            {
+              "param": "conversation_id",
+              "visible": true
+            },
+            {
+              "param": "author",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "text",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get-conversation",
+          "targets": [
+            {
+              "param": "app_id",
+              "visible": true
+            },
+            {
+              "param": "conversation_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-conversations",
+          "targets": [
+            {
+              "param": "app_id",
+              "visible": true
+            },
+            {
+              "param": "page[size]",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "update-visitor",
+          "targets": [
+            {
+              "param": "app_id",
+              "visible": true
+            },
+            {
+              "param": "user_id",
+              "visible": true
+            },
+            {
+              "param": "givenName",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "surname",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list-agents",
+          "targets": [
+            {
+              "param": "app_id",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "fd104dfa-73e6-54e1-b13d-f75ff69c757d",
+      "shortCode": "api_secret",
+      "label": "API secret",
+      "type": "password",
+      "description": "Sunshine key id + secret (HTTP Basic). StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9c6564c6-6826-503b-baa1-9d019e8801f7",
+      "shortCode": "api_key_id",
+      "label": "Auth username",
+      "type": "string",
+      "description": "Sunshine Conversations / Zendesk Messaging key id (HTTP Basic username / JWT kid). Not the secret; pair with the password config. Never log the secret.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2e85903e-1737-5118-aa8a-a496a816a254",
+      "shortCode": "app_id",
+      "label": "app_id",
+      "type": "string",
+      "description": "Sunshine Conversations app id. Path {appId}.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "00170497-fd49-401b-b400-3a627d8dd0c2",
+      "shortCode": "conversation_id",
+      "label": "Conversation ID",
+      "type": "string",
+      "description": "Sunshine conversation id. Purpose: operation input. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0a0e6765-2ccf-4aad-a5cc-802522dda8d9",
+      "shortCode": "author",
+      "label": "Author",
+      "type": "string",
+      "description": "Message author {type, userId?}. send-message. Example: {\"type\":\"business\"}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bdfa908c-096b-4efa-a9e8-ee03ea796c16",
+      "shortCode": "type",
+      "label": "Type",
+      "type": "string",
+      "description": "Sunshine content type for send-message. EXACT: text | image | file | location | carousel | list | form | formResponse. Nested as content.type. Default text.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7d0326d0-2eb3-4e1f-b6cd-1d78b9b7ce59",
+      "shortCode": "text",
+      "label": "Text",
+      "type": "string",
+      "description": "Message text for send-message. Nested as content.text. Example: Hello. https://developer.zendesk.com/api-reference/conversations/conversations-api/messages/",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b4bbaa99-1198-431f-8079-94a11954479d",
+      "shortCode": "page[size]",
+      "label": "Page[size]",
+      "type": "string",
+      "description": "Query-string parameter `page[size]` for operation: list-conversations.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b2fa53b8-b8ab-48a4-b3d5-f0254531bb55",
+      "shortCode": "filter",
+      "label": "Filter",
+      "type": "string",
+      "description": "Query-string parameter `filter` for operation: list-conversations.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4f7de265-f9a7-4ba4-a0bf-8c5bbbcc40e8",
+      "shortCode": "user_id",
+      "label": "User ID",
+      "type": "string",
+      "description": "User id for update-visitor. Purpose: operation input. Omit when unused.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "aa3659f0-04f0-492a-b887-bfb78cf36892",
+      "shortCode": "givenName",
+      "label": "Givenname",
+      "type": "string",
+      "description": "Request-body parameter `givenName` for operation: update-visitor.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f7f6bacb-0218-4d9c-aae2-041dc2e6237c",
+      "shortCode": "email",
+      "label": "Email",
+      "type": "string",
+      "description": "Request-body parameter `email` for operation: update-visitor.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0b6e66a5-13f6-468b-9fc2-9f5465b25471",
+      "shortCode": "surname",
+      "label": "Surname",
+      "type": "string",
+      "description": "Request-body parameter `surname` for operation: update-visitor.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b1b719f3-5d4c-5126-864b-965eabc1daf6",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

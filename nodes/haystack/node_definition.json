@@ -1,0 +1,282 @@
+{
+  "_id": "5f888507-3838-42d9-ac77-5ccc93f10813",
+  "version": "1.0.0",
+  "name": "Haystack",
+  "label": "Haystack",
+  "description": "Official deepset Haystack Enterprise Platform REST v1 (search + file upload) and Hayhooks POST /{pipeline}/run. Default host https://api.cloud.deepset.ai. Handler: OfficialApiNode. Auth is StudioQuack secret api_key as Authorization Bearer (required on SaaS). Files use type file. Docs: https://docs.cloud.deepset.ai/docs/getting-started · https://docs.haystack.deepset.ai/docs/hayhooks. Terms: https://www.deepset.ai/terms-and-conditions. Never log api_key. Queries and files leave the host on SaaS.",
+  "icon": "account_tree",
+  "tags": [
+    "haystack",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3a71a755-0926-4c99-ab2d-8699e4178ad2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. run_pipeline/query: queries (string array) or query (string), optional filters/params. index: files (type file) or text+filename. Hayhooks: pipeline name + body. Do not put api_key here. Example: {\"queries\":[\"What is Haystack?\"]}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search string. Prefer queries array for SaaS body. Hayhooks often expects {\"query\":\"...\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "queries",
+          "label": "queries",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "SaaS search body queries: string[]. Example: [\"capital of France\"].",
+          "children": []
+        },
+        {
+          "shortCode": "files",
+          "label": "files",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id(s) for index / hayhooks_index. Never inline bytes. SaaS max 25_000_000 bytes each.",
+          "children": []
+        },
+        {
+          "shortCode": "pipeline",
+          "label": "pipeline",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deployed pipeline name. Overrides config pipeline. Path {pipeline}.",
+          "children": []
+        },
+        {
+          "shortCode": "filters",
+          "label": "filters",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `filters` for operations: run_pipeline, query.",
+          "children": []
+        },
+        {
+          "shortCode": "params",
+          "label": "params",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `params` for operations: run_pipeline, query, hayhooks_run, hayhooks_index.",
+          "children": []
+        },
+        {
+          "shortCode": "filename",
+          "label": "filename",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `filename` for operation: index.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `text` for operation: index.",
+          "children": []
+        },
+        {
+          "shortCode": "metadata",
+          "label": "metadata",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `metadata` for operation: index.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `body` for operation: hayhooks_run.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "4299a0b6-2a18-426e-b8f1-9db23f395bf0",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (answers/documents or file metadata).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4f698929-2bbe-4706-9190-e5347718f26f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "EXACT: run_pipeline | query | index | hayhooks_run | hayhooks_index. Default run_pipeline = SaaS POST /api/v1/workspaces/{workspace}/pipelines/{pipeline}/search. Hayhooks ops POST {hayhooks_url}/{name}/run on the self-hosted Hayhooks server.",
+      "value": "run_pipeline",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "run_pipeline",
+        "query",
+        "index",
+        "hayhooks_run",
+        "hayhooks_index"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "092adf74-4ee8-4f0b-a397-91c140d20d90",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "deepset Cloud API token. Sent as Authorization: Bearer. StudioQuack secret. Required for SaaS. Hayhooks: the node always sends this header, so bind any placeholder value when the server has no auth. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "038e0b11-4222-47ec-be69-b9d794f2b7f3",
+      "shortCode": "workspace",
+      "label": "Workspace",
+      "type": "string",
+      "description": "SaaS path {workspace_name}. Required for run_pipeline, query, index. Overridable from input.workspace.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fec6865c-9079-4519-9a8e-32b54674f6a7",
+      "shortCode": "pipeline",
+      "label": "Pipeline",
+      "type": "string",
+      "description": "Deployed pipeline name (SaaS search or Hayhooks /{pipeline}/run). Overridable from input.pipeline.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "baa02aba-415a-4529-a1ca-128196713966",
+      "shortCode": "index_pipeline",
+      "label": "Index pipeline",
+      "type": "string",
+      "description": "Hayhooks indexing pipeline name for hayhooks_index (path {index_pipeline}).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6f186b2e-2e06-4703-8e41-35afedd3156a",
+      "shortCode": "hayhooks_url",
+      "label": "Hayhooks URL",
+      "type": "string",
+      "description": "Base URL of the self-hosted Hayhooks server used by hayhooks_run and hayhooks_index (scheme + host + port, no trailing slash). Hayhooks is not served from api.cloud.deepset.ai. Default http://localhost:1416 (the Hayhooks default port). Example: https://hayhooks.internal.example.com.",
+      "value": "http://localhost:1416",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "654ba630-15c8-4f68-895f-d503a5dd7b20",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 120. Floor 1. Idle SaaS pipelines may cold-start.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

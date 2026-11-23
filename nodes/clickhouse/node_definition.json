@@ -1,0 +1,236 @@
+{
+  "_id": "9a14006c-ab7e-4670-bca8-858095904e0c",
+  "version": "1.0.0",
+  "name": "ClickHouse",
+  "label": "ClickHouse HTTP — SQL and ping",
+  "description": "Official ClickHouse HTTP interface. Default origin http://localhost:8123 (edit api_spec.baseUrl for Cloud, typically https://<host>:8443). GET /?query= (readonly), POST /?query= INSERT with JSONEachRow body, GET /ping. HTTP Basic user+password. Docs: https://clickhouse.com/docs/interfaces/http",
+  "icon": "database",
+  "tags": [
+    "sql",
+    "olap"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "cb14c1cc-ab84-4c8e-8e0b-8bb6a12c5835",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. execute.sql and insert.rows take official HTTP query parameters (query, database, query_id, session_id, wait_end_of_query, default_format). insert.rows also requires rows (JSONEachRow NDJSON). ping needs none. Do not put password here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which official HTTP call to run. EXACT: execute.sql | insert.rows | ping. Example: execute.sql.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official `query` URL parameter: the SQL text. execute.sql: readonly SELECT/SHOW (GET). insert.rows: INSERT INTO table FORMAT JSONEachRow (POST body is `rows`). Example: INSERT INTO events FORMAT JSONEachRow.",
+          "children": []
+        },
+        {
+          "shortCode": "rows",
+          "label": "rows",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "insert.rows request body. Official JSONEachRow: one JSON object per line (NDJSON), not a JSON array. https://clickhouse.com/docs/interfaces/formats/JSONEachRow Example: {\"id\":1}\\n{\"id\":2}.",
+          "children": []
+        },
+        {
+          "shortCode": "database",
+          "label": "database",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official `database` URL parameter: default database for the query. Example: default. Used by execute.sql and insert.rows. Falls back to config database.",
+          "children": []
+        },
+        {
+          "shortCode": "query_id",
+          "label": "query_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official `query_id` URL parameter (any string). Used to identify or replace a running query. Example: ingest-42. execute.sql and insert.rows.",
+          "children": []
+        },
+        {
+          "shortCode": "session_id",
+          "label": "session_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official `session_id` URL parameter for sticky HTTP sessions. Example: etl-session-1. execute.sql and insert.rows.",
+          "children": []
+        },
+        {
+          "shortCode": "wait_end_of_query",
+          "label": "wait_end_of_query",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Official `wait_end_of_query` URL parameter. 1 waits until the query finishes before responding. Example: 1. insert.rows and execute.sql.",
+          "children": []
+        },
+        {
+          "shortCode": "default_format",
+          "label": "default_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official `default_format` URL parameter when SQL has no FORMAT clause. Example: JSONEachRow. execute.sql and insert.rows.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c3dab835-5407-4655-b9c8-74ee10222f10",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider body (JSON if parseable, else text such as ping Ok.).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a4c5042c-d43b-4862-8131-3aa9d9f1070e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: execute.sql | insert.rows | ping.",
+      "value": "execute.sql",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "execute.sql",
+        "insert.rows",
+        "ping"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "6b24574d-95c3-4001-927c-a9fff3326c77",
+      "shortCode": "user",
+      "label": "User",
+      "type": "string",
+      "description": "HTTP Basic username. Default ClickHouse user is often 'default'. Not a secret.",
+      "value": "default",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c59a06df-bcc2-4288-b11b-e37f516e850d",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "HTTP Basic password (StudioQuack secret). Never log or place on INPUT. Must be non-empty; set a password on the ClickHouse user if the default is blank.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "060b0206-9582-4052-8bf6-38ce989e738e",
+      "shortCode": "database",
+      "label": "Database",
+      "type": "string",
+      "description": "Default ClickHouse database sent as the official `database` query parameter when INPUT database is empty. Example: default.",
+      "value": "default",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1e494249-1e9b-45f5-b12f-dc1187d33625",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

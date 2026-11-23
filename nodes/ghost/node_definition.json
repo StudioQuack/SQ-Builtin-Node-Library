@@ -1,0 +1,312 @@
+{
+  "_id": "0f660ac9-1024-4b20-9a22-4b4626c6869f",
+  "version": "1.0.0",
+  "name": "Ghost",
+  "label": "Ghost Admin API",
+  "description": "Official Ghost Admin API. OfficialApiNode. Auth Authorization: Ghost {jwt} (https://ghost.org/docs/admin-api/) — paste a short-lived Admin JWT, not the raw id:secret key. post_create / post_update take title/html/status/tags nested into posts[0] via bodyMap. extraHeaders send Accept-Version: v6.0. Never log the JWT.",
+  "icon": "auto_stories",
+  "tags": [
+    "ghost",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d3a30b55-adca-4906-a765-d28e3e66cda9",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Writes send bodyFrom posts (Ghost envelope {posts:[{…}]}). Path {post_id}. Do not put admin_api_key here. Example: {\"operation\":\"post_list\",\"limit\":15}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "post_create",
+          "description": "Overrides config operation. EXACT: post_create | post_get | post_list | post_update | post_delete | content_get | content_list.",
+          "children": []
+        },
+        {
+          "shortCode": "site_host",
+          "label": "site_host",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Ghost site hostname only (no scheme). Interpolated as https://{site_host}/ghost/api/…. Example: example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "content_api_key",
+          "label": "content_api_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Ghost Content API key sent as query key= on content_get/content_list. Example: abc123contentkey.",
+          "children": []
+        },
+        {
+          "shortCode": "post_id",
+          "label": "post_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path {post_id} for get/update/delete and content_get.",
+          "children": []
+        },
+        {
+          "shortCode": "posts",
+          "label": "posts",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "One post object escape hatch merged into posts[0]. Named title/html/status/tags win. Example: {\"title\":\"Hi\",\"html\":\"<p>Hi</p>\",\"status\":\"draft\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "source",
+          "label": "source",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Admin write query source. Send html when using the html field (Ghost default is lexical). Example: html.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Browse page size. Ghost default 15; cap 100.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Browse page (default 1).",
+          "children": []
+        },
+        {
+          "shortCode": "include",
+          "label": "include",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "e.g. tags,authors.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Ghost filter string, e.g. status:published.",
+          "children": []
+        },
+        {
+          "shortCode": "order",
+          "label": "order",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "e.g. published_at desc.",
+          "children": []
+        },
+        {
+          "shortCode": "formats",
+          "label": "formats",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "e.g. html,lexical on get.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_create / post_update title. Wired to posts[0].title. Required. Example: Hello world.",
+          "children": []
+        },
+        {
+          "shortCode": "html",
+          "label": "html",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_create / post_update HTML. Wired to posts[0].html. Set query source=html (Ghost lexical is default).",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "post_create / post_update status. Wired to posts[0].status. EXACT: draft | published | scheduled. Example: draft.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "post_create / post_update tags. Wired to posts[0].tags. Official [{name}] or [{slug}]. Example: [{\"name\":\"News\"}].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "22d345c1-5720-476d-8d4b-e0033d657cd0",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (Ghost JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Ghost JSON { posts, meta }.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "1b60ee63-14f1-4a5d-944b-610ec4c1106a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation. EXACT: post_create | post_get | post_list | post_update | post_delete | content_get | content_list. content_* are Admin GET /posts/ (not Content API).",
+      "value": "post_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "post_create",
+        "post_get",
+        "post_list",
+        "post_update",
+        "post_delete",
+        "content_get",
+        "content_list"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "9c8e0a55-06b2-423c-af29-b4f9e1de3cfd",
+      "shortCode": "admin_api_key",
+      "label": "Admin JWT",
+      "type": "password",
+      "description": "Short-lived Ghost Admin JWT (not the raw id:secret key). Sent as Authorization: Ghost {jwt} (official Admin API). OfficialApiNode cannot mint HS256 Admin tokens. StudioQuack secret only. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a4b50bd1-62ac-416a-a47f-0c52fb0e3f1c",
+      "shortCode": "site_host",
+      "label": "Site Host",
+      "type": "string",
+      "description": "Ghost site hostname only (no scheme). Admin API at https://{site_host}/ghost/api/admin. Example: example.com.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "31a75744-5fe2-45ee-bada-9e65de6d502a",
+      "shortCode": "content_api_key",
+      "label": "Content API Key",
+      "type": "password",
+      "description": "Content API key for content_get/content_list (?key=). StudioQuack secret. Never log.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f5bb9143-c89b-40d3-8566-e8ccdc97c92a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

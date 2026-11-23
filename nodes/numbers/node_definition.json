@@ -1,0 +1,213 @@
+{
+  "_id": "4e7de7da-c3af-4adc-87ab-e7ed67efa9c4",
+  "version": "1.0.0",
+  "name": "Numbers",
+  "label": "Format / round / math / CSPRNG int",
+  "description": "Format, round, arithmetic, and CSPRNG random_int. random_int uses SecureRandom, not java.util.Random.",
+  "icon": "",
+  "tags": [
+    "number",
+    "math"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "222d187e-86b4-419f-8302-54a9780930da",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Numbers operation. INPUT operation and op override the instance config. Secrets stay in configurationParameters. Example: {\"operation\":\"math\",\"op\":\"*\",\"value\":6,\"other\":7}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which capability to run. EXACT values: format | round | math | random_int. Overrides instance Operation when set. Example: math.",
+          "children": []
+        },
+        {
+          "shortCode": "op",
+          "label": "op",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Math operator when operation is math. EXACT values: + | - | * | / | %. Overrides instance Op when set. Example: *.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Primary operand.",
+          "children": []
+        },
+        {
+          "shortCode": "other",
+          "label": "other",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Second operand for math.",
+          "children": []
+        },
+        {
+          "shortCode": "min",
+          "label": "min",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Inclusive min for random_int.",
+          "children": []
+        },
+        {
+          "shortCode": "max",
+          "label": "max",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Inclusive max for random_int.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "035f7465-ab21-47b7-a505-4e49d49cfa78",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e9696f8d-7495-4039-8ec8-2d26f398ec44",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: format | round | math | random_int. Required. Example: 'format'.",
+      "value": "format",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "format",
+        "round",
+        "math",
+        "random_int"
+      ]
+    },
+    {
+      "_id": "ad591ed7-c567-41cd-8ac4-da02092d2e6f",
+      "shortCode": "precision",
+      "label": "Precision",
+      "type": "number",
+      "description": "Decimal places. Default 2.",
+      "value": "2",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "482d04d2-d587-49f7-a087-2a2f3ef577fd",
+      "shortCode": "op",
+      "label": "Op",
+      "type": "select",
+      "description": "Math operator + - * / %.",
+      "value": "+",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "+",
+        "-",
+        "*",
+        "/",
+        "%"
+      ]
+    },
+    {
+      "_id": "271a2a0c-6b55-4c98-a466-b31a47c93f06",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

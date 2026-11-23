@@ -1,0 +1,222 @@
+{
+  "_id": "1b4d5377-2b69-458a-821f-43a49802e6e0",
+  "version": "1.0.0",
+  "name": "Markdown",
+  "label": "CommonMark / GFM",
+  "description": "Converts CommonMark (optional GFM tables) to HTML and HTML back to Markdown. Official parsers only.",
+  "icon": "",
+  "tags": [
+    "markdown",
+    "html"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "df021c63-0fb8-47f4-b53a-ef3a8cd4ac6a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Markdown operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'md_to_html'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "markdown",
+          "label": "markdown",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CommonMark source for md_to_html.",
+          "children": []
+        },
+        {
+          "shortCode": "html",
+          "label": "html",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTML source for html_to_md.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "27ff3e1d-4fba-41c3-9ac6-5094283da27a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "fba951fd-cdc1-44a0-beb1-81470dbf4273",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: md_to_html | html_to_md. Required. Example: 'md_to_html'.",
+      "value": "md_to_html",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "md_to_html",
+        "html_to_md"
+      ],
+      "filterRules": [
+        {
+          "when": "md_to_html",
+          "targets": [
+            {
+              "param": "markdown",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "html_to_md",
+          "targets": [
+            {
+              "param": "html",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "53557c9b-0b01-4bbc-a885-11e012c8618e",
+      "shortCode": "gfm",
+      "label": "Gfm",
+      "type": "select",
+      "description": "Enable GFM extensions. Default true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "f1e3f7b0-91e3-4472-b188-ae2745801474",
+      "shortCode": "tables",
+      "label": "Tables",
+      "type": "select",
+      "description": "Enable GFM tables. Default true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "04a2e1cc-a6eb-4fe7-85ea-fca7d0c4a59f",
+      "shortCode": "markdown",
+      "label": "Markdown",
+      "type": "string",
+      "description": "Markdown source. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "670e1f12-29b2-42ac-babb-5ed7c6d7009e",
+      "shortCode": "html",
+      "label": "Html",
+      "type": "string",
+      "description": "HTML source. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cb5001ff-9b15-45c9-8bd1-619436ec4559",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

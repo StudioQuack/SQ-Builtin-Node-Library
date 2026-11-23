@@ -1,0 +1,261 @@
+{
+  "_id": "db5863d2-4a53-49dd-aef5-2646918b36d9",
+  "version": "1.0.0",
+  "name": "AWS Certificate Manager",
+  "label": "AWS Certificate Manager JSON API",
+  "description": "AWS Certificate Manager API 2015-12-08 via OfficialApiNode, signed with AWS SigV4 (service acm). Docs: https://docs.aws.amazon.com/acm/latest/APIReference/Welcome.html. Operations: get-certificate, list-certificates, get-metadata (DescribeCertificate), renew-certificate, delete-certificate, listen. Auth secrets access_key_id, secret_access_key, optional session_token are instance config only (never on INPUT, never logged). Retrieved certificate PEM must not be logged. listen is kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "verified",
+  "tags": [
+    "pki",
+    "aws"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ac04996d-8266-4a22-b88b-742f342797c6",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_key_id, secret_access_key, or session_token here. Path params match api_spec.json placeholders. Example: {\"operation\":\"get-certificate\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "get-certificate",
+          "description": "Which official API call to run. EXACT values: get-certificate | list-certificates | get-metadata | renew-certificate | delete-certificate | listen. Prefer the instance config operation select. listen is ingress: no HTTP — use a BPMN message event. Example: 'get-certificate'.",
+          "children": []
+        },
+        {
+          "shortCode": "CertificateArn",
+          "label": "CertificateArn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ACM certificate ARN. Required except list-certificates.",
+          "children": []
+        },
+        {
+          "shortCode": "NextToken",
+          "label": "NextToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination token for list-certificates.",
+          "children": []
+        },
+        {
+          "shortCode": "MaxItems",
+          "label": "MaxItems",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size 1–1000 for list-certificates.",
+          "children": []
+        },
+        {
+          "shortCode": "CertificateStatuses",
+          "label": "CertificateStatuses",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `CertificateStatuses` for operation: list-certificates.",
+          "children": []
+        },
+        {
+          "shortCode": "CertificateKeyPairOrigins",
+          "label": "CertificateKeyPairOrigins",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `CertificateKeyPairOrigins` for operation: list-certificates.",
+          "children": []
+        },
+        {
+          "shortCode": "Includes",
+          "label": "Includes",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `Includes` for operation: list-certificates.",
+          "children": []
+        },
+        {
+          "shortCode": "SortBy",
+          "label": "SortBy",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `SortBy` for operation: list-certificates.",
+          "children": []
+        },
+        {
+          "shortCode": "SortOrder",
+          "label": "SortOrder",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `SortOrder` for operation: list-certificates.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0863cf74-45ed-41ac-ad93-50aace7d1820",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Secret bytes in data must not be logged; bind them into StudioQuack secrets. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON from the official API. May contain secret material — never log; bind into StudioQuack secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "17f3b683-4130-488c-95f1-dbd9124f4d14",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: get-certificate, list-certificates, get-metadata, renew-certificate, delete-certificate, listen. listen is BPMN ingress, not a socket.",
+      "value": "get-certificate",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "get-certificate",
+        "list-certificates",
+        "get-metadata",
+        "renew-certificate",
+        "delete-certificate",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "45697487-6163-4dfa-8c70-6c07732a11c4",
+      "shortCode": "access_key_id",
+      "label": "AWS access key ID",
+      "type": "password",
+      "description": "IAM access key ID used as the SigV4 credential. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "252a9931-e8f0-4fcd-a791-3b0abd049d50",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "ACM Region for acm.{region}.amazonaws.com. Certificates are regional.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d217b95d-8db0-494e-aad7-41ec6677fc7b",
+      "shortCode": "secret_access_key",
+      "label": "AWS secret access key",
+      "type": "password",
+      "description": "IAM secret access key used to sign SigV4. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a006bb3c-f76e-4260-aad6-9bdacc6b101d",
+      "shortCode": "session_token",
+      "label": "AWS session token",
+      "type": "password",
+      "description": "Optional STS session token. When set, OfficialApiNode adds x-amz-security-token. Empty for long-lived keys. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "217a83bb-63f1-4404-8f83-95a58c70e4ae",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon invoke budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

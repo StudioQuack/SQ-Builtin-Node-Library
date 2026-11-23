@@ -1,0 +1,397 @@
+{
+  "_id": "c9589c42-4a0a-4da7-8d0c-4535bb1fa4ff",
+  "version": "1.0.0",
+  "name": "Moosend",
+  "label": "Moosend REST v3 — lists, subscribers, campaigns",
+  "description": "Official Moosend REST v3 at https://api.moosend.com/v3. Handler: OfficialApiNode. Auth is query apikey (Moosend does not use Authorization). Treat HTTP 200 + Code != 0 as failure (handler still surfaces data). trigger.listen is BPMN ingress — no documented webhook subscribe endpoint on REST v3 as of 2026-08-20. Customer owns the Moosend account. Operator must have consent (CAN-SPAM/CASL/GDPR). Never log apikey or subscriber email.",
+  "icon": "email",
+  "tags": [
+    "email",
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "cbf11101-d3e0-4278-b096-9beff10c2c0a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Example keys match api_spec.json required/queryFrom/bodyFrom.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "subscriber.add",
+          "description": "Overrides config operation when non-blank. EXACT: subscriber.add | subscriber.get | subscriber.unsubscribe | subscriber.remove | list.create | list.get | campaign.create | campaign.send | campaign.get | trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "list_id",
+          "label": "list_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mailing list id for subscriber_* and list.get.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subscriber email for subscriber.add/get/unsubscribe/remove.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subscriber or list or campaign name (snake_case alias).",
+          "children": []
+        },
+        {
+          "shortCode": "has_external_double_opt_in",
+          "label": "has_external_double_opt_in",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Consent already collected elsewhere. Does not invent consent.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_fields",
+          "label": "custom_fields",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "\"Name=Value\" strings. Omitted fields may clear on update.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Tag strings.",
+          "children": []
+        },
+        {
+          "shortCode": "confirmation_page",
+          "label": "confirmation_page",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list.create post-subscribe URL.",
+          "children": []
+        },
+        {
+          "shortCode": "redirect_after_unsubscribe_page",
+          "label": "redirect_after_unsubscribe_page",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list.create unsubscribe redirect.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "campaign.create subject line.",
+          "children": []
+        },
+        {
+          "shortCode": "sender_email",
+          "label": "sender_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Verified sender.",
+          "children": []
+        },
+        {
+          "shortCode": "reply_to_email",
+          "label": "reply_to_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reply-to.",
+          "children": []
+        },
+        {
+          "shortCode": "html_content",
+          "label": "html_content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign HTML. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "mailing_list_id",
+          "label": "mailing_list_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Target list GUID for campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "confirmation_to",
+          "label": "confirmation_to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Notify email.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign id for campaign.send / campaign.get.",
+          "children": []
+        },
+        {
+          "shortCode": "HasExternalDoubleOptIn",
+          "label": "HasExternalDoubleOptIn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `HasExternalDoubleOptIn` for operation: subscriber.add.",
+          "children": []
+        },
+        {
+          "shortCode": "CustomFields",
+          "label": "CustomFields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `CustomFields` for operation: subscriber.add.",
+          "children": []
+        },
+        {
+          "shortCode": "Tags",
+          "label": "Tags",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Tags` for operation: subscriber.add.",
+          "children": []
+        },
+        {
+          "shortCode": "ConfirmationPage",
+          "label": "ConfirmationPage",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ConfirmationPage` for operation: list.create.",
+          "children": []
+        },
+        {
+          "shortCode": "RedirectAfterUnsubscribePage",
+          "label": "RedirectAfterUnsubscribePage",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `RedirectAfterUnsubscribePage` for operation: list.create.",
+          "children": []
+        },
+        {
+          "shortCode": "Preferences",
+          "label": "Preferences",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Preferences` for operation: list.create.",
+          "children": []
+        },
+        {
+          "shortCode": "Subject",
+          "label": "Subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Subject` for operation: campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "SenderEmail",
+          "label": "SenderEmail",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `SenderEmail` for operation: campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "ReplyToEmail",
+          "label": "ReplyToEmail",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ReplyToEmail` for operation: campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "HtmlContent",
+          "label": "HtmlContent",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `HtmlContent` for operation: campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "MailingListID",
+          "label": "MailingListID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `MailingListID` for operation: campaign.create.",
+          "children": []
+        },
+        {
+          "shortCode": "ConfirmationTo",
+          "label": "ConfirmationTo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ConfirmationTo` for operation: campaign.create.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e3a5405e-b32d-4839-97fd-540450d4e1cb",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Size-capped. Never log secrets or raw PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c45f2395-b15c-475f-a346-e3b5cbd59f3f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: subscriber.add | subscriber.get | subscriber.unsubscribe | subscriber.remove | list.create | list.get | campaign.create | campaign.send | campaign.get | trigger.listen.",
+      "value": "subscriber.add",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "subscriber.add",
+        "subscriber.get",
+        "subscriber.unsubscribe",
+        "subscriber.remove",
+        "list.create",
+        "list.get",
+        "campaign.create",
+        "campaign.send",
+        "campaign.get",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "ff2b7e10-f994-484a-a342-d859407b3d74",
+      "shortCode": "apikey",
+      "label": "API key",
+      "type": "password",
+      "description": "Account API key (StudioQuack secret). Sent as query apikey= on every request. Never on INPUT. Never log the query string. Settings → API key.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "04050597-4785-482d-9883-8ba49393d8a9",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

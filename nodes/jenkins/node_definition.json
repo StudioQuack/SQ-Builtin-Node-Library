@@ -1,0 +1,304 @@
+{
+  "_id": "fcb9203b-a545-4026-80e8-8a2c2dbc1788",
+  "version": "1.0.0",
+  "name": "Jenkins",
+  "label": "Jenkins Remote Access API",
+  "description": "Jenkins Remote Access API. baseUrl is {jenkins_url}. job_create posts config.xml as application/xml; job_build takes token/delay query params. Docs: https://www.jenkins.io/doc/book/using/remote-access-api/. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "hub",
+  "tags": [
+    "jenkins",
+    "ci"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "fd132ba3-e492-4f04-8d14-c8f375279247",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "job_build",
+          "description": "Which official API call to run. EXACT values: job_build | job_build_wait | job_get | job_copy | job_create | build_list | queue_get | queue_item_get | quiet_down | restart | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'job_build'.",
+          "children": []
+        },
+        {
+          "shortCode": "jobPath",
+          "label": "jobPath",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job path for build/get/list. Folders: Folder/job/Name. Example: my-job.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "New job name query for job_create / job_copy. Example: pipeline-2.",
+          "children": []
+        },
+        {
+          "shortCode": "mode",
+          "label": "mode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "job_copy query mode. EXACT: copy.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Source job name for job_copy query from. Example: pipeline-1.",
+          "children": []
+        },
+        {
+          "shortCode": "tree",
+          "label": "tree",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Jenkins tree query for build_list. Example: builds[number,result,timestamp].",
+          "children": []
+        },
+        {
+          "shortCode": "token",
+          "label": "token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Remote-build token query for job_build / job_build_wait. Configure the same token on the job.",
+          "children": []
+        },
+        {
+          "shortCode": "delay",
+          "label": "delay",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional build delay query (Jenkins delay, e.g. 0sec) for job_build / job_build_wait.",
+          "children": []
+        },
+        {
+          "shortCode": "configXml",
+          "label": "configXml",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job config.xml for job_create. Sent as raw application/xml body. Official Jenkins createItem body.",
+          "children": []
+        },
+        {
+          "shortCode": "queue_id",
+          "label": "queue_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Queue item id for queue_item_get. Jenkins returns it in the Location header of job_build (/queue/item/<id>/). Example: 1042.",
+          "children": []
+        },
+        {
+          "shortCode": "jenkins_url",
+          "label": "jenkins_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Jenkins origin including scheme, no trailing slash. Overrides config. Example: https://ci.example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "config_xml",
+          "label": "config_xml",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job config.xml for job_create. Sent as raw application/xml body (alias of configXml). Official Jenkins createItem body.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "460a373b-51da-4144-8a2f-d6f830a44488",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "9fc865b8-10de-40c8-b276-5fdfc8ff3236",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: job_build, job_build_wait, job_get, job_copy, job_create, build_list, queue_get, queue_item_get, quiet_down, restart, listen. listen is BPMN ingress, not a socket.",
+      "value": "job_build",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "job_build",
+        "job_build_wait",
+        "job_get",
+        "job_copy",
+        "job_create",
+        "build_list",
+        "queue_get",
+        "queue_item_get",
+        "quiet_down",
+        "restart",
+        "listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "job_create",
+          "targets": [
+            {
+              "param": "config_xml",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "e0c7fcaa-61a2-43f7-9588-a1c1e6bb669a",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "Jenkins user API token (not account password). Basic user:token. CSRF crumb is not auto-fetched by OfficialApiNode.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "84f6213e-e97a-436d-b03c-d14772bb27eb",
+      "shortCode": "user",
+      "label": "User",
+      "type": "string",
+      "description": "Jenkins username.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a7a9a769-8356-423f-9cf8-0157309b18ca",
+      "shortCode": "jenkins_url",
+      "label": "Jenkins URL",
+      "type": "string",
+      "description": "Jenkins origin including scheme (baseUrl {jenkins_url}). Example: https://ci.example.com. No trailing slash.",
+      "value": "https://ci.example.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fc9b4df8-b161-4f4c-908a-cd8a5e289fe7",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5946078f-df0e-4387-8b6d-3c8c24c7f3f3",
+      "shortCode": "config_xml",
+      "label": "Config Xml",
+      "type": "string",
+      "description": "Job config.xml for job_create. Sent as raw application/xml body (alias of configXml). Official Jenkins createItem body.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

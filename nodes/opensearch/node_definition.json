@@ -1,0 +1,281 @@
+{
+  "_id": "cfa32956-500c-4f53-9e0d-22ce1f3925e5",
+  "version": "1.0.0",
+  "name": "OpenSearch",
+  "label": "OpenSearch — Amazon OpenSearch Service (SigV4)",
+  "description": "Amazon OpenSearch Service domain REST APIs signed with AWS SigV4 (service es). Set endpoint to the domain hostname (search-mydomain-abc.{region}.es.amazonaws.com). Docs: https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-signing-service-requests.html and https://docs.opensearch.org/latest/api-reference/. OpenSearch Serverless uses signing service aoss (not supported by this node; use the generic AWS or HTTP Request node). Self-hosted OpenSearch with HTTP Basic should use the HTTP Request node. Customer owns the index data. Secrets never logged or returned.",
+  "icon": "storage",
+  "tags": [
+    "search"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "51ec1a95-0647-58d1-839b-a6b1ab6f6fad",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put access_key_id, secret_access_key, or session_token here. Example: {\"operation\":\"document.create\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "document.create",
+          "description": "Overrides config. EXACT: document.create | document.get | document.update | document.delete | document.search.",
+          "children": []
+        },
+        {
+          "shortCode": "index",
+          "label": "index",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Index name. Path.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document id. Path.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Query DSL for document.search.",
+          "children": []
+        },
+        {
+          "shortCode": "doc",
+          "label": "doc",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Partial document for document.update. Pair with doc_as_upsert when inserting on miss (https://docs.opensearch.org/latest/api-reference/document-apis/update-document/).",
+          "children": []
+        },
+        {
+          "shortCode": "upsert",
+          "label": "upsert",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "document.update optional upsert document when the id is missing. Example: {\"status\":\"new\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "refresh",
+          "label": "refresh",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "document.create/update/delete query. EXACT: true | false | wait_for. Example: wait_for.",
+          "children": []
+        },
+        {
+          "shortCode": "doc_as_upsert",
+          "label": "doc_as_upsert",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "If true, uses doc for both update and insert. Official Update Document API.",
+          "children": []
+        },
+        {
+          "shortCode": "size",
+          "label": "size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Search size.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Search from (offset). Official Search API.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8f0c415b-3f1e-5843-b53a-f59e1a67f681",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Secrets never copied here.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "47422431-867c-575f-a525-413c8139c233",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: document.create | document.get | document.update | document.delete | document.search.",
+      "value": "document.create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "document.create",
+        "document.get",
+        "document.update",
+        "document.delete",
+        "document.search"
+      ]
+    },
+    {
+      "_id": "f6ded686-f45a-5eb8-9e43-544b2a72f7f5",
+      "shortCode": "secret_access_key",
+      "label": "AWS secret access key",
+      "type": "password",
+      "description": "IAM secret access key used to sign SigV4 for the OpenSearch domain. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1312c133-7012-59f9-9a3c-28c482278b00",
+      "shortCode": "access_key_id",
+      "label": "AWS access key ID",
+      "type": "password",
+      "description": "IAM access key ID used as the SigV4 credential. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ea1fa7ca-1760-49d6-985e-10a81e706b42",
+      "shortCode": "session_token",
+      "label": "AWS session token",
+      "type": "password",
+      "description": "Optional STS session token. When set, OfficialApiNode adds x-amz-security-token. Empty for long-lived keys. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ee84f2b5-a0a9-4e7e-bb75-c8f70d5ea4a8",
+      "shortCode": "region",
+      "label": "AWS region",
+      "type": "string",
+      "description": "SigV4 signing region of the OpenSearch domain (e.g. us-east-1). Must match the domain.",
+      "value": "us-east-1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e5f81cb4-6922-4fd8-9446-a6a34a2c82c5",
+      "shortCode": "endpoint",
+      "label": "Domain endpoint host",
+      "type": "string",
+      "description": "OpenSearch domain hostname without scheme, e.g. search-mydomain-abc.us-east-1.es.amazonaws.com. OfficialApiNode calls https://{endpoint}.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "91d8278d-87a3-5dc5-865a-fbe467aca22e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

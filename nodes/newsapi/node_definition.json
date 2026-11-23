@@ -1,0 +1,305 @@
+{
+  "_id": "6c601741-a3ce-4a08-86c8-a684cfda7b58",
+  "version": "1.0.0",
+  "name": "NewsAPI Search",
+  "label": "NewsAPI.org - News Article Search",
+  "description": "Search news articles via the NewsAPI.org REST API from this in-process Java handler (NewsapiNode). Calls GET {base_url}/everything (default, full-text search across 150K+ sources, date window, title-only query, domain filter, sort) or GET {base_url}/top-headlines (breaking news by category/country/sources). Authentication is the required instance password api_key, sent only as header X-Api-Key (never as a query param, never on the output port, never in helper logs). User-Agent is always StudioQuack/1.0. Free Developer plan is 100 requests/day, 24-hour article delay, about 1 month of article archive, and truncated content (~200 chars); development/testing only — not production (https://newsapi.org/pricing). Official rate-limit HTTP status is 429 (https://newsapi.org/docs/errors); this handler maps HTTP 429 to a dedicated daily-limit error string. Despite input.schema.query.required=true, the handler accepts a request when at least one of query (or alias q), q_in_title, sources, or domains is present — matching the Python node. jobType remains custom-script-executor; execution is the library image listener, not a Script tab. NewsAPI developer terms require attribution and restrict production use; see https://newsapi.org/terms.",
+  "icon": "newspaper",
+  "tags": [
+    "newsapi",
+    "news",
+    "articles",
+    "headlines"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One NewsAPI search. Delivered as inputVariables.input (or currentNode.inputList[] with targetPortValue=input). A one-element list is unwrapped. Fields: query (or q), endpoint, from, to, sources, domains, language, sort_by, page_size, page, q_in_title, category, country. At least one of query/q, q_in_title, sources, or domains is required at runtime even though query.required is true. endpoint EXACT: 'everything' (default) | 'top-headlines'. Do not put api_key on this port — it is instance config only. Example: {\"query\":\"workflow OR automation\",\"endpoint\":\"everything\",\"language\":\"en\",\"sort_by\":\"publishedAt\",\"page_size\":20,\"from\":\"2026-08-01\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Keywords sent as NewsAPI `q`. Alias: when this field is blank, `q` is read instead (Python `query or q`). Supports NewsAPI operators AND, OR, NOT and quoted phrases. Example: '\"workflow automation\" OR \"low-code\"'. Schema required=true is a designer hint only: the handler does NOT fail when query is empty if at least one of q_in_title, sources, or domains is present (Python parity). If all four are missing/blank, the node raises INVALID_INPUT 'At least one of query, q_in_title, sources, or domains is required.' Applied on both endpoints when non-blank. Do not put the API key here. Empty string is omitted from the HTTP query.",
+          "children": []
+        },
+        {
+          "shortCode": "endpoint",
+          "label": "endpoint",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which NewsAPI path to call. EXACT accepted values (case-sensitive, no aliases): 'everything' | 'top-headlines'. Default when omitted/blank: 'everything' (GET {base_url}/everything). 'top-headlines' calls GET {base_url}/top-headlines. Any other string is treated as everything (same as Python: only the exact token top-headlines switches). Pairing: from, to, q_in_title, domains, sort_by apply only to everything. category and country apply only to top-headlines. NewsAPI rejects combining sources with country or category on top-headlines — that 400 surfaces as NewsAPI HTTP Error: HTTP 400 for url: …. Example: 'everything'.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Inclusive start of the article window, sent as NewsAPI `from`. ISO 8601 date or datetime (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS). Used ONLY when endpoint is everything (ignored for top-headlines — the handler does not send it). Optional; omitted/blank is dropped from the query. Free-tier NewsAPI typically allows about one month of history; older dates may return HTTP 400 or empty results depending on the plan (Developer: 1-month archive). Example: '2026-08-01'. Pair with `to` to bound a window.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Inclusive end of the article window, sent as NewsAPI `to`. Same formats as `from` (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS). Used ONLY when endpoint is everything (ignored for top-headlines). Optional; omitted/blank is dropped. Example: '2026-08-20'. If `to` is before `from`, NewsAPI returns an HTTP 4xx which this node raises as HTTP_{status} 'NewsAPI HTTP Error: HTTP {status} for url: {url}'.",
+          "children": []
+        },
+        {
+          "shortCode": "sources",
+          "label": "sources",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated NewsAPI source IDs sent as `sources`. Example: 'techcrunch,the-verge,wired'. Counts toward the runtime 'at least one of query, q_in_title, sources, or domains' rule, so a sources-only request is valid even when query.required is true. Sent on both everything and top-headlines when non-blank. NewsAPI does not allow sources together with country or category on top-headlines (HTTP 400). Max 20 sources per request on the public API. Use the NewsAPI /top-headlines/sources catalogue for valid IDs — arbitrary publisher names are rejected.",
+          "children": []
+        },
+        {
+          "shortCode": "domains",
+          "label": "domains",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated publisher domains sent as NewsAPI `domains`. Example: 'techcrunch.com,wired.com'. Used ONLY on everything (ignored for top-headlines). Counts toward the runtime required-one-of rule with query / q_in_title / sources. Optional; omitted/blank is dropped. Do not include a scheme (http://) — host only. A domains-only search (no query) is valid at runtime despite query.required=true.",
+          "children": []
+        },
+        {
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 639-1 language code sent as NewsAPI `language`. EXACT accepted NewsAPI language tokens: ar | de | en | es | fr | he | it | nl | no | pt | ru | sv | zh. Default when omitted/blank: instance config default_language (itself default 'en'). On everything this param is always sent (including the default). On top-headlines it is sent only when non-blank after defaulting. Unknown codes typically yield HTTP 400 from NewsAPI. Example: 'en'. This is article language, not country; use `country` for top-headlines geo.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_by",
+          "label": "sort_by",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sort order sent as NewsAPI `sortBy` (camelCase on the wire). EXACT accepted values: 'relevancy' | 'publishedAt' | 'popularity'. Default when omitted/blank: instance config default_sort_by (itself default 'relevancy'). Used ONLY on everything — top-headlines does not send sortBy. relevancy = best match first; publishedAt = newest first; popularity = most shared/engaged first. Any other string is forwarded and NewsAPI may 400. Example: 'publishedAt'.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page length sent as NewsAPI `pageSize`. Integer. Default when omitted/not positive: instance config default_page_size (itself default 20). NewsAPI maximum is 100; values above 100 typically return HTTP 400. Applies to both endpoints. Pair with `page` for pagination. output.articles_returned is this page's length; output.total_results is the index size (may exceed page_size). Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "1-based page number sent as NewsAPI `page`. Integer. Default when omitted/not positive: 1. Applies to both endpoints. NewsAPI will 400 if page is out of range for the result set. Example: 1. Use with page_size; there is no separate cursor.",
+          "children": []
+        },
+        {
+          "shortCode": "category",
+          "label": "category",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Top-headlines category filter sent as NewsAPI `category`. EXACT accepted values: business | entertainment | general | health | science | sports | technology. Used ONLY when endpoint is 'top-headlines' (ignored for everything). Optional; omitted/blank is dropped. Cannot be combined with `sources` (NewsAPI HTTP 400). Often paired with `country`. Example: 'technology'.",
+          "children": []
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Top-headlines country filter sent as NewsAPI `country`. ISO 3166-1 alpha-2, lowercase. Examples: 'us', 'gb', 'de'. Used ONLY when endpoint is 'top-headlines' (ignored for everything). Optional; omitted/blank is dropped. Cannot be combined with `sources` (NewsAPI HTTP 400). This is the edition country, not language — use `language` for ISO 639-1. Example: 'us'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', total_results, articles_returned, articles:[{title, description, url, source, author, published_at, content}]}. api_key is never included. Example success: {\"status\":\"ok\",\"total_results\":1280,\"articles_returned\":20,\"articles\":[{\"title\":\"…\",\"description\":\"…\",\"url\":\"https://…\",\"source\":\"TechCrunch\",\"author\":\"…\",\"published_at\":\"2026-08-20T12:00:00Z\",\"content\":\"…\"}]}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "Present on success only, always the exact string 'ok' when the NewsAPI JSON was parsed and articles were mapped. Absent on failure (do not expect status:'error'). Use the presence of `error` as the failure gate. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "total_results",
+          "label": "Total Results",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "NewsAPI `totalResults` — estimated matches in the index, not the page length. Integer, 0 when missing. May be larger than articles_returned. Present on success only. Example: 1280.",
+          "children": []
+        },
+        {
+          "shortCode": "articles_returned",
+          "label": "Articles Returned",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Length of the `articles` array on this page (after mapping). Integer. Equal to min(page_size, remaining hits) on a healthy response; 0 when NewsAPI returned an empty articles list. Present on success only. Example: 20.",
+          "children": []
+        },
+        {
+          "shortCode": "articles",
+          "label": "Articles",
+          "type": "array",
+          "required": false,
+          "value": "[]",
+          "description": "Mapped article objects, one per NewsAPI article on this page. Each object has string fields (all trimmed): title, description, url, source (from source.name), author, published_at (from publishedAt), content. Missing JSON fields become ''. Free-tier content is often truncated with a trailing character count. Empty array when there are no hits. Present on success only. Example element: {\"title\":\"Acme raises Series A\",\"description\":\"…\",\"url\":\"https://example.com/a\",\"source\":\"TechCrunch\",\"author\":\"Jane Doe\",\"published_at\":\"2026-08-20T12:00:00Z\",\"content\":\"…\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "status_code",
+          "label": "Status Code",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status copied onto the output object only for two NewsAPI responses: 401 (invalid key) and 429 (rate limited / daily quota). Absent on success and on other errors (those use error text only). Example: 401. Do not treat a missing status_code as success — check `error`.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "NewsAPI.org API key. Required. Register at https://newsapi.org/register (free Developer key is for development/testing only). Sent only as HTTP header X-Api-Key; never as a query parameter, never written to output, never written to helper logs. Blank/missing → INVALID_INPUT 'Missing NewsAPI API key. Provide it in node parameters (api_key).' (no outbound call). HTTP 401 from NewsAPI → AUTH_FAILED with an HTTP 401 message. HTTP 429 → RATE_LIMITED with an HTTP 429 message. Treat this as a secret: instance-editable, not public. Developer plan: 100 requests/day, 24-hour delay, 1-month archive, development/testing only (https://newsapi.org/pricing).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+      "shortCode": "base_url",
+      "label": "Base URL",
+      "type": "string",
+      "description": "NewsAPI origin including the /v2 prefix, with trailing slashes stripped before /everything or /top-headlines is appended. Default: https://newsapi.org/v2. Change only for a documented proxy or NewsAPI enterprise endpoint that speaks the same REST shape. Empty/blank falls back to the default. Example: https://newsapi.org/v2. Do not put the API key in this URL — it is a header.",
+      "value": "https://newsapi.org/v2",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+      "shortCode": "default_language",
+      "label": "Default Language",
+      "type": "string",
+      "description": "Fallback ISO 639-1 language used when input.language is omitted or blank. EXACT NewsAPI tokens: ar, de, en, es, fr, he, it, nl, no, pt, ru, sv, zh. Default: en. Empty config falls back to en. Overridden per invoke by input.language. Example: en.",
+      "value": "en",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+      "shortCode": "default_page_size",
+      "label": "Default Page Size",
+      "type": "number",
+      "description": "Fallback pageSize when input.page_size is omitted or not positive. Range intended: 1–100 (NewsAPI max 100). Default: 20. Example: 20. Overridden per invoke by input.page_size. Values above 100 are forwarded and typically 400 from NewsAPI.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+      "shortCode": "default_sort_by",
+      "label": "Default Sort By",
+      "type": "select",
+      "description": "Fallback sortBy for everything when input.sort_by is omitted or blank. EXACT accepted values: relevancy (best match first) | publishedAt (newest first) | popularity (most shared/engaged first). Default: relevancy. Ignored for top-headlines (that endpoint does not send sortBy). Example: relevancy.",
+      "value": "relevancy",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "relevancy",
+        "publishedAt",
+        "popularity"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Wall-clock HTTP timeout for the NewsAPI GET (connect+read via DataNodeSupport). Positive integer. Default: 25. 0 or negative fall back to 25. On expiry the node raises REQUEST_FAILED 'NewsAPI request timed out after {timeout}s.' (Python wording). Increase only on slow links; keep below the daemon stateful request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-03-15T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

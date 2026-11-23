@@ -1,0 +1,238 @@
+{
+  "_id": "a2afffde-2da8-4595-b5a6-1a288933fb70",
+  "version": "1.0.0",
+  "name": "Hootsuite",
+  "label": "Hootsuite REST — schedule, list, analytics",
+  "description": "Official Hootsuite REST API 1.0 at https://platform.hootsuite.com/v1. OfficialApiNode: POST /messages, GET /messages, POST /analytics/posts. Auth is StudioQuack secret access_token (Bearer). trigger is BPMN message-event ingress (com.hootsuite.messages.event.v1), not a socket. Analytics needs Advanced Analytics and scope analytics:read. Customer owns the Developer Portal app. Never log access_token.",
+  "icon": "campaign",
+  "tags": [
+    "hootsuite",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4b913f29-a34c-4bee-aa2f-c54757e9eb52",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. No secrets. Example: {\"text\":\"Hello\",\"scheduledSendTime\":\"2026-08-21T15:00:00Z\",\"socialProfileIds\":[\"123\"]}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "message_schedule",
+          "description": "Overrides config operation when non-blank. EXACT: message_schedule | message_list | analytics_get | trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "message_schedule body. Message text.",
+          "children": []
+        },
+        {
+          "shortCode": "scheduledSendTime",
+          "label": "scheduledSendTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "message_schedule body. UTC ISO-8601 ending in Z, at least 5 minutes ahead (videos: at least 15 minutes).",
+          "children": []
+        },
+        {
+          "shortCode": "socialProfileIds",
+          "label": "socialProfileIds",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "message_schedule body. Array of Hootsuite profile ids (not socialNetworkId). Resolve via GET /v1/socialProfiles.",
+          "children": []
+        },
+        {
+          "shortCode": "startTime",
+          "label": "startTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "message_list query. ISO-8601. Required with endTime. Window max 4 weeks.",
+          "children": []
+        },
+        {
+          "shortCode": "endTime",
+          "label": "endTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "message_list query. ISO-8601. Not later than startTime + 4 weeks.",
+          "children": []
+        },
+        {
+          "shortCode": "filters",
+          "label": "filters",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "analytics_get body. Profile ids (max 10), reporting period (≤ 2 years), network type per Analytics docs.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "analytics_get body. Max 100.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "analytics_get body pagination cursor.",
+          "children": []
+        },
+        {
+          "shortCode": "emailNotification",
+          "label": "Email notification",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "message_schedule emailNotification.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "State",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "message_list state. EXACT: SCHEDULED | PENDING_APPROVAL | SENT | DELETED.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "280541a3-b29d-4d32-963f-37cc3dccefc2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). trigger returns an ingress instruction, not HTTP. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (messages envelope or analytics).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "35fca804-1772-4746-8055-35756c016a0c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: message_schedule | message_list | analytics_get | trigger.",
+      "value": "message_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "message_schedule",
+        "message_list",
+        "analytics_get",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "b8c61ff2-f39b-497c-8267-5b299ef8fbc4",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Hootsuite OAuth access token (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT. Empty → no HTTP. Refresh tokens are single-use — rotate out of band.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c9e2b021-5790-4513-b4f5-8d6889fe2230",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

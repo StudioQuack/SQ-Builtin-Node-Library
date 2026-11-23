@@ -1,0 +1,267 @@
+{
+  "_id": "d5e996ba-ffa4-4986-8467-a24c1654c3e5",
+  "version": "1.0.0",
+  "name": "Mindee",
+  "label": "Mindee V2 inference — extraction models",
+  "description": "Official Mindee API v2 at https://api-v2.mindee.net. POST /v2/products/extraction/enqueue with JSON {model_id, url|file_base64} (multipart file also official; OfficialApiNode JSON-encodes type file refs). invoice, receipt, and passport are the same enqueue path — pass the UUID of the Invoice / Receipt / Passport model cloned from Mindee's catalog in your account (V2 has no global /invoices/v4 product path). Authorization header is the raw API key (not Bearer, not Token). Identity docs = PII. Docs: https://docs.mindee.com/integrations/api-reference/extraction-models.md.",
+  "icon": "receipt_long",
+  "tags": [
+    "mindee",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "bce06748-0f87-4071-ac64-7f85b4546037",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Enqueue an extraction inference (model_id + url or file), then poll it with job_id (get_job) or fetch it with inference_id (get_result). model_id is the account model UUID. Provide url (HTTPS) or file (platform ref-id). Do not put api_key here. Example: {\"model_id\":\"11111111-2222-4333-8444-555555555555\",\"url\":\"https://example.com/invoice.pdf\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "predict",
+          "description": "Overrides config operation. EXACT: predict | invoice | receipt | passport | get_job | get_result. The first four POST the same V2 extraction enqueue (async); the model_id selects Invoice vs Receipt vs Passport vs custom schema. get_job polls job_id; get_result fetches inference_id.",
+          "children": []
+        },
+        {
+          "shortCode": "model_id",
+          "label": "model_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mindee v2 model id for every enqueue. Example: my-invoice-model.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Document file (platform file list) for predict / invoice / receipt / passport.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTTPS document URL alternative to file.",
+          "children": []
+        },
+        {
+          "shortCode": "file_base64",
+          "label": "file_base64",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Base64 document alternative to file.",
+          "children": []
+        },
+        {
+          "shortCode": "filename",
+          "label": "filename",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Original file name when sending file_base64.",
+          "children": []
+        },
+        {
+          "shortCode": "alias",
+          "label": "alias",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional document alias.",
+          "children": []
+        },
+        {
+          "shortCode": "raw_text",
+          "label": "raw_text",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "predict: return raw text. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "polygon",
+          "label": "polygon",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "predict: return polygons. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "confidence",
+          "label": "confidence",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "predict: return confidence scores. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "rag",
+          "label": "rag",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "predict: enable RAG. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "text_context",
+          "label": "text_context",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "predict extra text context string.",
+          "children": []
+        },
+        {
+          "shortCode": "job_id",
+          "label": "job_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job UUID returned by any enqueue operation (response job.id) for operation get_job (GET /v2/jobs/{job_id}). Returns the job status while Processing; once Processed the server redirects and the node returns the extraction result. Example: 12345678-1234-4123-8123-123456789abc.",
+          "children": []
+        },
+        {
+          "shortCode": "inference_id",
+          "label": "inference_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Inference UUID of a processed job (job.result_url tail or inference.id) for operation get_result (GET /v2/products/extraction/results/{inference_id}). Example: 87654321-4321-4321-8321-cba987654321.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "f8cd2de2-9ad2-4b96-b612-fdf04a7ae1e3",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Enqueue returns HTTP 202 with job (id, polling_url, status). OfficialApiNode does not poll. Retrieve via GET job.result_url when Processed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx (including 202 Accepted).",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (job.id, polling_url, result_url).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "d3308538-ddde-4a32-8228-ce8b86c600ca",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Designer intent. EXACT: predict | invoice | receipt | passport | get_job | get_result. predict / invoice / receipt / passport POST /v2/products/extraction/enqueue (async, returns job.id); bind the matching catalog model UUID as input.model_id. get_job = GET /v2/jobs/{job_id} (status, or the result once Processed). get_result = GET /v2/products/extraction/results/{inference_id}.",
+      "value": "predict",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "predict",
+        "invoice",
+        "receipt",
+        "passport",
+        "get_job",
+        "get_result"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "f12a9795-ed9f-4fd1-a1f1-c7d287d85442",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Mindee V2 API key (starts with md_). Authorization header value is the key only — not Bearer and not Token (V1). V1 and V2 keys are not interchangeable. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "922f7187-9085-475c-929a-94a61a212f1e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout for enqueue. Default 60. Floor 1. Inference itself is async (up to 590s server-side).",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

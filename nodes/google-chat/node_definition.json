@@ -1,0 +1,299 @@
+{
+  "_id": "097e91c5-45a8-56bb-aed9-554bbfbc2a78",
+  "version": "1.0.0",
+  "name": "Google Chat",
+  "label": "Google Chat — Google Chat API v1",
+  "description": "Google Chat via the official Google Chat API v1. Base https://chat.googleapis.com/v1. Docs: https://developers.google.com/workspace/chat/api/reference/rest. Chat app must be installed in the space. Workspace admin allow-list. listen = Chat/Workspace Events as BPMN message events. Customer-level preview subscriptions are out of v1. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "chat",
+  "tags": [
+    "chat",
+    "google"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "31350d20-34e2-5df2-9b29-de70872f7cd3",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Google Chat operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"create-message\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "create-message",
+          "description": "Which official call to run. EXACT values: create-message | get-message | update-message | delete-message | list-messages | get-membership | list-memberships | get-space | list-spaces | send-and-wait | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "parent",
+          "label": "parent",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Space resource name, e.g. spaces/AAAA. Used as {parent}. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource name spaces/{space}/messages/{message} or members/spaces. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Plain text body. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "updateMask",
+          "label": "updateMask",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Field mask for update-message, e.g. text. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "messageReplyOption",
+          "label": "messageReplyOption",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `messageReplyOption` for operation: create-message.",
+          "children": []
+        },
+        {
+          "shortCode": "cardsV2",
+          "label": "cardsV2",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `cardsV2` for operations: create-message, update-message.",
+          "children": []
+        },
+        {
+          "shortCode": "thread",
+          "label": "thread",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `thread` for operation: create-message.",
+          "children": []
+        },
+        {
+          "shortCode": "pageSize",
+          "label": "pageSize",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `pageSize` for operations: list-messages, list-memberships, list-spaces.",
+          "children": []
+        },
+        {
+          "shortCode": "pageToken",
+          "label": "pageToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `pageToken` for operations: list-messages, list-memberships, list-spaces.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `filter` for operation: list-spaces.",
+          "children": []
+        },
+        {
+          "shortCode": "messageId",
+          "label": "Client message id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-message query messageId (spaces/*/messages/{id} client-assigned). Example: client-abc.",
+          "children": []
+        },
+        {
+          "shortCode": "requestId",
+          "label": "Request id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "create-message query requestId — idempotency key.",
+          "children": []
+        },
+        {
+          "shortCode": "showDeleted",
+          "label": "Show deleted",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "list-messages showDeleted.",
+          "children": []
+        },
+        {
+          "shortCode": "orderBy",
+          "label": "Order by",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list-messages orderBy. Example: createTime DESC.",
+          "children": []
+        },
+        {
+          "shortCode": "showGroups",
+          "label": "Show groups",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "list-memberships showGroups.",
+          "children": []
+        },
+        {
+          "shortCode": "showInvited",
+          "label": "Show invited",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "list-memberships showInvited.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a9b8431c-fecc-5a39-b8ff-2292657f1f83",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "70d52f64-70a9-512d-849c-c660327e8848",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: create-message, get-message, update-message, delete-message, list-messages, get-membership, list-memberships, get-space, list-spaces, send-and-wait, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "create-message",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "create-message",
+        "get-message",
+        "update-message",
+        "delete-message",
+        "list-messages",
+        "get-membership",
+        "list-memberships",
+        "get-space",
+        "list-spaces",
+        "send-and-wait",
+        "listen"
+      ]
+    },
+    {
+      "_id": "b5f59319-9908-5398-84a9-40e798237098",
+      "shortCode": "access_token",
+      "label": "OAuth access token",
+      "type": "password",
+      "description": "Google OAuth access token or Chat app service-account token. Header Authorization: Bearer. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5996f264-ce5f-53fe-bfbb-f9900d678a86",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

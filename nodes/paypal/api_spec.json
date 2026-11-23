@@ -1,0 +1,84 @@
+{
+  "baseUrl": "https://{environment}",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "order_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/checkout/orders",
+      "required": [
+        "intent",
+        "purchase_units"
+      ],
+      "bodyFrom": [
+        "intent",
+        "purchase_units",
+        "payer",
+        "payment_source",
+        "application_context"
+      ]
+    },
+    "order_capture": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/checkout/orders/{id}/capture",
+      "required": [
+        "id"
+      ]
+    },
+    "refund": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/payments/captures/{id}/refund",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "amount",
+        "invoice_id",
+        "note_to_payer"
+      ]
+    },
+    "payout_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/payments/payouts",
+      "bodyFrom": [
+        "sender_batch_header",
+        "items"
+      ]
+    },
+    "payout_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/payments/payouts/{payout_batch_id}",
+      "required": [
+        "payout_batch_id"
+      ]
+    },
+    "payout_item_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/payments/payouts-item/{payout_item_id}",
+      "required": [
+        "payout_item_id"
+      ]
+    },
+    "payout_item_cancel": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/payments/payouts-item/{payout_item_id}/cancel",
+      "required": [
+        "payout_item_id"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

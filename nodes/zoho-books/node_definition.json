@@ -1,0 +1,922 @@
+{
+  "_id": "1ec22b27-6ff0-495c-826a-3f1ee291fd5d",
+  "version": "1.0.0",
+  "name": "Zoho Books",
+  "label": "Zoho Books — Zoho Books API v3",
+  "description": "Official Zoho Books API v3. Docs: https://www.zoho.com/books/api/v3/introduction/. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. Distinct from Zoho CRM. No PAN. organization_id required. Data centers: com | eu | in | com.au | jp | sa | ca | com.cn.",
+  "icon": "account_balance",
+  "tags": [
+    "zoho",
+    "books",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a02056e8-173d-4bfd-888d-a113226f9575",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Zoho Books. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "contact_create",
+          "description": "Overrides config operation. EXACT: contact_create | invoice_create | invoice_get | payment_create | bill_create | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "contact_name",
+          "label": "contact_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Display name. Required on contact_create. Example: Acme Corp.",
+          "children": []
+        },
+        {
+          "shortCode": "customer_id",
+          "label": "customer_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Customer contact id. Required on invoice_create and payment_create. Example: 8527119000000099001.",
+          "children": []
+        },
+        {
+          "shortCode": "line_items",
+          "label": "line_items",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Line items [{item_id, quantity, rate}] for invoice_create / bill_create. Required. Example: [{\"item_id\":\"…\",\"quantity\":1,\"rate\":100}].",
+          "children": []
+        },
+        {
+          "shortCode": "invoice_id",
+          "label": "invoice_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `invoice_id` for operation: invoice_get. Required by: invoice_get.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Payment amount. Required on payment_create. Example: 150.00.",
+          "children": []
+        },
+        {
+          "shortCode": "vendor_id",
+          "label": "vendor_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Vendor contact id. Required on bill_create.",
+          "children": []
+        },
+        {
+          "shortCode": "contact_type",
+          "label": "contact_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Zoho Books contact type. EXACT: customer | vendor. contact_create. Example: customer. https://www.zoho.com/books/api/v3/contacts/",
+          "children": []
+        },
+        {
+          "shortCode": "company_name",
+          "label": "company_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Legal company name. contact_create. Example: Acme Corp.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact email. contact_create. PII — do not log. Example: billing@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact phone. contact_create. PII — do not log.",
+          "children": []
+        },
+        {
+          "shortCode": "billing_address",
+          "label": "billing_address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Billing address {address,city,state,zip,country}. contact_create.",
+          "children": []
+        },
+        {
+          "shortCode": "shipping_address",
+          "label": "shipping_address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Shipping address {address,city,state,zip,country}. contact_create.",
+          "children": []
+        },
+        {
+          "shortCode": "contact_persons",
+          "label": "contact_persons",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Contact persons [{first_name,last_name,email,phone}]. contact_create.",
+          "children": []
+        },
+        {
+          "shortCode": "payment_terms",
+          "label": "payment_terms",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Net payment days. contact_create and invoice_create. Example: 15.",
+          "children": []
+        },
+        {
+          "shortCode": "invoice_number",
+          "label": "invoice_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Invoice number. invoice_create. Auto-generated when omitted. Max 100 chars.",
+          "children": []
+        },
+        {
+          "shortCode": "date",
+          "label": "date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document date YYYY-MM-DD. invoice_create, payment_create, bill_create. Example: 2026-01-15.",
+          "children": []
+        },
+        {
+          "shortCode": "due_date",
+          "label": "due_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Due date YYYY-MM-DD. invoice_create / bill_create.",
+          "children": []
+        },
+        {
+          "shortCode": "notes",
+          "label": "notes",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Notes on invoice_create or bill_create.",
+          "children": []
+        },
+        {
+          "shortCode": "currency_id",
+          "label": "currency_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Zoho currency id for invoice_create when not using the org default.",
+          "children": []
+        },
+        {
+          "shortCode": "payment_mode",
+          "label": "payment_mode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create. EXACT: check | cash | creditcard | banktransfer | bankremittance | autotransaction | others. Required by Zoho. Example: banktransfer.",
+          "children": []
+        },
+        {
+          "shortCode": "invoices",
+          "label": "invoices",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "payment_create invoices [{invoice_id, amount_applied}]. Required by Zoho. Example: [{\"invoice_id\":\"123\",\"amount_applied\":50}].",
+          "children": []
+        },
+        {
+          "shortCode": "reference_number",
+          "label": "reference_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Payment reference. payment_create. Max 100 chars.",
+          "children": []
+        },
+        {
+          "shortCode": "account_id",
+          "label": "account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deposit account id for payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "bill_number",
+          "label": "bill_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Vendor bill number. bill_create. Example: BILL-001.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Payment description / notes. payment_create. Example: Invoice settlement.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c15c98fa-fc92-4ee2-bf6a-c5c6fa782e9a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "3a0acfd8-cc3f-4e57-9aaa-71fe6cbdc70c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: contact_create | invoice_create | invoice_get | payment_create | bill_create | trigger. Default contact_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "contact_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "contact_create",
+        "invoice_create",
+        "invoice_get",
+        "payment_create",
+        "bill_create",
+        "trigger"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "contact_create",
+          "targets": [
+            {
+              "param": "organization_id",
+              "visible": true
+            },
+            {
+              "param": "dc",
+              "visible": true
+            },
+            {
+              "param": "payment_terms",
+              "visible": true
+            },
+            {
+              "param": "billing_address",
+              "visible": true
+            },
+            {
+              "param": "shipping_address",
+              "visible": true
+            },
+            {
+              "param": "company_name",
+              "visible": true
+            },
+            {
+              "param": "contact_name",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "contact_type",
+              "visible": true
+            },
+            {
+              "param": "contact_persons",
+              "visible": true
+            },
+            {
+              "param": "phone",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "invoice_create",
+          "targets": [
+            {
+              "param": "organization_id",
+              "visible": true
+            },
+            {
+              "param": "dc",
+              "visible": true
+            },
+            {
+              "param": "payment_terms",
+              "visible": true
+            },
+            {
+              "param": "customer_id",
+              "visible": true
+            },
+            {
+              "param": "notes",
+              "visible": true
+            },
+            {
+              "param": "due_date",
+              "visible": true
+            },
+            {
+              "param": "date",
+              "visible": true
+            },
+            {
+              "param": "currency_id",
+              "visible": true
+            },
+            {
+              "param": "line_items",
+              "visible": true
+            },
+            {
+              "param": "invoice_number",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "invoice_get",
+          "targets": [
+            {
+              "param": "organization_id",
+              "visible": true
+            },
+            {
+              "param": "dc",
+              "visible": true
+            },
+            {
+              "param": "invoice_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "payment_create",
+          "targets": [
+            {
+              "param": "organization_id",
+              "visible": true
+            },
+            {
+              "param": "dc",
+              "visible": true
+            },
+            {
+              "param": "customer_id",
+              "visible": true
+            },
+            {
+              "param": "date",
+              "visible": true
+            },
+            {
+              "param": "payment_mode",
+              "visible": true
+            },
+            {
+              "param": "reference_number",
+              "visible": true
+            },
+            {
+              "param": "amount",
+              "visible": true
+            },
+            {
+              "param": "description",
+              "visible": true
+            },
+            {
+              "param": "invoices",
+              "visible": true
+            },
+            {
+              "param": "account_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "bill_create",
+          "targets": [
+            {
+              "param": "organization_id",
+              "visible": true
+            },
+            {
+              "param": "dc",
+              "visible": true
+            },
+            {
+              "param": "notes",
+              "visible": true
+            },
+            {
+              "param": "due_date",
+              "visible": true
+            },
+            {
+              "param": "date",
+              "visible": true
+            },
+            {
+              "param": "line_items",
+              "visible": true
+            },
+            {
+              "param": "bill_number",
+              "visible": true
+            },
+            {
+              "param": "vendor_id",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "f565c914-3153-451f-92b3-d649e5c54583",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Zoho Books credential (header Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "032c7ff3-c238-4b66-9652-7ac51448abb0",
+      "shortCode": "organization_id",
+      "label": "Organization Id",
+      "type": "string",
+      "description": "organization_id query on every call.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e4af925d-e91f-4c01-8a21-cb93de4bb33a",
+      "shortCode": "dc",
+      "label": "Dc",
+      "type": "string",
+      "description": "Data center TLD interpolated into https://www.zohoapis.{dc}/books/v3. EXACT: com | eu | in | com.au | jp | sa | ca | com.cn. Official: https://www.zoho.com/books/api/v3/introduction/#multidc.",
+      "value": "com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "10ea4299-2280-47b9-8275-8ec928378f3c",
+      "shortCode": "payment_terms",
+      "label": "Payment Terms",
+      "type": "number",
+      "description": "Net payment days. contact_create and invoice_create. Example: 15.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b6e47768-ad69-4090-8558-3b0d8870a295",
+      "shortCode": "billing_address",
+      "label": "Billing Address",
+      "type": "object",
+      "description": "Billing address {address,city,state,zip,country}. contact_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3846b27a-f15b-4bd7-9026-01b792cf7115",
+      "shortCode": "shipping_address",
+      "label": "Shipping Address",
+      "type": "object",
+      "description": "Shipping address {address,city,state,zip,country}. contact_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "107d34b1-9db1-4a54-bce8-acf866d0d904",
+      "shortCode": "company_name",
+      "label": "Company Name",
+      "type": "string",
+      "description": "Legal company name. contact_create. Example: Acme Corp.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3d421136-d6b6-41d7-95bd-44c16a37cfef",
+      "shortCode": "contact_name",
+      "label": "Contact Name",
+      "type": "string",
+      "description": "Display name. Required on contact_create. Example: Acme Corp.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e649a00f-e052-48ee-96ff-5f4b8865c416",
+      "shortCode": "email",
+      "label": "Email",
+      "type": "string",
+      "description": "Contact email. contact_create. PII — do not log. Example: billing@example.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fd422e81-49de-435f-9613-4d98652fd234",
+      "shortCode": "contact_type",
+      "label": "Contact Type",
+      "type": "string",
+      "description": "Zoho Books contact type. EXACT: customer | vendor. contact_create. Example: customer. https://www.zoho.com/books/api/v3/contacts/",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "11c8e365-b1c7-435a-b5cd-a8170873b588",
+      "shortCode": "contact_persons",
+      "label": "Contact Persons",
+      "type": "list",
+      "description": "Contact persons [{first_name,last_name,email,phone}]. contact_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "471767d4-91e6-4492-9e2b-d6e3e37c94d8",
+      "shortCode": "phone",
+      "label": "Phone",
+      "type": "string",
+      "description": "Contact phone. contact_create. PII — do not log.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c5c67c30-4e73-45ec-8c95-530f6ac18f49",
+      "shortCode": "customer_id",
+      "label": "Customer ID",
+      "type": "string",
+      "description": "Customer contact id. Required on invoice_create and payment_create. Example: 8527119000000099001.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2860b789-195f-470c-84c1-13ec0bc7482c",
+      "shortCode": "notes",
+      "label": "Notes",
+      "type": "string",
+      "description": "Notes on invoice_create or bill_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7f62f4c5-9674-4bc8-a0e6-d8c85aa9d0fd",
+      "shortCode": "due_date",
+      "label": "Due Date",
+      "type": "string",
+      "description": "Due date YYYY-MM-DD. invoice_create / bill_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9200668e-a72e-46da-9c1d-aedb22674fc7",
+      "shortCode": "date",
+      "label": "Date",
+      "type": "string",
+      "description": "Document date YYYY-MM-DD. invoice_create, payment_create, bill_create. Example: 2026-01-15.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "19789597-5a24-4186-aed1-30651ff83fe1",
+      "shortCode": "currency_id",
+      "label": "Currency ID",
+      "type": "string",
+      "description": "Zoho currency id for invoice_create when not using the org default.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ed440bd1-fd42-4c0d-99f4-e5a44b1dd09a",
+      "shortCode": "line_items",
+      "label": "Line Items",
+      "type": "string",
+      "description": "Line items [{item_id, quantity, rate}] for invoice_create / bill_create. Required. Example: [{\"item_id\":\"…\",\"quantity\":1,\"rate\":100}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "47ee1dbb-455a-4523-833d-508d00d0166e",
+      "shortCode": "invoice_number",
+      "label": "Invoice Number",
+      "type": "string",
+      "description": "Invoice number. invoice_create. Auto-generated when omitted. Max 100 chars.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "05da4d7a-4a0c-44e1-af06-55de9b0a3df2",
+      "shortCode": "invoice_id",
+      "label": "Invoice ID",
+      "type": "string",
+      "description": "URL path parameter `invoice_id` for operation: invoice_get. Required by: invoice_get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c9c3058e-2348-4970-af1c-70bc334e70c5",
+      "shortCode": "payment_mode",
+      "label": "Payment Mode",
+      "type": "string",
+      "description": "payment_create. EXACT: check | cash | creditcard | banktransfer | bankremittance | autotransaction | others. Required by Zoho. Example: banktransfer.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "34e3ae01-1459-4af0-b6ef-1fea21d243fc",
+      "shortCode": "reference_number",
+      "label": "Reference Number",
+      "type": "string",
+      "description": "Payment reference. payment_create. Max 100 chars.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c4ae5ac5-f55e-4f29-af11-4ccad62ee793",
+      "shortCode": "amount",
+      "label": "Amount",
+      "type": "string",
+      "description": "Payment amount. Required on payment_create. Example: 150.00.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "72ea2a33-23c1-4164-b61e-70d99f5f7c83",
+      "shortCode": "description",
+      "label": "Description",
+      "type": "string",
+      "description": "Payment description / notes. payment_create. Example: Invoice settlement.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6c79c89d-c0cb-44db-9b81-e83ce9cc6f83",
+      "shortCode": "invoices",
+      "label": "Invoices",
+      "type": "list",
+      "description": "payment_create invoices [{invoice_id, amount_applied}]. Required by Zoho. Example: [{\"invoice_id\":\"123\",\"amount_applied\":50}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2483eeff-c5f5-4b11-9992-e07861d7e6d0",
+      "shortCode": "account_id",
+      "label": "Account ID",
+      "type": "string",
+      "description": "Deposit account id for payment_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "97e6f44a-84d3-43c1-95f6-bdffffdbb4aa",
+      "shortCode": "bill_number",
+      "label": "Bill Number",
+      "type": "string",
+      "description": "Vendor bill number. bill_create. Example: BILL-001.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9f7a3e2c-739b-4a28-9725-2af19848801d",
+      "shortCode": "vendor_id",
+      "label": "Vendor ID",
+      "type": "string",
+      "description": "Vendor contact id. Required on bill_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cf90b428-44fc-4e92-b279-c2d3908ab011",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

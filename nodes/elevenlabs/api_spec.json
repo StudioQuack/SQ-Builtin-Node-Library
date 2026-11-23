@@ -1,0 +1,73 @@
+{
+  "baseUrl": "https://api.elevenlabs.io",
+  "defaultTimeout": 120,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "xi-api-key",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "tts": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/text-to-speech/{voice_id}",
+      "required": ["text", "voice_id"],
+      "queryFrom": ["output_format", "enable_logging"],
+      "bodyFrom": ["text", "model_id", "language_code", "voice_settings", "seed", "previous_text", "next_text"]
+    },
+    "stt": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/speech-to-text",
+      "required": [],
+      "bodyFrom": ["file", "source_url", "model_id", "language_code", "diarize", "num_speakers", "timestamps_granularity", "tag_audio_events", "webhook", "keyterms"],
+      "contentType": "multipart/form-data",
+      "bodyFormat": "multipart"
+    },
+    "get_transcript": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/speech-to-text/transcripts/{transcription_id}",
+      "required": ["transcription_id"]
+    },
+    "voices_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v2/voices",
+      "queryFrom": ["search", "page_size", "next_page_token", "voice_type", "category"],
+      "required": []
+    },
+    "clone_voice": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/voices/add",
+      "required": ["name"],
+      "bodyFrom": ["name", "files", "description", "remove_background_noise", "labels"],
+      "contentType": "multipart/form-data",
+      "bodyFormat": "multipart"
+    },
+    "dub": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/dubbing",
+      "required": ["target_lang"],
+      "bodyFrom": ["file", "source_url", "source_lang", "target_lang", "name", "num_speakers", "watermark", "drop_background_audio", "disable_voice_cloning"],
+      "contentType": "multipart/form-data",
+      "bodyFormat": "multipart"
+    },
+    "get_dub": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/dubbing/{dubbing_id}",
+      "required": ["dubbing_id"]
+    },
+    "download_dub": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/dubbing/{dubbing_id}/audio/{language_code}",
+      "required": ["dubbing_id", "language_code"]
+    }
+  }
+}

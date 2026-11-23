@@ -1,0 +1,274 @@
+{
+  "_id": "8e516311-d8af-4866-9a05-1fe42aa47fcf",
+  "version": "1.0.0",
+  "name": "Facebook Pages",
+  "label": "Facebook Pages — Graph API v26.0",
+  "description": "Official Meta Graph API v26.0 for a Facebook Page on https://graph.facebook.com/v26.0. Handler: OfficialApiNode. Page feed publish/list, insights, Lead Ads form list, generic Page-scoped GET/POST/DELETE. page_access_token is never logged or returned. Instagram stays on the Instagram node. Do not scrape facebook.com. Customer owns the Meta app.",
+  "icon": "flag",
+  "tags": [
+    "facebook",
+    "pages",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ce284bea-5391-4b09-8fcb-4fd8f165dfc6",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put page_access_token here. Example: {\"operation\":\"page_post_create\",\"page_id\":\"123\",\"message\":\"Hello\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "graph_get",
+          "description": "Overrides config operation when non-blank. EXACT: graph_get | page_post_create | page_feed_get | insights_get | lead_list | graph_post | graph_delete | trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "path",
+          "label": "path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "graph_get / graph_post path after version. No scheme/host. Slash in the value is URL-encoded — prefer a single object id, or use page_* ops for /feed edges.",
+          "children": []
+        },
+        {
+          "shortCode": "page_id",
+          "label": "page_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path {page_id} for page_post_create, page_feed_get, insights_get, lead_list.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Page post text for page_post_create / graph_post. Official message.",
+          "children": []
+        },
+        {
+          "shortCode": "link",
+          "label": "link",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "page_post_create / graph_post URL. Graph must be able to fetch it.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "page_feed_get query limit (Graph paging).",
+          "children": []
+        },
+        {
+          "shortCode": "metric",
+          "label": "metric",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "insights_get comma-separated metrics valid on v26.0. Do not send metrics Meta removed after 2026-06-15.",
+          "children": []
+        },
+        {
+          "shortCode": "period",
+          "label": "period",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "insights_get period: day | week | days_28 | lifetime as documented.",
+          "children": []
+        },
+        {
+          "shortCode": "object_id",
+          "label": "object_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "graph_delete path {object_id}. Page-owned object the token may delete.",
+          "children": []
+        },
+        {
+          "shortCode": "published",
+          "label": "published",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "page_post_create published. false = draft / unpublished.",
+          "children": []
+        },
+        {
+          "shortCode": "scheduled_publish_time",
+          "label": "scheduled_publish_time",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "page_post_create unix timestamp when scheduling.",
+          "children": []
+        },
+        {
+          "shortCode": "since",
+          "label": "since",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "insights_get since unix or YYYY-MM-DD.",
+          "children": []
+        },
+        {
+          "shortCode": "until",
+          "label": "until",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "insights_get until unix or YYYY-MM-DD.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0bf8b85b-df0f-4c0f-968b-34fe889a7799",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Lead payloads are PII — do not log data. trigger is ingress. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (feed, insights, forms, or Graph object). May contain lead PII — do not log.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "f47ccccc-53b3-4919-8f32-9acc6b41055e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT values listed in options. trigger does not open a socket.",
+      "value": "page_post_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "graph_get",
+        "page_post_create",
+        "page_feed_get",
+        "insights_get",
+        "lead_list",
+        "graph_post",
+        "graph_delete",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "c07d60d6-b24f-462b-9e76-d97309ea4c5d",
+      "shortCode": "page_access_token",
+      "label": "Page access token",
+      "type": "password",
+      "description": "Facebook Page access token (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT. Empty → no HTTP.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9a0ba609-25cd-4a03-9349-a75e803b7659",
+      "shortCode": "page_id",
+      "label": "page_id",
+      "type": "string",
+      "description": "Default Page id when INPUT page_id is empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0098bbff-3afe-4807-8b3a-8a2501936467",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

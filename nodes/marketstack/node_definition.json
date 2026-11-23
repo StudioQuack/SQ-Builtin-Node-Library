@@ -1,0 +1,221 @@
+{
+  "_id": "d7435cae-2f25-5690-97a0-a09d488fda85",
+  "version": "1.0.0",
+  "name": "marketstack",
+  "label": "marketstack",
+  "description": "marketstack official API via OfficialApiNode (api_spec.json). Operations: eod_list, exchange_get, ticker_get. Docs: https://marketstack.com/documentation_v2. marketstack (APILayer) terms. REST v2 (https://api.marketstack.com/v2). v1 was deprecated after 2025-06-30. access_key query. EOD only on free. Exchange redistribution rules apply. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "chart",
+  "tags": [
+    "finance",
+    "marketstack"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d521d684-3f88-5b0e-8a87-fd9f25dd6731",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One marketstack request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"eod_list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: eod_list | exchange_get | ticker_get. Default: first listed or instance operation. Example: 'eod_list'.",
+          "children": [],
+          "_id": "216dc9fc-ceb1-593c-aaaa-8ae4a7797b0a"
+        },
+        {
+          "shortCode": "date_from",
+          "label": "date_from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "YYYY-MM-DD start for eod_list.",
+          "children": [],
+          "_id": "46042921-f7f7-56e9-94ec-9b46d2f5f4c8"
+        },
+        {
+          "shortCode": "date_to",
+          "label": "date_to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "YYYY-MM-DD end for eod_list.",
+          "children": [],
+          "_id": "9fffbcb3-21d3-5054-b313-64be8686b086"
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for eod_list.",
+          "children": [],
+          "_id": "16571ba8-014e-5a19-98b0-33b27b99de0a"
+        },
+        {
+          "shortCode": "mic",
+          "label": "mic",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exchange MIC path for exchange_get. Example: XNAS.",
+          "children": [],
+          "_id": "0d94e53a-6c71-5ab6-a56d-2209ea4e31c6"
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Offset for eod_list.",
+          "children": [],
+          "_id": "95bbbab5-87ed-525e-ac26-c10498b41b03"
+        },
+        {
+          "shortCode": "symbol",
+          "label": "symbol",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Ticker path for ticker_get. Example: AAPL.",
+          "children": [],
+          "_id": "865072ad-3602-53cb-b5ca-b4d1c338c918"
+        },
+        {
+          "shortCode": "symbols",
+          "label": "symbols",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated tickers for eod_list. Official symbols. Example: AAPL,MSFT.",
+          "children": [],
+          "_id": "7ad973bc-330c-585b-851c-794d219af043"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "d14d6046-4173-57ba-b8eb-ad16558c3303",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "dad42ebb-decc-5ccd-9e2e-8ad48ddfb98a"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "86aaae15-a59a-5713-9e11-0fd68b75226b"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "634c41cb-e238-532b-ab51-b92cfe6c6fd9"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "69ca4882-32e6-5d3a-bb23-4afc388a2276",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: eod_list, exchange_get, ticker_get.",
+      "value": "eod_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "eod_list",
+        "exchange_get",
+        "ticker_get"
+      ]
+    },
+    {
+      "_id": "f395f2a8-fefa-586b-8c07-145d8475842c",
+      "shortCode": "access_key",
+      "label": "Access Key",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d08e2583-5529-5d06-bf9c-0d594e241a75",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

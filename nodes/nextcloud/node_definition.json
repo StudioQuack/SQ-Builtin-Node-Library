@@ -1,0 +1,402 @@
+{
+  "_id": "a704f921-104a-56b1-b540-b727744b6e4c",
+  "version": "1.0.0",
+  "name": "Nextcloud",
+  "label": "Nextcloud WebDAV + OCS",
+  "description": "Nextcloud WebDAV + OCS. Official API https://docs.nextcloud.com/server/stable/developer_manual/client_apis/WebDAV/index.html. One node; pick operation. Downloaded payloads may appear as OUTPUT file. baseUrl is config base_url. Handler: OfficialApiNode + api_spec.json. Self-hosted AGPL server. Use app passwords, not the account password. Set base_url to the real origin.",
+  "icon": "folder",
+  "tags": [
+    "nextcloud",
+    "files",
+    "webdav"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f54bb1fd-8ab7-5cc0-829d-41c76fd1ca22",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port. File bytes are type file.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "copy_file",
+          "description": "Overrides config operation. Accepted: copy_file, delete_file, download, move_file, share_file, upload, copy_folder, create_folder, delete_folder, list_folder, move_folder, share_folder, user_invite, user_get, user_list, user_update, user_delete.",
+          "children": []
+        },
+        {
+          "shortCode": "path",
+          "label": "path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "WebDAV path under /remote.php/dav/files/{username}/. Used by file/folder ops and OCS share path. Example: Documents/notes.md.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "File bytes for upload. Platform file list. Sent as the raw PUT body.",
+          "children": []
+        },
+        {
+          "shortCode": "destination",
+          "label": "destination",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "WebDAV Destination header for copy_file, move_file, copy_folder, move_folder. Absolute URL, e.g. https://cloud.example/remote.php/dav/files/ada/Archive/notes.md.",
+          "children": []
+        },
+        {
+          "shortCode": "key",
+          "label": "key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Object key.",
+          "children": []
+        },
+        {
+          "shortCode": "format",
+          "label": "format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OCS response format. EXACT: json | xml. Example: json.",
+          "children": []
+        },
+        {
+          "shortCode": "shareType",
+          "label": "shareType",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "OCS shareType for share_file / share_folder. EXACT: 0 user | 1 group | 3 public link | 4 email | 7 circle | 10 talk. Example: 3.",
+          "children": []
+        },
+        {
+          "shortCode": "share_type",
+          "label": "Share Type",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "OCS shareType (0=user,1=group,3=public link,…). Alias of shareType. share_file/share_folder.",
+          "children": []
+        },
+        {
+          "shortCode": "shareWith",
+          "label": "shareWith",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Share target (user id, group id, or email) for shareType 0/1/4. Omit for public link (3).",
+          "children": []
+        },
+        {
+          "shortCode": "share_with",
+          "label": "Share With",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OCS shareWith (user/group id). Alias of shareWith. Required for user/group shares.",
+          "children": []
+        },
+        {
+          "shortCode": "permissions",
+          "label": "permissions",
+          "type": "number",
+          "required": false,
+          "value": "1",
+          "description": "OCS share permissions bitmask for share_file. 1 read, 2 update, 4 create, 8 delete, 16 share. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "userid",
+          "label": "userid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path/request-body parameter `userid` for operations: user_invite, user_get, user_update, user_delete. Required by: user_get, user_update, user_delete.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "User Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OCS userid for user_get/update/delete/invite. Path /cloud/users/{user_id}.",
+          "children": []
+        },
+        {
+          "shortCode": "password",
+          "label": "password",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `password` for operation: user_invite.",
+          "children": []
+        },
+        {
+          "shortCode": "displayName",
+          "label": "displayName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `displayName` for operation: user_invite.",
+          "children": []
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `search` for operation: user_list.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `value` for operation: user_update.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "Email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email for user_invite when password is empty (OCS users). Example: user@example.com.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "114e50dd-ad3e-58c0-91e3-b12d91557be0",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "53dd7b28-59fb-50f4-b9d3-d7c1745ed49c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "copy_file",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "copy_file",
+        "delete_file",
+        "download",
+        "move_file",
+        "share_file",
+        "upload",
+        "copy_folder",
+        "create_folder",
+        "delete_folder",
+        "list_folder",
+        "move_folder",
+        "share_folder",
+        "user_invite",
+        "user_get",
+        "user_list",
+        "user_update",
+        "user_delete"
+      ]
+    },
+    {
+      "_id": "3c87be5c-8a68-5cf1-8433-a8b03e8f7bac",
+      "shortCode": "app_password",
+      "label": "App Password",
+      "type": "password",
+      "description": "Nextcloud app password (not the account password). StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1b277cd4-f4ab-5147-bd77-781e89d7fd65",
+      "shortCode": "base_url",
+      "label": "Base Url",
+      "type": "string",
+      "description": "Nextcloud origin (https://cloud.example.com). Interpolated as api_spec baseUrl. Required.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "79bb1b35-2a9e-5178-a0ad-5c570a6da16e",
+      "shortCode": "username",
+      "label": "Username",
+      "type": "string",
+      "description": "Nextcloud username for WebDAV path and Basic auth.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f955c767-c3d3-416e-8206-05f45127f26f",
+      "shortCode": "email",
+      "label": "Email",
+      "type": "string",
+      "description": "Email for user_invite when password is empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "1192ec3e-b5b2-4497-ad9b-d2a518ef7845",
+      "shortCode": "share_type",
+      "label": "Share Type",
+      "type": "number",
+      "description": "OCS shareType. Alias of shareType.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "598dc683-8796-42f4-9ae4-6b54027c9b42",
+      "shortCode": "share_with",
+      "label": "Share With",
+      "type": "string",
+      "description": "OCS shareWith. Alias of shareWith.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "2426139a-71c5-488b-b2c4-5a2c6a7af73b",
+      "shortCode": "user_id",
+      "label": "User Id",
+      "type": "string",
+      "description": "OCS userid for user_get/update/delete/invite.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "23847822-63f4-5a42-a908-e6e9a1a4ac36",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

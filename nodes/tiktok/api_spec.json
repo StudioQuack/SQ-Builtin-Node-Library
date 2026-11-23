@@ -1,0 +1,154 @@
+{
+  "baseUrl": "https://open.tiktokapis.com",
+  "defaultTimeout": 30,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "creator_info": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/post/publish/creator_info/query/",
+      "bodyFrom": [
+        "_"
+      ],
+      "contentType": "application/json"
+    },
+    "direct_post_video": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/post/publish/video/init/",
+      "bodyFrom": [
+        "title",
+        "privacy_level",
+        "video_url",
+        "media",
+        "source",
+        "video_size",
+        "chunk_size",
+        "total_chunk_count"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "title": "post_info.title",
+        "privacy_level": "post_info.privacy_level",
+        "video_url": "source_info.video_url",
+        "media": "source_info.media",
+        "source": "source_info.source",
+        "video_size": "source_info.video_size",
+        "chunk_size": "source_info.chunk_size",
+        "total_chunk_count": "source_info.total_chunk_count"
+      }
+    },
+    "direct_post_photo": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/post/publish/content/init/",
+      "bodyFrom": [
+        "title",
+        "privacy_level",
+        "media",
+        "source",
+        "post_mode",
+        "media_type",
+        "photo_cover_index"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "title": "post_info.title",
+        "privacy_level": "post_info.privacy_level",
+        "media": "source_info.photo_images",
+        "source": "source_info.source",
+        "post_mode": "post_info.post_mode",
+        "media_type": "post_info.media_type",
+        "photo_cover_index": "post_info.photo_cover_index"
+      }
+    },
+    "upload_inbox": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/post/publish/inbox/video/init/",
+      "bodyFrom": [
+        "title",
+        "video_url",
+        "media",
+        "source",
+        "video_size",
+        "chunk_size",
+        "total_chunk_count"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "title": "post_info.title",
+        "video_url": "source_info.video_url",
+        "media": "source_info.media",
+        "source": "source_info.source",
+        "video_size": "source_info.video_size",
+        "chunk_size": "source_info.chunk_size",
+        "total_chunk_count": "source_info.total_chunk_count"
+      }
+    },
+    "publish_status": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/post/publish/status/fetch/",
+      "required": [
+        "publish_id"
+      ],
+      "bodyFrom": [
+        "publish_id"
+      ]
+    },
+    "video_list": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/video/list/",
+      "queryFrom": [
+        "fields"
+      ],
+      "bodyFrom": [
+        "max_count",
+        "cursor"
+      ],
+      "contentType": "application/json"
+    },
+    "insights_get": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/video/query/",
+      "bodyFrom": [
+        "video_ids"
+      ],
+      "queryFrom": [
+        "fields"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "video_ids": "filters.video_ids"
+      }
+    },
+    "research_query": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/research/video/query/",
+      "required": [
+        "query",
+        "start_date",
+        "end_date"
+      ],
+      "bodyFrom": [
+        "query",
+        "start_date",
+        "end_date",
+        "max_count"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

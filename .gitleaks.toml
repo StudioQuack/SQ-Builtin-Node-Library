@@ -1,0 +1,41 @@
+# gitleaks configuration — extends the default ruleset and allowlists only
+# specific, reviewed non-secrets (template UUIDs, published RFC/AWS test
+# vectors, and PEM header/footer literals without real key material).
+title = "SQ-Builtin-Node-Library"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Reviewed non-secret literals and published test vectors"
+regexTarget = "match"
+regexes = [
+  # Node templateIds are UUIDs baked into Containerfile as env vars, not credentials.
+  '''SQ_TEMPLATE_ID_[A-Z0-9_]+=[0-9a-fA-F-]{36}''',
+  # AWS published Signature Version 4 test-suite fixture secret.
+  '''wJalrXUtnFEMI/K7MDENG\+bPxRfiCYEXAMPLEKEY''',
+  # RFC 6238 Appendix B reference TOTP secrets (Base32 of "1234567890...").
+  '''GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ(GEZDGNBVGY3TQOJQGEZA====)?''',
+  # Documentation example Marketo paging token (Base32 of a sample timestamp, not a credential).
+  '''GIYDAOBNGEYS2MBWKQYDAORQGA5DAMBOGAYDAKZQGAYDALBQ''',
+  # Synthetic wrong-password fixture in SqlDatabaseLiveTest negative auth test.
+  '''Wrong_Pw_9431''',
+  # English prose phrase "bounce/complaint" in nodes/emelia/README.md.
+  '''bounce/complaint''',
+]
+
+[[allowlists]]
+description = "PEM header/footer literals and documentation placeholders (no real key bytes)"
+regexTarget = "line"
+regexes = [
+  # Java handlers stripping PEM headers/footers.
+  '''\.replace\("-----(BEGIN|END) (EC |RSA |ENCRYPTED )?(PRIVATE|PUBLIC) KEY-----"''',
+  # Runtime-generated test keys (Java KeyPairGenerator concatenation or dummy "AAAA" fixture).
+  '''String (?:private)?[Pp]em = "-----BEGIN (?:ENCRYPTED )?PRIVATE KEY-----\\n"(?:\s*\+|$)''',
+  '''String pem = "-----BEGIN ENCRYPTED PRIVATE KEY-----\\nAAAA\\n-----END ENCRYPTED PRIVATE KEY-----";''',
+  # Documentation and schema placeholder examples without key bytes.
+  '''Example: -----BEGIN (?:EC |RSA |ENCRYPTED )?PRIVATE KEY-----(?:…| MIIE\.\.\. -----END PRIVATE KEY-----)''',
+  '''PKCS#8 PEM \(`-----BEGIN PRIVATE KEY-----`\)''',
+  '''PEM PKCS8, -----BEGIN PRIVATE KEY-----''',
+  '''"private_key":"-----BEGIN PRIVATE KEY-----\\n\.\.\.\\n-----END PRIVATE KEY-----\\n"''',
+]

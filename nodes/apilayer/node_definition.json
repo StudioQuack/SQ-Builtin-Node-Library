@@ -1,0 +1,244 @@
+{
+  "_id": "6621f650-c774-5afb-8cc8-06fdbc6c4efb",
+  "version": "1.0.0",
+  "name": "APILayer",
+  "label": "APILayer",
+  "description": "Fixer official API via OfficialApiNode (api_spec.json). Operations: fixer_latest, fixer_convert, fixer_historical, fixer_timeseries, fixer_fluctuation, fixer_symbols. Docs: https://fixer.io/documentation. Base https://data.fixer.io/api. Auth is query access_key from configuration. The marketplace gateway https://api.apilayer.com and header apikey are deliberately unused. JSONP callback is deliberately unused. Numverify/Mediastack/marketstack are separate nodes. Secrets stay in configurationParameters. jobType custom-script-executor. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "database",
+  "tags": [
+    "enrichment",
+    "apilayer"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ce62858c-17ab-59a0-8c0c-26981f9207c6",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One APILayer request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"fixer_latest\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: fixer_latest | fixer_convert | fixer_historical | fixer_timeseries | fixer_fluctuation | fixer_symbols. Default: first listed or instance operation. Example: 'fixer_latest'.",
+          "children": [],
+          "_id": "bcdb8dd2-ac3b-5b30-85fb-cefdb02ccf30"
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Amount to convert for fixer_convert. Example: 10.5.",
+          "children": [],
+          "_id": "cb671007-8031-545e-b32d-07839de592f3"
+        },
+        {
+          "shortCode": "base",
+          "label": "base",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Base currency for fixer_latest. Example: USD.",
+          "children": [],
+          "_id": "45bb3f5e-9332-5680-8684-cd65fee6d554"
+        },
+        {
+          "shortCode": "date",
+          "label": "date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Historical date YYYY-MM-DD for fixer_historical. Example: 2026-01-15.",
+          "children": [],
+          "_id": "54a4f144-421f-46e3-bb00-b37192199261"
+        },
+        {
+          "shortCode": "end_date",
+          "label": "end_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Range end YYYY-MM-DD for fixer_timeseries.",
+          "children": [],
+          "_id": "a5444130-bd0a-476d-ad8a-915b177411a5"
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Source currency for fixer_convert. Example: USD.",
+          "children": [],
+          "_id": "a48db6ff-0b9d-5896-a782-480a41ddf96c"
+        },
+        {
+          "shortCode": "spread",
+          "label": "spread",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional FX spread for convert. Example: 2.",
+          "children": [],
+          "_id": "1b652d04-b63e-4e79-b5ab-9393668a77d9"
+        },
+        {
+          "shortCode": "start_date",
+          "label": "start_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Range start YYYY-MM-DD for fixer_timeseries.",
+          "children": [],
+          "_id": "bafdea1a-56b8-4021-94ad-cc979be6cb59"
+        },
+        {
+          "shortCode": "symbols",
+          "label": "symbols",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated quote currencies. Example: EUR,GBP.",
+          "children": [],
+          "_id": "54c283d3-cc61-5195-bb8e-7141cc9986f3"
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Target currency for fixer_convert. Example: EUR.",
+          "children": [],
+          "_id": "7f234a81-7960-50b2-8e98-197b2f474961"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0c0f25b6-4c0b-5080-977b-a7cdf6ea7e06",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "ab244c70-d813-5f94-be4c-6ece55d2f4ee"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "9fa362ac-6edf-549a-81a3-0c87ec44e0bf"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "e1127f27-9fca-56e3-adac-ab69f2bced17"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "12c9ee64-b933-5392-8590-937742babf59",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: fixer_latest, fixer_convert, fixer_historical, fixer_timeseries, fixer_fluctuation, fixer_symbols.",
+      "value": "fixer_latest",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "fixer_latest",
+        "fixer_convert",
+        "fixer_historical",
+        "fixer_timeseries",
+        "fixer_fluctuation",
+        "fixer_symbols"
+      ]
+    },
+    {
+      "_id": "2cfdb3d3-56d2-5a51-9fce-8457021e56c6",
+      "shortCode": "access_key",
+      "label": "Access Key",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query` parameter access_key. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3f18b4b6-5891-5f5b-913c-ab21691e2505",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 20. Keep under the daemon sandbox request budget.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-10-29T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

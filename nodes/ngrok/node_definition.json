@@ -1,0 +1,203 @@
+{
+  "_id": "9852dd84-76f4-4f2f-b65a-833314ce000f",
+  "version": "1.0.0",
+  "name": "ngrok",
+  "label": "ngrok API",
+  "description": "ngrok API via OfficialApiNode. Docs: https://ngrok.com/docs/api/. Operations: tunnel_list, tunnel_get, edge_get, reserved_domain_list, listen. tunnel_list/tunnel_get call GET /endpoints (Cloud Endpoints). edge_get (GET /edges/https/{id}) is deprecated — Edges sunset 2025-12-31 (https://ngrok.com/docs/gateway/edges). Every request sends Ngrok-Version: 2 via extraHeaders. Auth secret api_key is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "ngrok",
+    "tunnels"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f79723ab-c662-469c-b2ce-8d2323286fe8",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "tunnel_list",
+          "description": "Which official API call to run. EXACT values: tunnel_list | tunnel_get | edge_get | reserved_domain_list | listen. edge_get is deprecated (Edges sunset 2025-12-31). Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'tunnel_list'.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Endpoint or HTTPS edge id for tunnel_get / edge_get.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for tunnel_list / reserved_domain_list.",
+          "children": []
+        },
+        {
+          "shortCode": "before_id",
+          "label": "before_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination cursor (list items before this id).",
+          "children": []
+        },
+        {
+          "shortCode": "edge_type",
+          "label": "edge_type",
+          "type": "string",
+          "required": false,
+          "value": "https",
+          "description": "Edge protocol for edge_get path /edges/{edge_type}/{id}. EXACT: https | tcp | tls.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "46068c59-0cae-47ec-aaec-fee8f28d7d45",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "936f70d7-c545-4632-8f27-69aab3b9f3e6",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: tunnel_list, tunnel_get, edge_get, reserved_domain_list, listen. edge_get is deprecated (Edges sunset 2025-12-31). listen is BPMN ingress, not a socket.",
+      "value": "tunnel_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "tunnel_list",
+        "tunnel_get",
+        "edge_get",
+        "reserved_domain_list",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "ae1ce86e-e654-4f34-a755-801f8c73e759",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "ngrok API key. Authorization: Bearer. Ngrok-Version: 2 is sent via extraHeaders (https://ngrok.com/docs/api/).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6f66fd28-85bc-47cd-9ddc-dcfd3ca99c90",
+      "shortCode": "edge_type",
+      "label": "Edge Type",
+      "type": "select",
+      "description": "Edge protocol for edge_get path /edges/{edge_type}/{id}. EXACT: https | tcp | tls.",
+      "value": "https",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "https",
+        "tcp",
+        "tls"
+      ]
+    },
+    {
+      "_id": "a79fd608-d300-4aeb-a259-e979abcc867b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

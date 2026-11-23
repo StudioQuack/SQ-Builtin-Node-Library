@@ -1,0 +1,446 @@
+{
+  "_id": "4756dd78-e040-4a8f-ac49-54ffb8d25660",
+  "version": "1.0.0",
+  "name": "Stripe",
+  "label": "Stripe — Stripe REST v1, pin 2026-07-29.dahlia (Stripe-Version)",
+  "description": "Stripe API at https://api.stripe.com. Docs: https://docs.stripe.com/api. POST bodies are application/x-www-form-urlencoded (official). payment_intent_create requires amount (integer cents) + currency. Bearer secret_key. Optional Stripe-Version from config api_version. Handler: OfficialApiNode. Never log secret_key.",
+  "icon": "account_balance",
+  "tags": [
+    "stripe",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "35fca98f-8294-451f-ab5c-e042fbfb704b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Stripe. Secrets never on this port. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "balance_get",
+          "description": "Overrides config operation. EXACT: balance_get | payment_intent_create | payment_intent_get | payment_intent_confirm | customer_create | customer_get | customer_list | customer_update | customer_delete | coupon_create | coupon_list | meter_event_create | refund_create | subscription_create | invoice_get | payout_list | charge_get | charge_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id when the path uses {id}.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Amount in the smallest currency unit for payment_intent_create (required) and refund_create. Example: 2000 = $20.00 USD.",
+          "children": []
+        },
+        {
+          "shortCode": "currency",
+          "label": "currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO currency lowercase for payment_intent_create (required) and coupon_create. Example: usd.",
+          "children": []
+        },
+        {
+          "shortCode": "payment_method",
+          "label": "payment_method",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `payment_method` for operations: payment_intent_create, payment_intent_confirm.",
+          "children": []
+        },
+        {
+          "shortCode": "customer",
+          "label": "customer",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `customer` for operations: payment_intent_create, subscription_create. Required by: subscription_create.",
+          "children": []
+        },
+        {
+          "shortCode": "confirm",
+          "label": "confirm",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "payment_intent_create confirm. true confirms immediately when payment_method is set.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `description` for operations: payment_intent_create, customer_create, customer_update.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `email` for operations: customer_create, customer_update.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `name` for operations: customer_create, customer_update, coupon_create.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operations: customer_list, coupon_list, payout_list, charge_list.",
+          "children": []
+        },
+        {
+          "shortCode": "starting_after",
+          "label": "starting_after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `starting_after` for operation: customer_list.",
+          "children": []
+        },
+        {
+          "shortCode": "percent_off",
+          "label": "percent_off",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "coupon_create percent_off 1–100. Mutually exclusive with amount_off.",
+          "children": []
+        },
+        {
+          "shortCode": "amount_off",
+          "label": "amount_off",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "coupon_create amount_off in cents. Requires currency.",
+          "children": []
+        },
+        {
+          "shortCode": "duration",
+          "label": "duration",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `duration` for operation: coupon_create.",
+          "children": []
+        },
+        {
+          "shortCode": "event_name",
+          "label": "event_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `event_name` for operation: meter_event_create. Required by: meter_event_create.",
+          "children": []
+        },
+        {
+          "shortCode": "payload",
+          "label": "payload",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "meter_event_create payload map. Official keys include stripe_customer_id and the meter value key. Example: {\"stripe_customer_id\":\"cus_123\",\"value\":\"10\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "payment_intent",
+          "label": "payment_intent",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `payment_intent` for operation: refund_create.",
+          "children": []
+        },
+        {
+          "shortCode": "charge",
+          "label": "charge",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `charge` for operation: refund_create.",
+          "children": []
+        },
+        {
+          "shortCode": "items",
+          "label": "items",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "subscription_create items. Official [{price, quantity}]. Required with customer. Example: [{\"price\":\"price_123\",\"quantity\":1}].",
+          "children": []
+        },
+        {
+          "shortCode": "receipt_email",
+          "label": "receipt_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_intent_create receipt_email.",
+          "children": []
+        },
+        {
+          "shortCode": "metadata",
+          "label": "metadata",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Stripe metadata key/value on payment_intent_create, customer_*, refund_create, subscription_create.",
+          "children": []
+        },
+        {
+          "shortCode": "automatic_payment_methods",
+          "label": "automatic_payment_methods",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "payment_intent_create automatic_payment_methods, e.g. {\"enabled\":true}.",
+          "children": []
+        },
+        {
+          "shortCode": "capture_method",
+          "label": "capture_method",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_intent_create capture_method. automatic | manual.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create / customer_update phone.",
+          "children": []
+        },
+        {
+          "shortCode": "trial_period_days",
+          "label": "trial_period_days",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "subscription_create trial_period_days.",
+          "children": []
+        },
+        {
+          "shortCode": "default_payment_method",
+          "label": "default_payment_method",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "subscription_create default_payment_method.",
+          "children": []
+        },
+        {
+          "shortCode": "reason",
+          "label": "reason",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "refund_create reason. duplicate | fraudulent | requested_by_customer.",
+          "children": []
+        },
+        {
+          "shortCode": "duration_in_months",
+          "label": "duration_in_months",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "coupon_create duration_in_months when duration=repeating.",
+          "children": []
+        },
+        {
+          "shortCode": "identifier",
+          "label": "identifier",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "meter_event_create identifier for idempotency.",
+          "children": []
+        },
+        {
+          "shortCode": "timestamp",
+          "label": "timestamp",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "meter_event_create unix timestamp.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ebcda546-397a-4515-8e2f-9633853e7776",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "076ff6d8-97dc-4ec1-87bc-d1894a981ba3",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: balance_get | payment_intent_create | payment_intent_get | payment_intent_confirm | customer_create | customer_get | customer_list | customer_update | customer_delete | coupon_create | coupon_list | meter_event_create | refund_create | subscription_create | invoice_get | payout_list | charge_get | charge_list | trigger. Default balance_get. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "balance_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "balance_get",
+        "payment_intent_create",
+        "payment_intent_get",
+        "payment_intent_confirm",
+        "customer_create",
+        "customer_get",
+        "customer_list",
+        "customer_update",
+        "customer_delete",
+        "coupon_create",
+        "coupon_list",
+        "meter_event_create",
+        "refund_create",
+        "subscription_create",
+        "invoice_get",
+        "payout_list",
+        "charge_get",
+        "charge_list",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "8c1c16fd-420b-421d-9bd6-e4c6a2162283",
+      "shortCode": "secret_key",
+      "label": "Secret Key",
+      "type": "password",
+      "description": "Stripe credential (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7fdd8c9c-f65f-4bf7-8b60-92df6a7be420",
+      "shortCode": "api_version",
+      "label": "Api Version",
+      "type": "string",
+      "description": "Optional Stripe-Version header (YYYY-MM-DD). Wired as extraHeaders when set.",
+      "value": "2026-07-29.dahlia",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d0fe8632-318b-4716-bb02-1d3312ffce40",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

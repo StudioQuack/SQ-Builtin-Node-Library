@@ -1,0 +1,285 @@
+{
+  "_id": "6c2afd12-93ea-4bd8-86e3-42e7ce55668e",
+  "version": "1.0.0",
+  "name": "Google Ads",
+  "label": "Google Ads API v25 — GAQL search, mutate, conversions",
+  "description": "Official Google Ads API v25 REST at https://googleads.googleapis.com/v25. Handler: OfficialApiNode. Auth: OAuth access token as Bearer (customer supplies a current token). extraHeaders send developer-token from config developerToken and login-customer-id from config loginCustomerId (blank MCC id omitted). Reads use GAQL via GoogleAdsService.Search / SearchStream. No official push webhook; trigger.listen is omitted. Customer owns the Google Ads / MCC accounts. Never log developer-token, OAuth secrets, emails, or GCLIDs.",
+  "icon": "campaign",
+  "tags": [
+    "ads"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5ddbd50b-4863-4596-8ed2-b7b0e0b88213",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Search ops require GAQL in query (allowlist FROM campaign, ad_group, ad_group_ad, customer). Do not put access_token or developerToken here. Example: {\"operation\":\"campaign.list\",\"customerId\":\"1234567890\",\"query\":\"SELECT campaign.id, campaign.name FROM campaign\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "customer.list",
+          "description": "Overrides config operation when non-blank. EXACT: 'customer.list' | 'campaign.get' | 'campaign.list' | 'campaign.mutate' | 'adGroup.list' | 'ad.list' | 'report.query' | 'conversion.upload' | 'audience.mutate'. No trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "customerId",
+          "label": "customerId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Target 10-digit customer id (no dashes). Required on all ops except customer.list. Falls back to config.",
+          "children": []
+        },
+        {
+          "shortCode": "campaignId",
+          "label": "campaignId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign resource id for campaign.get (Google Ads has no Get RPC; use to build GAQL WHERE campaign.id = …). Example: 1234567890.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GAQL for campaign.get/list, adGroup.list, ad.list, report.query. Google Ads has no Get RPC, so campaign.get must filter by id in the query. Example (list): SELECT campaign.id, campaign.name FROM campaign. Example (get): SELECT campaign.id, campaign.name, campaign.status FROM campaign WHERE campaign.id = 1234567890.",
+          "children": []
+        },
+        {
+          "shortCode": "operations",
+          "label": "operations",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Google Ads mutate operations list (campaign.mutate, audience.mutate). Official operations[].",
+          "children": []
+        },
+        {
+          "shortCode": "conversions",
+          "label": "conversions",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "uploadClickConversions conversions [{gclid, conversionAction, conversionDateTime, conversionValue, currencyCode}].",
+          "children": []
+        },
+        {
+          "shortCode": "partialFailure",
+          "label": "partialFailure",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Allow mixed success on mutate / conversion.upload. Recommended true for uploads.",
+          "children": []
+        },
+        {
+          "shortCode": "pageSize",
+          "label": "pageSize",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Search page size. SearchStream may ignore.",
+          "children": []
+        },
+        {
+          "shortCode": "pageToken",
+          "label": "pageToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search next-page token.",
+          "children": []
+        },
+        {
+          "shortCode": "validateOnly",
+          "label": "validateOnly",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "When true, campaign.mutate / conversion.upload / audience.mutate validate without executing.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "900c22c2-0610-4e3a-8f07-834415246d03",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (GoogleAdsRow JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (camelCase GoogleAdsRow / mutate results).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "328fa84e-3757-423c-be4f-006238c6b5a8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. No trigger.listen (Google Ads has no official campaign webhook).",
+      "value": "campaign.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "customer.list",
+        "campaign.get",
+        "campaign.list",
+        "campaign.mutate",
+        "adGroup.list",
+        "ad.list",
+        "report.query",
+        "conversion.upload",
+        "audience.mutate"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "d9faf1f0-d699-49c4-a14c-dc09ed606ee6",
+      "shortCode": "access_token",
+      "label": "OAuth access token",
+      "type": "password",
+      "description": "Google OAuth access token (StudioQuack secret). Scope https://www.googleapis.com/auth/adwords. Sent as Authorization: Bearer. Customer supplies a current token (engine does not refresh). Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a0d7e143-0987-4961-89d9-71dcd452ea95",
+      "shortCode": "developerToken",
+      "label": "Developer token",
+      "type": "password",
+      "description": "Google Ads API Center developer-token (22-char). Sent as header developer-token on every call. Optional after the 2026-09-09 sunset (servers ignore it); still accepted. Test tokens cannot touch production accounts.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1bffe726-53b7-4c23-8dee-6000a8ff3327",
+      "shortCode": "loginCustomerId",
+      "label": "Login customer id",
+      "type": "string",
+      "description": "MCC manager id for header login-customer-id (10-digit, no dashes). Sent when set; omitted when blank.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a980481a-cb24-4d5a-b81b-03894c0aec2f",
+      "shortCode": "customerId",
+      "label": "Customer id",
+      "type": "string",
+      "description": "Default 10-digit target customer id when INPUT omits customerId.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9c433b05-55d0-4c33-9e3e-25a86c09a687",
+      "shortCode": "campaignId",
+      "label": "Campaign Id",
+      "type": "string",
+      "description": "Default campaign id for campaign.get when INPUT omits campaignId. Example: 1234567890.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "482f41e0-89a3-461f-be7f-541c8ed8574a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 60 (searchStream). Keep below the daemon invoke budget.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

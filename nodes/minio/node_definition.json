@@ -1,0 +1,282 @@
+{
+  "_id": "bebf5ab5-9b03-5569-a7ae-78550910a5d2",
+  "version": "1.0.0",
+  "name": "MinIO",
+  "label": "MinIO S3-compatible object storage",
+  "description": "MinIO S3-compatible object storage. Official API https://min.io/docs/minio/linux/developers/minio-drivers.html. One node; pick operation. Downloaded payloads may appear as OUTPUT file. Auth is AWS SigV4 (access_key + secret_key + region); baseUrl is config endpoint. Handler: OfficialApiNode + api_spec.json. Customer-hosted S3 API. No vendor SaaS terms. Path-style vs virtual-host is an endpoint choice. Set endpoint to the real origin (scheme + host).",
+  "icon": "cloud",
+  "tags": [
+    "minio",
+    "s3",
+    "object-storage"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3373fa4b-5066-51dc-96a9-397270a0bf53",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port. File bytes are type file.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "bucket_create",
+          "description": "Overrides config operation. Accepted: bucket_create, bucket_delete, bucket_list, object_get, object_put, object_delete, object_list, presign.",
+          "children": []
+        },
+        {
+          "shortCode": "bucket",
+          "label": "bucket",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "S3 bucket name for all object/bucket ops. Example: invoices.",
+          "children": []
+        },
+        {
+          "shortCode": "key",
+          "label": "key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Object key for object_get/put/delete/presign. Example: 2026/q1.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Object bytes for object_put. Platform file list. Sent as the raw PUT body (S3 PutObject).",
+          "children": []
+        },
+        {
+          "shortCode": "list-type",
+          "label": "list-type",
+          "type": "number",
+          "required": false,
+          "value": "2",
+          "description": "object_list ListObjects version. Official S3: 2 = ListObjectsV2. Example: 2.",
+          "children": []
+        },
+        {
+          "shortCode": "prefix",
+          "label": "prefix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "object_list key prefix. Example: 2026/.",
+          "children": []
+        },
+        {
+          "shortCode": "delimiter",
+          "label": "delimiter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "object_list delimiter (usually /) to group common prefixes. Example: /.",
+          "children": []
+        },
+        {
+          "shortCode": "continuation-token",
+          "label": "continuation-token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "object_list ListObjectsV2 continuation token from a previous response.",
+          "children": []
+        },
+        {
+          "shortCode": "max-keys",
+          "label": "max-keys",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "object_list max keys to return. S3 default 1000. Example: 100.",
+          "children": []
+        },
+        {
+          "shortCode": "X-Amz-Expires",
+          "label": "X-Amz-Expires",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "presign expiry in seconds (SigV4). Example: 3600.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "f01a8889-da54-56d1-bfc8-db65a44dc68f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "d70f3da5-a134-5ede-a779-8375ab2ba191",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "bucket_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "bucket_create",
+        "bucket_delete",
+        "bucket_list",
+        "object_get",
+        "object_put",
+        "object_delete",
+        "object_list",
+        "presign"
+      ]
+    },
+    {
+      "_id": "2b181a38-4603-5764-8a6e-03146a6e2e3c",
+      "shortCode": "secret_key",
+      "label": "Secret Key",
+      "type": "password",
+      "description": "MinIO secret key for AWS SigV4. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "80fc1f4b-505d-5e05-8900-2d76d81d6e7f",
+      "shortCode": "access_key",
+      "label": "Access Key",
+      "type": "password",
+      "description": "MinIO access key for AWS SigV4. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7c57c2d2-d9af-51dc-a365-6ef9207be378",
+      "shortCode": "endpoint",
+      "label": "Endpoint",
+      "type": "string",
+      "description": "MinIO S3 API origin including scheme, e.g. https://minio.example.com:9000. Interpolated as api_spec baseUrl.",
+      "value": "https://localhost:9000",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b5e67065-08dd-5536-b4a5-5b6aaefc48d4",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "S3 region for SigV4 signing. MinIO default us-east-1.",
+      "value": "us-east-1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4077f170-8ef6-576e-874b-ac41e3b07d1c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

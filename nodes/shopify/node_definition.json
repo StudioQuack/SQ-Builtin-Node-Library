@@ -1,0 +1,202 @@
+{
+  "_id": "fae66c89-4726-53dc-95fc-7e1a8a04e3d3",
+  "version": "1.0.0",
+  "name": "Shopify",
+  "label": "Shopify Admin GraphQL 2026-07 — orders, products, inventory, webhooks",
+  "description": "Shopify Admin GraphQL at https://{shop}.myshopify.com/admin/api/{api_version}/graphql.json. Docs: https://shopify.dev/docs/api/admin-graphql. Every verb sends official {query, variables} — the Admin REST product/order resources are not used. Header X-Shopify-Access-Token. Handler: OfficialApiNode. Never log access_token.",
+  "icon": "storefront",
+  "tags": [
+    "shopify",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f5d88dd9-eaf8-5c88-9b6f-da35c0a6b98d",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "order_create",
+          "description": "Official API verb. EXACT: order_create | order_delete | order_get | order_list | order_update | product_create | product_delete | product_get | product_list | product_update | customer_get | inventory_adjust | fulfillment_create | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Admin GraphQL document for every HTTP op (order_*, product_*, customer_get, inventory_adjust, fulfillment_create). Required. Official POST {shop}.myshopify.com/admin/api/{api_version}/graphql.json body query. Example: mutation { orderCreate(order: {…}) { order { id } } }.",
+          "children": []
+        },
+        {
+          "shortCode": "variables",
+          "label": "variables",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Admin GraphQL variables object matching the query. Example: {\"id\":\"gid://shopify/Order/1\"}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "fe9d4c22-2258-526e-bded-beab2657545c",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c7d0f22a-2a95-547d-bae3-d1ccb7938111",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: order_create | order_delete | order_get | order_list | order_update | product_create | product_delete | product_get | product_list | product_update | customer_get | inventory_adjust | fulfillment_create | trigger. trigger does not open a socket.",
+      "value": "order_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "order_create",
+        "order_delete",
+        "order_get",
+        "order_list",
+        "order_update",
+        "product_create",
+        "product_delete",
+        "product_get",
+        "product_list",
+        "product_update",
+        "customer_get",
+        "inventory_adjust",
+        "fulfillment_create",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "9f91c5fb-a848-5eed-bfd6-41141711f1d0",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type header. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f5684d12-b154-57c4-ab2c-d6b910f2f934",
+      "shortCode": "shop",
+      "label": "Shop",
+      "type": "string",
+      "description": "Shop subdomain only (example → example.myshopify.com).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d91c6920-529a-5366-b2ca-454717c88c6e",
+      "shortCode": "api_version",
+      "label": "Api Version",
+      "type": "string",
+      "description": "Year-month Admin API version. Pin. Do not send unstable.",
+      "value": "2026-07",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ab41b8a6-04bb-51b6-9f82-106016cee767",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

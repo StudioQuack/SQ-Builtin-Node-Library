@@ -1,0 +1,299 @@
+{
+  "_id": "62d91522-b258-4a71-bffc-1e36d6ca36e0",
+  "version": "1.0.0",
+  "name": "JSON",
+  "label": "Parse / stringify / jq / patch",
+  "description": "RFC 8259 parse/stringify, jq-compatible query (no JS eval), merge, RFC 6902 patch, flatten/unflatten.",
+  "icon": "",
+  "tags": [
+    "json",
+    "jq",
+    "transform"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f341b94e-c9db-4452-a31e-8bb1be4f7102",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One JSON operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'parse'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JSON value or JSON text for parse.",
+          "children": []
+        },
+        {
+          "shortCode": "expression",
+          "label": "expression",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "jq program for jq.",
+          "children": []
+        },
+        {
+          "shortCode": "patch",
+          "label": "patch",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "RFC 6902 operations for patch.",
+          "children": []
+        },
+        {
+          "shortCode": "other",
+          "label": "Other",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Second object to merge into value. INPUT wins.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "4cf6fdf0-00ec-4212-b88f-f96845d0f0fc",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2246e567-44aa-4676-8907-78003abf8329",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: parse | stringify | jq | merge | patch | flatten | unflatten. Required. Example: 'parse'.",
+      "value": "parse",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "parse",
+        "stringify",
+        "jq",
+        "merge",
+        "patch",
+        "flatten",
+        "unflatten"
+      ],
+      "filterRules": [
+        {
+          "when": "stringify",
+          "targets": [
+            {
+              "param": "pretty",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "jq",
+          "targets": [
+            {
+              "param": "path",
+              "visible": true
+            },
+            {
+              "param": "expression",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "merge",
+          "targets": [
+            {
+              "param": "other",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "patch",
+          "targets": [
+            {
+              "param": "patch",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "flatten",
+          "targets": [
+            {
+              "param": "path",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "40855ca6-5abe-4b5b-91ba-5e38ea860f09",
+      "shortCode": "path",
+      "label": "Path",
+      "type": "string",
+      "description": "jq expression or flatten prefix. Example: '.items[] | .id'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "830be012-e253-416b-a1ef-fd110d5446b7",
+      "shortCode": "pretty",
+      "label": "Pretty",
+      "type": "select",
+      "description": "Pretty-print stringify. Default false.",
+      "value": "false",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "fbce82c3-3c6c-4dd4-b789-a9cf07b46e5f",
+      "shortCode": "value",
+      "label": "Value",
+      "type": "object",
+      "description": "JSON value or JSON text. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0fc64755-94ea-4fdc-949a-5430398386a9",
+      "shortCode": "expression",
+      "label": "Expression",
+      "type": "string",
+      "description": "jq program. INPUT wins. path is the fallback when this is empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ca1904a5-2ca6-4452-ae75-44493754346b",
+      "shortCode": "patch",
+      "label": "Patch",
+      "type": "list",
+      "description": "RFC 6902 operation array. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "122718aa-c11c-42df-8fe1-9bd65a554725",
+      "shortCode": "other",
+      "label": "Other",
+      "type": "string",
+      "description": "Second object to merge into value. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8650ec81-6154-4bf1-a531-198846dae724",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

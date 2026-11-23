@@ -1,0 +1,277 @@
+{
+  "_id": "4e6b5e24-e8d0-43af-9189-6ee2169be763",
+  "version": "1.0.0",
+  "name": "Recraft",
+  "label": "Recraft",
+  "description": "Official Recraft image/vector REST at https://external.api.recraft.ai. generate is synchronous (POST /v1/images/generations). vectorize converts raster to SVG. style creates a reusable style id. Handler: OfficialApiNode. Auth is StudioQuack secret api_key as Authorization Bearer. Image payloads use type file. Docs: https://www.recraft.ai/docs/api-reference/endpoints. Terms: https://www.recraft.ai/terms. Never log api_key. No official get-task poll path as of 2026-08-20.",
+  "icon": "brush",
+  "tags": [
+    "recraft",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "501dc7d9-22d9-4992-b900-57af2da9d533",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "generate requires prompt. vectorize: file (type file) or image_url. style: image_urls and/or file1 (type file) plus style. Do not put api_key here. Example: {\"prompt\":\"two race cars on a track\",\"model\":\"recraftv4_1\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required for generate. Max length depends on model (see Recraft appendix).",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for vectorize (PNG/JPG/WEBP, max 10MB, max 16MP). Never inline bytes. JSON path also accepts image_url.",
+          "children": []
+        },
+        {
+          "shortCode": "image_url",
+          "label": "image_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTTPS or data URL for vectorize when not sending file. Recraft fetches this URL.",
+          "children": []
+        },
+        {
+          "shortCode": "style_id",
+          "label": "style_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "UUID from operation=style to reuse as visual reference on generate.",
+          "children": []
+        },
+        {
+          "shortCode": "n",
+          "label": "n",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `n` for operation: generate.",
+          "children": []
+        },
+        {
+          "shortCode": "style",
+          "label": "style",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `style` for operations: generate, style.",
+          "children": []
+        },
+        {
+          "shortCode": "size",
+          "label": "size",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `size` for operation: generate.",
+          "children": []
+        },
+        {
+          "shortCode": "negative_prompt",
+          "label": "negative_prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `negative_prompt` for operation: generate.",
+          "children": []
+        },
+        {
+          "shortCode": "random_seed",
+          "label": "random_seed",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `random_seed` for operation: generate.",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operations: generate, vectorize.",
+          "children": []
+        },
+        {
+          "shortCode": "text_layout",
+          "label": "text_layout",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `text_layout` for operation: generate.",
+          "children": []
+        },
+        {
+          "shortCode": "controls",
+          "label": "controls",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `controls` for operation: generate.",
+          "children": []
+        },
+        {
+          "shortCode": "image_urls",
+          "label": "image_urls",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `image_urls` for operation: style.",
+          "children": []
+        },
+        {
+          "shortCode": "file1",
+          "label": "file1",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `file1` for operation: style.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "56299b1c-4992-4792-a0b2-980e2b4830ad",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (data[].url or image.url or style id). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. generate: data[].url (or b64_json). vectorize: image.url. style: id.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "49ce28b0-86f2-4e62-821c-71a45d86a8e8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "EXACT: generate | vectorize | style. Default generate = POST /v1/images/generations (sync; no poll endpoint in official docs).",
+      "value": "generate",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "generate",
+        "vectorize",
+        "style"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "b967cd42-eda5-4c69-8424-4711e44a044c",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Recraft API token from https://app.recraft.ai/profile/api. Sent as Authorization: Bearer. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "eded0b09-481f-4b42-9fca-3338038df162",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Default generate model id. Official default recraftv4_1 (https://www.recraft.ai/docs/api-reference/endpoints). Current ids: recraftv4_1, recraftv4_1_vector, recraftv4_1_pro, recraftv4_1_pro_vector, recraftv4_1_utility, recraftv4_1_utility_vector, recraftv4_1_utility_pro, recraftv4_1_utility_pro_vector, recraftv4, recraftv4_vector, recraftv4_pro, recraftv4_pro_vector, recraftv3, recraftv3_vector, recraftv2, recraftv2_vector. Put model on INPUT to send it (handler reads body from input).",
+      "value": "recraftv4_1",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "da0702e3-1fef-4bf0-9247-d3958c5c4765",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 120. Floor 1.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

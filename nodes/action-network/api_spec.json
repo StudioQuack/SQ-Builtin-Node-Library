@@ -1,0 +1,340 @@
+{
+  "baseUrl": "https://actionnetwork.org",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "OSDI-API-Token",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "person.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/people/",
+      "required": [
+        "person"
+      ],
+      "queryFrom": [
+        "background_request"
+      ],
+      "bodyFrom": [
+        "person",
+        "add_tags",
+        "remove_tags",
+        "given_name",
+        "family_name",
+        "email",
+        "postal_code"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "given_name": "person.given_name",
+        "family_name": "person.family_name",
+        "email": "person.email_addresses[0].address",
+        "postal_code": "person.postal_addresses[0].postal_code"
+      }
+    },
+    "person.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/people/{personId}",
+      "required": [
+        "personId"
+      ]
+    },
+    "person.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/people",
+      "required": [],
+      "queryFrom": [
+        "page",
+        "per_page",
+        "filter"
+      ]
+    },
+    "person.update": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/api/v2/people/{personId}",
+      "required": [
+        "personId"
+      ],
+      "bodyFrom": [
+        "person",
+        "given_name",
+        "family_name",
+        "email",
+        "postal_code"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "given_name": "person.given_name",
+        "family_name": "person.family_name",
+        "email": "person.email_addresses[0].address",
+        "postal_code": "person.postal_addresses[0].postal_code"
+      }
+    },
+    "event.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/events",
+      "required": [
+        "title"
+      ],
+      "bodyFrom": [
+        "title",
+        "start_date",
+        "end_date",
+        "browser_url",
+        "capacity",
+        "origin_system"
+      ],
+      "contentType": "application/json",
+      "bodyDefaults": {
+        "origin_system": "StudioQuack"
+      }
+    },
+    "event.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/events/{eventId}",
+      "required": [
+        "eventId"
+      ]
+    },
+    "event.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/events",
+      "required": [],
+      "queryFrom": [
+        "page",
+        "per_page",
+        "start_date",
+        "end_date"
+      ]
+    },
+    "attendance.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/events/{eventId}/attendances",
+      "required": [
+        "eventId"
+      ],
+      "bodyFrom": [
+        "person",
+        "add_tags",
+        "remove_tags",
+        "given_name",
+        "family_name",
+        "email",
+        "postal_code"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "given_name": "person.given_name",
+        "family_name": "person.family_name",
+        "email": "person.email_addresses[0].address",
+        "postal_code": "person.postal_addresses[0].postal_code"
+      }
+    },
+    "attendance.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/events/{eventId}/attendances/{attendanceId}",
+      "required": [
+        "eventId",
+        "attendanceId"
+      ]
+    },
+    "attendance.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/events/{eventId}/attendances",
+      "required": [
+        "eventId"
+      ],
+      "queryFrom": [
+        "page",
+        "per_page"
+      ]
+    },
+    "petition.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/petitions",
+      "required": [
+        "title"
+      ],
+      "bodyFrom": [
+        "title",
+        "description",
+        "browser_url",
+        "origin_system"
+      ],
+      "contentType": "application/json",
+      "bodyDefaults": {
+        "origin_system": "StudioQuack"
+      }
+    },
+    "petition.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/petitions/{petitionId}",
+      "required": [
+        "petitionId"
+      ]
+    },
+    "petition.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/petitions",
+      "required": [],
+      "queryFrom": [
+        "page",
+        "per_page"
+      ]
+    },
+    "petition.update": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/api/v2/petitions/{petitionId}",
+      "required": [
+        "petitionId"
+      ],
+      "bodyFrom": [
+        "title",
+        "description",
+        "browser_url"
+      ],
+      "contentType": "application/json"
+    },
+    "signature.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/petitions/{petitionId}/signatures",
+      "required": [
+        "petitionId"
+      ],
+      "bodyFrom": [
+        "person",
+        "comments",
+        "add_tags",
+        "remove_tags",
+        "triggers",
+        "given_name",
+        "family_name",
+        "email",
+        "postal_code"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "given_name": "person.given_name",
+        "family_name": "person.family_name",
+        "email": "person.email_addresses[0].address",
+        "postal_code": "person.postal_addresses[0].postal_code"
+      }
+    },
+    "signature.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/petitions/{petitionId}/signatures/{signatureId}",
+      "required": [
+        "petitionId",
+        "signatureId"
+      ]
+    },
+    "signature.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/petitions/{petitionId}/signatures",
+      "required": [
+        "petitionId"
+      ],
+      "queryFrom": [
+        "page",
+        "per_page"
+      ]
+    },
+    "signature.update": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/api/v2/petitions/{petitionId}/signatures/{signatureId}",
+      "required": [
+        "petitionId",
+        "signatureId"
+      ],
+      "bodyFrom": [
+        "comments"
+      ],
+      "contentType": "application/json"
+    },
+    "tag.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/tags",
+      "required": [
+        "name"
+      ],
+      "bodyFrom": [
+        "name"
+      ],
+      "contentType": "application/json"
+    },
+    "tag.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/tags/{tagId}",
+      "required": [
+        "tagId"
+      ]
+    },
+    "tag.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/v2/tags",
+      "required": [],
+      "queryFrom": [
+        "page",
+        "per_page"
+      ]
+    },
+    "personTag.add": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/v2/tags/{tagId}/taggings",
+      "required": [
+        "tagId"
+      ],
+      "bodyFrom": [
+        "person",
+        "given_name",
+        "family_name",
+        "email",
+        "postal_code"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "given_name": "person.given_name",
+        "family_name": "person.family_name",
+        "email": "person.email_addresses[0].address",
+        "postal_code": "person.postal_addresses[0].postal_code"
+      }
+    },
+    "personTag.remove": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/api/v2/people/{personId}/taggings/{taggingId}",
+      "required": [
+        "personId",
+        "taggingId"
+      ]
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

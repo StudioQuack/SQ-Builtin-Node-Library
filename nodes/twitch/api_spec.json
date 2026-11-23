@@ -1,0 +1,68 @@
+{
+    "baseUrl": "https://api.twitch.tv/helix",
+    "defaultTimeout": 25,
+    "timeoutConfigKey": "timeout_seconds",
+    "auth": {
+        "type": "bearer",
+        "header": "Authorization",
+        "prefix": "Bearer ",
+        "configKey": "access_token"
+    },
+    "extraHeaders": {
+        "Client-Id": "{client_id}"
+    },
+    "operations": {
+        "stream_get": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/streams",
+            "queryFrom": [
+                "user_id",
+                "user_login",
+                "game_id",
+                "type",
+                "first",
+                "after"
+            ]
+        },
+        "user_get": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/users",
+            "queryFrom": [
+                "id",
+                "login"
+            ]
+        },
+        "clip_create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/clips",
+            "required": [
+                "broadcaster_id"
+            ],
+            "queryFrom": [
+                "broadcaster_id",
+                "has_delay"
+            ]
+        },
+        "chat_send": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/chat/messages",
+            "required": [
+                "broadcaster_id",
+                "sender_id",
+                "message"
+            ],
+            "bodyFrom": [
+                "broadcaster_id",
+                "sender_id",
+                "message"
+            ]
+        },
+        "trigger": {
+            "kind": "ingress"
+        }
+    }
+}

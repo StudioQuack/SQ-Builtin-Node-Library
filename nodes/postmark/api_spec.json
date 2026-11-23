@@ -1,0 +1,124 @@
+{
+  "baseUrl": "https://api.postmarkapp.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "X-Postmark-Server-Token",
+    "prefix": "",
+    "configKey": "server_token"
+  },
+  "operations": {
+    "send-email": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/email",
+      "contentType": "application/json",
+      "required": [
+        "From",
+        "To"
+      ],
+      "bodyFrom": [
+        "From",
+        "To",
+        "Cc",
+        "Bcc",
+        "Subject",
+        "HtmlBody",
+        "TextBody",
+        "ReplyTo",
+        "Tag",
+        "Attachments",
+        "MessageStream",
+        "TrackOpens",
+        "TrackLinks",
+        "Metadata",
+        "Headers"
+      ]
+    },
+    "send-template": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/email/withTemplate",
+      "contentType": "application/json",
+      "required": [
+        "From",
+        "To"
+      ],
+      "bodyFrom": [
+        "From",
+        "To",
+        "Cc",
+        "Bcc",
+        "ReplyTo",
+        "Tag",
+        "TemplateId",
+        "TemplateAlias",
+        "TemplateModel",
+        "Attachments",
+        "MessageStream",
+        "Metadata"
+      ],
+      "bodyDefaults": {
+        "TemplateModel": {}
+      }
+    },
+    "send-batch": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/email/batch",
+      "contentType": "application/json",
+      "required": [
+        "Messages"
+      ],
+      "bodyFrom": [
+        "Messages"
+      ],
+      "bodyMap": {
+        "Messages": "$"
+      }
+    },
+    "get-bounce": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/bounces/{id}",
+      "contentType": "application/json",
+      "required": [
+        "id"
+      ]
+    },
+    "list-bounces": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/bounces",
+      "contentType": "application/json",
+      "required": [
+        "count",
+        "offset"
+      ],
+      "queryFrom": [
+        "count",
+        "offset",
+        "type",
+        "inactive",
+        "email_filter",
+        "Tag",
+        "message_id",
+        "from_date",
+        "to_date",
+        "MessageStream"
+      ],
+      "queryMap": {
+        "email_filter": "emailFilter",
+        "Tag": "tag",
+        "message_id": "messageID",
+        "from_date": "fromdate",
+        "to_date": "todate",
+        "MessageStream": "messagestream"
+      }
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

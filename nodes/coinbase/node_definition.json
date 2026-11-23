@@ -1,0 +1,204 @@
+{
+  "_id": "e3ddd671-3ae2-4ae6-ab7f-c3a39b5ff761",
+  "version": "1.0.0",
+  "name": "Coinbase",
+  "label": "Coinbase — Advanced Trade REST v3 (CDP); INTX cutover 2026-09-09",
+  "description": "Official Coinbase Advanced Trade REST v3 (CDP). Docs: https://docs.cdp.coinbase.com/api-reference/advanced-trade-api/rest-api/introduction. Coinbase Pro retired 2023-12-01 — do not use Pro keys or api.pro.coinbase.com. Spot and US futures stay on this v3 REST. International derivatives hard-cut over on 2026-09-09 from INTX REST (/api/v3/brokerage/intx/) to the Deribit-powered JSON-RPC gateway https://drb.coinbase.com/api/v2 — those INTX paths are not this node and stop serving at cutover. One node; operations via `operation`. operation=trigger is kind:ingress. Not investment advice. Geo restrictions; travel-rule on withdrawals. Bind a CDP JWT as api_key (engine does not sign CB-ACCESS headers).",
+  "icon": "account_balance",
+  "tags": [
+    "coinbase",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "755a7a6b-32c5-4ab1-9a5b-7aecd5592084",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Coinbase. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "account_list",
+          "description": "Overrides config operation. EXACT: account_list | transaction_list | order_create | order_get | price_get | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id when the path uses {id}.",
+          "children": []
+        },
+        {
+          "shortCode": "product_id",
+          "label": "product_id",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "URL path/query-string/request-body parameter `product_id` for operations: transaction_list, order_create, price_get. Required by: price_get.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: transaction_list.",
+          "children": []
+        },
+        {
+          "shortCode": "client_order_id",
+          "label": "client_order_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `client_order_id` for operation: order_create.",
+          "children": []
+        },
+        {
+          "shortCode": "side",
+          "label": "side",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `side` for operation: order_create.",
+          "children": []
+        },
+        {
+          "shortCode": "order_configuration",
+          "label": "order_configuration",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `order_configuration` for operation: order_create.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "255a02b2-36dd-4af7-8c52-3d1c37e854e6",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ce48ea4f-a924-4966-aca2-e33ad5e2050e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: account_list | transaction_list | order_create | order_get | price_get | trigger. Default account_list. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "account_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "account_list",
+        "transaction_list",
+        "order_create",
+        "order_get",
+        "price_get",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "32a4c159-70c4-46c3-814a-8266da685e43",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "CDP JWT minted outside StudioQuack (engine does not sign with an API secret). Bearer Authorization. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "641c53ee-c2c6-4247-8389-dc0a1816cb90",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

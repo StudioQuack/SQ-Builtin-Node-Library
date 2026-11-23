@@ -1,0 +1,53 @@
+{
+  "baseUrl": "https://api.mistral.ai",
+  "defaultTimeout": 300,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "chat": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "required": ["messages"],
+      "bodyFrom": ["model", "messages", "temperature", "top_p", "max_tokens", "stream", "stop", "random_seed", "response_format", "tools", "tool_choice", "presence_penalty", "frequency_penalty", "n", "reasoning_effort"],
+      "stream": {
+        "format": "openai-sse"
+      }
+    },
+    "embeddings": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/embeddings",
+      "required": [],
+      "bodyFrom": ["model", "input", "output_dimension", "output_dtype"]
+    },
+    "fim": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/fim/completions",
+      "required": ["prompt"],
+      "bodyFrom": ["model", "prompt", "suffix", "temperature", "top_p", "max_tokens", "stream", "stop", "random_seed"]
+    },
+    "ocr": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/ocr",
+      "required": ["document"],
+      "bodyFrom": ["model", "document", "pages", "include_image_base64", "image_limit", "image_min_size"]
+    },
+    "files": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/files",
+      "required": ["file"],
+      "bodyFrom": ["file", "purpose"],
+      "contentType": "multipart/form-data",
+      "bodyFormat": "multipart"
+    }
+  }
+}

@@ -1,0 +1,238 @@
+{
+  "_id": "fc0cfcc7-82fd-4731-a5dc-fd38dcf42883",
+  "version": "1.0.0",
+  "name": "Shodan",
+  "label": "Shodan REST — lookup-only host/search/DNS/profile",
+  "description": "Official Shodan REST API via OfficialApiNode. Docs: https://developer.shodan.io/api. LOOKUP ONLY: host/search read the existing index; dns-resolve/dns-reverse; account-profile. Do not wrap on-demand scan or crawl. Auth query param key. Never log the key (including request URLs).",
+  "icon": "search",
+  "tags": [
+    "threat-intel"
+  ],
+  "category": "Security & Identity",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d4ac4b2c-85ef-4ecd-8c6a-bfe388edd00b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path/query/body keys match api_spec.json.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "host",
+          "description": "Overrides config operation when non-blank. EXACT: host | search | dns-resolve | dns-reverse | account-profile.",
+          "children": []
+        },
+        {
+          "shortCode": "ip",
+          "label": "ip",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IPv4/IPv6 for host.",
+          "children": []
+        },
+        {
+          "shortCode": "history",
+          "label": "history",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "host query history=true to include historical banners.",
+          "children": []
+        },
+        {
+          "shortCode": "minify",
+          "label": "minify",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "host / search minify=true to omit banners/raw.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Legacy alias of search query. Official param is query; q is still sent when set. Prefer query.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Shodan search query for search (required). Official query param. Example: apache country:DE.",
+          "children": []
+        },
+        {
+          "shortCode": "facets",
+          "label": "facets",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search facets, comma-separated. Example: country,org.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "search page (1-based, 100 results each).",
+          "children": []
+        },
+        {
+          "shortCode": "hostnames",
+          "label": "hostnames",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "dns-resolve: comma-separated hostnames.",
+          "children": []
+        },
+        {
+          "shortCode": "ips",
+          "label": "ips",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "dns-reverse: comma-separated IPs.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search fields= comma-separated minified field list. Example: ip,port,org.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "c67b3222-7dfc-408d-9fba-81b70ce3ac53",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "33b5ea48-f063-4cad-89fc-fc2feb3a861a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default verb when input.operation is blank. Lookup-only.",
+      "value": "host",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "host",
+        "search",
+        "dns-resolve",
+        "dns-reverse",
+        "account-profile"
+      ]
+    },
+    {
+      "_id": "01a73bd9-5a51-4e93-80d3-4149a9be629b",
+      "shortCode": "key",
+      "label": "API key",
+      "type": "password",
+      "description": "Shodan API key. Query param key (OfficialApiNode query auth). Never on INPUT. Redact from logs including URLs.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3d68a4e2-f6b2-4ece-ab19-47a0ef8e736c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

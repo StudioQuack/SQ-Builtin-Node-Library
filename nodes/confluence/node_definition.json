@@ -1,0 +1,326 @@
+{
+  "_id": "353fa6f2-5f86-42c1-866a-19ab3bd06375",
+  "version": "1.0.0",
+  "name": "Confluence",
+  "label": "Confluence Cloud REST v2",
+  "description": "Confluence Cloud REST v2 via OfficialApiNode. https://developer.atlassian.com/cloud/confluence/rest/v2/intro/ Basic auth: Atlassian email + API token. page_create / page_update / blog_create take representation + value (nested as body.representation / body.value). attach_file uses v1 multipart POST /wiki/rest/api/content/{id}/child/attachment.",
+  "icon": "menu_book",
+  "tags": [
+    "atlassian",
+    "confluence",
+    "wiki"
+  ],
+  "category": "Productivity & Collaboration",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1da75416-323c-446c-80af-c07f86c83403",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Confluence official API call. Delivered as inputVariables.input. Set operation plus the path/query/body fields that operation lists in api_spec.json. Do not put secrets on this port. Example: {\"operation\":\"page_create\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official Confluence Cloud REST v2 verb. EXACT: page_create | page_get | page_update | page_delete | blog_create | blog_get | blog_delete | space_get | search | attach_file | listen. listen is ingress. Example: page_create.",
+          "children": []
+        },
+        {
+          "shortCode": "cloud_id",
+          "label": "cloud_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Atlassian cloud id (UUID) for /{cloud_id}/wiki/…. Optional on INPUT when instance configurationParameters.cloud_id is set; otherwise required per HTTP operation. Example: 11111111-2222-3333-4444-555555555555.",
+          "children": []
+        },
+        {
+          "shortCode": "spaceId",
+          "label": "spaceId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "page_create / blog_create required space id (numeric string). Example: 123456.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "page_create / page_update / blog_create body `status`. EXACT: current | draft. search query filter. Example: current.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Page or blog title. Required for page_create, page_update, blog_create. search query `title`. Example: Q4 runbook.",
+          "children": []
+        },
+        {
+          "shortCode": "body",
+          "label": "body",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Confluence body envelope escape hatch for page_create/update and blog_create. Purpose fields representation/value merge as body.* via bodyMap. Example: {\"representation\":\"storage\",\"value\":\"<p>Hi</p>\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "parentId",
+          "label": "parentId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "page_create parent page id. Example: 789.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Page, blog, space, or attachment parent content id (path {id}).",
+          "children": []
+        },
+        {
+          "shortCode": "body-format",
+          "label": "body-format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "page_get / blog_get / search query `body-format`. EXACT: storage | atlas_doc_format. Example: storage.",
+          "children": []
+        },
+        {
+          "shortCode": "version",
+          "label": "version",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Page version envelope escape hatch for page_update. Purpose fields version_number/version_message merge as version.* via bodyMap.",
+          "children": []
+        },
+        {
+          "shortCode": "space-id",
+          "label": "space-id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search query `space-id`. Example: 123456.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "search query `limit` (1–250). Example: 25.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "attach_file multipart part `file`. Platform file ref-id. v1 attachments API.",
+          "children": []
+        },
+        {
+          "shortCode": "representation",
+          "label": "representation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official body.representation. EXACT: storage | atlas_doc_format | wiki. Example: storage. page_create, page_update, blog_create.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official body.value (storage HTML, ADF JSON, or wiki markup matching representation). Example: <p>Hello</p>.",
+          "children": []
+        },
+        {
+          "shortCode": "version_number",
+          "label": "version_number",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "page_update required version.number (must be current version + 1). Example: 2.",
+          "children": []
+        },
+        {
+          "shortCode": "version_message",
+          "label": "version_message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "page_update version.message. Example: Fix steps.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8092174f-5869-4b7f-bad1-db6ed4a1177d",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or the raw string when not JSON. Example: {}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5e680423-f979-451a-af0f-37dc8ca61bbc",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: page_create, page_get, page_update, page_delete, blog_create, blog_get, blog_delete, space_get, search, attach_file, listen. Default: page_create. Example: page_create.",
+      "value": "page_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "page_create",
+        "page_get",
+        "page_update",
+        "page_delete",
+        "blog_create",
+        "blog_get",
+        "blog_delete",
+        "space_get",
+        "search",
+        "attach_file",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "3505ef03-d4fc-420c-a9f5-a6fe9222cde1",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "Provider credential for auth.type=basic (configKey api_token). REQUIRED secret — StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "630a14cc-814d-474a-a880-09fe431bfe1f",
+      "shortCode": "email",
+      "label": "Email",
+      "type": "string",
+      "description": "Basic-auth username field (email). Atlassian account email for API-token basic auth. Example: 'ops@example.com'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "220f698e-70ab-4ca4-ad31-2f7206053c5c",
+      "shortCode": "cloud_id",
+      "label": "Cloud Id",
+      "type": "string",
+      "description": "Atlassian cloud id (UUID) interpolated into every HTTP path as /{cloud_id}/wiki/…. Required for HTTP operations; may be omitted on INPUT when set here. Example: '11111111-2222-3333-4444-555555555555'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "69fc19fc-bc06-487f-a60d-add3c20c1893",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative → 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

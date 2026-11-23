@@ -1,0 +1,103 @@
+{
+  "baseUrl": "https://api.accounting.sage.com/v3.1",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "contact_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/contacts",
+      "bodyFrom": [
+        "name",
+        "contact_type_ids",
+        "reference",
+        "tax_number",
+        "notes",
+        "email",
+        "telephone",
+        "main_address"
+      ],
+      "required": [
+        "name",
+        "contact_type_ids"
+      ],
+      "bodyMap": {
+        "name": "contact.name",
+        "contact_type_ids": "contact.contact_type_ids",
+        "reference": "contact.reference",
+        "tax_number": "contact.tax_number",
+        "notes": "contact.notes",
+        "email": "contact.email",
+        "telephone": "contact.telephone",
+        "main_address": "contact.main_address"
+      }
+    },
+    "invoice_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/sales_invoices",
+      "bodyFrom": [
+        "contact_id",
+        "date",
+        "invoice_lines",
+        "reference",
+        "notes"
+      ],
+      "required": [
+        "contact_id",
+        "date",
+        "invoice_lines"
+      ],
+      "bodyMap": {
+        "contact_id": "sales_invoice.contact_id",
+        "date": "sales_invoice.date",
+        "invoice_lines": "sales_invoice.invoice_lines",
+        "reference": "sales_invoice.reference",
+        "notes": "sales_invoice.notes"
+      }
+    },
+    "invoice_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/sales_invoices/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "payment_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/contact_payments",
+      "bodyFrom": [
+        "transaction_type_id",
+        "contact_id",
+        "bank_account_id",
+        "date",
+        "total_amount",
+        "reference"
+      ],
+      "required": [
+        "transaction_type_id",
+        "contact_id",
+        "bank_account_id",
+        "date",
+        "total_amount"
+      ],
+      "bodyMap": {
+        "transaction_type_id": "contact_payment.transaction_type_id",
+        "contact_id": "contact_payment.contact_id",
+        "bank_account_id": "contact_payment.bank_account_id",
+        "date": "contact_payment.date",
+        "total_amount": "contact_payment.total_amount",
+        "reference": "contact_payment.reference"
+      }
+    }
+  },
+  "extraHeaders": {
+    "X-Business": "{business_id}"
+  }
+}

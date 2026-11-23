@@ -1,0 +1,213 @@
+{
+  "_id": "b8000247-171c-44cb-a882-b99b38cbfbf9",
+  "version": "1.0.0",
+  "name": "Compare Datasets",
+  "label": "Compare two JSON arrays",
+  "description": "In-process diff of two arrays `{a,b}` by match fields. No network.",
+  "icon": "",
+  "tags": [
+    "compare",
+    "diff",
+    "transform"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d14eb8ab-2eb7-45c4-b694-c957f5428ec5",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Compare Datasets operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'compare'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "a",
+          "label": "a",
+          "type": "list",
+          "required": true,
+          "value": "[]",
+          "description": "Left array. Required. Example: [{\"id\":1}].",
+          "children": []
+        },
+        {
+          "shortCode": "b",
+          "label": "b",
+          "type": "list",
+          "required": true,
+          "value": "[]",
+          "description": "Right array. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "match_fields",
+          "label": "match_fields",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Keys that identify a row. Overrides config.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e519bdec-20d4-4aaf-a35e-c736d95a6aad",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b365b166-63b4-4efb-a5c7-fa1a4a406c3c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: compare. Required. Example: 'compare'.",
+      "value": "compare",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "compare"
+      ]
+    },
+    {
+      "_id": "18aa8820-65d2-4db4-b431-43b86223d3ca",
+      "shortCode": "match_fields",
+      "label": "Match Fields",
+      "type": "string",
+      "description": "JSON array of key names used to pair rows. Example: '[\"id\"]'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ebba5ba6-029f-41e5-9889-ab1da3336a62",
+      "shortCode": "difference_mode",
+      "label": "Difference Mode",
+      "type": "select",
+      "description": "both | only_a | only_b | all. Default all.",
+      "value": "all",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "all",
+        "both",
+        "only_a",
+        "only_b"
+      ]
+    },
+    {
+      "_id": "ae739b10-9fe5-4926-8eaa-6171664aa204",
+      "shortCode": "fuzzy",
+      "label": "Fuzzy",
+      "type": "select",
+      "description": "Optional string-near match. Default false.",
+      "value": "false",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "41d0aae9-343d-4ff4-b97d-01b71b493498",
+      "shortCode": "skip_fields",
+      "label": "Skip Fields",
+      "type": "string",
+      "description": "JSON array of keys ignored in equality.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "23e11e38-7606-451d-8cda-1977578304ec",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

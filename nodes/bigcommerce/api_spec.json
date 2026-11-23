@@ -1,0 +1,113 @@
+{
+  "baseUrl": "https://api.bigcommerce.com/stores",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "X-Auth-Token",
+    "prefix": "",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "product_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{store_hash}/v3/catalog/products",
+      "queryFrom": [
+        "limit",
+        "page",
+        "sku",
+        "name",
+        "is_visible"
+      ]
+    },
+    "product_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{store_hash}/v3/catalog/products/{product_id}",
+      "required": [
+        "product_id"
+      ]
+    },
+    "product_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{store_hash}/v3/catalog/products",
+      "bodyFrom": [
+        "name",
+        "type",
+        "weight",
+        "price",
+        "sku",
+        "description",
+        "categories",
+        "brand_id",
+        "brand_name",
+        "inventory_level",
+        "sale_price",
+        "cost_price",
+        "retail_price",
+        "is_visible"
+      ],
+      "required": [
+        "name",
+        "type",
+        "weight",
+        "price"
+      ],
+      "contentType": "application/json"
+    },
+    "order_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{store_hash}/v2/orders",
+      "queryFrom": [
+        "limit",
+        "page",
+        "status_id"
+      ]
+    },
+    "order_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{store_hash}/v2/orders/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "order_update": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/{store_hash}/v2/orders/{id}",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "status_id",
+        "staff_notes",
+        "customer_message",
+        "customer_id",
+        "payment_method",
+        "billing_address",
+        "shipping_addresses",
+        "is_deleted"
+      ],
+      "contentType": "application/json"
+    },
+    "customer_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{store_hash}/v3/customers",
+      "queryFrom": [
+        "id:in",
+        "email:in",
+        "limit",
+        "page",
+        "include"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

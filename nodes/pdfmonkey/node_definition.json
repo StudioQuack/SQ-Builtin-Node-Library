@@ -1,0 +1,222 @@
+{
+  "_id": "c97d08f3-e081-53c1-a14f-05571a510766",
+  "version": "1.0.0",
+  "name": "PDFMonkey",
+  "label": "PDFMonkey API — template documents",
+  "description": "PDFMonkey API — template documents. Official API https://pdfmonkey.io/docs/api/. One node; pick operation. Handler: OfficialApiNode + api_spec.json. Template-based HTML/PDF. Generated files stay on PDFMonkey until deleted. List templates via GET /document_template_cards. Download is a signed download_url on the document/card (valid 1 hour), not a dedicated /download path. document_download OUTPUT is type file (platform file ref-id; never inline bytes or base64).",
+  "icon": "picture_as_pdf",
+  "tags": [
+    "pdfmonkey",
+    "pdf",
+    "templates"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "7ae35a10-0743-50bb-bf35-06c4f9197ca9",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port. File bytes are type file.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "document_generate",
+          "description": "Overrides config operation. Accepted: document_generate, document_get, document_list, document_download, template_list.",
+          "children": []
+        },
+        {
+          "shortCode": "document_template_id",
+          "label": "document_template_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "document_generate required template id. Nested as document.document_template_id. Example: 11111111-1111-1111-1111-111111111111.",
+          "children": []
+        },
+        {
+          "shortCode": "payload",
+          "label": "payload",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "document_generate template variables. Nested as document.payload (https://pdfmonkey.io/docs/api/#create-a-document). Example: {\"name\":\"Ada\",\"total\":\"19.00\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "meta",
+          "label": "meta",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "document_generate optional document.meta (internal refs). Nested via bodyMap. Example: {\"order_id\":\"1001\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "document_list search query. Example: invoice.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "document_generate. EXACT: pending (generate now) | draft (save). Nested as document.status. Example: pending.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL path parameter `id` for operations: document_get, document_download. Required by: document_get, document_download.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page` for operation: document_list.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b556751b-831f-53e3-b656-e569cf2ae12b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b10fea6f-eec6-53be-a682-55ab72229319",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "document_generate",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "document_generate",
+        "document_get",
+        "document_list",
+        "document_download",
+        "template_list"
+      ]
+    },
+    {
+      "_id": "7ce0d616-9a13-5ce9-b499-f10b2a5b96df",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "PDFMonkey API key. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "92776b9b-7e91-5212-a748-7098e6e12db2",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

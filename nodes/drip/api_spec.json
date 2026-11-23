@@ -1,0 +1,167 @@
+{
+  "baseUrl": "https://api.getdrip.com/v2",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "userKey": "api_token",
+    "configKey": "api_token"
+  },
+  "operations": {
+    "subscriber.upsert": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{account_id}/subscribers",
+      "required": [
+        "account_id",
+        "email"
+      ],
+      "bodyFrom": [
+        "subscribers",
+        "email",
+        "first_name",
+        "last_name",
+        "custom_fields",
+        "user_id"
+      ],
+      "bodyMap": {
+        "subscribers": "subscribers[0]",
+        "email": "subscribers[0].email",
+        "first_name": "subscribers[0].first_name",
+        "last_name": "subscribers[0].last_name",
+        "custom_fields": "subscribers[0].custom_fields",
+        "user_id": "subscribers[0].user_id"
+      }
+    },
+    "subscriber.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{account_id}/subscribers/{id_or_email}",
+      "required": [
+        "account_id",
+        "id_or_email"
+      ]
+    },
+    "subscriber.unsubscribe": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{account_id}/subscribers/{id_or_email}/unsubscribe_all",
+      "required": [
+        "account_id",
+        "id_or_email"
+      ],
+      "bodyFrom": [
+        "_empty"
+      ]
+    },
+    "subscriber.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/{account_id}/subscribers/{id_or_email}",
+      "required": [
+        "account_id",
+        "id_or_email"
+      ]
+    },
+    "tag.apply": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{account_id}/tags",
+      "required": [
+        "account_id",
+        "email",
+        "tag"
+      ],
+      "bodyFrom": [
+        "tags",
+        "email",
+        "tag"
+      ],
+      "bodyMap": {
+        "tags": "tags[0]",
+        "email": "tags[0].email",
+        "tag": "tags[0].tag"
+      }
+    },
+    "tag.remove": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/{account_id}/subscribers/{id_or_email}/tags/{tag}",
+      "required": [
+        "account_id",
+        "id_or_email",
+        "tag"
+      ]
+    },
+    "event.record": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{account_id}/events",
+      "required": [
+        "account_id",
+        "email",
+        "action"
+      ],
+      "bodyFrom": [
+        "events",
+        "email",
+        "action",
+        "properties"
+      ],
+      "bodyMap": {
+        "events": "events[0]",
+        "email": "events[0].email",
+        "action": "events[0].action",
+        "properties": "events[0].properties"
+      }
+    },
+    "campaign.subscribe": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{account_id}/campaigns/{campaign_id}/subscribers",
+      "required": [
+        "account_id",
+        "campaign_id",
+        "email"
+      ],
+      "bodyFrom": [
+        "subscribers",
+        "email"
+      ],
+      "bodyMap": {
+        "subscribers": "subscribers[0]",
+        "email": "subscribers[0].email"
+      }
+    },
+    "campaign.unsubscribe": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{account_id}/subscribers/{id_or_email}/remove",
+      "required": [
+        "account_id",
+        "id_or_email"
+      ],
+      "queryFrom": [
+        "campaign_id"
+      ],
+      "bodyFrom": [
+        "_empty"
+      ]
+    },
+    "workflow.activate": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{account_id}/workflows/{workflow_id}/activate",
+      "required": [
+        "account_id",
+        "workflow_id"
+      ],
+      "bodyFrom": [
+        "_empty"
+      ]
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

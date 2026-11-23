@@ -1,0 +1,176 @@
+{
+  "_id": "c19e2bd3-2e6e-404a-8494-6c950a7ff04d",
+  "version": "1.0.0",
+  "name": "Summarize",
+  "label": "Numeric / string aggregations",
+  "description": "In-process sum/count/avg/min/max/concat over listed fields. No network.",
+  "icon": "",
+  "tags": [
+    "summarize",
+    "transform"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "dd427b49-4b8d-44fa-b6dd-74d166bee7e4",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Summarize operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'summarize'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "items",
+          "label": "items",
+          "type": "list",
+          "required": true,
+          "value": "[]",
+          "description": "Rows to summarize. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Field names. Required for aggregations other than whole-batch count.",
+          "children": []
+        },
+        {
+          "shortCode": "aggregations",
+          "label": "aggregations",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "sum | count | avg | min | max | concat.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "994144c7-ca72-4de4-853f-03d6a7511701",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0a28bc40-4724-4a03-94f3-da5adc6d1343",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: summarize. Required. Example: 'summarize'.",
+      "value": "summarize",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "summarize"
+      ]
+    },
+    {
+      "_id": "48303261-a0a9-48c7-962a-6ff03e2ca98d",
+      "shortCode": "fields",
+      "label": "Fields",
+      "type": "string",
+      "description": "JSON array of field names. Example: '[\"amount\"]'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c90c7ee5-204e-4fec-89a8-5996b5b6551c",
+      "shortCode": "aggregations",
+      "label": "Aggregations",
+      "type": "string",
+      "description": "JSON array from sum|count|avg|min|max|concat. Default '[\"count\"]'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "eefed736-41ec-4af8-b39f-e0abb9d66e56",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,260 @@
+{
+  "_id": "bb32c85d-ad1a-4bea-8c36-8d5d1646a8b8",
+  "version": "1.0.0",
+  "name": "Formstack",
+  "label": "Formstack Forms API V2025 — forms and submissions",
+  "description": "Official Formstack Forms API V2025 at https://www.formstack.com/api/v2025. Handler: OfficialApiNode. PAT Bearer (fs_pat_…). Submissions are respondent PII (may be PHI on HIPAA accounts). Customer owns the Formstack account. trigger.listen is ingress (BPMN message event). personalAccessToken is never logged or returned.",
+  "icon": "assignment",
+  "tags": [
+    "forms"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f5252c85-c0cc-4e2f-89df-df0188170944",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put personalAccessToken here. Example: {\"operation\":\"form.get\",\"formId\":\"12345\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "form.list",
+          "description": "Overrides config operation when non-blank. EXACT: 'form.list' | 'form.get' | 'submission.list' | 'submission.get' | 'trigger.listen'. trigger.listen never opens a socket.",
+          "children": []
+        },
+        {
+          "shortCode": "formId",
+          "label": "formId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Form id for form.get, submission.list. Falls back to config formId.",
+          "children": []
+        },
+        {
+          "shortCode": "submissionId",
+          "label": "submissionId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Submission id for submission.get. Answers are PII.",
+          "children": []
+        },
+        {
+          "shortCode": "pageNumber",
+          "label": "pageNumber",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page ≥ 1 for form.list / submission.list.",
+          "children": []
+        },
+        {
+          "shortCode": "pageSize",
+          "label": "pageSize",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size. form.list: 10–500; default 50.",
+          "children": []
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Filter form.list by form name.",
+          "children": []
+        },
+        {
+          "shortCode": "orderBy",
+          "label": "orderBy",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sort column for form.list.",
+          "children": []
+        },
+        {
+          "shortCode": "order",
+          "label": "order",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ASC or DESC for form.list.",
+          "children": []
+        },
+        {
+          "shortCode": "folder",
+          "label": "folder",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Folder id for form.list.",
+          "children": []
+        },
+        {
+          "shortCode": "minTime",
+          "label": "minTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "submission.list minTime unix or ISO.",
+          "children": []
+        },
+        {
+          "shortCode": "maxTime",
+          "label": "maxTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "submission.list maxTime.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "submission.list sort. EXACT: ASC | DESC.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a51ed9dc-b423-4dfb-9701-072667adbb9b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Submission answers are PII — do not log.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a018b389-8529-4a21-9623-10bd258ee209",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: form.list | form.get | submission.list | submission.get | trigger.listen.",
+      "value": "form.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "form.list",
+        "form.get",
+        "submission.list",
+        "submission.get",
+        "trigger.listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "d4b49aa2-a78e-4406-b168-113cadfedee5",
+      "shortCode": "personalAccessToken",
+      "label": "Personal access token",
+      "type": "password",
+      "description": "Formstack V2025 PAT (StudioQuack secret). Authorization: Bearer fs_pat_…. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b47980d3-bb58-49f7-a598-04d0849ee7fc",
+      "shortCode": "formId",
+      "label": "Form id",
+      "type": "number",
+      "description": "Default form id for form.get / submission.list when INPUT omits formId.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e8f8dfae-e822-4a8d-bc78-64bf6bbfb36b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

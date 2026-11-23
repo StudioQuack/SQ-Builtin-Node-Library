@@ -1,0 +1,404 @@
+{
+  "_id": "3cfac9e8-619d-5ca4-a028-f69c0310bae7",
+  "version": "1.0.0",
+  "name": "Azure Blob",
+  "label": "Azure Blob Storage REST (x-ms-version 2026-06-06)",
+  "description": "Azure Blob Storage REST (x-ms-version 2026-06-06). Official API https://learn.microsoft.com/en-us/rest/api/storageservices/blob-service-rest-api. One node; pick operation. Upload/download/convert/sign payloads use type file (Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.) Handler: OfficialApiNode + api_spec.json. Default x-ms-version 2026-06-06. Block blobs for upload. OfficialApiNode does not compute SharedKey; prefer SAS on the request URL. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "cloud",
+  "tags": [
+    "azure",
+    "blob",
+    "object-storage"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "db0b92a6-ea45-564e-9858-472a8b7a24d0",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "blob_create",
+          "description": "Overrides config operation. Accepted: blob_create, blob_delete, blob_get, blob_list, container_create, container_delete, container_get, container_list.",
+          "children": []
+        },
+        {
+          "shortCode": "container",
+          "label": "container",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Container name path for blob_* and container_*. Example: invoices.",
+          "children": []
+        },
+        {
+          "shortCode": "blob",
+          "label": "blob",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Blob name path for blob_create/get/delete. Example: 2026/report.pdf.",
+          "children": []
+        },
+        {
+          "shortCode": "prefix",
+          "label": "prefix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Blob name prefix for blob_list. Example: 2026/.",
+          "children": []
+        },
+        {
+          "shortCode": "marker",
+          "label": "marker",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Continuation marker for blob_list.",
+          "children": []
+        },
+        {
+          "shortCode": "blob_type",
+          "label": "blob_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "x-ms-blob-type for blob_create. EXACT: BlockBlob | PageBlob | AppendBlob. Example: BlockBlob.",
+          "children": []
+        },
+        {
+          "shortCode": "content_type",
+          "label": "content_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "x-ms-blob-content-type for blob_create. Example: application/pdf.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7e9d78a9-48ba-5c71-bca5-b9b975577e0f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0a972fe9-2254-54f8-ac65-8b70e04d55f6",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "blob_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "blob_create",
+        "blob_delete",
+        "blob_get",
+        "blob_list",
+        "container_create",
+        "container_delete",
+        "container_get",
+        "container_list"
+      ],
+      "filterRules": [
+        {
+          "when": "blob_create",
+          "targets": [
+            {
+              "param": "content_type",
+              "visible": true
+            },
+            {
+              "param": "blob_type",
+              "visible": true
+            },
+            {
+              "param": "container",
+              "visible": true
+            },
+            {
+              "param": "blob",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "blob_delete",
+          "targets": [
+            {
+              "param": "container",
+              "visible": true
+            },
+            {
+              "param": "blob",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "blob_get",
+          "targets": [
+            {
+              "param": "container",
+              "visible": true
+            },
+            {
+              "param": "blob",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "blob_list",
+          "targets": [
+            {
+              "param": "container",
+              "visible": true
+            },
+            {
+              "param": "marker",
+              "visible": true
+            },
+            {
+              "param": "prefix",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "container_create",
+          "targets": [
+            {
+              "param": "container",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "container_delete",
+          "targets": [
+            {
+              "param": "container",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "container_get",
+          "targets": [
+            {
+              "param": "container",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "container_list",
+          "targets": []
+        }
+      ]
+    },
+    {
+      "_id": "8e4adb0a-4730-5a82-8460-2d231f950000",
+      "shortCode": "sas_token",
+      "label": "Sas Token",
+      "type": "password",
+      "description": "Service or user-delegation SAS query string without leading ?. OfficialApiNode sends it as the Authorization header. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bff6287f-60df-5343-acca-612889993b9a",
+      "shortCode": "account_name",
+      "label": "Account Name",
+      "type": "string",
+      "description": "Storage account name interpolated into https://{account_name}.blob.core.windows.net. Official Blob REST host.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "87344584-29c1-494b-8563-d55b54b9be3d",
+      "shortCode": "content_type",
+      "label": "Content Type",
+      "type": "string",
+      "description": "x-ms-blob-content-type for blob_create. Example: application/pdf.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3549c9d2-5bd0-4df6-9f20-490dd48b9fc9",
+      "shortCode": "blob_type",
+      "label": "Blob Type",
+      "type": "string",
+      "description": "x-ms-blob-type for blob_create. EXACT: BlockBlob | PageBlob | AppendBlob. Example: BlockBlob.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "deb31044-7cd8-4c00-af2f-68a43a718d29",
+      "shortCode": "container",
+      "label": "Container",
+      "type": "string",
+      "description": "Container name path for blob_* and container_*. Example: invoices.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4d287f12-6bcd-46fc-9a1b-09671024604d",
+      "shortCode": "blob",
+      "label": "Blob",
+      "type": "string",
+      "description": "Blob name path for blob_create/get/delete. Example: 2026/report.pdf.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "04d87a4e-1d1a-45a8-96ea-6b861291ae1d",
+      "shortCode": "marker",
+      "label": "Marker",
+      "type": "string",
+      "description": "Continuation marker for blob_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b019600e-d5ba-4e9f-ac4b-1ff2915d4f37",
+      "shortCode": "prefix",
+      "label": "Prefix",
+      "type": "string",
+      "description": "Blob name prefix for blob_list. Example: 2026/.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0bdae52d-9dc7-5416-94e7-ae2081c3e1e3",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 60.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

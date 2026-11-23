@@ -1,0 +1,69 @@
+{
+  "baseUrl": "https://{language}.wikipedia.org",
+  "defaultTimeout": 20,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "none",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "extraHeaders": {
+    "User-Agent": "{user_agent}"
+  },
+  "operations": {
+    "wiki_search": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/w/api.php?action=query&list=search&format=json&formatversion=2",
+      "required": [
+        "srsearch",
+        "language"
+      ],
+      "queryFrom": [
+        "srsearch",
+        "srlimit",
+        "sroffset"
+      ],
+      "bodyFrom": []
+    },
+    "wiki_page": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/w/api.php?action=query&prop=extracts&explaintext=1&format=json&formatversion=2",
+      "required": [
+        "titles",
+        "language"
+      ],
+      "queryFrom": [
+        "titles",
+        "exintro"
+      ],
+      "bodyFrom": []
+    },
+    "wiki_summary": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/rest_v1/page/summary/{title}",
+      "required": [
+        "title",
+        "language"
+      ],
+      "queryFrom": [],
+      "bodyFrom": []
+    },
+    "wikidata_entity": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/w/api.php?action=query&prop=pageprops&ppprop=wikibase_item&format=json&formatversion=2",
+      "required": [
+        "titles",
+        "language"
+      ],
+      "queryFrom": [
+        "titles"
+      ],
+      "bodyFrom": []
+    }
+  }
+}

@@ -1,0 +1,641 @@
+{
+  "_id": "bb649912-98d6-41e7-9deb-1d6f8b67d67c",
+  "version": "1.0.0",
+  "name": "HubSpot",
+  "label": "HubSpot — CRM + Marketing Hub (one node)",
+  "description": "Official HubSpot REST at https://api.hubapi.com. Handler: OfficialApiNode. Auth: Service Key or private-app / static token as Authorization: Bearer. Legacy hapikey query auth is dead — never send hapikey. CRM objects use /crm/objects/2026-03 (https://developers.hubspot.com/docs/api-reference/latest/overview). Lists use /crm/lists/2026-03 (v1 lists sunset 2026-04-30). Marketing Hub (lists, forms, transactional email, workflow enroll) is THIS node. trigger.listen is ingress. Customer owns the HubSpot account. Contacts/emails are PII. Never log access_token.",
+  "icon": "hub",
+  "tags": [
+    "crm",
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "27b6262e-a879-460a-953f-dee8aeab2321",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation CRM/Marketing fields. Object ids, purpose-oriented company/deal/ticket properties, or a properties map escape hatch. trigger.listen does not call HTTP. Do not put access_token here. Example: {\"operation\":\"company.update\",\"companyId\":\"123\",\"name\":\"Acme\",\"domain\":\"acme.com\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.upsert",
+          "description": "Overrides config. EXACT catalog verb including trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "contactId",
+          "label": "contactId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CRM contact record id (or email when idProperty=email).",
+          "children": []
+        },
+        {
+          "shortCode": "companyId",
+          "label": "companyId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Company record id.",
+          "children": []
+        },
+        {
+          "shortCode": "dealId",
+          "label": "dealId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deal record id.",
+          "children": []
+        },
+        {
+          "shortCode": "ticketId",
+          "label": "ticketId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Ticket record id.",
+          "children": []
+        },
+        {
+          "shortCode": "engagementId",
+          "label": "engagementId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note/engagement record id (engagements map to CRM notes).",
+          "children": []
+        },
+        {
+          "shortCode": "listId",
+          "label": "listId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ILS list id for list.add / list.remove (MANUAL or SNAPSHOT lists).",
+          "children": []
+        },
+        {
+          "shortCode": "formId",
+          "label": "formId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Marketing form id (form GUID) for getFields / submit. Example: 0f1e2d3c-4b5a-6978-8a9b-0c1d2e3f4a5b.",
+          "children": []
+        },
+        {
+          "shortCode": "portalId",
+          "label": "portalId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot account (portal / Hub) id; required by form.submit (path {portalId} of the authenticated submissions endpoint). Shown in the account menu. Example: 12345678.",
+          "children": []
+        },
+        {
+          "shortCode": "emailId",
+          "label": "emailId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Marketing/transactional email content id.",
+          "children": []
+        },
+        {
+          "shortCode": "workflowId",
+          "label": "workflowId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Workflow id for enroll/unenroll.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact email. contact.upsert → inputs[0].id (set idProperty=email); workflow enroll path. PII.",
+          "children": []
+        },
+        {
+          "shortCode": "idProperty",
+          "label": "idProperty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Unique property name. contact.upsert → inputs[0].idProperty (send email when using the email field as id). Also a GET query.",
+          "children": []
+        },
+        {
+          "shortCode": "properties",
+          "label": "properties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "CRM properties map escape hatch. company/deal/ticket/engagement create/update merge purpose fields into properties.*; contact.upsert merges into inputs[0].properties. Custom properties stay here. On GET/search this is the comma-separated property-name list.",
+          "children": []
+        },
+        {
+          "shortCode": "associations",
+          "label": "associations",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Create associations array as documented.",
+          "children": []
+        },
+        {
+          "shortCode": "inputs",
+          "label": "inputs",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "contact.upsert one batch input object escape hatch merged into inputs[0]. Named email/firstname/lastname/properties win. Example: {\"idProperty\":\"email\",\"id\":\"ada@example.com\",\"properties\":{\"firstname\":\"Ada\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "filterGroups",
+          "label": "filterGroups",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "CRM search filterGroups.",
+          "children": []
+        },
+        {
+          "shortCode": "sorts",
+          "label": "sorts",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Search sorts or GET sorts (recent).",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CRM search query string.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size.",
+          "children": []
+        },
+        {
+          "shortCode": "after",
+          "label": "after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Paging cursor.",
+          "children": []
+        },
+        {
+          "shortCode": "recordIdsToAdd",
+          "label": "recordIdsToAdd",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "list.add: string ids for memberships/add-and-remove (object body; raw JSON arrays are not sent by OfficialApiNode).",
+          "children": []
+        },
+        {
+          "shortCode": "recordIdsToRemove",
+          "label": "recordIdsToRemove",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "list.remove: string ids.",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "form.submit field values. Authenticated api.hubapi.com Forms API — public hsforms.com posts are a different host.",
+          "children": []
+        },
+        {
+          "shortCode": "context",
+          "label": "context",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Optional form submit context.",
+          "children": []
+        },
+        {
+          "shortCode": "legalConsentOptions",
+          "label": "legalConsentOptions",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Form consent payload. Caller owns lawful basis.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "email.send envelope { to, from?, cc?, bcc?, replyTo?, sendId? }.",
+          "children": []
+        },
+        {
+          "shortCode": "contactProperties",
+          "label": "contactProperties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Transactional email contact property overrides.",
+          "children": []
+        },
+        {
+          "shortCode": "customProperties",
+          "label": "customProperties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Transactional email custom properties.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "Company name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot company property name. company.create / company.update. Example: Acme Inc. Also sendable inside properties.",
+          "children": []
+        },
+        {
+          "shortCode": "domain",
+          "label": "Company domain",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot company property domain — primary unique key. company.create / company.update. Example: acme.com.",
+          "children": []
+        },
+        {
+          "shortCode": "city",
+          "label": "City",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot company property city. company.create / company.update. Example: Cambridge.",
+          "children": []
+        },
+        {
+          "shortCode": "industry",
+          "label": "Industry",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot company property industry. company.create / company.update. Example: Computer Software.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "Phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Phone. company create/update → properties.phone; contact.upsert → inputs[0].properties.phone.",
+          "children": []
+        },
+        {
+          "shortCode": "state",
+          "label": "State / region",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot company property state. company.create / company.update. Example: Massachusetts.",
+          "children": []
+        },
+        {
+          "shortCode": "website",
+          "label": "Website",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Website. company create/update → properties.website; contact.upsert → inputs[0].properties.website.",
+          "children": []
+        },
+        {
+          "shortCode": "lifecyclestage",
+          "label": "Lifecycle stage",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lifecycle stage. company create/update → properties.lifecyclestage; contact.upsert → inputs[0].properties.lifecyclestage.",
+          "children": []
+        },
+        {
+          "shortCode": "dealname",
+          "label": "Deal name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot deal property dealname. deal.create / deal.update. Example: Q4 renewal.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "Deal amount",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot deal property amount (string number). deal.create / deal.update. Example: 15000.",
+          "children": []
+        },
+        {
+          "shortCode": "dealstage",
+          "label": "Deal stage",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot deal property dealstage — stage id. deal.create / deal.update. Example: appointmentscheduled.",
+          "children": []
+        },
+        {
+          "shortCode": "pipeline",
+          "label": "Deal pipeline",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot deal property pipeline — pipeline id. deal.create / deal.update. Example: default.",
+          "children": []
+        },
+        {
+          "shortCode": "closedate",
+          "label": "Close date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot deal property closedate as midnight UTC ms or YYYY-MM-DD. deal.create / deal.update. Example: 2026-12-01.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "Ticket subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot ticket property subject. ticket.create / ticket.update. Example: Cannot log in.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "Ticket body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot ticket property content (HTML/text). ticket.create / ticket.update.",
+          "children": []
+        },
+        {
+          "shortCode": "hs_pipeline",
+          "label": "Ticket pipeline",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot ticket property hs_pipeline — pipeline id. ticket.create / ticket.update.",
+          "children": []
+        },
+        {
+          "shortCode": "hs_pipeline_stage",
+          "label": "Ticket stage",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot ticket property hs_pipeline_stage — stage id. ticket.create / ticket.update.",
+          "children": []
+        },
+        {
+          "shortCode": "hs_ticket_priority",
+          "label": "Ticket priority",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot ticket property hs_ticket_priority. EXACT: LOW | MEDIUM | HIGH. ticket.create / ticket.update.",
+          "children": []
+        },
+        {
+          "shortCode": "hs_note_body",
+          "label": "Note body",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot note property hs_note_body. engagement.create. Example: Called the buyer.",
+          "children": []
+        },
+        {
+          "shortCode": "hs_timestamp",
+          "label": "Note timestamp",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HubSpot note property hs_timestamp (ms since epoch). engagement.create. Example: 1735689600000.",
+          "children": []
+        },
+        {
+          "shortCode": "firstname",
+          "label": "firstname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.upsert firstname. Wired to inputs[0].properties.firstname.",
+          "children": []
+        },
+        {
+          "shortCode": "lastname",
+          "label": "lastname",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.upsert lastname. Wired to inputs[0].properties.lastname.",
+          "children": []
+        },
+        {
+          "shortCode": "company",
+          "label": "company",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.upsert company property (inputs[0].properties.company). Not the companies object id.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6ff8bf21-4474-4d0a-82b7-19e859d895a9",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. trigger.listen: BPMN message event (project app webhooks). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "bcd45268-5da6-42ae-a87d-2c00c7fd2a7d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. Marketing Hub verbs live here (not a second node).",
+      "value": "contact.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "contact.upsert",
+        "contact.get",
+        "contact.list",
+        "contact.search",
+        "contact.delete",
+        "contact.recent",
+        "list.add",
+        "list.remove",
+        "company.create",
+        "company.get",
+        "company.list",
+        "company.search",
+        "company.update",
+        "company.delete",
+        "company.recent",
+        "deal.create",
+        "deal.get",
+        "deal.list",
+        "deal.search",
+        "deal.update",
+        "deal.delete",
+        "deal.recent",
+        "engagement.create",
+        "engagement.get",
+        "engagement.list",
+        "engagement.delete",
+        "ticket.create",
+        "ticket.get",
+        "ticket.list",
+        "ticket.update",
+        "ticket.delete",
+        "form.getFields",
+        "form.submit",
+        "email.send",
+        "email.get",
+        "workflow.enroll",
+        "workflow.unenroll",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "0f94c8ac-05ee-432f-9ce2-e677b0f146dc",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "HubSpot Service Key (Settings → Integrations → Service Keys, public beta 2026-02) or private-app / static token. Sent as Authorization: Bearer. Do not use hapikey. Service Keys cannot register webhooks — use a project app for trigger.listen. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a8c11880-9619-4f7f-811e-a897f3f36ede",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

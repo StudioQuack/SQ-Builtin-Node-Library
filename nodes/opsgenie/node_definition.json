@@ -1,0 +1,341 @@
+{
+  "_id": "2742bcf6-ebcd-481b-8a7a-dcb130ccf2cc",
+  "version": "1.0.0",
+  "name": "Opsgenie",
+  "label": "Opsgenie REST API",
+  "description": "Opsgenie REST API via OfficialApiNode. Docs: https://docs.opsgenie.com/docs/api-overview. Atlassian end of support is 2027-04-05 (REST APIs remain until then; migrate to Jira Service Management or Compass Operations APIs). Operations: alert_create, alert_get, alert_ack, alert_close, alert_note, incident_create, schedule_oncall, heartbeat_ping, listen. Auth secret api_key is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "opsgenie",
+    "alerts",
+    "atlassian"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "e89f5e77-8a38-4e19-9a45-fbc009c0f712",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "alert_create",
+          "description": "Which official API call to run. EXACT values: alert_create | alert_get | alert_ack | alert_close | alert_note | incident_create | schedule_oncall | heartbeat_ping | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'alert_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alert, incident, or schedule id.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Heartbeat name.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alert/incident message.",
+          "children": []
+        },
+        {
+          "shortCode": "alias",
+          "label": "alias",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `alias` for operation: alert_create.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `description` for operations: alert_create, incident_create.",
+          "children": []
+        },
+        {
+          "shortCode": "priority",
+          "label": "priority",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `priority` for operations: alert_create, incident_create.",
+          "children": []
+        },
+        {
+          "shortCode": "responders",
+          "label": "responders",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `responders` for operation: alert_create.",
+          "children": []
+        },
+        {
+          "shortCode": "visibleTo",
+          "label": "visibleTo",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "alert_create teams/users who can see the alert. [{type, id|name}].",
+          "children": []
+        },
+        {
+          "shortCode": "actions",
+          "label": "actions",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "alert_create custom action names. Example: [\"Restart\"].",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "alert_create / incident_create tags. Example: [\"prod\",\"payments\"].",
+          "children": []
+        },
+        {
+          "shortCode": "details",
+          "label": "details",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "alert_create / incident_create extra key/value details.",
+          "children": []
+        },
+        {
+          "shortCode": "entity",
+          "label": "entity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "alert_create entity (host/service). Example: payments-api.",
+          "children": []
+        },
+        {
+          "shortCode": "source",
+          "label": "source",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "alert_create source. Example: studioquack.",
+          "children": []
+        },
+        {
+          "shortCode": "user",
+          "label": "user",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "alert_create display user. Example: workflow.",
+          "children": []
+        },
+        {
+          "shortCode": "identifierType",
+          "label": "identifierType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `identifierType` for operations: alert_get, alert_ack, alert_close, alert_note.",
+          "children": []
+        },
+        {
+          "shortCode": "note",
+          "label": "note",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Free-text note for alert_note (required), alert_ack, alert_close, alert_create and incident_create. Max 25000 characters. Example: Restarted the payment worker.",
+          "children": []
+        },
+        {
+          "shortCode": "api_region",
+          "label": "api_region",
+          "type": "string",
+          "required": false,
+          "value": "api.opsgenie.com",
+          "description": "Opsgenie API region host. EXACT: api.opsgenie.com (US) | api.eu.opsgenie.com (EU). Example: api.eu.opsgenie.com.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e3dbf21c-e536-405d-a2d1-9b73a6730d52",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0088c210-f5f9-4812-a8ea-3daf6673a38e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: alert_create, alert_get, alert_ack, alert_close, alert_note, incident_create, schedule_oncall, heartbeat_ping, listen. listen is BPMN ingress, not a socket.",
+      "value": "alert_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "alert_create",
+        "alert_get",
+        "alert_ack",
+        "alert_close",
+        "alert_note",
+        "incident_create",
+        "schedule_oncall",
+        "heartbeat_ping",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "5d37ac54-0428-4968-b380-a7a6a6adfbc9",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Opsgenie API key. Authorization: GenieKey <key>. EU accounts also set api_host to api.eu.opsgenie.com. Product sunset 2027-04-05 — https://www.atlassian.com/software/opsgenie/migration.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "321d421b-14e9-4e1e-b970-8c97940dd6fd",
+      "shortCode": "api_host",
+      "label": "API Host",
+      "type": "select",
+      "description": "Opsgenie API host for the account's region. EXACT: api.opsgenie.com (US, default) | api.eu.opsgenie.com (EU). Example: api.eu.opsgenie.com.",
+      "value": "api.opsgenie.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "api.opsgenie.com",
+        "api.eu.opsgenie.com"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "179bf5dd-f367-4f1c-84bd-9b1fdd40729b",
+      "shortCode": "api_region",
+      "label": "API Region",
+      "type": "select",
+      "description": "Opsgenie API region host. EXACT: api.opsgenie.com (US) | api.eu.opsgenie.com (EU). Example: api.eu.opsgenie.com.",
+      "value": "api.opsgenie.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "api.opsgenie.com",
+        "api.eu.opsgenie.com"
+      ]
+    },
+    {
+      "_id": "36b77884-b450-4699-967e-477a26bf2de0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

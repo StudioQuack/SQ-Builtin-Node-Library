@@ -1,0 +1,96 @@
+{
+    "baseUrl": "https://{endpoint}",
+    "defaultTimeout": 25,
+    "timeoutConfigKey": "timeout_seconds",
+    "auth": {
+        "type": "aws-sigv4",
+        "configKey": "access_key_id",
+        "secretKeyConfigKey": "secret_access_key"
+    },
+    "sigv4": {
+        "service": "es",
+        "regionConfigKey": "region",
+        "sessionTokenConfigKey": "session_token"
+    },
+    "operations": {
+        "document.create": {
+            "method": "PUT",
+            "path": "/{index}/_doc/{id}",
+            "required": [
+                "index",
+                "id"
+            ],
+            "kind": "http",
+            "bodyFrom": [
+                "doc"
+            ],
+            "bodyFormat": "raw",
+            "bodyParam": "doc",
+            "contentType": "application/json",
+            "queryFrom": [
+                "refresh"
+            ]
+        },
+        "document.get": {
+            "method": "GET",
+            "path": "/{index}/_doc/{id}",
+            "required": [
+                "index",
+                "id"
+            ],
+            "kind": "http"
+        },
+        "document.update": {
+            "method": "POST",
+            "path": "/{index}/_update/{id}",
+            "bodyFrom": [
+                "doc",
+                "doc_as_upsert",
+                "upsert"
+            ],
+            "required": [
+                "index",
+                "id"
+            ],
+            "kind": "http",
+            "bodyMap": {
+                "doc": "doc",
+                "doc_as_upsert": "doc_as_upsert",
+                "upsert": "upsert"
+            },
+            "queryFrom": [
+                "refresh"
+            ]
+        },
+        "document.delete": {
+            "method": "DELETE",
+            "path": "/{index}/_doc/{id}",
+            "required": [
+                "index",
+                "id"
+            ],
+            "kind": "http",
+            "queryFrom": [
+                "refresh"
+            ]
+        },
+        "document.search": {
+            "method": "POST",
+            "path": "/{index}/_search",
+            "bodyFrom": [
+                "query"
+            ],
+            "required": [
+                "index"
+            ],
+            "kind": "http",
+            "queryFrom": [
+                "size",
+                "from"
+            ],
+            "bodyMap": {
+                "query": "query"
+            }
+        }
+    }
+}

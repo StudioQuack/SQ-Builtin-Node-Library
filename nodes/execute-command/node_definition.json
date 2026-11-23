@@ -1,0 +1,237 @@
+{
+  "_id": "d3e8777b-a46d-4611-b034-94a8c67910e9",
+  "version": "1.0.0",
+  "name": "Execute Command",
+  "label": "Sandbox argv (default off)",
+  "description": "Runs an allowlisted argv list inside the node-library container (Podman sandbox). Never the daemon host. Never a shell. Default off — set enabled=true. Empty allowlist is refused. Working directory is confined to the sandbox workspace. A non-zero exit code is a normal result.",
+  "icon": "",
+  "tags": [
+    "shell",
+    "command"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "84ab379a-3cf7-417b-af75-8dd874ed83f9",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One exec. argv is the argument list (argv[0] must be allowlisted). Never a shell string. Example: [\"echo\",\"hello\"].",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "argv",
+          "label": "argv",
+          "type": "list",
+          "required": true,
+          "value": "[]",
+          "description": "Purpose: argument vector passed to ProcessBuilder. argv[0] is the executable basename (or path whose basename is allowlisted). Never interpolated into a shell. Example: [\"echo\",\"hello\"].",
+          "children": []
+        },
+        {
+          "shortCode": "stdin",
+          "label": "stdin",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: optional UTF-8 bytes written to the child's stdin, then closed. Secrets must not be placed here from config.",
+          "children": []
+        },
+        {
+          "shortCode": "working_dir",
+          "label": "working_dir",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Purpose: workspace-relative cwd. Absolute paths and .. that leave the workspace are refused. Example: 'out'.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "76444805-b203-4d8a-b6f0-2e0f2d518db3",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`, `exit_code`, `stdout`, `stderr`, `timed_out`). Non-zero exit_code is success of the node. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'. Set even when exit_code is non-zero.",
+          "children": []
+        },
+        {
+          "shortCode": "exit_code",
+          "label": "exit_code",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Child exit status. -1 if the process was still alive after a timeout kill. Non-zero is a normal result.",
+          "children": []
+        },
+        {
+          "shortCode": "stdout",
+          "label": "stdout",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "UTF-8 stdout, capped at 65536 bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "stderr",
+          "label": "stderr",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "UTF-8 stderr, capped at 65536 bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "timed_out",
+          "label": "timed_out",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "True when the wall-clock budget expired and the child was killed.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e6f1d1ce-ea51-487c-9028-c3d1db677f02",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: exec. Required. Example: 'exec'.",
+      "value": "exec",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "exec"
+      ]
+    },
+    {
+      "_id": "a1b2c3d4-e5f6-4789-abcd-0123456789ab",
+      "shortCode": "enabled",
+      "label": "Enabled",
+      "type": "select",
+      "description": "Master switch. Default false. The node refuses every invoke until this is true. Input cannot enable it.",
+      "value": "false",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "296a577c-583a-4d66-9ace-dc8422f9c6cf",
+      "shortCode": "allowlist",
+      "label": "Allowlist",
+      "type": "string",
+      "description": "JSON array (or comma list) of allowed executable basenames. Required. Empty list refuses. Example: '[\"echo\",\"true\"]'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "90c8c298-dc5b-4990-829b-8d1cfd77abad",
+      "shortCode": "argv",
+      "label": "Argv",
+      "type": "list",
+      "description": "Argument vector. argv[0] must be on the allowlist. Example: [\"echo\",\"hello\"]. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "adc04807-f944-48b4-ae96-d016c4cfaaf8",
+      "shortCode": "stdin",
+      "label": "Stdin",
+      "type": "string",
+      "description": "UTF-8 bytes written to the child stdin. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6c864ecf-c9d9-49b8-81a4-341db0867fd6",
+      "shortCode": "working_dir",
+      "label": "Working Dir",
+      "type": "string",
+      "description": "Default workspace-relative cwd when input.working_dir is blank. Host paths rejected.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6ee22d85-5003-4ad5-a217-43a2e7d412ae",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Fallback run budget in seconds when timeout_ms is blank/0. Positive integer. Blank/0/negative → 15s via timeout_ms default.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

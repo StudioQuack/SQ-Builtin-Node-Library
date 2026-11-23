@@ -1,0 +1,646 @@
+{
+  "_id": "caa0de62-a809-46c5-b732-d965f170fa15",
+  "version": "1.0.0",
+  "name": "Elasticsearch",
+  "label": "Elasticsearch — official REST",
+  "description": "Elasticsearch — official REST. Handler: OfficialApiNode. Paths PUT/GET/DELETE /{index}/_doc/{id}, POST /{index}/_update/{id}, POST /{index}/_search (unversioned; still current in ES 9). Auth is Authorization: ApiKey <encoded> from secret api_key (https://www.elastic.co/docs/api/doc/elasticsearch/v9/authentication). Optional REST API compatibility uses Accept/Content-Type application/vnd.elasticsearch+json; compatible-with=N — this node does not send those. Docs: https://www.elastic.co/docs/api/doc/elasticsearch. Customer owns the database. Minimize payload. Secrets never logged or returned.",
+  "icon": "storage",
+  "tags": [
+    "search"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "0bf7cc35-bb1a-5ac0-8d19-f4b841b9867c",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put api_key here. Example: {\"operation\":\"document.create\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "document.create",
+          "description": "Overrides config. EXACT: document.create | document.get | document.update | document.delete | document.search.",
+          "children": []
+        },
+        {
+          "shortCode": "index",
+          "label": "index",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Index name. Path. Example: logs.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document id. Path.",
+          "children": []
+        },
+        {
+          "shortCode": "document",
+          "label": "document",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Index API document merged at the JSON root for document.create (PUT /{index}/_doc/{id}). Arbitrary source fields; do not put operation/index/id here. Example: {\"message\":\"hi\",\"status\":200}. https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-create",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "document.search Query DSL. Example: {\"match_all\":{}}.",
+          "children": []
+        },
+        {
+          "shortCode": "doc",
+          "label": "doc",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Partial document for document.update, sent as {doc}. Example: {\"status\":\"done\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "size",
+          "label": "size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Search size.",
+          "children": []
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Search from (offset). Official Search API.",
+          "children": []
+        },
+        {
+          "shortCode": "doc_as_upsert",
+          "label": "doc_as_upsert",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "If true, uses doc for both update and insert. Official Update API.",
+          "children": []
+        },
+        {
+          "shortCode": "refresh",
+          "label": "refresh",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "document.create query refresh. EXACT: true | false | wait_for. Example: wait_for.",
+          "children": []
+        },
+        {
+          "shortCode": "routing",
+          "label": "routing",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Shard routing for document.create / document.get.",
+          "children": []
+        },
+        {
+          "shortCode": "op_type",
+          "label": "op_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "document.create query op_type. EXACT: index | create.",
+          "children": []
+        },
+        {
+          "shortCode": "pipeline",
+          "label": "pipeline",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Ingest pipeline id for document.create.",
+          "children": []
+        },
+        {
+          "shortCode": "script",
+          "label": "script",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "document.update script {source, lang, params} instead of or with doc.",
+          "children": []
+        },
+        {
+          "shortCode": "upsert",
+          "label": "upsert",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "document.update upsert document when the id does not exist.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "document.search sort. Example: [{\"@timestamp\":\"desc\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "_source",
+          "label": "_source",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "document.search / get _source filter. true, false, or {includes,excludes}.",
+          "children": []
+        },
+        {
+          "shortCode": "aggs",
+          "label": "aggs",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "document.search aggregations map.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "d4b06b55-a5a8-54cd-9c3c-b202e6ba4e1b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Secrets never copied here.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "80235ca6-cd9f-500c-8d65-63c9ba0329aa",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: document.create | document.get | document.update | document.delete | document.search.",
+      "value": "document.create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "document.create",
+        "document.get",
+        "document.update",
+        "document.delete",
+        "document.search"
+      ],
+      "filterRules": [
+        {
+          "when": "document.create",
+          "targets": [
+            {
+              "param": "pipeline",
+              "visible": true
+            },
+            {
+              "param": "routing",
+              "visible": true
+            },
+            {
+              "param": "document",
+              "visible": true
+            },
+            {
+              "param": "refresh",
+              "visible": true
+            },
+            {
+              "param": "op_type",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "document.get",
+          "targets": [
+            {
+              "param": "routing",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "_source",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "document.update",
+          "targets": [
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "doc_as_upsert",
+              "visible": true
+            },
+            {
+              "param": "script",
+              "visible": true
+            },
+            {
+              "param": "doc",
+              "visible": true
+            },
+            {
+              "param": "upsert",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "document.delete",
+          "targets": [
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "document.search",
+          "targets": [
+            {
+              "param": "_source",
+              "visible": true
+            },
+            {
+              "param": "sort",
+              "visible": true
+            },
+            {
+              "param": "size",
+              "visible": true
+            },
+            {
+              "param": "aggs",
+              "visible": true
+            },
+            {
+              "param": "from",
+              "visible": true
+            },
+            {
+              "param": "query",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "db715008-11cd-4df8-b5f0-d47080df7793",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Encoded Elasticsearch API key. Sent as Authorization: ApiKey <value> (the encoded field from POST /_security/api_key). Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5342f16d-f989-49a2-bd0a-8e9628ceeaa2",
+      "shortCode": "base_url",
+      "label": "base_url",
+      "type": "string",
+      "description": "Elasticsearch origin including scheme and port, no trailing slash. Example: https://es.example.com:9200.",
+      "value": "http://localhost:9200",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b8e642dc-87dc-488b-9816-eef00fc3a09d",
+      "shortCode": "index",
+      "label": "index",
+      "type": "string",
+      "description": "Default index when INPUT index is empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9344f92c-c0bb-4860-86a9-3c3e20c6c748",
+      "shortCode": "pipeline",
+      "label": "Pipeline",
+      "type": "string",
+      "description": "Ingest pipeline id for document.create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "188c921a-d6d8-4bf1-b3c7-dba7f283482a",
+      "shortCode": "routing",
+      "label": "Routing",
+      "type": "string",
+      "description": "Shard routing for document.create / document.get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "882b5a6a-e0cb-4553-9bef-0c0a3f19a1d6",
+      "shortCode": "document",
+      "label": "Document",
+      "type": "object",
+      "description": "Index API document merged at the JSON root for document.create (PUT /{index}/_doc/{id}). Arbitrary source fields; do not put operation/index/id here. Example: {\"message\":\"hi\",\"status\":200}. https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-create",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e1991649-7869-41c6-b6ce-4718f88e262e",
+      "shortCode": "refresh",
+      "label": "Refresh",
+      "type": "string",
+      "description": "document.create query refresh. EXACT: true | false | wait_for. Example: wait_for.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0ae0fedc-6f34-48e2-81dc-1c990459eddf",
+      "shortCode": "op_type",
+      "label": "Op Type",
+      "type": "string",
+      "description": "document.create query op_type. EXACT: index | create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f0bd2541-b3a0-456d-8eaa-db6615e31041",
+      "shortCode": "id",
+      "label": "ID",
+      "type": "string",
+      "description": "Document id. Path.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5544fef7-22a7-4f1d-b035-db6b3764561c",
+      "shortCode": "_source",
+      "label": " Source",
+      "type": "object",
+      "description": "document.search / get _source filter. true, false, or {includes,excludes}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b93f1bf9-3bf5-4ace-8a98-18ffac30aa70",
+      "shortCode": "doc_as_upsert",
+      "label": "Doc As Upsert",
+      "type": "boolean",
+      "description": "If true, uses doc for both update and insert. Official Update API.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7d89b425-4131-4459-a491-a564ce72b05b",
+      "shortCode": "script",
+      "label": "Script",
+      "type": "object",
+      "description": "document.update script {source, lang, params} instead of or with doc.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f56c5cd6-a661-4bad-ba7a-4413cf2093b6",
+      "shortCode": "doc",
+      "label": "Doc",
+      "type": "object",
+      "description": "Partial document for document.update, sent as {doc}. Example: {\"status\":\"done\"}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8b01637a-6d42-4976-bb14-7b486daa5644",
+      "shortCode": "upsert",
+      "label": "Upsert",
+      "type": "object",
+      "description": "document.update upsert document when the id does not exist.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f45c78cf-c686-4d00-9c7e-be4683a3018a",
+      "shortCode": "sort",
+      "label": "Sort",
+      "type": "list",
+      "description": "document.search sort. Example: [{\"@timestamp\":\"desc\"}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "eac1273d-6abc-433a-91f5-9e5897580ecc",
+      "shortCode": "size",
+      "label": "Size",
+      "type": "number",
+      "description": "Search size.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4eef2e41-cd52-477b-bc17-deb4c0c7da0a",
+      "shortCode": "aggs",
+      "label": "Aggs",
+      "type": "object",
+      "description": "document.search aggregations map.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8922207b-cd0a-4b6c-aef5-bcd7501b343c",
+      "shortCode": "from",
+      "label": "From",
+      "type": "number",
+      "description": "Search from (offset). Official Search API.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "58a5eff4-319b-46d7-b42a-15c0c64f96b9",
+      "shortCode": "query",
+      "label": "Query",
+      "type": "object",
+      "description": "document.search Query DSL. Example: {\"match_all\":{}}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9042e7dd-8f3f-5459-8b3e-f82d77cff6d0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

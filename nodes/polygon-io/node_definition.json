@@ -1,0 +1,222 @@
+{
+  "_id": "d46f2ce9-0eaf-5b20-9117-a6929ecfe893",
+  "version": "1.0.0",
+  "name": "Polygon.io",
+  "label": "Polygon.io",
+  "description": "Polygon.io official API via OfficialApiNode (api_spec.json). Operations: aggregates, ticker_details, snapshot, news. Docs: https://polygon.io/docs/rest/stocks/aggregates/custom-bars. Polygon/Massive terms. Host remains https://api.polygon.io. Bearer or apiKey query. Paid plans for realtime. Display/redistribution limits. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "chart",
+  "tags": [
+    "finance",
+    "polygon"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "53982081-5293-5846-b45a-edef620cccc0",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Polygon.io request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"aggregates\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: aggregates | ticker_details | snapshot | news. Default: first listed or instance operation. Example: 'aggregates'.",
+          "children": [],
+          "_id": "b55126f9-8a0b-5f0d-b6ad-cd132f322233"
+        },
+        {
+          "shortCode": "adjusted",
+          "label": "adjusted",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `adjusted` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "6e03c074-b413-5afa-96aa-811905f18b80"
+        },
+        {
+          "shortCode": "from",
+          "label": "from",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "aggregates: path segment YYYY-MM-DD (e.g. 2024-01-02). Other ops: omit when unused.",
+          "children": [],
+          "_id": "b3d05356-781f-59e9-9909-908dce462d35"
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `limit` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "e986fb68-fe6d-5c4f-a685-ee888b903eaf"
+        },
+        {
+          "shortCode": "multiplier",
+          "label": "multiplier",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `multiplier` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "3e538353-7c79-5df6-8758-d7610cae0332"
+        },
+        {
+          "shortCode": "ticker",
+          "label": "ticker",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `ticker` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "983c367b-d9fb-5b6f-81c7-a73bccdacf15"
+        },
+        {
+          "shortCode": "timespan",
+          "label": "timespan",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sent as path, query, or JSON body field `timespan` for the selected operation. Omit when unused. Do not put secrets here.",
+          "children": [],
+          "_id": "cfe3f1c1-3579-5f15-be38-34150b22240b"
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "aggregates: path segment YYYY-MM-DD. Must not be before `from`. Other ops: omit when unused.",
+          "children": [],
+          "_id": "2ef060bf-401d-5b8d-91e2-a2d6f634888b"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "37066605-989b-50c0-b106-11ffa69d223e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "dd15657b-bfb3-5229-8283-3a1440e81b49"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "aef4db34-15c7-5aae-ba60-4320099e0f47"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "c9acaad2-64f0-50a2-858c-4aa9de46fab9"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "f01ababf-1450-57f8-babe-286fc7bdc249",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: aggregates, ticker_details, snapshot, news.",
+      "value": "aggregates",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "aggregates",
+        "ticker_details",
+        "snapshot",
+        "news"
+      ]
+    },
+    {
+      "_id": "c5bffa3b-9732-5e5f-990b-8871aa115bce",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `bearer`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7ddc89fe-a82f-5b80-9e94-4a24905e43c0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,262 @@
+{
+  "_id": "5894ba96-8c2f-568d-b24c-f55718759f89",
+  "version": "1.0.0",
+  "name": "Mediastack",
+  "label": "Mediastack",
+  "description": "Mediastack official API via OfficialApiNode (api_spec.json). Operations: live, historical, sources. Docs: https://mediastack.com/documentation. Mediastack (APILayer) terms. access_key query. Display/source attribution. Distinct from NewsAPI. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "news",
+  "tags": [
+    "news",
+    "mediastack"
+  ],
+  "category": "News & Reference",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "9e85b624-363f-514d-a14c-5ac5135110c6",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Mediastack request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"live\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: live | historical | sources. Default: first listed or instance operation. Example: 'live'.",
+          "children": [],
+          "_id": "7b550db9-5a13-598c-81c4-9d7d3e713aac"
+        },
+        {
+          "shortCode": "categories",
+          "label": "categories",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated categories. Typical: general,business,technology,sports.",
+          "children": [],
+          "_id": "c92e3eb0-c9cf-5b49-96f9-a72f2c43de59"
+        },
+        {
+          "shortCode": "countries",
+          "label": "countries",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated ISO country codes.",
+          "children": [],
+          "_id": "b553df1d-7771-5335-9113-afc1a366f752"
+        },
+        {
+          "shortCode": "date",
+          "label": "date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "YYYY-MM-DD or range for historical. Required by historical.",
+          "children": [],
+          "_id": "edeb8477-f7d7-53e9-8872-8cb1bf028762"
+        },
+        {
+          "shortCode": "keywords",
+          "label": "keywords",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search keywords for live / historical. Official keywords.",
+          "children": [],
+          "_id": "8fd70c66-26c3-5243-b679-6c9c1cb3d6b2"
+        },
+        {
+          "shortCode": "languages",
+          "label": "languages",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated language codes.",
+          "children": [],
+          "_id": "44ca0338-6d7d-5702-82b0-5177e2e86e6f"
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size.",
+          "children": [],
+          "_id": "aebecd94-edf8-5d50-a0dc-c461fbefa8cf"
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Offset.",
+          "children": [],
+          "_id": "488b8c50-3c5f-5a4b-a988-aefab0375c32"
+        },
+        {
+          "shortCode": "sources",
+          "label": "sources",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated sources for live / historical.",
+          "children": [],
+          "_id": "87c2d44a-33e6-5d16-8897-97ac349104f5"
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Source name search for sources.",
+          "children": []
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "News ordering. EXACT: published_desc | published_asc | popularity. Example: published_desc.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ebc4b42a-867f-5bfc-919a-adbc6d860d42",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "99281330-72a0-559a-8194-58d68b2e375d"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "7fb1954f-671e-583d-98eb-9ab97a113a01"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "fc151307-9da7-5e0a-a421-f6e023377a31"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "98791a28-8b29-5512-ad72-ba227865939c",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: live | historical | sources. Example: 'live'.",
+      "value": "live",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "live",
+        "historical",
+        "sources"
+      ]
+    },
+    {
+      "_id": "710c0a45-fda5-597f-9c8f-c985b809b128",
+      "shortCode": "access_key",
+      "label": "Access Key",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5c8aeacf-7f77-4a74-b653-e9524b803181",
+      "shortCode": "sort",
+      "label": "Sort",
+      "type": "string",
+      "description": "Default news sort when INPUT blank. EXACT: published_desc | published_asc | popularity.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "f0ac3351-9d81-5d3b-bcaf-c712b32e0890",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

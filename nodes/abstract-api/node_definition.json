@@ -1,0 +1,333 @@
+{
+  "_id": "cdcf3384-c0e1-52d2-9030-a074538339a2",
+  "version": "1.0.0",
+  "name": "Abstract API",
+  "label": "Abstract API",
+  "description": "Abstract API official API via OfficialApiNode (api_spec.json). Operations: ip_geolocate, phone_validate, email_validate, vat_validate, exchange_live, company_enrich, holiday_list. Docs: https://docs.abstractapi.com. Company Enrichment is Version 2 (https://docs.abstractapi.com/api/company-enrichment). Per-product AbstractAPI terms and keys. Phone/email are PII. Each product has its own key config (ip_geolocation_api_key, phone_validation_api_key, email_validation_api_key, vat_api_key, exchange_rates_api_key, company_enrichment_api_key, holidays_api_key); bind the ones for the operations you run. Secrets stay in configurationParameters. jobType custom-script-executor. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "database",
+  "tags": [
+    "enrichment",
+    "abstract"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "57953592-0c34-5638-a755-02de6cc5291a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Abstract API request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"ip_geolocate\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: ip_geolocate | phone_validate | email_validate | vat_validate | exchange_live | company_enrich | holiday_list. Default: first listed or instance operation. Example: 'ip_geolocate'.",
+          "children": [],
+          "_id": "8ce168cc-f641-504c-98b2-65fce8255bfa"
+        },
+        {
+          "shortCode": "base",
+          "label": "base",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Currency base for exchange_rates. Example: USD.",
+          "children": [],
+          "_id": "c6b0c6fc-9461-5863-896a-864aea31f066"
+        },
+        {
+          "shortCode": "country",
+          "label": "country",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO country for holidays. Example: US.",
+          "children": [],
+          "_id": "34521ea5-3759-55e5-86eb-2714fe7ea7e6"
+        },
+        {
+          "shortCode": "day",
+          "label": "day",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Holiday day 1–31.",
+          "children": [],
+          "_id": "8300cffc-a935-5bf6-a580-231b08b4db36"
+        },
+        {
+          "shortCode": "domain",
+          "label": "domain",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Domain for company_enrichment or similar. Example: example.com.",
+          "children": [],
+          "_id": "b1d3d744-e564-5f46-8dd7-4ccb4d6a546c"
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email for email_validate. Example: ada@example.com.",
+          "children": [],
+          "_id": "4d1cbe7d-7825-52af-8013-f1ad9ab85268"
+        },
+        {
+          "shortCode": "ip_address",
+          "label": "ip_address",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IPv4/IPv6 for ip_geolocate. Example: 8.8.8.8.",
+          "children": [],
+          "_id": "9dd5895d-18d0-5b68-9cb1-3ed53ae59296"
+        },
+        {
+          "shortCode": "month",
+          "label": "month",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Holiday month 1–12.",
+          "children": [],
+          "_id": "474cd7db-5043-57de-9e59-fffc8f6d4e37"
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "E.164 phone for phone_validate. Example: +14155552671.",
+          "children": [],
+          "_id": "0c6a6106-d07b-502f-8526-5688b2f71f4f"
+        },
+        {
+          "shortCode": "vat_number",
+          "label": "vat_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "VAT number for vat_validate. Example: DE123456789.",
+          "children": [],
+          "_id": "7760994f-18b0-5b59-b3cb-b98647fccf27"
+        },
+        {
+          "shortCode": "year",
+          "label": "year",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Holiday year. Example: 2026.",
+          "children": [],
+          "_id": "ef42b9f8-cfb3-5976-ac5c-361a37a2d484"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b7e8a4ac-e3c7-5b8b-ae67-69caecf7308a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "b72bc321-939f-5925-be6c-af9aabdc4009"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "2eace0c1-5662-5a2b-a5e7-9ffac339b09e"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "5cf19623-bb5e-527e-897d-9e1e471075d1"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "09fcd3b6-5342-529d-8cb4-043811b10ee5",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: ip_geolocate, phone_validate, email_validate, vat_validate, exchange_live, company_enrich, holiday_list.",
+      "value": "ip_geolocate",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "ip_geolocate",
+        "phone_validate",
+        "email_validate",
+        "vat_validate",
+        "exchange_live",
+        "company_enrich",
+        "holiday_list"
+      ]
+    },
+    {
+      "_id": "b720162c-d594-42a9-8bbf-25699bf3b8e8",
+      "shortCode": "ip_geolocation_api_key",
+      "label": "IP Geolocation Api Key",
+      "type": "password",
+      "description": "Abstract IP Geolocation API key, sent as query api_key by ip_geolocate (ipgeolocation.abstractapi.com). Abstract issues a distinct key per API, so this key works only for that product. Required only when that operation runs; leave blank otherwise. Bind a StudioQuack secret; never log, never put on INPUT. Example: <your-ip-geolocation-key>.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a3c75a3a-d23d-4663-af57-8c8392f10824",
+      "shortCode": "phone_validation_api_key",
+      "label": "Phone Validation Api Key",
+      "type": "password",
+      "description": "Abstract Phone Validation API key, sent as query api_key by phone_validate (phonevalidation.abstractapi.com). Abstract issues a distinct key per API, so this key works only for that product. Required only when that operation runs; leave blank otherwise. Bind a StudioQuack secret; never log, never put on INPUT. Example: <your-phone-validation-key>.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ac218e20-64ef-404d-a60b-6a03b708201d",
+      "shortCode": "email_validation_api_key",
+      "label": "Email Validation Api Key",
+      "type": "password",
+      "description": "Abstract Email Validation API key, sent as query api_key by email_validate (emailvalidation.abstractapi.com). Abstract issues a distinct key per API, so this key works only for that product. Required only when that operation runs; leave blank otherwise. Bind a StudioQuack secret; never log, never put on INPUT. Example: <your-email-validation-key>.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "897c41d1-fe99-4efa-bec5-af39574dc3ce",
+      "shortCode": "vat_api_key",
+      "label": "VAT Validation Api Key",
+      "type": "password",
+      "description": "Abstract VAT Validation API key, sent as query api_key by vat_validate (vat.abstractapi.com). Abstract issues a distinct key per API, so this key works only for that product. Required only when that operation runs; leave blank otherwise. Bind a StudioQuack secret; never log, never put on INPUT. Example: <your-vat-validation-key>.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "83a77817-81d3-4fca-9834-6c6edf5949e9",
+      "shortCode": "exchange_rates_api_key",
+      "label": "Exchange Rates Api Key",
+      "type": "password",
+      "description": "Abstract Exchange Rates API key, sent as query api_key by exchange_live (exchange-rates.abstractapi.com). Abstract issues a distinct key per API, so this key works only for that product. Required only when that operation runs; leave blank otherwise. Bind a StudioQuack secret; never log, never put on INPUT. Example: <your-exchange-rates-key>.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b17c77a7-bd0a-4989-9f50-1197e5526cd0",
+      "shortCode": "company_enrichment_api_key",
+      "label": "Company Enrichment Api Key",
+      "type": "password",
+      "description": "Abstract Company Enrichment API key, sent as query api_key by company_enrich (companyenrichment.abstractapi.com). Abstract issues a distinct key per API, so this key works only for that product. Required only when that operation runs; leave blank otherwise. Bind a StudioQuack secret; never log, never put on INPUT. Example: <your-company-enrichment-key>.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f0ba390a-b88a-432d-8507-eaf0b2779429",
+      "shortCode": "holidays_api_key",
+      "label": "Public Holidays Api Key",
+      "type": "password",
+      "description": "Abstract Public Holidays API key, sent as query api_key by holiday_list (holidays.abstractapi.com). Abstract issues a distinct key per API, so this key works only for that product. Required only when that operation runs; leave blank otherwise. Bind a StudioQuack secret; never log, never put on INPUT. Example: <your-public-holidays-key>.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8ac2004d-1986-52ea-b7b2-b572ead15dcb",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 20. Keep under the daemon sandbox request budget.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

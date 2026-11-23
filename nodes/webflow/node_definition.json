@@ -1,0 +1,286 @@
+{
+  "_id": "f7834b99-2728-4313-b605-54210b2d1ee2",
+  "version": "1.0.0",
+  "name": "Webflow",
+  "label": "Webflow — Data API v2 CMS items and forms",
+  "description": "Official Webflow Data API v2 at https://api.webflow.com/v2. Handler: OfficialApiNode. Bearer site token or OAuth access token in access_token. Form submissions are respondent PII. Customer owns the Webflow site/workspace. Minimize; never log tokens or formResponse. v1 (no /v2) is retired for this node. trigger.form and trigger.listen are BPMN message-event ingress. Docs: https://developers.webflow.com/data/reference/rest-introduction",
+  "icon": "web",
+  "tags": [
+    "forms"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "0b216cca-2d81-4af3-9aee-f090038a7a2a",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. site_id and collection_id may come from config. Do not put access_token here. CMS images/files: type file (ref-id). Example: {\"operation\":\"site.list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "site.list",
+          "description": "Overrides config operation when non-blank. EXACT: site.list | item.list | item.get | item.create | item.update | item.delete | form.list | form.submission.list | order.list | sku.list | trigger.form | trigger.listen. Underscore aliases: item_list | item_create | item_update | order_list | sku_list | trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "site_id",
+          "label": "site_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Site id. Else config site_id.",
+          "children": []
+        },
+        {
+          "shortCode": "collection_id",
+          "label": "collection_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CMS collection id. Else config collection_id.",
+          "children": []
+        },
+        {
+          "shortCode": "item_id",
+          "label": "item_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CMS item id for get/update/delete.",
+          "children": []
+        },
+        {
+          "shortCode": "form_id",
+          "label": "form_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Form id for form.submission.list.",
+          "children": []
+        },
+        {
+          "shortCode": "fieldData",
+          "label": "fieldData",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "CMS item fieldData map (slug → value) for item.create / item.update / item_create / item_update. Required. Example: {\"name\":\"Post\",\"slug\":\"post\"}. https://developers.webflow.com/data/reference/cms/collection-items/create-item",
+          "children": []
+        },
+        {
+          "shortCode": "cmsLocaleId",
+          "label": "cmsLocaleId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "CMS locale id.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "order.list filter: pending | refunded | dispute-lost | fulfilled | disputed | unfulfilled.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Pagination page size (1–100). Omit or leave unset to use API default; 0 is not sent as a valid limit.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Pagination offset.",
+          "children": []
+        },
+        {
+          "shortCode": "isArchived",
+          "label": "isArchived",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "item.create staged flag.",
+          "children": []
+        },
+        {
+          "shortCode": "isDraft",
+          "label": "isDraft",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "item.create staged flag.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9813a662-dc36-41a0-ab06-9d85a1909250",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. May contain PII — never log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "303c5448-bafc-4096-9c1c-e343c21b85e5",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT dotted CRM verbs plus order.list | sku.list. Underscore aliases match the ecommerce catalog row. trigger* is ingress.",
+      "value": "site.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "site.list",
+        "item.list",
+        "item.get",
+        "item.create",
+        "item.update",
+        "item.delete",
+        "form.list",
+        "form.submission.list",
+        "order.list",
+        "sku.list",
+        "item_list",
+        "item_create",
+        "item_update",
+        "order_list",
+        "sku_list",
+        "trigger.form",
+        "trigger.listen",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "4194a806-8c9a-4799-a6bc-cf1b14f63413",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Site token or OAuth access token (StudioQuack secret). Sent as Authorization: Bearer. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4da53e1a-e82c-4b38-a54b-91b667e47ccc",
+      "shortCode": "site_id",
+      "label": "Site id",
+      "type": "string",
+      "description": "Default site id. Overridable on INPUT.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b64b0857-9acb-4866-9e40-acb1bf1fdb83",
+      "shortCode": "collection_id",
+      "label": "Collection id",
+      "type": "string",
+      "description": "Default CMS collection id. Overridable on INPUT.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "baca483b-7424-4f5e-87bc-1021b73ea0de",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

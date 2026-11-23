@@ -1,0 +1,263 @@
+{
+    "baseUrl": "https://services.leadconnectorhq.com",
+    "defaultTimeout": 25,
+    "timeoutConfigKey": "timeout_seconds",
+    "auth": {
+        "type": "bearer",
+        "header": "Authorization",
+        "prefix": "Bearer ",
+        "configKey": "access_token"
+    },
+    "extraHeaders": {
+        "Version": "{api_version}"
+    },
+    "operations": {
+        "contact.upsert": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/contacts/upsert",
+            "required": [
+                "locationId"
+            ],
+            "bodyFrom": [
+                "locationId",
+                "email",
+                "phone",
+                "firstName",
+                "lastName",
+                "name",
+                "tags",
+                "customFields",
+                "createNewIfDuplicateAllowed",
+                "dnd",
+                "source",
+                "assignedTo",
+                "address1",
+                "city",
+                "state",
+                "postalCode",
+                "website",
+                "companyName"
+            ]
+        },
+        "contact.get": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/contacts/{contactId}",
+            "required": [
+                "contactId"
+            ]
+        },
+        "contact.list": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/contacts/search",
+            "required": [
+                "locationId"
+            ],
+            "bodyFrom": [
+                "locationId",
+                "query",
+                "page",
+                "pageLimit",
+                "filters"
+            ]
+        },
+        "contact.update": {
+            "kind": "http",
+            "method": "PUT",
+            "path": "/contacts/{contactId}",
+            "required": [
+                "contactId"
+            ],
+            "bodyFrom": [
+                "firstName",
+                "lastName",
+                "name",
+                "email",
+                "phone",
+                "tags",
+                "customFields",
+                "dnd",
+                "source",
+                "assignedTo",
+                "address1",
+                "city",
+                "state",
+                "postalCode",
+                "website",
+                "companyName"
+            ]
+        },
+        "contact.delete": {
+            "kind": "http",
+            "method": "DELETE",
+            "path": "/contacts/{contactId}",
+            "required": [
+                "contactId"
+            ]
+        },
+        "opportunity.create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/opportunities/",
+            "required": [
+                "locationId",
+                "contactId",
+                "pipelineId",
+                "pipelineStageId"
+            ],
+            "bodyFrom": [
+                "locationId",
+                "contactId",
+                "pipelineId",
+                "pipelineStageId",
+                "name",
+                "monetaryValue",
+                "status"
+            ]
+        },
+        "opportunity.get": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/opportunities/{id}",
+            "required": [
+                "id"
+            ]
+        },
+        "opportunity.list": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/opportunities/search",
+            "required": [
+                "locationId"
+            ],
+            "queryFrom": [
+                "locationId",
+                "q",
+                "status",
+                "pipelineId",
+                "pipelineStageId"
+            ]
+        },
+        "opportunity.update": {
+            "kind": "http",
+            "method": "PUT",
+            "path": "/opportunities/{id}",
+            "required": [
+                "id"
+            ],
+            "bodyFrom": [
+                "name",
+                "monetaryValue",
+                "status",
+                "pipelineId",
+                "pipelineStageId"
+            ]
+        },
+        "opportunity.delete": {
+            "kind": "http",
+            "method": "DELETE",
+            "path": "/opportunities/{id}",
+            "required": [
+                "id"
+            ]
+        },
+        "task.create": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/contacts/{contactId}/tasks",
+            "required": [
+                "contactId",
+                "title"
+            ],
+            "bodyFrom": [
+                "title",
+                "dueDate",
+                "completed",
+                "assignedTo"
+            ]
+        },
+        "task.get": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/contacts/{contactId}/tasks/{taskId}",
+            "required": [
+                "contactId",
+                "taskId"
+            ]
+        },
+        "task.list": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/contacts/{contactId}/tasks",
+            "required": [
+                "contactId"
+            ]
+        },
+        "task.update": {
+            "kind": "http",
+            "method": "PUT",
+            "path": "/contacts/{contactId}/tasks/{taskId}",
+            "required": [
+                "contactId",
+                "taskId"
+            ],
+            "bodyFrom": [
+                "title",
+                "dueDate",
+                "completed",
+                "assignedTo"
+            ]
+        },
+        "task.delete": {
+            "kind": "http",
+            "method": "DELETE",
+            "path": "/contacts/{contactId}/tasks/{taskId}",
+            "required": [
+                "contactId",
+                "taskId"
+            ]
+        },
+        "calendar.freeSlots": {
+            "kind": "http",
+            "method": "GET",
+            "path": "/calendars/{calendarId}/free-slots",
+            "required": [
+                "calendarId",
+                "startDate",
+                "endDate"
+            ],
+            "queryFrom": [
+                "startDate",
+                "endDate",
+                "timezone",
+                "userId"
+            ]
+        },
+        "calendar.book": {
+            "kind": "http",
+            "method": "POST",
+            "path": "/calendars/events/appointments",
+            "required": [
+                "calendarId",
+                "locationId",
+                "contactId",
+                "startTime"
+            ],
+            "bodyFrom": [
+                "calendarId",
+                "locationId",
+                "contactId",
+                "startTime",
+                "endTime",
+                "title",
+                "appointmentStatus",
+                "assignedUserId"
+            ]
+        },
+        "trigger.listen": {
+            "kind": "ingress"
+        }
+    }
+}

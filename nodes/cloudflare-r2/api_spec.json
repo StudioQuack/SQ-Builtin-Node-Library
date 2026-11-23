@@ -1,0 +1,130 @@
+{
+  "baseUrl": "https://{account_id}.{jurisdiction}",
+  "defaultTimeout": 60,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "aws-sigv4",
+    "configKey": "access_key_id",
+    "secretKeyConfigKey": "secret_access_key"
+  },
+  "sigv4": {
+    "service": "s3",
+    "regionConfigKey": "region"
+  },
+  "docs": "https://developers.cloudflare.com/r2/api/s3/api/",
+  "operations": {
+    "bucket_create": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/{bucket}",
+      "required": [
+        "bucket"
+      ],
+      "queryFrom": [],
+      "bodyFrom": [],
+      "contentType": "application/json"
+    },
+    "bucket_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/",
+      "required": [],
+      "queryFrom": [],
+      "bodyFrom": [],
+      "contentType": "application/json"
+    },
+    "object_put": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/{bucket}/{key}",
+      "required": [
+        "bucket",
+        "key",
+        "file"
+      ],
+      "queryFrom": [],
+      "bodyFrom": [],
+      "contentType": "application/octet-stream",
+      "bodyFormat": "raw",
+      "bodyParam": "file",
+      "extraHeaders": {
+        "Content-Type": "{content_type}",
+        "Cache-Control": "{cache_control}",
+        "Content-Disposition": "{content_disposition}",
+        "Content-Encoding": "{content_encoding}",
+        "Content-Language": "{content_language}",
+        "Expires": "{expires}",
+        "Content-MD5": "{content_md5}",
+        "x-amz-storage-class": "{storage_class}",
+        "If-Match": "{if_match}",
+        "If-None-Match": "{if_none_match}"
+      }
+    },
+    "object_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{bucket}/{key}",
+      "required": [
+        "bucket",
+        "key"
+      ],
+      "queryFrom": [
+        "versionId"
+      ],
+      "bodyFrom": [],
+      "contentType": "application/json",
+      "extraHeaders": {
+        "Range": "{range}",
+        "If-Match": "{if_match}",
+        "If-None-Match": "{if_none_match}"
+      }
+    },
+    "object_delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/{bucket}/{key}",
+      "required": [
+        "bucket",
+        "key"
+      ],
+      "queryFrom": [
+        "versionId"
+      ],
+      "bodyFrom": [],
+      "contentType": "application/json"
+    },
+    "object_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{bucket}",
+      "required": [
+        "bucket"
+      ],
+      "queryFrom": [
+        "list-type",
+        "prefix",
+        "delimiter",
+        "max-keys",
+        "continuation-token",
+        "start-after",
+        "encoding-type"
+      ],
+      "bodyFrom": [],
+      "contentType": "application/json"
+    },
+    "presign": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{bucket}/{key}",
+      "required": [
+        "bucket",
+        "key"
+      ],
+      "queryFrom": [
+        "expires_in"
+      ],
+      "bodyFrom": [],
+      "contentType": "application/json"
+    }
+  }
+}

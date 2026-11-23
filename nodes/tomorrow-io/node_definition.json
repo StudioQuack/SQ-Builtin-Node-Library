@@ -1,0 +1,219 @@
+{
+  "_id": "4a9f3fa1-0bef-5f81-850a-ca081f8cdb33",
+  "version": "1.0.0",
+  "name": "Tomorrow.io",
+  "label": "Tomorrow.io",
+  "description": "Tomorrow.io official API via OfficialApiNode (api_spec.json). Operations: realtime, forecast, historical, timelines. Docs: https://docs.tomorrow.io/reference/realtime-weather. Tomorrow.io REST v4 (https://api.tomorrow.io/v4). Auth apikey query (https://docs.tomorrow.io/reference/api-authentication). timesteps=best on /timelines is deprecated and returns 1h. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "cloud",
+  "tags": [
+    "weather",
+    "tomorrow"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "087debef-03c9-5df1-b8ee-364255a74f86",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Tomorrow.io request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"realtime\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: realtime | forecast | historical | timelines. Default: first listed or instance operation. Example: 'realtime'.",
+          "children": [],
+          "_id": "5566a72f-0e77-5623-b39e-f35b0ea69edd"
+        },
+        {
+          "shortCode": "fields",
+          "label": "fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated Tomorrow fields for timelines. Example: temperature,humidity,windSpeed.",
+          "children": [],
+          "_id": "167f3c08-2f29-575f-b122-a94f8307afc2"
+        },
+        {
+          "shortCode": "location",
+          "label": "location",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lat,lon or place name. Required on all weather ops. Example: 42.3478,-71.0466 or new york.",
+          "children": [],
+          "_id": "c0c1d2c5-6a96-50ad-8aae-3e3be4ea661c"
+        },
+        {
+          "shortCode": "timesteps",
+          "label": "timesteps",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Timestep list. forecast/historical/timelines. Accepted includes 1m | 5m | 15m | 30m | 1h | 1d. Example: 1h.",
+          "children": [],
+          "_id": "f7872056-4bbb-54c8-9f0b-961e1665471a"
+        },
+        {
+          "shortCode": "units",
+          "label": "units",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "EXACT: metric | imperial | si. All weather ops. Example: metric.",
+          "children": [],
+          "_id": "4b762834-b43e-50c8-8eda-5bd4c5d794a4"
+        },
+        {
+          "shortCode": "startTime",
+          "label": "startTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO8601 start for timelines / forecast / historical. Example: 2026-01-15T00:00:00Z. https://docs.tomorrow.io/reference/weather-forecast",
+          "children": []
+        },
+        {
+          "shortCode": "endTime",
+          "label": "endTime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO8601 end for timelines / forecast / historical. Example: 2026-01-16T00:00:00Z.",
+          "children": []
+        },
+        {
+          "shortCode": "timezone",
+          "label": "timezone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IANA timezone for timelines. Example: America/New_York.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "31e19042-5c6b-5654-9fad-ae9825e2d45b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "be096352-4a51-5496-a575-efd53b89250e"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "3bebdeec-13b0-5dde-b61e-4d0d0ff0e55b"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "1775a051-e282-5df8-a14b-3b63645566ce"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "9ad03b98-11bb-515c-bd48-f35fc47e55fc",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: realtime, forecast, historical, timelines.",
+      "value": "realtime",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "realtime",
+        "forecast",
+        "historical",
+        "timelines"
+      ]
+    },
+    {
+      "_id": "79119179-1b86-5833-9386-2de97842a710",
+      "shortCode": "apikey",
+      "label": "Apikey",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d5b15dd3-d085-59ab-a267-69992711e735",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

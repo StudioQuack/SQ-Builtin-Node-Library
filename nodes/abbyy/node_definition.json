@@ -1,0 +1,233 @@
+{
+  "_id": "f97b417b-492c-5c9e-8d63-f6400d51d404",
+  "version": "1.0.0",
+  "name": "ABBYY",
+  "label": "ABBYY Cloud OCR / Vantage",
+  "description": "ABBYY Cloud OCR / Vantage. Official API https://support.abbyy.com/hc/en-us/articles/360017269420-API-reference. One node; pick operation. Upload/download/convert/sign payloads use type file (Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.) Handler: OfficialApiNode + api_spec.json. Commercial Cloud OCR. Partner/contract required. Public HTTP surface is Cloud OCR SDK API v2 JSON (/v2/processImage, /v2/processDocument, /v2/getTaskStatus); v1 XML paths without /v2/ are legacy. Vantage is tenant-specific REST. Files go to ABBYY cloud unless on-prem Vantage. Re-verify if Cloud OCR SDK is sunset for the customer's contract. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "visibility",
+  "tags": [
+    "abbyy",
+    "ocr",
+    "idp"
+  ],
+  "category": "Files & Documents",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f4eb3dfb-333a-54f1-8311-760cf4755b75",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "process_image",
+          "description": "Overrides config operation. Accepted: process_image, process_document, get_task, get_result.",
+          "children": []
+        },
+        {
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OCR language for process_image (English,French,…). Example: English.",
+          "children": []
+        },
+        {
+          "shortCode": "exportFormat",
+          "label": "exportFormat",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "process_image exportFormat. EXACT common: pdfSearchable | txt | rtf | docx | xlsx | xml.",
+          "children": []
+        },
+        {
+          "shortCode": "taskId",
+          "label": "taskId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task id for process_document / get_task / get_result.",
+          "children": []
+        },
+        {
+          "shortCode": "task_id",
+          "label": "task_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ABBYY task id (wire query taskId) for get_task, get_result, process_document.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9625b759-1a75-5ab2-b92c-754b984bd59a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": true,
+          "value": "",
+          "description": "ok on success.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body or text.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Downloaded or converted bytes. Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "4e337831-1133-5547-a6ac-8613b7b202d0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "value": "process_image",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "process_image",
+        "process_document",
+        "get_task",
+        "get_result"
+      ]
+    },
+    {
+      "_id": "75665e4a-35e9-56a1-b9f3-ff2530abdf23",
+      "shortCode": "password",
+      "label": "Password",
+      "type": "password",
+      "description": "Cloud OCR SDK application password. StudioQuack secret binding. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "36bcf4e9-a088-5a5a-97a8-417a019e1e47",
+      "shortCode": "application_id",
+      "label": "Application Id",
+      "type": "string",
+      "description": "Cloud OCR SDK application id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "46dcb6bd-b967-51b4-ae38-cea0e56b7663",
+      "shortCode": "endpoint",
+      "label": "Endpoint",
+      "type": "string",
+      "description": "Cloud OCR processing location host. Official: cloud-eu.ocrsdk.com (EU) or cloud-westus.ocrsdk.com (US). No scheme.",
+      "value": "cloud-eu.ocrsdk.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "35e7f441-5756-4191-a3cd-f8812e846ded",
+      "shortCode": "task_id",
+      "label": "Task ID",
+      "type": "string",
+      "description": "ABBYY task id (wire query taskId) for get_task, get_result, process_document.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "25720dba-1159-5d03-846a-e3f039309403",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 120.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,168 @@
+{
+  "_id": "12ce5af7-8f2c-429e-9814-51a17de8bed0",
+  "version": "1.0.0",
+  "name": "Remove Duplicates",
+  "label": "Unique rows",
+  "description": "In-process unique-by-keys. unique_history is per-environment and bounded (shared store, not JVM memory).",
+  "icon": "",
+  "tags": [
+    "unique",
+    "transform"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "427cf5e7-bd80-4161-810a-1514a66ad7c9",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Remove Duplicates operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'unique'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "items",
+          "label": "items",
+          "type": "list",
+          "required": true,
+          "value": "[]",
+          "description": "Array to unique. Required.",
+          "children": []
+        },
+        {
+          "shortCode": "keys",
+          "label": "keys",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional JSON array of field paths on object items (e.g. [\"id\",\"email\"]). Ignored for scalars. Dedup is case-sensitive and keeps first occurrence order.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "dcd10d86-5252-40f7-bf04-24847c26747a",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "e07c6bc1-a240-423f-9c61-5061dc81c753",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: unique | unique_history. Required. Example: 'unique'.",
+      "value": "unique",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "unique",
+        "unique_history"
+      ]
+    },
+    {
+      "_id": "4df025ec-74e1-49a9-8873-8c61203f1392",
+      "shortCode": "keys",
+      "label": "Keys",
+      "type": "string",
+      "description": "JSON array of identity field paths on object items. Example: '[\"email\"]'. Ignored when items are not objects.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "58c8dbf0-c4f9-4f48-9ee2-2b4d1aebc898",
+      "shortCode": "history_scope",
+      "label": "History Scope",
+      "type": "string",
+      "description": "Per-env history key suffix. Bounded. Example: 'leads'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c6d3efba-d3c5-4b53-8cc6-987c83ba0bf4",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

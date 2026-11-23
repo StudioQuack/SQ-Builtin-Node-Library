@@ -1,0 +1,307 @@
+{
+  "_id": "1aa82ea2-04f0-4999-86da-3ef321685c6c",
+  "version": "1.0.0",
+  "name": "DigitalOcean",
+  "label": "DigitalOcean API v2",
+  "description": "DigitalOcean API v2 via OfficialApiNode. Docs: https://docs.digitalocean.com/reference/api/reference/. Operations: droplet_create, droplet_get, droplet_power, snapshot_create, domain_create, ssh_key_add, k8s_get, volume_list, listen. Auth secret token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "digitalocean",
+    "droplets",
+    "dns"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "964fe99d-d2ad-4fc7-b677-4442b1f7fddd",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "droplet_create",
+          "description": "Which official API call to run. EXACT values: droplet_create | droplet_get | droplet_power | snapshot_create | domain_create | ssh_key_add | k8s_get | volume_list | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'droplet_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "droplet_id",
+          "label": "droplet_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Droplet id.",
+          "children": []
+        },
+        {
+          "shortCode": "cluster_id",
+          "label": "cluster_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Kubernetes cluster id.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "droplet_power action type. EXACT: power_on | power_off | shutdown | reboot | power_cycle | password_reset. snapshot_create uses type=snapshot.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "droplet / domain / ssh key / snapshot name.",
+          "children": []
+        },
+        {
+          "shortCode": "region",
+          "label": "region",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Slug such as nyc3 for droplet_create and volume_list.",
+          "children": []
+        },
+        {
+          "shortCode": "size",
+          "label": "size",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "droplet_create size slug. Example: s-1vcpu-1gb.",
+          "children": []
+        },
+        {
+          "shortCode": "image",
+          "label": "image",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "droplet_create image slug or id (not a file). Example: ubuntu-24-04-x64.",
+          "children": []
+        },
+        {
+          "shortCode": "ssh_keys",
+          "label": "ssh_keys",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "droplet_create ssh_keys: fingerprint or id list.",
+          "children": []
+        },
+        {
+          "shortCode": "ip_address",
+          "label": "ip_address",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ip_address` for operation: domain_create.",
+          "children": []
+        },
+        {
+          "shortCode": "public_key",
+          "label": "public_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `public_key` for operation: ssh_key_add.",
+          "children": []
+        },
+        {
+          "shortCode": "backups",
+          "label": "backups",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "droplet_create backups.",
+          "children": []
+        },
+        {
+          "shortCode": "ipv6",
+          "label": "ipv6",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "droplet_create ipv6.",
+          "children": []
+        },
+        {
+          "shortCode": "monitoring",
+          "label": "monitoring",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "droplet_create monitoring.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "droplet_create tags.",
+          "children": []
+        },
+        {
+          "shortCode": "user_data",
+          "label": "user_data",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "droplet_create cloud-init user_data.",
+          "children": []
+        },
+        {
+          "shortCode": "volumes",
+          "label": "volumes",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "droplet_create volume ids to attach.",
+          "children": []
+        },
+        {
+          "shortCode": "vpc_uuid",
+          "label": "vpc_uuid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "droplet_create VPC uuid.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7839227f-40db-4836-bc50-cd3b6edf6f4b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "93b8fe48-f5d6-4032-bd38-b0d2050cd343",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: droplet_create, droplet_get, droplet_power, snapshot_create, domain_create, ssh_key_add, k8s_get, volume_list, listen. listen is BPMN ingress, not a socket.",
+      "value": "droplet_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "droplet_create",
+        "droplet_get",
+        "droplet_power",
+        "snapshot_create",
+        "domain_create",
+        "ssh_key_add",
+        "k8s_get",
+        "volume_list",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "6e1abfe6-200a-4dab-8301-ca9284d5a56c",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "DigitalOcean personal access token. Authorization: Bearer.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "90354262-1a6d-441f-ab70-722ee333f6af",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

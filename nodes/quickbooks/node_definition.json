@@ -1,0 +1,435 @@
+{
+  "_id": "fbf3a73d-452a-45fa-9cbe-115b6d324df5",
+  "version": "1.0.0",
+  "name": "QuickBooks",
+  "label": "QuickBooks — QuickBooks Online Accounting API v3, minorversion=75",
+  "description": "Official QuickBooks Online Accounting API v3, minorversion=75. Docs: https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/invoice. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. Pin minorversion=75 on query. Employee is a payroll/HR record, not an Intuit login. Sandbox host sandbox-quickbooks.api.intuit.com. No PAN on payment_create.",
+  "icon": "account_balance",
+  "tags": [
+    "quickbooks",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d6cf349a-59fe-4931-99f8-40842e84633b",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for QuickBooks. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "bill_create",
+          "description": "Overrides config operation. EXACT: bill_create | bill_get | bill_list | bill_update | bill_delete | customer_create | customer_get | customer_list | customer_update | employee_create | employee_get | employee_list | estimate_create | estimate_get | estimate_list | estimate_update | estimate_send | invoice_create | invoice_get | invoice_list | invoice_update | invoice_send | payment_create | payment_get | payment_list | payment_update | payment_delete | payment_void | purchase_get | purchase_list | report_transaction | vendor_create | vendor_get | vendor_list | vendor_update | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "Environment",
+          "type": "string",
+          "required": false,
+          "value": "quickbooks.api.intuit.com",
+          "description": "sandbox-quickbooks.api.intuit.com vs quickbooks.api.intuit.com. Substituted into baseUrl as https://{environment}.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id when the path uses {id}.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "Query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "QuickBooks SELECT query or generic filter string.",
+          "children": []
+        },
+        {
+          "shortCode": "Line",
+          "label": "Line",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Line` for operations: bill_create, estimate_create, invoice_create.",
+          "children": []
+        },
+        {
+          "shortCode": "VendorRef",
+          "label": "VendorRef",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `VendorRef` for operation: bill_create.",
+          "children": []
+        },
+        {
+          "shortCode": "minorversion",
+          "label": "minorversion",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `minorversion` for operations: bill_list, customer_list, employee_list, estimate_list, invoice_list, payment_list, purchase_list, vendor_list.",
+          "children": []
+        },
+        {
+          "shortCode": "Id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Id` for operations: bill_update, bill_delete, customer_update, estimate_update, invoice_update, payment_update, payment_delete, payment_void, vendor_update.",
+          "children": []
+        },
+        {
+          "shortCode": "SyncToken",
+          "label": "SyncToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `SyncToken` for operations: bill_update, bill_delete, customer_update, estimate_update, invoice_update, payment_update, payment_delete, payment_void, vendor_update.",
+          "children": []
+        },
+        {
+          "shortCode": "sparse",
+          "label": "sparse",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `sparse` for operation: bill_update.",
+          "children": []
+        },
+        {
+          "shortCode": "DisplayName",
+          "label": "DisplayName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `DisplayName` for operations: customer_create, customer_update, vendor_create, vendor_update.",
+          "children": []
+        },
+        {
+          "shortCode": "GivenName",
+          "label": "GivenName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `GivenName` for operation: employee_create.",
+          "children": []
+        },
+        {
+          "shortCode": "FamilyName",
+          "label": "FamilyName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `FamilyName` for operation: employee_create.",
+          "children": []
+        },
+        {
+          "shortCode": "PrimaryEmailAddr",
+          "label": "PrimaryEmailAddr",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "customer/vendor create-update {Address}. Example: {\"Address\":\"ada@example.com\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "PrimaryPhone",
+          "label": "PrimaryPhone",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "customer/vendor create-update {FreeFormNumber}.",
+          "children": []
+        },
+        {
+          "shortCode": "CompanyName",
+          "label": "CompanyName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer/vendor company name.",
+          "children": []
+        },
+        {
+          "shortCode": "BillAddr",
+          "label": "BillAddr",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "customer create-update billing address {Line1, City, CountrySubDivisionCode, PostalCode, Country}.",
+          "children": []
+        },
+        {
+          "shortCode": "TxnDate",
+          "label": "TxnDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "invoice/estimate/payment/bill date YYYY-MM-DD. Example: 2026-10-31.",
+          "children": []
+        },
+        {
+          "shortCode": "DueDate",
+          "label": "DueDate",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "invoice/estimate/bill due date YYYY-MM-DD.",
+          "children": []
+        },
+        {
+          "shortCode": "PrivateNote",
+          "label": "PrivateNote",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "invoice/estimate private note.",
+          "children": []
+        },
+        {
+          "shortCode": "BillEmail",
+          "label": "BillEmail",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "invoice/estimate_send {Address}.",
+          "children": []
+        },
+        {
+          "shortCode": "PaymentRefNum",
+          "label": "PaymentRefNum",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create reference number.",
+          "children": []
+        },
+        {
+          "shortCode": "CustomerRef",
+          "label": "CustomerRef",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `CustomerRef` for operations: estimate_create, invoice_create, payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "TotalAmt",
+          "label": "TotalAmt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `TotalAmt` for operation: payment_create.",
+          "children": []
+        },
+        {
+          "shortCode": "start_date",
+          "label": "start_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `start_date` for operation: report_transaction.",
+          "children": []
+        },
+        {
+          "shortCode": "end_date",
+          "label": "end_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `end_date` for operation: report_transaction.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "495fcaa4-ae69-4a1c-b09a-f3ff7705c45c",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "d514194e-deaa-4470-b6a4-b0f8b307a5a2",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: bill_create | bill_get | bill_list | bill_update | bill_delete | customer_create | customer_get | customer_list | customer_update | employee_create | employee_get | employee_list | estimate_create | estimate_get | estimate_list | estimate_update | estimate_send | invoice_create | invoice_get | invoice_list | invoice_update | invoice_send | payment_create | payment_get | payment_list | payment_update | payment_delete | payment_void | purchase_get | purchase_list | report_transaction | vendor_create | vendor_get | vendor_list | vendor_update | trigger. Default bill_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "bill_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "bill_create",
+        "bill_get",
+        "bill_list",
+        "bill_update",
+        "bill_delete",
+        "customer_create",
+        "customer_get",
+        "customer_list",
+        "customer_update",
+        "employee_create",
+        "employee_get",
+        "employee_list",
+        "estimate_create",
+        "estimate_get",
+        "estimate_list",
+        "estimate_update",
+        "estimate_send",
+        "invoice_create",
+        "invoice_get",
+        "invoice_list",
+        "invoice_update",
+        "invoice_send",
+        "payment_create",
+        "payment_get",
+        "payment_list",
+        "payment_update",
+        "payment_delete",
+        "payment_void",
+        "purchase_get",
+        "purchase_list",
+        "report_transaction",
+        "vendor_create",
+        "vendor_get",
+        "vendor_list",
+        "vendor_update",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "dcd1dcce-d8f5-4e29-bf4e-0aa080b79e38",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "OAuth access token minted outside StudioQuack (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4b3eca05-8d72-432b-9afa-255ad742dd93",
+      "shortCode": "realm_id",
+      "label": "Realm Id",
+      "type": "string",
+      "description": "Company realmId. Also accepted as path/input realm_id.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "eaf0bf88-87b6-4927-809b-82b5ad1efb02",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "sandbox-quickbooks.api.intuit.com vs quickbooks.api.intuit.com. Substituted into baseUrl as https://{environment}.",
+      "value": "quickbooks.api.intuit.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "quickbooks.api.intuit.com",
+        "sandbox-quickbooks.api.intuit.com"
+      ]
+    },
+    {
+      "_id": "d3a6f9e1-cf25-49f1-ad84-e1c6b1c84b2b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

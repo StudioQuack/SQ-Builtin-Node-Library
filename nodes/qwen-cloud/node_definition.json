@@ -1,0 +1,469 @@
+{
+  "_id": "cc4efbda-5e4e-45dd-9f8e-7758fc360467",
+  "version": "1.0.0",
+  "name": "Qwen Cloud",
+  "label": "Qwen Cloud",
+  "description": "Official Alibaba Cloud Model Studio (DashScope) Qwen APIs on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). operation selects chat / analyze_image (OpenAI-compat POST /compatible-mode/v1/chat/completions), generate_image (Wan text2image), or generate_video (Wan video-synthesis). Auth is StudioQuack secret api_key sent as Bearer. base_url is the DashScope origin (Singapore intl, Beijing, US Virginia, or a workspace host) — keys are not interchangeable. Docs: https://www.alibabacloud.com/help/en/model-studio/compatibility-of-openai-with-dashscope. Terms: https://www.alibabacloud.com/help/en/model-studio/related-agreements. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "qwen",
+    "cloud",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4368d44f-d4c3-4811-a874-1b97a2a21469",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, stream?, model?, input?, parameters?, file?}. Image/video use type file (platform ref-id). Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Conversation for chat / analyze_image. VL models use image_url / video_url content parts. Image sources use type file. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "input",
+          "label": "input",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "DashScope native body for generate_image / generate_video, e.g. {prompt, negative_prompt?} or {prompt, media?}.",
+          "children": []
+        },
+        {
+          "shortCode": "parameters",
+          "label": "parameters",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "DashScope native parameters (size, n, resolution, duration, ratio, prompt_extend).",
+          "children": []
+        },
+        {
+          "shortCode": "task_id",
+          "label": "task_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Async image/video task id for polling GET /api/v1/tasks/{task_id}. Example: abc123.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for VL chat or Wan image/video inputs. Never inline bytes.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tools` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "tool_choice",
+          "label": "tool_choice",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `tool_choice` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "temperature",
+          "label": "temperature",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `temperature` for operations: chat, analyze_image.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_p` for operations: chat, analyze_image.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_tokens` for operations: chat, analyze_image.",
+          "children": []
+        },
+        {
+          "shortCode": "stop",
+          "label": "stop",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `stop` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "presence_penalty",
+          "label": "presence_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `presence_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "frequency_penalty",
+          "label": "frequency_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `frequency_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operation: chat.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5c12301d-3e4f-4214-a9ec-453033bd34f4",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Image/video async tasks return a task id — poll GET /api/v1/tasks/{task_id} is not a catalog verb. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed DashScope JSON (chat completion or async task).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2789c54d-6c20-481b-a261-7fa7d04863c5",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official DashScope verb. EXACT values: chat | analyze_image | generate_image | generate_video. chat and analyze_image share POST /compatible-mode/v1/chat/completions (VL content for analyze_image).",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "analyze_image",
+        "generate_image",
+        "generate_video"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "69ec4c78-210b-4163-a4fe-0c7a989f9bff",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "DashScope / Model Studio API key for the origin in base_url. Sent as Authorization: Bearer. Keys are region-specific (intl vs PRC vs US). StudioQuack secret binding only. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "07744135-6657-4bb7-a637-55ba51d374c1",
+      "shortCode": "base_url",
+      "label": "Base URL",
+      "type": "string",
+      "description": "DashScope origin only (HTTPS), no path. Interpolated as api_spec baseUrl. intl default https://dashscope-intl.aliyuncs.com. PRC: https://dashscope.aliyuncs.com. US: https://dashscope-us.aliyuncs.com. Workspace-specific hosts {WorkspaceId}.ap-southeast-1.maas.aliyuncs.com / {WorkspaceId}.cn-beijing.maas.aliyuncs.com are also documented. Pair with an api_key from the same region.",
+      "value": "https://dashscope-intl.aliyuncs.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "948af21f-34e8-418f-8d8e-1bec5ac1e64b",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Chat/VL. Default qwen-plus (still listed). Current Model Studio ids: qwen3.8-max, qwen3.7-plus, qwen3.6-plus, qwen3.5-plus, qwen-plus, qwen3.6-flash, qwen-flash, qwen-turbo, qwen3-coder-plus, qwen3-vl-plus / qwen-vl-plus. Image: wan2.5-t2i-preview. Video: wan2.7-i2v / wan2.5-t2v. Match the region's catalog. Docs: https://www.alibabacloud.com/help/en/model-studio/models .",
+      "value": "qwen-plus",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "qwen3.8-max",
+        "qwen3.7-plus",
+        "qwen3.7-max",
+        "qwen3.6-plus",
+        "qwen3.5-plus",
+        "qwen-plus",
+        "qwen3.6-flash",
+        "qwen-flash",
+        "qwen-turbo",
+        "qwen3-coder-plus",
+        "qwen3-vl-plus",
+        "qwen-vl-plus",
+        "wan2.5-t2i-preview"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "a7d438c4-a57c-4f48-80b4-f7e3178572d3",
+      "shortCode": "task_id",
+      "label": "Task Id",
+      "type": "string",
+      "description": "Async image/video task id for polling GET /api/v1/tasks/{task_id}. Example: abc123.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "a7580f05-fb4c-41c6-9e38-29c52d303c18",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9b993fa2-d077-482d-8872-6b495e6f29fb",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether Qwen Cloud requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

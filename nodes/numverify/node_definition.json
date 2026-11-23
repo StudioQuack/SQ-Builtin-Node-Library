@@ -1,0 +1,153 @@
+{
+  "_id": "caed9196-4d72-535c-a1fb-42e0a06c32f9",
+  "version": "1.0.0",
+  "name": "Numverify",
+  "label": "Numverify",
+  "description": "Numverify official API via OfficialApiNode (api_spec.json). Operations: validate. Docs: https://numverify.com/documentation. APILayer Numverify terms. HTTPS base https://apilayer.net/api (classic access_key query). Phone numbers are PII — do not log. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "phone",
+  "tags": [
+    "phone",
+    "numverify"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "1612e48e-1f57-59ac-aa5d-00f002cb4635",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Numverify request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"validate\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "country_code",
+          "label": "country_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 3166-1 alpha-2 when number is national. Example: US.",
+          "children": [],
+          "_id": "295ffba8-ae1e-5887-889f-853bbc4f1bb5"
+        },
+        {
+          "shortCode": "format",
+          "label": "format",
+          "type": "number",
+          "required": false,
+          "value": "1",
+          "description": "1 to pretty-print JSON. Example: 1.",
+          "children": [],
+          "_id": "c801352b-4fec-5e24-86e8-745d019768aa"
+        },
+        {
+          "shortCode": "number",
+          "label": "number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Phone number to validate (E.164 or national with country_code). Example: 14158586273.",
+          "children": [],
+          "_id": "0780a057-1531-58f8-b834-6f88d38544c5"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e075575f-ff4b-59e3-940f-6a205c55c012",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "657853da-5688-5cf7-a92f-5413cba9d45e"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "bbe2e768-1806-5c7c-9cd1-cc4294f2dda9"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "8913190e-4656-599a-91e9-11cefa8c56de"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "dd17b76b-422b-5170-b735-92fe0ffe34eb",
+      "shortCode": "access_key",
+      "label": "Access Key",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "eba20678-2ec1-5183-98d8-a6e19d9b2e79",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 20. Keep under the daemon sandbox request budget.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

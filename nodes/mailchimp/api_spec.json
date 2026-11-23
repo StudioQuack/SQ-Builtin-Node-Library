@@ -1,0 +1,232 @@
+{
+  "baseUrl": "https://{dc}.api.mailchimp.com/3.0",
+  "defaultTimeout": 30,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "member.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/lists/{list_id}/members",
+      "required": [
+        "dc",
+        "list_id",
+        "email_address",
+        "status"
+      ],
+      "bodyFrom": [
+        "email_address",
+        "status",
+        "merge_fields",
+        "tags",
+        "language",
+        "ip_signup"
+      ]
+    },
+    "member.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/lists/{list_id}/members/{subscriber_hash}",
+      "required": [
+        "dc",
+        "list_id",
+        "subscriber_hash"
+      ]
+    },
+    "member.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/lists/{list_id}/members",
+      "queryFrom": [
+        "count",
+        "offset",
+        "status",
+        "fields"
+      ],
+      "required": [
+        "dc",
+        "list_id"
+      ]
+    },
+    "member.update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/lists/{list_id}/members/{subscriber_hash}",
+      "required": [
+        "dc",
+        "list_id",
+        "subscriber_hash"
+      ],
+      "bodyFrom": [
+        "email_address",
+        "status",
+        "merge_fields",
+        "language"
+      ]
+    },
+    "member.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/lists/{list_id}/members/{subscriber_hash}",
+      "required": [
+        "dc",
+        "list_id",
+        "subscriber_hash"
+      ]
+    },
+    "memberTag.add": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/lists/{list_id}/members/{subscriber_hash}/tags",
+      "required": [
+        "dc",
+        "list_id",
+        "subscriber_hash",
+        "tags"
+      ],
+      "bodyFrom": [
+        "tags"
+      ]
+    },
+    "memberTag.remove": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/lists/{list_id}/members/{subscriber_hash}/tags",
+      "required": [
+        "dc",
+        "list_id",
+        "subscriber_hash",
+        "tags"
+      ],
+      "bodyFrom": [
+        "tags"
+      ]
+    },
+    "list.group.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/lists/{list_id}/interest-categories",
+      "required": [
+        "dc",
+        "list_id"
+      ]
+    },
+    "campaign.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/campaigns/{campaign_id}",
+      "required": [
+        "dc",
+        "campaign_id"
+      ]
+    },
+    "campaign.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/campaigns",
+      "queryFrom": [
+        "count",
+        "offset",
+        "type",
+        "status"
+      ],
+      "required": [
+        "dc"
+      ]
+    },
+    "campaign.send": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/campaigns/{campaign_id}/actions/send",
+      "required": [
+        "dc",
+        "campaign_id"
+      ],
+      "bodyFrom": [
+        "__omit"
+      ]
+    },
+    "campaign.replicate": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/campaigns/{campaign_id}/actions/replicate",
+      "required": [
+        "dc",
+        "campaign_id"
+      ],
+      "bodyFrom": [
+        "__omit"
+      ]
+    },
+    "campaign.resendNonOpeners": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/campaigns/{campaign_id}/actions/create-resend",
+      "required": [
+        "dc",
+        "campaign_id"
+      ],
+      "bodyFrom": [
+        "__omit"
+      ]
+    },
+    "campaign.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/campaigns/{campaign_id}",
+      "required": [
+        "dc",
+        "campaign_id"
+      ]
+    },
+    "campaign.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/campaigns",
+      "required": [
+        "dc",
+        "type"
+      ],
+      "bodyFrom": [
+        "settings",
+        "recipients",
+        "type",
+        "list_id",
+        "subject_line",
+        "from_name",
+        "reply_to",
+        "title",
+        "template_id"
+      ],
+      "bodyMap": {
+        "list_id": "recipients.list_id",
+        "subject_line": "settings.subject_line",
+        "from_name": "settings.from_name",
+        "reply_to": "settings.reply_to",
+        "title": "settings.title",
+        "template_id": "settings.template_id"
+      }
+    },
+    "template.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/templates",
+      "queryFrom": [
+        "count",
+        "offset",
+        "type"
+      ],
+      "required": [
+        "dc"
+      ]
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

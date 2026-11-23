@@ -1,0 +1,232 @@
+{
+  "_id": "5b97e104-1029-407d-a20b-a6a14dfee66d",
+  "version": "1.0.0",
+  "name": "Crypto",
+  "label": "JDK hash / HMAC / AES-GCM / UUID",
+  "description": "In-process JDK cryptography: hash, hmac, sign, encrypt, decrypt, CSPRNG random, UUID. Prefer AES-GCM. MD5 and SHA-1 are legacy checksum-compat only (not for security). Keys never logged.",
+  "icon": "",
+  "tags": [
+    "crypto",
+    "hash",
+    "uuid"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b81efaba-53bd-47a4-babd-b5a88bf76a7e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Crypto operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'hash'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "hash | hmac | sign | encrypt | decrypt | random | uuid.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Input bytes as text (encoding applies).",
+          "children": []
+        },
+        {
+          "shortCode": "length",
+          "label": "length",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Byte length for random. Default 32.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5be7318d-490e-4667-8e13-65501c0d7d59",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "fb026cd7-5820-45cf-8077-8625c4638f77",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: hash | hmac | sign | encrypt | decrypt | random | uuid. Required. Example: 'hash'.",
+      "value": "hash",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "hash",
+        "hmac",
+        "sign",
+        "encrypt",
+        "decrypt",
+        "random",
+        "uuid"
+      ]
+    },
+    {
+      "_id": "319537b6-5925-4d4e-889e-28ab57b6c7f4",
+      "shortCode": "algorithm",
+      "label": "Algorithm",
+      "type": "string",
+      "description": "Hash/HMAC: sha256|sha384|sha512. sha1/md5 are legacy checksum-compat only (not for security). Sign: SHA256withRSA. Default sha256.",
+      "value": "sha256",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "10553365-92f5-4188-8cbe-3cbc9f10c1db",
+      "shortCode": "encoding",
+      "label": "Encoding",
+      "type": "select",
+      "description": "hex | base64 | utf8. Default hex.",
+      "value": "hex",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "hex",
+        "base64",
+        "utf8"
+      ]
+    },
+    {
+      "_id": "0c27ff1e-9927-49b4-baec-06a9722d1ed9",
+      "shortCode": "key",
+      "label": "Key",
+      "type": "password",
+      "description": "HMAC/sign/encrypt key. Secret.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d00421de-0a48-4eea-8c3d-7f17f9430750",
+      "shortCode": "passphrase",
+      "label": "Passphrase",
+      "type": "password",
+      "description": "Password-based key input. Secret.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dbeab496-172e-4dc0-9fe0-48d31f4b86ce",
+      "shortCode": "cipher",
+      "label": "Cipher",
+      "type": "select",
+      "description": "aes-256-gcm | aes-128-gcm | chacha20-poly1305. Default aes-256-gcm.",
+      "value": "aes-256-gcm",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "aes-256-gcm",
+        "aes-128-gcm",
+        "chacha20-poly1305"
+      ]
+    },
+    {
+      "_id": "9c403b5a-3586-49c4-9e4d-6e35167f05c2",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

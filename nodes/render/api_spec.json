@@ -1,0 +1,87 @@
+{
+  "baseUrl": "https://api.render.com/v1",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "service_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/services/{serviceId}",
+      "required": [
+        "serviceId"
+      ]
+    },
+    "service_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/services",
+      "queryFrom": [
+        "limit",
+        "cursor",
+        "name",
+        "type",
+        "env",
+        "suspended"
+      ]
+    },
+    "deploy_trigger": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/services/{serviceId}/deploys",
+      "required": [
+        "serviceId"
+      ],
+      "bodyFrom": [
+        "clearCache",
+        "commitId",
+        "imageUrl"
+      ]
+    },
+    "deploy_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/services/{serviceId}/deploys/{deployId}",
+      "required": [
+        "serviceId",
+        "deployId"
+      ]
+    },
+    "env_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/services/{serviceId}/env-vars",
+      "required": [
+        "serviceId"
+      ],
+      "queryFrom": [
+        "limit",
+        "cursor"
+      ]
+    },
+    "env_set": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/services/{serviceId}/env-vars",
+      "required": [
+        "serviceId",
+        "envVars"
+      ],
+      "contentType": "application/json",
+      "bodyFrom": [
+        "envVars"
+      ],
+      "bodyMap": {
+        "envVars": "$"
+      }
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

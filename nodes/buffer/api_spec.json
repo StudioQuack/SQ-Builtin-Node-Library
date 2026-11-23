@@ -1,0 +1,142 @@
+{
+  "baseUrl": "https://api.buffer.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "organization_list": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/",
+      "bodyDefaults": {
+        "query": "query { account { organizations { id name } } }"
+      },
+      "bodyFrom": [
+        "query",
+        "organizationId",
+        "channelId",
+        "text",
+        "schedulingType",
+        "mode",
+        "dueAt",
+        "first",
+        "after"
+      ],
+      "required": [],
+      "contentType": "application/json",
+      "bodyMap": {
+        "organizationId": "variables.input.organizationId",
+        "channelId": "variables.input.channelId",
+        "text": "variables.input.text",
+        "schedulingType": "variables.input.schedulingType",
+        "mode": "variables.input.mode",
+        "dueAt": "variables.input.dueAt",
+        "first": "variables.first",
+        "after": "variables.after"
+      }
+    },
+    "channel_list": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/",
+      "bodyDefaults": {
+        "query": "query($input: ChannelsInput!) { channels(input: $input) { id name service } }"
+      },
+      "bodyFrom": [
+        "query",
+        "organizationId",
+        "channelId",
+        "text",
+        "schedulingType",
+        "mode",
+        "dueAt",
+        "first",
+        "after"
+      ],
+      "required": [
+        "organizationId"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "organizationId": "variables.input.organizationId",
+        "channelId": "variables.input.channelId",
+        "text": "variables.input.text",
+        "schedulingType": "variables.input.schedulingType",
+        "mode": "variables.input.mode",
+        "dueAt": "variables.input.dueAt",
+        "first": "variables.first",
+        "after": "variables.after"
+      }
+    },
+    "post_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/",
+      "bodyDefaults": {
+        "query": "mutation($input: CreatePostInput!) { createPost(input: $input) { ... on PostActionSuccess { post { id text status } } ... on MutationError { message } } }"
+      },
+      "bodyFrom": [
+        "query",
+        "organizationId",
+        "channelId",
+        "text",
+        "schedulingType",
+        "mode",
+        "dueAt",
+        "first",
+        "after"
+      ],
+      "required": [
+        "text",
+        "channelId"
+      ],
+      "contentType": "application/json",
+      "bodyMap": {
+        "organizationId": "variables.input.organizationId",
+        "channelId": "variables.input.channelId",
+        "text": "variables.input.text",
+        "schedulingType": "variables.input.schedulingType",
+        "mode": "variables.input.mode",
+        "dueAt": "variables.input.dueAt",
+        "first": "variables.first",
+        "after": "variables.after"
+      }
+    },
+    "post_list": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/",
+      "bodyDefaults": {
+        "query": "query($first: Int, $after: String, $input: PostsInput) { posts(first: $first, after: $after, input: $input) { edges { node { id text } } } }"
+      },
+      "bodyFrom": [
+        "query",
+        "organizationId",
+        "channelId",
+        "text",
+        "schedulingType",
+        "mode",
+        "dueAt",
+        "first",
+        "after"
+      ],
+      "required": [],
+      "contentType": "application/json",
+      "bodyMap": {
+        "organizationId": "variables.input.organizationId",
+        "channelId": "variables.input.channelId",
+        "text": "variables.input.text",
+        "schedulingType": "variables.input.schedulingType",
+        "mode": "variables.input.mode",
+        "dueAt": "variables.input.dueAt",
+        "first": "variables.first",
+        "after": "variables.after"
+      }
+    }
+  }
+}

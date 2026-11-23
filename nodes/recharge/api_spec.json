@@ -1,0 +1,79 @@
+{
+  "baseUrl": "https://api.rechargeapps.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "X-Recharge-Access-Token",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "extraHeaders": {
+    "X-Recharge-Version": "{api_version}"
+  },
+  "operations": {
+    "customer_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/customers/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "subscription_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/subscriptions",
+      "queryFrom": [
+        "customer_id",
+        "address_id",
+        "status",
+        "limit"
+      ]
+    },
+    "subscription_skip": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/addresses/{address_id}/charges/skip",
+      "required": [
+        "address_id"
+      ],
+      "bodyFrom": [
+        "date"
+      ]
+    },
+    "charge_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/charges",
+      "queryFrom": [
+        "customer_id",
+        "status",
+        "limit"
+      ]
+    },
+    "address_update": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/addresses/{id}",
+      "required": [
+        "id"
+      ],
+      "bodyFrom": [
+        "first_name",
+        "last_name",
+        "address1",
+        "address2",
+        "city",
+        "province",
+        "zip",
+        "country",
+        "company",
+        "phone"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "baseUrl": "https://driftapi.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "accessToken"
+  },
+  "operations": {
+    "contact.create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/contacts",
+      "required": [
+        "email"
+      ],
+      "bodyFrom": [
+        "attributes",
+        "email",
+        "externalId",
+        "name"
+      ],
+      "bodyMap": {
+        "email": "attributes.email",
+        "name": "attributes.name",
+        "externalId": "attributes.externalId"
+      }
+    },
+    "contact.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/contacts/{contactId}",
+      "required": [
+        "contactId"
+      ]
+    },
+    "contact.update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/contacts/{contactId}",
+      "required": [
+        "contactId"
+      ],
+      "bodyFrom": [
+        "attributes",
+        "name",
+        "email"
+      ],
+      "bodyMap": {
+        "name": "attributes.name",
+        "email": "attributes.email"
+      }
+    },
+    "contact.delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/contacts/{contactId}",
+      "required": [
+        "contactId"
+      ]
+    },
+    "contact.customAttributes": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/contacts/attributes"
+    },
+    "conversation.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/conversations/list",
+      "queryFrom": [
+        "limit",
+        "page_token",
+        "statusId"
+      ]
+    },
+    "message.send": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/conversations/{conversationId}/messages",
+      "required": [
+        "conversationId",
+        "body"
+      ],
+      "bodyFrom": [
+        "body",
+        "type",
+        "attributes"
+      ],
+      "bodyDefaults": {
+        "type": "chat"
+      }
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

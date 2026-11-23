@@ -1,0 +1,86 @@
+{
+  "baseUrl": "https://www.wixapis.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "configKey": "access_token"
+  },
+  "extraHeaders": {
+    "wix-site-id": "{site_id}"
+  },
+  "operations": {
+    "order_list": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/ecom/v1/orders/search",
+      "bodyFrom": [
+        "filter",
+        "sort",
+        "limit",
+        "cursor"
+      ],
+      "bodyMap": {
+        "filter": "search.filter",
+        "sort": "search.sort",
+        "limit": "search.cursorPaging.limit",
+        "cursor": "search.cursorPaging.cursor"
+      }
+    },
+    "order_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/ecom/v1/orders/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "product_list": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/stores-reader/v1/products/query",
+      "bodyFrom": [
+        "filter",
+        "sort",
+        "paging"
+      ],
+      "bodyMap": {
+        "filter": "query.filter",
+        "sort": "query.sort",
+        "paging": "query.paging"
+      }
+    },
+    "product_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/stores-reader/v1/products/{id}",
+      "required": [
+        "id"
+      ]
+    },
+    "inventory_update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/stores/v3/inventory-items/{inventory_item_id}",
+      "required": [
+        "inventory_item_id",
+        "revision"
+      ],
+      "bodyFrom": [
+        "inventory_item_id",
+        "revision",
+        "quantity",
+        "trackQuantity"
+      ],
+      "bodyMap": {
+        "inventory_item_id": "inventoryItem.id",
+        "revision": "inventoryItem.revision",
+        "quantity": "inventoryItem.quantity",
+        "trackQuantity": "inventoryItem.trackQuantity"
+      }
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

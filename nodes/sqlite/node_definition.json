@@ -1,0 +1,358 @@
+{
+  "_id": "b7c48dc6-836b-4a12-a2e5-2749be0abe80",
+  "version": "1.0.0",
+  "name": "SQLite",
+  "label": "SQLite — query and write a database file",
+  "description": "Run SQL on a SQLite database file. Handler: SqlDatabaseNode with the SQLite JDBC driver (sqlite-jdbc). The database arrives as a file value (max 8 MiB) or starts empty; execute and insert return the updated database on output file, query never changes it. Values bind as ? parameters; ATTACH and extension loading are disabled. Docs: https://www.sqlite.org/lang.html",
+  "icon": "storage",
+  "tags": [
+    "sqlite",
+    "sql",
+    "database",
+    "file"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c35d2368-be1c-45fa-aecd-f83f92f9623f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One SQL call. Non-blank fields override the node configuration. Wire the database file from an upstream node. Example: {\"operation\":\"query\",\"query\":\"SELECT * FROM orders WHERE id = ?\",\"parameters\":[42],\"database\":<file>}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Overrides config operation when non-blank. EXACT: query | execute | insert.",
+          "children": []
+        },
+        {
+          "shortCode": "database",
+          "label": "database",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "SQLite database file (path, ContentBlock or $fileRef). Overrides the config Database File. Blank starts a new database.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "SQL for query/execute with ? placeholders. Alias: sql.",
+          "children": []
+        },
+        {
+          "shortCode": "parameters",
+          "label": "parameters",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Positional values for the ? placeholders. Alias: params.",
+          "children": []
+        },
+        {
+          "shortCode": "table",
+          "label": "table",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Target table for insert.",
+          "children": []
+        },
+        {
+          "shortCode": "rows",
+          "label": "rows",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Array of column → value objects for insert.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "cfa1cb16-1aaf-47f2-b5bf-bdbf874d64eb",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', operation, rows?, columns?, row_count?, truncated?, affected_rows?, file?, data:{value}}. file is the updated SQLite database after execute or insert. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, REQUEST_FAILED) with data {sql_state, vendor_code} for SQL errors.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "The operation that ran.",
+          "children": []
+        },
+        {
+          "shortCode": "rows",
+          "label": "rows",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Result rows as column → value objects (query, or execute with a result set). Binary values are base64; LOBs are capped at 1 MiB.",
+          "children": []
+        },
+        {
+          "shortCode": "columns",
+          "label": "columns",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Column labels in result order (insert: the inserted columns).",
+          "children": []
+        },
+        {
+          "shortCode": "row_count",
+          "label": "row_count",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Number of rows returned.",
+          "children": []
+        },
+        {
+          "shortCode": "truncated",
+          "label": "truncated",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "true when max_rows cut the result set.",
+          "children": []
+        },
+        {
+          "shortCode": "affected_rows",
+          "label": "affected_rows",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Rows changed by execute or insert.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Updated database (application/vnd.sqlite3, max 8 MiB) after execute or insert. Absent for query. Wire it to a storage node to keep the changes.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "data.value = rows for queries, affected_rows otherwise. Never includes secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2c9ab7f7-2f38-4c9d-bbf0-8f9a63f093d8",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "What to run. EXACT: query (SELECT, returns rows) | execute (INSERT/UPDATE/DELETE/DDL or a call; returns affected_rows, plus rows when the statement returns a result set) | insert (batch-insert input rows into one table in one transaction). Input operation overrides this when non-blank.",
+      "value": "query",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "query",
+        "execute",
+        "insert"
+      ],
+      "filterRules": [
+        {
+          "when": "query",
+          "targets": [
+            {
+              "param": "query",
+              "visible": true
+            },
+            {
+              "param": "parameters",
+              "visible": true
+            },
+            {
+              "param": "max_rows",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "execute",
+          "targets": [
+            {
+              "param": "query",
+              "visible": true
+            },
+            {
+              "param": "parameters",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "insert",
+          "targets": [
+            {
+              "param": "table",
+              "visible": true
+            },
+            {
+              "param": "rows",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "6a07a321-52a9-4c14-8056-0ffd0d385042",
+      "shortCode": "database",
+      "label": "Database File",
+      "type": "file",
+      "description": "SQLite database file (path, ContentBlock or $fileRef from an upstream node), max 8 MiB. Input database overrides this. Blank starts a new empty database. execute and insert return the updated database on output file; query never changes it.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1f959a01-fe5e-4692-8c86-3ce6d91376ca",
+      "shortCode": "query",
+      "label": "SQL",
+      "type": "longtext",
+      "description": "SQL statement for query and execute. Purpose: one statement; use ? placeholders for values and put them in parameters — never concatenate input into SQL. Example: SELECT id, total FROM \"orders\" WHERE customer_id = ? AND total > ?.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "17dc59c1-ea2f-4348-bd55-2160e67bd633",
+      "shortCode": "parameters",
+      "label": "Parameters",
+      "type": "list",
+      "description": "Positional values for the ? placeholders, in order. Accepted: JSON array of strings, numbers, booleans or null; objects/arrays are sent as JSON text. Example: [42, 100.5].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "986d6034-e738-4742-a76e-0c2db0c0573f",
+      "shortCode": "max_rows",
+      "label": "Max Rows",
+      "type": "number",
+      "description": "Row cap for returned result sets. Purpose: bound memory and output size. Default 1000, max 10000. truncated=true when more rows existed.",
+      "value": "1000",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d6a455e9-6584-4bef-b364-4f83bd1dc646",
+      "shortCode": "table",
+      "label": "Table",
+      "type": "string",
+      "description": "Target table for insert: table, schema.table or database.schema.table. Accepted: identifiers [A-Za-z_][A-Za-z0-9_$#]*; each part is quoted. Example: 'sales.orders'.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b505086a-3da3-4ed1-b016-5ed347ad962a",
+      "shortCode": "rows",
+      "label": "Rows",
+      "type": "list",
+      "description": "Rows for insert. Accepted: JSON array of objects (column → value), up to 10000. Columns are the union of all keys; a missing key inserts NULL. All rows commit together or roll back together. Example: [{\"id\":1,\"total\":9.5}].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c5fbcdf9-3e73-486d-bb68-c43a3f061d6a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Statement timeout (and lock wait for SQLite). Default 30, max 300.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-11-10T18:30:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-10T18:30:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

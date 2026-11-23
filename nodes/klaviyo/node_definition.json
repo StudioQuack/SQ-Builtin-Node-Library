@@ -1,0 +1,1230 @@
+{
+  "_id": "8ce5013a-aa88-44ed-bdd0-d4a42cb7ebb8",
+  "version": "1.0.0",
+  "name": "Klaviyo",
+  "label": "Klaviyo API revision 2026-07-15 — profiles, lists, events, campaigns",
+  "description": "Official Klaviyo REST JSON:API at https://a.klaviyo.com. Auth Authorization: Klaviyo-API-Key {private_api_key}. Every call sends header revision (config default 2026-07-15). Profile/event/campaign writes accept purpose fields and nest them into data.attributes via bodyMap. Docs: https://developers.klaviyo.com/en/reference. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "campaign",
+  "tags": [
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "24ee9f4f-577d-4bd6-a464-31e9ab8583ff",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. JSON:API writes use data. Do not put private_api_key here. Example: {\"operation\":\"profile.get\",\"profile_id\":\"01ABC\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "profile.create",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs including trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JSON:API document escape hatch. Profile/event/campaign writes merge purpose fields into data. list.addProfiles / list.removeProfiles: one {type,id} object merged into data[0]. catalog.item.upsert: official catalog-item-bulk-create-job document; purpose fields merge into items.data[0].attributes.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Profile email. profile.* → data.attributes.email; event.create → data.attributes.profile.data.attributes.email. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "phone_number",
+          "label": "phone_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "E.164 phone. Same nesting as email. Example: +15551234567.",
+          "children": []
+        },
+        {
+          "shortCode": "external_id",
+          "label": "external_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Profile external_id (profile writes → data.attributes.external_id) or catalog.item.upsert item external_id → data.attributes.items.data[0].attributes.external_id.",
+          "children": []
+        },
+        {
+          "shortCode": "first_name",
+          "label": "first_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Profile first name. Wired to data.attributes.first_name on profile writes.",
+          "children": []
+        },
+        {
+          "shortCode": "last_name",
+          "label": "last_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Profile last name. Wired to data.attributes.last_name on profile writes.",
+          "children": []
+        },
+        {
+          "shortCode": "properties",
+          "label": "properties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Custom profile properties (profile.*) or event properties (event.create).",
+          "children": []
+        },
+        {
+          "shortCode": "profile_id",
+          "label": "profile_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Profile id. Path for profile.get/update; data.id on profile.upsert; event.create profile relationship id; list.addProfiles / list.removeProfiles → data[0].id.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Klaviyo filter for profile.search, campaign.list, template.list. Example: equals(email,\"ada@example.com\").",
+          "children": []
+        },
+        {
+          "shortCode": "page_cursor",
+          "label": "page_cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "page[cursor] from a previous list response. profile.search, campaign.list, template.list.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "page[size] for profile.search. Positive integer, typical max 100.",
+          "children": []
+        },
+        {
+          "shortCode": "list_id",
+          "label": "list_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List id for list.get / list.addProfiles / list.removeProfiles. Example: Y6nRLr.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign id. Path for campaign.get; data.id for campaign.send (type campaign-send-job).",
+          "children": []
+        },
+        {
+          "shortCode": "segment_id",
+          "label": "segment_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Segment id for segment.get.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "JSON:API resource type. profile.* → data.type (profile); event.create → event; campaign.send → campaign-send-job; list.add/removeProfiles → data[0].type (profile); catalog.item.upsert → data.type (catalog-item-bulk-create-job). Example: profile.",
+          "children": []
+        },
+        {
+          "shortCode": "organization",
+          "label": "organization",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Profile organization. Wired to data.attributes.organization on profile writes.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Profile title (profile writes) or catalog.item.upsert item title → data.attributes.items.data[0].attributes.title.",
+          "children": []
+        },
+        {
+          "shortCode": "image",
+          "label": "image",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Profile image URL. Wired to data.attributes.image on profile writes.",
+          "children": []
+        },
+        {
+          "shortCode": "location",
+          "label": "location",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Profile location object {address1, city, region, zip, country}. Wired to data.attributes.location on profile writes.",
+          "children": []
+        },
+        {
+          "shortCode": "metric_name",
+          "label": "metric_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event metric name for event.create. Wired to data.attributes.metric.data.attributes.name. Example: Viewed Product.",
+          "children": []
+        },
+        {
+          "shortCode": "time",
+          "label": "time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO-8601 event timestamp for event.create. Wired to data.attributes.time. Example: 2026-10-31T12:00:00Z.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Numeric value for event.create (e.g. order total). Wired to data.attributes.value.",
+          "children": []
+        },
+        {
+          "shortCode": "unique_id",
+          "label": "unique_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Idempotency id for event.create. Wired to data.attributes.unique_id. Example: a UUID v4.",
+          "children": []
+        },
+        {
+          "shortCode": "revision",
+          "label": "revision",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Klaviyo revision header YYYY-MM-DD. Required by every call. Default from config (2026-07-15). Example: 2026-07-15.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "catalog.item.upsert item description. Wired to data.attributes.items.data[0].attributes.description.",
+          "children": []
+        },
+        {
+          "shortCode": "url",
+          "label": "url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "catalog.item.upsert item URL. Wired to data.attributes.items.data[0].attributes.url.",
+          "children": []
+        },
+        {
+          "shortCode": "image_full_url",
+          "label": "image_full_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "catalog.item.upsert image URL. Wired to data.attributes.items.data[0].attributes.image_full_url.",
+          "children": []
+        },
+        {
+          "shortCode": "price",
+          "label": "price",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "catalog.item.upsert price. Wired to data.attributes.items.data[0].attributes.price.",
+          "children": []
+        },
+        {
+          "shortCode": "published",
+          "label": "published",
+          "type": "boolean",
+          "required": false,
+          "value": "true",
+          "description": "catalog.item.upsert published flag. Wired to data.attributes.items.data[0].attributes.published.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b666498f-3d0d-48d3-a420-0f37b0468134",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Do not log emails, phones, or secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "b9606edf-18e3-44e6-9000-f0aecbe571e0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT Klaviyo verbs.",
+      "value": "profile.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "profile.create",
+        "profile.upsert",
+        "profile.get",
+        "profile.update",
+        "profile.search",
+        "list.addProfiles",
+        "list.removeProfiles",
+        "list.get",
+        "event.create",
+        "campaign.get",
+        "campaign.list",
+        "campaign.send",
+        "segment.get",
+        "template.list",
+        "catalog.item.upsert",
+        "trigger.listen"
+      ],
+      "filterRules": [
+        {
+          "when": "profile.create",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "phone_number",
+              "visible": true
+            },
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "first_name",
+              "visible": true
+            },
+            {
+              "param": "external_id",
+              "visible": true
+            },
+            {
+              "param": "location",
+              "visible": true
+            },
+            {
+              "param": "title",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "image",
+              "visible": true
+            },
+            {
+              "param": "properties",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "last_name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "profile.upsert",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "phone_number",
+              "visible": true
+            },
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "first_name",
+              "visible": true
+            },
+            {
+              "param": "external_id",
+              "visible": true
+            },
+            {
+              "param": "location",
+              "visible": true
+            },
+            {
+              "param": "title",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "image",
+              "visible": true
+            },
+            {
+              "param": "properties",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "last_name",
+              "visible": true
+            },
+            {
+              "param": "profile_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "profile.get",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "profile_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "profile.update",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "phone_number",
+              "visible": true
+            },
+            {
+              "param": "organization",
+              "visible": true
+            },
+            {
+              "param": "first_name",
+              "visible": true
+            },
+            {
+              "param": "external_id",
+              "visible": true
+            },
+            {
+              "param": "location",
+              "visible": true
+            },
+            {
+              "param": "title",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "image",
+              "visible": true
+            },
+            {
+              "param": "properties",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "last_name",
+              "visible": true
+            },
+            {
+              "param": "profile_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "profile.search",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "page_cursor",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            },
+            {
+              "param": "page_size",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list.addProfiles",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "profile_id",
+              "visible": true
+            },
+            {
+              "param": "list_id",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list.removeProfiles",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "profile_id",
+              "visible": true
+            },
+            {
+              "param": "list_id",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "list.get",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "list_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "event.create",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "phone_number",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "properties",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "profile_id",
+              "visible": true
+            },
+            {
+              "param": "unique_id",
+              "visible": true
+            },
+            {
+              "param": "time",
+              "visible": true
+            },
+            {
+              "param": "metric_name",
+              "visible": true
+            },
+            {
+              "param": "value",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "campaign.get",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "campaign_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "campaign.list",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "page_cursor",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "campaign.send",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "campaign_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "segment.get",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "segment_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "template.list",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "page_cursor",
+              "visible": true
+            },
+            {
+              "param": "filter",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "catalog.item.upsert",
+          "targets": [
+            {
+              "param": "revision",
+              "visible": true
+            },
+            {
+              "param": "external_id",
+              "visible": true
+            },
+            {
+              "param": "title",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "price",
+              "visible": true
+            },
+            {
+              "param": "description",
+              "visible": true
+            },
+            {
+              "param": "url",
+              "visible": true
+            },
+            {
+              "param": "image_full_url",
+              "visible": true
+            },
+            {
+              "param": "published",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "fab21db4-39ce-476c-aa94-b137f158f274",
+      "shortCode": "private_api_key",
+      "label": "Private API key",
+      "type": "password",
+      "description": "Klaviyo private key pk_… (StudioQuack secret). Sent as Authorization: Klaviyo-API-Key {key}. Never log or place on INPUT. Engine must also send revision: 2026-07-15.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "16e824d7-428d-4523-9e1d-a9f2bbf58df3",
+      "shortCode": "revision",
+      "label": "API revision",
+      "type": "string",
+      "description": "Klaviyo revision header sent on every call (extraHeaders revision). Format YYYY-MM-DD. Default 2026-07-15. Invalid revision → 404.",
+      "value": "2026-07-15",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f417e8f3-0527-4510-a852-3ea11de7e5cd",
+      "shortCode": "phone_number",
+      "label": "Phone Number",
+      "type": "string",
+      "description": "E.164 phone. Same nesting as email. Example: +15551234567.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c950ec29-2d66-4f79-aa14-358d30867436",
+      "shortCode": "organization",
+      "label": "Organization",
+      "type": "string",
+      "description": "Profile organization. Wired to data.attributes.organization on profile writes.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e0c0aa86-5fbe-452f-8f68-1a59489a7904",
+      "shortCode": "first_name",
+      "label": "First Name",
+      "type": "string",
+      "description": "Profile first name. Wired to data.attributes.first_name on profile writes.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "90787271-6f39-4586-a79e-b985e67e8e7c",
+      "shortCode": "external_id",
+      "label": "External ID",
+      "type": "string",
+      "description": "Profile external_id (profile writes → data.attributes.external_id) or catalog.item.upsert item external_id → data.attributes.items.data[0].attributes.external_id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7460f969-f00a-4846-bd98-0c9315efabdb",
+      "shortCode": "location",
+      "label": "Location",
+      "type": "object",
+      "description": "Profile location object {address1, city, region, zip, country}. Wired to data.attributes.location on profile writes.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ddecc2d8-04b8-46b3-8706-f2d7ab5afd1a",
+      "shortCode": "title",
+      "label": "Title",
+      "type": "string",
+      "description": "Profile title (profile writes) or catalog.item.upsert item title → data.attributes.items.data[0].attributes.title.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1301527e-ccdf-4270-9476-b9b3721c6eb1",
+      "shortCode": "email",
+      "label": "Email",
+      "type": "string",
+      "description": "Profile email. profile.* → data.attributes.email; event.create → data.attributes.profile.data.attributes.email. Example: ada@example.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c4dab025-f5c6-49f6-8d18-3d0cef1844e3",
+      "shortCode": "image",
+      "label": "Image",
+      "type": "string",
+      "description": "Profile image URL. Wired to data.attributes.image on profile writes.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d74dcda0-8d52-43de-96b2-aec6b2acfa1b",
+      "shortCode": "properties",
+      "label": "Properties",
+      "type": "object",
+      "description": "Custom profile properties (profile.*) or event properties (event.create).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "93fadfd7-b319-46e4-8a36-85ad044f48ef",
+      "shortCode": "type",
+      "label": "Type",
+      "type": "string",
+      "description": "JSON:API resource type. profile.* → data.type (profile); event.create → event; campaign.send → campaign-send-job; list.add/removeProfiles → data[0].type (profile); catalog.item.upsert → data.type (catalog-item-bulk-create-job). Example: profile.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4db8474c-47e4-46c4-99ee-a5697178e5fc",
+      "shortCode": "last_name",
+      "label": "Last Name",
+      "type": "string",
+      "description": "Profile last name. Wired to data.attributes.last_name on profile writes.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ee51e66a-5613-40f4-84a5-b9b9afd0ffda",
+      "shortCode": "profile_id",
+      "label": "Profile ID",
+      "type": "string",
+      "description": "Profile id. Path for profile.get/update; data.id on profile.upsert; event.create profile relationship id; list.addProfiles / list.removeProfiles → data[0].id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "df4bfc42-7f0e-473d-8fce-bb569ff89f1f",
+      "shortCode": "page_cursor",
+      "label": "Page Cursor",
+      "type": "string",
+      "description": "page[cursor] from a previous list response. profile.search, campaign.list, template.list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "36f95d5d-f908-453a-b26f-1bc681f230df",
+      "shortCode": "filter",
+      "label": "Filter",
+      "type": "string",
+      "description": "Klaviyo filter for profile.search, campaign.list, template.list. Example: equals(email,\"ada@example.com\").",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d42282de-cd0d-4274-ae0f-d2b0ea2d5997",
+      "shortCode": "page_size",
+      "label": "Page Size",
+      "type": "number",
+      "description": "page[size] for profile.search. Positive integer, typical max 100.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c78be348-a356-4dd7-8de4-9335df396ce2",
+      "shortCode": "list_id",
+      "label": "List ID",
+      "type": "string",
+      "description": "List id for list.get / list.addProfiles / list.removeProfiles. Example: Y6nRLr.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3aebcdd3-f549-4345-81ea-dd51ba1876ec",
+      "shortCode": "data",
+      "label": "Data",
+      "type": "object",
+      "description": "JSON:API document escape hatch. Profile/event/campaign writes merge purpose fields into data. list.addProfiles / list.removeProfiles: one {type,id} object merged into data[0]. catalog.item.upsert: official catalog-item-bulk-create-job document; purpose fields merge into items.data[0].attributes.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "454eaae6-b941-43e6-98f0-cf3087fc8800",
+      "shortCode": "unique_id",
+      "label": "Unique ID",
+      "type": "string",
+      "description": "Idempotency id for event.create. Wired to data.attributes.unique_id. Example: a UUID v4.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "834b73ec-6a7f-4aee-bc8b-3e38960b52c4",
+      "shortCode": "time",
+      "label": "Time",
+      "type": "string",
+      "description": "ISO-8601 event timestamp for event.create. Wired to data.attributes.time. Example: 2026-10-31T12:00:00Z.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b952dabf-e59d-4177-bb7a-73ef2f297d58",
+      "shortCode": "metric_name",
+      "label": "Metric Name",
+      "type": "string",
+      "description": "Event metric name for event.create. Wired to data.attributes.metric.data.attributes.name. Example: Viewed Product.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "64f124a7-343d-4e0a-91cd-e61e93e51d59",
+      "shortCode": "value",
+      "label": "Value",
+      "type": "number",
+      "description": "Numeric value for event.create (e.g. order total). Wired to data.attributes.value.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0599faf3-1e0f-411f-ae0d-429ac088eaec",
+      "shortCode": "campaign_id",
+      "label": "Campaign ID",
+      "type": "string",
+      "description": "Campaign id. Path for campaign.get; data.id for campaign.send (type campaign-send-job).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f03f0341-c5b5-4705-8960-f9b8469ca540",
+      "shortCode": "segment_id",
+      "label": "Segment ID",
+      "type": "string",
+      "description": "Segment id for segment.get.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0a7ea20a-5dc8-43e7-9808-65fc46c1321b",
+      "shortCode": "price",
+      "label": "Price",
+      "type": "number",
+      "description": "catalog.item.upsert price. Wired to data.attributes.items.data[0].attributes.price.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2db8a2fc-f9e6-4ba7-88de-6a63165098ac",
+      "shortCode": "description",
+      "label": "Description",
+      "type": "string",
+      "description": "catalog.item.upsert item description. Wired to data.attributes.items.data[0].attributes.description.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6e28d63a-9dd0-4e6a-acdb-341aef78a4a3",
+      "shortCode": "url",
+      "label": "URL",
+      "type": "string",
+      "description": "catalog.item.upsert item URL. Wired to data.attributes.items.data[0].attributes.url.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ad5f10d8-ab7d-4cb1-8aa4-9740f148a367",
+      "shortCode": "image_full_url",
+      "label": "Image Full URL",
+      "type": "string",
+      "description": "catalog.item.upsert image URL. Wired to data.attributes.items.data[0].attributes.image_full_url.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d401308d-ae13-4547-ae66-ab0e5e670ae5",
+      "shortCode": "published",
+      "label": "Published",
+      "type": "boolean",
+      "description": "catalog.item.upsert published flag. Wired to data.attributes.items.data[0].attributes.published.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c18b908f-fd24-420d-8f73-b25962cbe6fb",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

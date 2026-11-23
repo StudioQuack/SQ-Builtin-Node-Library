@@ -1,0 +1,322 @@
+{
+  "_id": "3fc310d7-bfed-4eb3-8d6a-1a373fcb7836",
+  "version": "1.0.0",
+  "name": "Google Analytics",
+  "label": "GA4 Data API v1beta + Admin v1beta",
+  "description": "Official Google Analytics Data API v1beta (analyticsdata.googleapis.com) plus Admin v1beta accountSummaries (analyticsadmin.googleapis.com). Handler: OfficialApiNode. GA4 only — Universal Analytics is dead; userActivity.search is omitted. Auth: OAuth access token as Bearer (customer supplies a current token). Scope analytics.readonly for reports. Customer owns the GA4 property. Never log access tokens or row values containing user ids/emails. Reject UA- / ga: property ids.",
+  "icon": "insights",
+  "tags": [
+    "analytics"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "384bd8c0-0ecc-464b-8239-2f3fe1acbfca",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. propertyId is numeric GA4 id (no properties/ prefix). Do not put access_token here. Example: {\"operation\":\"report.run\",\"propertyId\":\"123456\",\"dateRanges\":[{\"startDate\":\"7daysAgo\",\"endDate\":\"today\"}],\"metrics\":[{\"name\":\"activeUsers\"}]}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "report.run",
+          "description": "Overrides config operation when non-blank. EXACT: 'report.run' | 'report.realtime' | 'metadata.get' | 'property.list'. userActivity.search is not offered (UA).",
+          "children": []
+        },
+        {
+          "shortCode": "propertyId",
+          "label": "propertyId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Numeric GA4 property id. Path becomes properties/{propertyId}. Use 0 on metadata.get for universal metadata only. No UA- or ga: ids.",
+          "children": []
+        },
+        {
+          "shortCode": "dateRanges",
+          "label": "dateRanges",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "report.run: [{ startDate, endDate }] YYYY-MM-DD or NdaysAgo.",
+          "children": []
+        },
+        {
+          "shortCode": "dimensions",
+          "label": "dimensions",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "[{ name }] — max 9 on report.run.",
+          "children": []
+        },
+        {
+          "shortCode": "metrics",
+          "label": "metrics",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "[{ name }] — at least one for report.run / report.realtime.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Row cap. Default 10000; API max 250000 — cap at 10000 in this node.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Pagination offset for report.run.",
+          "children": []
+        },
+        {
+          "shortCode": "minuteRanges",
+          "label": "minuteRanges",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "report.realtime: [{ startMinutesAgo, endMinutesAgo }]; max 2 ranges.",
+          "children": []
+        },
+        {
+          "shortCode": "returnPropertyQuota",
+          "label": "returnPropertyQuota",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Include remaining quota object.",
+          "children": []
+        },
+        {
+          "shortCode": "pageSize",
+          "label": "pageSize",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Admin page size for property.list (cap 200).",
+          "children": []
+        },
+        {
+          "shortCode": "pageToken",
+          "label": "pageToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Admin next page for property.list.",
+          "children": []
+        },
+        {
+          "shortCode": "dimensionFilter",
+          "label": "dimensionFilter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `dimensionFilter` for operation: report.run.",
+          "children": []
+        },
+        {
+          "shortCode": "metricFilter",
+          "label": "metricFilter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `metricFilter` for operation: report.run.",
+          "children": []
+        },
+        {
+          "shortCode": "orderBys",
+          "label": "orderBys",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `orderBys` for operation: report.run.",
+          "children": []
+        },
+        {
+          "shortCode": "keepEmptyRows",
+          "label": "keepEmptyRows",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `keepEmptyRows` for operation: report.run.",
+          "children": []
+        },
+        {
+          "shortCode": "currencyCode",
+          "label": "currencyCode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `currencyCode` for operation: report.run.",
+          "children": []
+        },
+        {
+          "shortCode": "metricAggregations",
+          "label": "Metric aggregations",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "RunReportRequest.metricAggregations. EXACT values: TOTAL | MINIMUM | MAXIMUM | COUNT. report.run / report.realtime.",
+          "children": []
+        },
+        {
+          "shortCode": "cohortSpec",
+          "label": "Cohort spec",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "RunReportRequest.cohortSpec. report.run only. See GA4 cohortSpec.",
+          "children": []
+        },
+        {
+          "shortCode": "comparisons",
+          "label": "Comparisons",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "RunReportRequest.comparisons. report.run.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "d49b7a5d-9174-47a4-bfe4-53449905d336",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (rows / metadata / accountSummaries). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Minimize logging of row values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0acfee35-131a-410b-a344-2eabee0d1ddd",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: report.run | report.realtime | metadata.get | property.list.",
+      "value": "report.run",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "report.run",
+        "report.realtime",
+        "metadata.get",
+        "property.list"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "0a61e5ee-d3ed-4ae3-8f63-aace78f78278",
+      "shortCode": "access_token",
+      "label": "OAuth access token",
+      "type": "password",
+      "description": "Google OAuth access token (StudioQuack secret). Scope https://www.googleapis.com/auth/analytics.readonly (reports) or analytics / analytics.edit (admin list). Customer supplies a current token. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c2f47015-21dc-40b8-badc-8d9b54c035e9",
+      "shortCode": "propertyId",
+      "label": "Property id",
+      "type": "string",
+      "description": "Default numeric GA4 property id when INPUT omits propertyId.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7c6fa41b-b981-40f0-9703-eac6dfffc087",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 60. Keep below the daemon invoke budget.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,273 @@
+{
+  "_id": "fc58840e-85b5-4d2d-af5c-b1da62fedeaa",
+  "version": "1.0.0",
+  "name": "Gladia",
+  "label": "Gladia",
+  "description": "Official Gladia v2 pre-recorded STT on INPUT input → OUTPUT output. pre_recorded = POST /v2/pre-recorded. get_transcript = GET /v2/pre-recorded/{id}. live = WebSocket ingress (no socket). Auth is StudioQuack secret api_key sent as x-gladia-key. Audio is submitted as audio_url. Docs: https://docs.gladia.io/api-reference/v2/pre-recorded/init. Terms: https://www.gladia.io/general-terms-of-use-gladia-inc. Never log api_key.",
+  "icon": "hearing",
+  "tags": [
+    "gladia",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "8cc9d3b3-49b3-499e-b765-c0c08ca90da9",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. pre_recorded requires audio_url. get_transcript requires id. live is ingress — use a BPMN message event. This HTTP submit uses audio_url (no file upload). Do not put api_key here. Example: {\"audio_url\":\"https://files.gladia.io/example.wav\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "pre_recorded",
+          "description": "Which call. EXACT: pre_recorded | get_transcript | live. Blank: infer from audio_url (submit) vs id-only (poll), else config default pre_recorded.",
+          "children": []
+        },
+        {
+          "shortCode": "audio_url",
+          "label": "audio_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required for pre_recorded (http/https). Selecting submit when present; ignored for get_transcript unless operation is forced.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job UUID for GET /v2/pre-recorded/{id}.",
+          "children": []
+        },
+        {
+          "shortCode": "model",
+          "label": "model",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional model. EXACT documented values include solaria-1 (default) and solaria-3 (async-only, limited languages).",
+          "children": []
+        },
+        {
+          "shortCode": "language_config",
+          "label": "language_config",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Optional {languages:[...], code_switching?:bool} as documented.",
+          "children": []
+        },
+        {
+          "shortCode": "diarization",
+          "label": "diarization",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Optional async diarization flag (not available on live WebSocket per Gladia docs).",
+          "children": []
+        },
+        {
+          "shortCode": "diarization_config",
+          "label": "diarization_config",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `diarization_config` for operation: pre_recorded.",
+          "children": []
+        },
+        {
+          "shortCode": "translation",
+          "label": "translation",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `translation` for operation: pre_recorded.",
+          "children": []
+        },
+        {
+          "shortCode": "translation_config",
+          "label": "translation_config",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `translation_config` for operation: pre_recorded.",
+          "children": []
+        },
+        {
+          "shortCode": "subtitles",
+          "label": "subtitles",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `subtitles` for operation: pre_recorded.",
+          "children": []
+        },
+        {
+          "shortCode": "sentences",
+          "label": "sentences",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `sentences` for operation: pre_recorded.",
+          "children": []
+        },
+        {
+          "shortCode": "punctuation_enhanced",
+          "label": "punctuation_enhanced",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `punctuation_enhanced` for operation: pre_recorded.",
+          "children": []
+        },
+        {
+          "shortCode": "callback",
+          "label": "callback",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `callback` for operation: pre_recorded.",
+          "children": []
+        },
+        {
+          "shortCode": "callback_config",
+          "label": "callback_config",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `callback_config` for operation: pre_recorded.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_metadata",
+          "label": "custom_metadata",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `custom_metadata` for operation: pre_recorded.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "69dcc161-6082-4987-9bf0-66f6072f31a2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (id, result_url, or full result). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Gladia JSON.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "78499466-9ed3-4115-952a-8702d4bb245f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Gladia verb. EXACT: pre_recorded | get_transcript | live. Default pre_recorded = POST /v2/pre-recorded. live = ingress (no socket).",
+      "value": "pre_recorded",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "pre_recorded",
+        "get_transcript",
+        "live"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "782da5f1-9f7f-4327-8b1d-eba1a8861bc8",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Gladia API key. Sent as x-gladia-key. StudioQuack secret only. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "63b09001-a638-4475-9648-44f38306cf25",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 60. Floor 1.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

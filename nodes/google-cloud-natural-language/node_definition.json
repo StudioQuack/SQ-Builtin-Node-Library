@@ -1,0 +1,212 @@
+{
+  "_id": "27c6fe78-fa00-4ed7-821b-420ba0748d61",
+  "version": "1.0.0",
+  "name": "Google Cloud Natural Language",
+  "label": "Cloud Natural Language API v2",
+  "description": "Official Cloud Natural Language REST v2 at https://language.googleapis.com. operation: analyze_sentiment (POST /v2/documents:analyzeSentiment), analyze_entities (POST /v2/documents:analyzeEntities), classify (POST /v2/documents:classifyText), moderate_text (POST /v2/documents:moderateText). analyze_syntax is v1-only and is omitted. Auth is Google API key via header x-goog-api-key. Body uses the official Document object. Docs: https://docs.cloud.google.com/natural-language/docs/reference/rest.",
+  "icon": "translate",
+  "tags": [
+    "google",
+    "cloud",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b4a8b646-8355-48d4-8a5f-5985d747fede",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Natural Language v2 call. Set operation plus document or type+content (or gcsContentUri). Do not put api_key here. Example: {\"operation\":\"classify\",\"type\":\"PLAIN_TEXT\",\"content\":\"The restaurant was excellent.\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "analyze_sentiment",
+          "description": "Overrides config operation. EXACT: analyze_sentiment | analyze_entities | classify | moderate_text.",
+          "children": []
+        },
+        {
+          "shortCode": "document",
+          "label": "document",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official Document object escape hatch {type, content|gcsContentUri, languageCode}. Merged with type/content/languageCode/gcsContentUri via bodyMap. Example: {\"type\":\"PLAIN_TEXT\",\"content\":\"Great product.\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "encodingType",
+          "label": "encodingType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Offset encoding for sentiment/entities. EXACT: NONE | UTF8 | UTF16 | UTF32. Omit to use API default.",
+          "children": []
+        },
+        {
+          "shortCode": "modelVersion",
+          "label": "modelVersion",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional moderate_text modelVersion. EXACT: MODEL_VERSION_UNSPECIFIED | MODEL_VERSION_1 | MODEL_VERSION_2. v2 adds severity for a subset of categories. Omit → API default (v1 confidence only).",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "Document type",
+          "type": "string",
+          "required": false,
+          "value": "PLAIN_TEXT",
+          "description": "Document.type for every operation. EXACT: PLAIN_TEXT | HTML. Required by the API when building document from content (not when a full document object is sent). Example: PLAIN_TEXT.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "Text content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document.content — the text to analyse. Use this or gcsContentUri (not both). Example: The restaurant was excellent. Used by analyze_sentiment, analyze_entities, classify, moderate_text.",
+          "children": []
+        },
+        {
+          "shortCode": "languageCode",
+          "label": "Language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document.languageCode (ISO / BCP-47). Omit to auto-detect. Example: en. Used by all four operations.",
+          "children": []
+        },
+        {
+          "shortCode": "gcsContentUri",
+          "label": "GCS URI",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document.gcsContentUri when the text lives in Cloud Storage. Form: gs://bucket/object. Mutually exclusive with content.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0a9dcd8c-6645-4f55-aac0-bb75cfe8ef56",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (v2 JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (documentSentiment, entities, categories, moderationCategories).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "88743adb-dcd1-4e55-853a-3d45daa0c090",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default v2 method. EXACT: analyze_sentiment | analyze_entities | classify | moderate_text. classify = POST /v2/documents:classifyText. moderate_text = POST /v2/documents:moderateText. analyze_syntax is not in v2.",
+      "value": "analyze_sentiment",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "analyze_sentiment",
+        "analyze_entities",
+        "classify",
+        "moderate_text"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "204c8802-f940-4987-b6d4-a06198e34206",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Google Cloud API key with Cloud Natural Language API enabled. Sent as x-goog-api-key. StudioQuack secret. Never on INPUT. Never logged. OAuth access tokens are not minted by OfficialApiNode.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d57adea2-08d1-4b2d-af70-c1dbd9d05312",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 25. Floor 1.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

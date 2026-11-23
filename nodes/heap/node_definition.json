@@ -1,0 +1,236 @@
+{
+  "_id": "1053d652-af3d-4478-b8cf-a6498a5cfd7d",
+  "version": "1.0.0",
+  "name": "Heap",
+  "label": "Heap — server-side track / identify / properties",
+  "description": "Official Heap server-side HTTP ingest. Handler: OfficialApiNode. POST /api/track, /api/v1/identify, /api/add_user_properties, /api/add_account_properties. app_id goes in the JSON body (auth type none). region selects the official host (heapanalytics.com or c.eu.heap-api.com). Not heatmap/session-replay export and not browser heap.js. Customer owns the Heap workspace. Minimize properties (no government IDs or health data). Never log identity or emails.",
+  "icon": "analytics",
+  "tags": [
+    "analytics"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f6441a73-921d-4d12-9944-24a049abe3b3",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation ingest fields plus app_id (OfficialApiNode bodyFrom reads INPUT only — copy config app_id onto input). track: event and exactly one of identity|user_id. identify: user_id+identity. addUserProperties: identity+properties. addAccountProperties: account_id+properties or accounts[]. Do not put secrets here. Example: {\"operation\":\"track\",\"app_id\":\"11\",\"identity\":\"ada@example.com\",\"event\":\"Signup\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "track",
+          "description": "Overrides config operation when non-blank. EXACT: 'track' | 'identify' | 'addUserProperties' | 'addAccountProperties'.",
+          "children": []
+        },
+        {
+          "shortCode": "app_id",
+          "label": "app_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Heap environment ID (Main Production). JSON body app_id. Also set in config; copy onto INPUT so it is posted.",
+          "children": []
+        },
+        {
+          "shortCode": "event",
+          "label": "event",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "track: event name. Max 255 chars.",
+          "children": []
+        },
+        {
+          "shortCode": "identity",
+          "label": "identity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Case-sensitive identity. Max 255. track: mutually exclusive with user_id.",
+          "children": []
+        },
+        {
+          "shortCode": "user_id",
+          "label": "user_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Heap SDK user id (decimal string, 0 … 2^53−1). identify required.",
+          "children": []
+        },
+        {
+          "shortCode": "timestamp",
+          "label": "timestamp",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO-8601. Heap defaults to now.",
+          "children": []
+        },
+        {
+          "shortCode": "properties",
+          "label": "properties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Heap event or user properties map. track / addUserProperties / addAccountProperties. Example: {\"plan\":\"pro\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "account_id",
+          "label": "account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "addAccountProperties single account id unless accounts[] is sent.",
+          "children": []
+        },
+        {
+          "shortCode": "accounts",
+          "label": "accounts",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Bulk { account_id, properties }[]. Max 1000.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5f88da79-2978-437f-9b20-4944679153e9",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (Heap often {}). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "3d1ac5aa-28da-4fc3-a9b0-e8fcfc560670",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: track | identify | addUserProperties | addAccountProperties.",
+      "value": "track",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "track",
+        "identify",
+        "addUserProperties",
+        "addAccountProperties"
+      ]
+    },
+    {
+      "_id": "7284f3ce-d15e-424b-8e14-5aa6e0548716",
+      "shortCode": "app_id",
+      "label": "App ID",
+      "type": "string",
+      "description": "Heap environment ID of Main Production. OfficialApiNode posts it only if also present on INPUT (bodyFrom). Never log next to identities.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d23507cc-9279-4752-a478-0d1bdfab62ad",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "select",
+      "description": "Official ingest host. US: heapanalytics.com. EU: c.eu.heap-api.com (https://developers.heap.io/reference/server-side-apis-overview). Interpolated into baseUrl.",
+      "value": "heapanalytics.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "heapanalytics.com",
+        "c.eu.heap-api.com"
+      ]
+    },
+    {
+      "_id": "68f8a5ba-5edb-45ef-98bb-c6b0437edc0b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

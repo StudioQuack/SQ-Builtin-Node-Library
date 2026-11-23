@@ -1,0 +1,88 @@
+{
+  "baseUrl": "https://api.calendly.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "list-event-types": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/event_types",
+      "contentType": "application/json",
+      "queryFrom": [
+        "user",
+        "organization",
+        "count",
+        "page_token"
+      ]
+    },
+    "get-event": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/scheduled_events/{uuid}",
+      "contentType": "application/json",
+      "required": [
+        "uuid"
+      ]
+    },
+    "list-events": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/scheduled_events",
+      "contentType": "application/json",
+      "queryFrom": [
+        "user",
+        "organization",
+        "status",
+        "min_start_time",
+        "max_start_time",
+        "count"
+      ]
+    },
+    "cancel-event": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/scheduled_events/{uuid}/cancellation",
+      "contentType": "application/json",
+      "required": [
+        "uuid"
+      ],
+      "bodyFrom": [
+        "reason"
+      ]
+    },
+    "list-invitees": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/scheduled_events/{uuid}/invitees",
+      "contentType": "application/json",
+      "required": [
+        "uuid"
+      ],
+      "queryFrom": [
+        "count",
+        "page_token"
+      ]
+    },
+    "create-invitee-no-show": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/invitee_no_shows",
+      "contentType": "application/json",
+      "required": [
+        "invitee"
+      ],
+      "bodyFrom": [
+        "invitee"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

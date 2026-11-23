@@ -1,0 +1,266 @@
+{
+  "_id": "9ddb5309-061e-43be-839b-9a3d99382deb",
+  "version": "1.0.0",
+  "name": "Discourse",
+  "label": "Discourse REST — topics, posts, users, search",
+  "description": "Official Discourse REST at the forum origin (api_spec.json baseUrl defaults to https://try.discourse.org — replace with the customer forum origin). Handler: OfficialApiNode. Auth header Api-Key from secret api_key; extraHeaders send required Api-Username: {api_username}. Customer owns the forum and key. Never log api_key. Docs: https://docs.discourse.org/",
+  "icon": "forum",
+  "tags": [
+    "discourse",
+    "social"
+  ],
+  "category": "Social Media",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "92d36ab2-1008-49a1-9a18-8353e3a6660e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. topic_create needs title + raw (category optional numeric id). topic_get needs topic_id. post_create needs raw + topic_id. user_get needs username. search needs q. Do not put api_key here. Example: {\"operation\":\"topic_get\",\"topic_id\":\"123\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "topic_create",
+          "description": "Overrides config operation when non-blank. EXACT: topic_create | topic_get | post_create | user_get | search | trigger.",
+          "children": []
+        },
+        {
+          "shortCode": "forum_host",
+          "label": "forum_host",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Discourse forum hostname only (no scheme). Also config. Example: meta.discourse.org.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "topic_create title. Required for topic_create.",
+          "children": []
+        },
+        {
+          "shortCode": "raw",
+          "label": "raw",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Markdown body for topic_create / post_create. Official `raw`.",
+          "children": []
+        },
+        {
+          "shortCode": "category",
+          "label": "category",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Numeric category id for topic_create (not a slug). Optional. Example: 4.",
+          "children": []
+        },
+        {
+          "shortCode": "topic_id",
+          "label": "topic_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Topic id for topic_get (GET /t/{topic_id}.json) and post_create. Example: '123'.",
+          "children": []
+        },
+        {
+          "shortCode": "username",
+          "label": "username",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Discourse username for user_get (GET /u/{username}.json). Example: 'alice'.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search query for search (GET /search.json). Same operators as on-site search. Example: 'workflow after:2026-01-01'.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "topic_create tag names.",
+          "children": []
+        },
+        {
+          "shortCode": "target_recipients",
+          "label": "target_recipients",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "topic_create PM recipients, comma-separated usernames.",
+          "children": []
+        },
+        {
+          "shortCode": "reply_to_post_number",
+          "label": "reply_to_post_number",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "post_create reply_to_post_number.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "2b5d313c-877b-4ed6-bf17-19ce9b9d6871",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (forum JSON). trigger returns the BPMN message-event instruction — it does not open a socket. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (topic, post, user, or search hits).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "32822801-19ea-4640-b1bc-756fb5deebfe",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: topic_create | topic_get | post_create | user_get | search | trigger.",
+      "value": "topic_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "topic_create",
+        "topic_get",
+        "post_create",
+        "user_get",
+        "search",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "2ae9d50e-9992-41d0-9eef-fb6670c4c91e",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Discourse API key (StudioQuack secret). Sent as header Api-Key. Never log or place on INPUT. Admin → API → New API Key. Pair with config api_username (extraHeaders Api-Username).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6f3a3710-628a-47bb-9a07-239570393356",
+      "shortCode": "api_username",
+      "label": "API username",
+      "type": "string",
+      "description": "Discourse acting username sent as Api-Username (required with Api-Key). Example: 'system'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "15e15e50-7b54-4847-b3de-fde6f022bdc6",
+      "shortCode": "forum_host",
+      "label": "Forum Host",
+      "type": "string",
+      "description": "Discourse forum hostname only (no scheme). Interpolated as https://{forum_host}. Example: meta.discourse.org.",
+      "value": "try.discourse.org",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2564e3f3-89a4-46eb-b563-b5dc9188be56",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

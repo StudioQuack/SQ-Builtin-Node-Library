@@ -1,0 +1,438 @@
+{
+  "_id": "cec54cdc-1f03-46a3-ae6a-d37e4d88ce9f",
+  "version": "1.0.0",
+  "name": "Lemlist",
+  "label": "lemlist REST v2 — campaigns, leads, enrichment",
+  "description": "Official lemlist REST v2 at https://api.lemlist.com/api. Handler: OfficialApiNode. HTTP Basic empty-user + api_key password. LinkedIn profile URL fields are operator-supplied data only — this node does not scrape LinkedIn; operator must honor LinkedIn terms. trigger.listen is ingress. Customer owns the lemlist account. api_key is never logged or returned.",
+  "icon": "outgoing_mail",
+  "tags": [
+    "outreach"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b20368bc-4a84-4341-a5c0-edfe25ce76b6",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put api_key here. Send version=v2 on campaign.list. Example: {\"operation\":\"campaign.list\",\"version\":\"v2\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "lead.create",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs including trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "campaign_id",
+          "label": "campaign_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Campaign id for lead.create / lead.delete / lead.unsubscribe / campaign.stats / activity.list.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lead email. lead.create / lead.unsubscribe (with campaign_id) / enrichPerson. unsubscribe.add and unsubscribe.delete also accept this when value is blank.",
+          "children": []
+        },
+        {
+          "shortCode": "email_or_id",
+          "label": "email_or_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lead email or id for lead.get / lead.delete.",
+          "children": []
+        },
+        {
+          "shortCode": "firstName",
+          "label": "firstName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official firstName for lead.create / enrichPerson.",
+          "children": []
+        },
+        {
+          "shortCode": "lastName",
+          "label": "lastName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official lastName for lead.create / enrichPerson.",
+          "children": []
+        },
+        {
+          "shortCode": "companyName",
+          "label": "companyName",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official companyName for lead.create.",
+          "children": []
+        },
+        {
+          "shortCode": "jobTitle",
+          "label": "jobTitle",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official jobTitle for lead.create.",
+          "children": []
+        },
+        {
+          "shortCode": "linkedinUrl",
+          "label": "linkedinUrl",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official linkedinUrl for lead.create / enrichPerson.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official phone for lead.create.",
+          "children": []
+        },
+        {
+          "shortCode": "companyDomain",
+          "label": "companyDomain",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official companyDomain for lead.create / enrichPerson.",
+          "children": []
+        },
+        {
+          "shortCode": "timezone",
+          "label": "timezone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official timezone for lead.create. Example: America/New_York.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_variables",
+          "label": "custom_variables",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Extra lead variables for lead.create.",
+          "children": []
+        },
+        {
+          "shortCode": "deduplicate",
+          "label": "deduplicate",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "lead.create query deduplicate.",
+          "children": []
+        },
+        {
+          "shortCode": "linkedinEnrichment",
+          "label": "linkedinEnrichment",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Query/body: credits. LinkedIn ToS on caller.",
+          "children": []
+        },
+        {
+          "shortCode": "findEmail",
+          "label": "findEmail",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Enrich flag.",
+          "children": []
+        },
+        {
+          "shortCode": "verifyEmail",
+          "label": "verifyEmail",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Enrich flag.",
+          "children": []
+        },
+        {
+          "shortCode": "findPhone",
+          "label": "findPhone",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Enrich flag.",
+          "children": []
+        },
+        {
+          "shortCode": "findLinkedin",
+          "label": "findLinkedin",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Legacy alias of linkedinEnrichment for enrichPerson. The wire flag is linkedinEnrichment.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Unsubscribe variable for unsubscribe.add / unsubscribe.delete: email, domain, LinkedIn URL, or phone. email or domain fills this when blank. Example: john.doe@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "lead_id",
+          "label": "lead_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Existing lead for enrichLead.",
+          "children": []
+        },
+        {
+          "shortCode": "enrichment_id",
+          "label": "enrichment_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job id for enrichment.get.",
+          "children": []
+        },
+        {
+          "shortCode": "version",
+          "label": "version",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Send v2 on list endpoints that default to v1.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Pagination.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Offset.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Activity type filter.",
+          "children": []
+        },
+        {
+          "shortCode": "domain",
+          "label": "domain",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Domain for unsubscribe.add / unsubscribe.delete when value and email are blank. Example: example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "action",
+          "label": "action",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "lead.delete query action. Typical: remove | delete.",
+          "children": []
+        },
+        {
+          "shortCode": "find_email",
+          "label": "find_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Legacy alias of findEmail for enrichment.enrichLead / enrichPerson. The wire flag is the findEmail query parameter.",
+          "children": []
+        },
+        {
+          "shortCode": "find_phone",
+          "label": "find_phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Legacy alias of findPhone for enrichment.enrichLead / enrichPerson. The wire flag is the findPhone query parameter.",
+          "children": []
+        },
+        {
+          "shortCode": "linkedin_enrichment",
+          "label": "linkedin_enrichment",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Legacy alias of linkedinEnrichment. The wire flag is the linkedinEnrichment query parameter.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "51bc82fe-07fd-4746-9161-469e3aa5758f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Do not log emails, phones, or secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "dd7050cc-ccef-4aad-bc35-e547685c075d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT lemlist verbs.",
+      "value": "campaign.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "lead.create",
+        "lead.get",
+        "lead.delete",
+        "lead.unsubscribe",
+        "campaign.list",
+        "campaign.stats",
+        "activity.list",
+        "enrichment.get",
+        "enrichment.enrichLead",
+        "enrichment.enrichPerson",
+        "team.get",
+        "team.credits",
+        "unsubscribe.add",
+        "unsubscribe.delete",
+        "unsubscribe.list",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "ad2b3109-23b6-4c15-a42b-9f03f8819902",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "lemlist integration key (StudioQuack secret). HTTP Basic password with empty username. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2dc23615-ed9d-461a-8183-d24b1b302b26",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Enrichment may need the full window.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

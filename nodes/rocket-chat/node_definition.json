@@ -1,0 +1,227 @@
+{
+  "_id": "b795d16e-f55f-5388-a0a7-265a0f3deb14",
+  "version": "1.0.0",
+  "name": "Rocket.Chat",
+  "label": "Rocket.Chat — Rocket.Chat REST API",
+  "description": "Rocket.Chat via the official Rocket.Chat REST API. Host is customer-supplied (config host). Docs: https://developer.rocket.chat/apidocs and https://developer.rocket.chat/apidocs/authentication-api. Every authenticated call sends X-Auth-Token (auth_token) plus X-User-Id ({user_id} extraHeader). listen = BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "forum",
+  "tags": [
+    "chat"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "ef85ddf8-b984-5964-99ad-0d8dd5d95b23",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Rocket.Chat operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"post-message\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "post-message",
+          "description": "Which official call to run. EXACT values: post-message | send-dm | list-channels | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "channel",
+          "label": "channel",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Channel name or #channel. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "roomId",
+          "label": "roomId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "DM / room id for send-dm. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message text. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "alias",
+          "label": "alias",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `alias` for operation: post-message.",
+          "children": []
+        },
+        {
+          "shortCode": "count",
+          "label": "count",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `count` for operation: list-channels.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `offset` for operation: list-channels.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "202ee765-7c37-522f-8b1b-7da3c4bc5f0b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "7d1af879-5bb3-5d38-bf18-ff89cd99775a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: post-message, send-dm, list-channels, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "post-message",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "post-message",
+        "send-dm",
+        "list-channels",
+        "listen"
+      ]
+    },
+    {
+      "_id": "d2cdf363-ddea-5fd4-b2c3-69ff2dde99b1",
+      "shortCode": "auth_token",
+      "label": "Auth token",
+      "type": "password",
+      "description": "Rocket.Chat personal auth token (X-Auth-Token). StudioQuack secret. Pair with user_id. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3327fca3-6ca3-5323-a4c7-0a8ee3ab7840",
+      "shortCode": "host",
+      "label": "host",
+      "type": "string",
+      "description": "Rocket.Chat host (no scheme).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "69b33d90-0f0f-54e0-b1c6-33ca71f9ede3",
+      "shortCode": "user_id",
+      "label": "user_id",
+      "type": "string",
+      "description": "Rocket.Chat user id sent as header X-User-Id on every authenticated call (with X-Auth-Token). Required. Never put the auth token on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fb610b7d-77da-5066-8db9-5a045d223f29",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

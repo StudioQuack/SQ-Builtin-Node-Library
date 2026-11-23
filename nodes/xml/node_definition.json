@@ -1,0 +1,257 @@
+{
+  "_id": "00805b5d-ba07-4a28-a725-171609d4abed",
+  "version": "1.0.0",
+  "name": "XML",
+  "label": "JSON ↔ XML 1.0",
+  "description": "Converts JSON to XML 1.0 and back. External entities and DTD fetch are disabled (XXE).",
+  "icon": "",
+  "tags": [
+    "xml",
+    "json",
+    "convert"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d51f74b7-2e03-4b96-a571-d386c146d2e7",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One XML operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'json_to_xml'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "item",
+          "label": "item",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "JSON for json_to_xml.",
+          "children": []
+        },
+        {
+          "shortCode": "xml",
+          "label": "xml",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "XML document for xml_to_json.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "0e2dcb19-6dfa-4f4d-8ba0-64802135c956",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "6a6ef36e-8e1f-40bb-8616-04fecea04036",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: json_to_xml | xml_to_json. Required. Example: 'json_to_xml'.",
+      "value": "json_to_xml",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "json_to_xml",
+        "xml_to_json"
+      ],
+      "filterRules": [
+        {
+          "when": "json_to_xml",
+          "targets": [
+            {
+              "param": "property",
+              "visible": true
+            },
+            {
+              "param": "root_name",
+              "visible": true
+            },
+            {
+              "param": "cdata",
+              "visible": true
+            },
+            {
+              "param": "item",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "xml_to_json",
+          "targets": [
+            {
+              "param": "xml",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "8fd23b9e-1ebf-400e-be05-cd26fd615604",
+      "shortCode": "property",
+      "label": "Property",
+      "type": "string",
+      "description": "Wrapper property name when converting a fragment.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2e64927b-4c30-4aa6-967f-a000db514bee",
+      "shortCode": "root_name",
+      "label": "Root Name",
+      "type": "string",
+      "description": "Root element name for json_to_xml. Default 'root'.",
+      "value": "root",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "199af866-d1c2-4ebe-9658-d7162c6f9ef8",
+      "shortCode": "attr_key",
+      "label": "Attr Key",
+      "type": "string",
+      "description": "JSON key prefix treated as attributes. Default '@'.",
+      "value": "@",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "66af9ad1-af6d-4ab8-9ac5-1fdd34a60606",
+      "shortCode": "cdata",
+      "label": "Cdata",
+      "type": "select",
+      "description": "Wrap text in CDATA. Default false.",
+      "value": "false",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "false",
+        "true"
+      ]
+    },
+    {
+      "_id": "00e0c0aa-9d44-49d5-a54b-1a1e8d044fbb",
+      "shortCode": "item",
+      "label": "Item",
+      "type": "object",
+      "description": "JSON object or array to encode. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "22738323-967a-4d59-af19-85aa9f95e58e",
+      "shortCode": "xml",
+      "label": "Xml",
+      "type": "string",
+      "description": "XML document. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "91c0d1a5-d0ce-49ca-a8f0-295ecdb037d2",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

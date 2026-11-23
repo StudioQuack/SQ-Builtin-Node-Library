@@ -1,0 +1,338 @@
+{
+  "_id": "3c67660e-451d-4693-8628-a6a00e8df9c2",
+  "version": "1.0.0",
+  "name": "Date & Time",
+  "label": "ISO-8601 / IANA timezone",
+  "description": "now, add, subtract, format, extract, diff, round using ISO-8601 / RFC 3339 and IANA time zones. Daemon clock only — no remote time API.",
+  "icon": "",
+  "tags": [
+    "date",
+    "time",
+    "timezone"
+  ],
+  "category": "Utilities & Core",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "cdc583e7-c97c-49ee-8cd6-9bac17a05686",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Date & Time operation. Set operation (or rely on config). Secrets stay in configurationParameters. Example operation: 'now'.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "datetime",
+          "label": "datetime",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "RFC 3339 / ISO-8601 instant. Default now for add/subtract.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Delta for add/subtract.",
+          "children": []
+        },
+        {
+          "shortCode": "other",
+          "label": "other",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Second instant for diff.",
+          "children": []
+        },
+        {
+          "shortCode": "part",
+          "label": "part",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "year|month|day|hour|minute|second|dow for extract.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "81522b96-184a-4d58-a428-9b823c5bcf27",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result as JSON (`status`/`data`). Secrets redacted. File-producing ops also set `file` (type file). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on success. EXACT value: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Operation payload (parsed JSON or engine result). Absent when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "HTTP status when the op is an official HTTP call. Absent for in-process ops.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "1ff19abc-8f31-4b2e-8e28-57a8d1a9789d",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Which capability to run. EXACT accepted values: now | add | subtract | format | extract | diff | round. Required. Example: 'now'.",
+      "value": "now",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "now",
+        "add",
+        "subtract",
+        "format",
+        "extract",
+        "diff",
+        "round"
+      ],
+      "filterRules": [
+        {
+          "when": "add",
+          "targets": [
+            {
+              "param": "datetime",
+              "visible": true
+            },
+            {
+              "param": "amount",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "subtract",
+          "targets": [
+            {
+              "param": "datetime",
+              "visible": true
+            },
+            {
+              "param": "amount",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "format",
+          "targets": [
+            {
+              "param": "datetime",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "extract",
+          "targets": [
+            {
+              "param": "datetime",
+              "visible": true
+            },
+            {
+              "param": "part",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "diff",
+          "targets": [
+            {
+              "param": "datetime",
+              "visible": true
+            },
+            {
+              "param": "other",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "round",
+          "targets": [
+            {
+              "param": "datetime",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "ec10da2b-48db-48c1-a470-7691b3c46b68",
+      "shortCode": "timezone",
+      "label": "Timezone",
+      "type": "string",
+      "description": "IANA TZ. Default UTC.",
+      "value": "UTC",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "14f73296-8ffa-4111-8d9b-ac2820b5ff4f",
+      "shortCode": "format",
+      "label": "Format",
+      "type": "string",
+      "description": "DateTimeFormatter pattern or iso. Default iso.",
+      "value": "iso",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e1b98b98-04f1-4ff1-a84d-48ac12a955ea",
+      "shortCode": "unit",
+      "label": "Unit",
+      "type": "select",
+      "description": "seconds|minutes|hours|days|weeks|months|years.",
+      "value": "days",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "seconds",
+        "minutes",
+        "hours",
+        "days",
+        "weeks",
+        "months",
+        "years"
+      ]
+    },
+    {
+      "_id": "3d53e3fe-f034-4e17-94b5-63f3a38f91a1",
+      "shortCode": "datetime",
+      "label": "Datetime",
+      "type": "string",
+      "description": "RFC 3339 / ISO-8601. add/subtract uses now when this is empty. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e98cfe7b-d7e1-4672-b700-aec11bae97f7",
+      "shortCode": "amount",
+      "label": "Amount",
+      "type": "number",
+      "description": "How many units to add or subtract. Empty uses 1. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d1313a4c-55c8-4009-8976-4481cd9d3a89",
+      "shortCode": "other",
+      "label": "Other",
+      "type": "string",
+      "description": "The other RFC 3339 datetime. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2cab600d-40af-4c4d-b683-92cdd6fccbd5",
+      "shortCode": "part",
+      "label": "Part",
+      "type": "string",
+      "description": "EXACT: year, month, day, hour, minute, second, dow. INPUT wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6b797a69-a0d5-48c1-9e41-564b471ba6d6",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read / run budget in seconds. Positive integer. Blank/0/negative → 25. Keep at or below the sandbox request budget. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

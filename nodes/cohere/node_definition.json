@@ -1,0 +1,585 @@
+{
+  "_id": "8bdba884-6ddc-4bbf-8730-c95e304db20a",
+  "version": "1.0.0",
+  "name": "Cohere",
+  "label": "Cohere",
+  "description": "Official Cohere API (Chat v2 + Embed v2 + Rerank v2 + Tokenize v1) on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). Classify was removed: Cohere retired POST /v1/classify on 2025-09-25. Auth is StudioQuack secret api_key sent as Authorization Bearer. command-a-reasoning thinking content chunks stream on the thinking channel automatically. Image embed inputs use type file (platform ref-id). Docs: https://docs.cohere.com/reference/chat. Terms: https://cohere.com/saas-agreement. Never log api_key.",
+  "icon": "psychology",
+  "tags": [
+    "cohere",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b007b340-bd19-47d0-9cde-bdd6236092f6",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {operation?, messages?, tools?, texts?, query?, documents?, inputs?, text?, file?}. AI Agent DuckTape maps tool request fields here. Image embed uses type file. Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Override config operation. EXACT: chat | embed | rerank | tokenize. When set on llm_input, routing uses this verb (not only instance config).",
+          "children": []
+        },
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Chat v2 messages [{role, content}]. Roles: system, user, assistant, tool. Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional Chat v2 tool definitions (array of objects with name/description/parameter_definitions). Omit or [] sends no tools. Do not send bare strings.",
+          "children": []
+        },
+        {
+          "shortCode": "texts",
+          "label": "texts",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "embed texts (max 96 per call).",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "rerank query string.",
+          "children": []
+        },
+        {
+          "shortCode": "documents",
+          "label": "documents",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "rerank documents (list of strings). Recommend ≤1000.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for embed images (data URI on the wire only). Never inline bytes in graph JSON.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "strict_tools",
+          "label": "strict_tools",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `strict_tools` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "citation_options",
+          "label": "citation_options",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `citation_options` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "response_format",
+          "label": "response_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `response_format` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "safety_mode",
+          "label": "safety_mode",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `safety_mode` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens",
+          "label": "max_tokens",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_tokens` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "k",
+          "label": "k",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `k` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "p",
+          "label": "p",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `p` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `seed` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "stop_sequences",
+          "label": "stop_sequences",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `stop_sequences` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "frequency_penalty",
+          "label": "frequency_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `frequency_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "presence_penalty",
+          "label": "presence_penalty",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `presence_penalty` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "input_type",
+          "label": "input_type",
+          "type": "select",
+          "required": false,
+          "value": "",
+          "description": "Embed v2 input type. Required for embed (defaults to search_document when texts/images/inputs are set). EXACT: search_document | search_query | classification | clustering | image.",
+          "options": [
+            "search_document",
+            "search_query",
+            "classification",
+            "clustering",
+            "image"
+          ],
+          "children": []
+        },
+        {
+          "shortCode": "images",
+          "label": "images",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `images` for operation: embed.",
+          "children": []
+        },
+        {
+          "shortCode": "inputs",
+          "label": "inputs",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Embed inputs array. Used by embed together with input_type.",
+          "children": []
+        },
+        {
+          "shortCode": "temperature",
+          "label": "temperature",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Chat sampling on the wire when set on llm_input; overrides instance config. Omitted when blank.",
+          "children": []
+        },
+        {
+          "shortCode": "embedding_types",
+          "label": "embedding_types",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `embedding_types` for operation: embed.",
+          "children": []
+        },
+        {
+          "shortCode": "truncate",
+          "label": "truncate",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `truncate` for operation: embed.",
+          "children": []
+        },
+        {
+          "shortCode": "output_dimension",
+          "label": "output_dimension",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `output_dimension` for operation: embed.",
+          "children": []
+        },
+        {
+          "shortCode": "top_n",
+          "label": "top_n",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `top_n` for operation: rerank.",
+          "children": []
+        },
+        {
+          "shortCode": "max_tokens_per_doc",
+          "label": "max_tokens_per_doc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `max_tokens_per_doc` for operation: rerank.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `text` for operation: tokenize. Required by: tokenize.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "f3f22793-5d78-48fb-b162-69d122be0723",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Cohere JSON (chat, embed, rerank, or tokenize).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "ea6234c4-10a7-46e6-9bd9-e182f3a38679",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Cohere verb. EXACT values: chat | embed | rerank | tokenize. Default chat = POST /v2/chat. classify was removed (Cohere retired /v1/classify on 2025-09-25).",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "embed",
+        "rerank",
+        "tokenize"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "de71ac41-1e24-435c-91a8-6dc9c9711bb2",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Cohere dashboard API key. Sent as Authorization Bearer. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "db98a3b8-125c-4098-b65c-38feffa331b4",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Model id. Default command-a-plus-05-2026 for chat (current Command A+). Other live chat: command-a-03-2025, command-a-reasoning-08-2025, command-a-vision-07-2025, command-a-translate-08-2025, command-r7b-12-2024, command-r-plus-08-2024, command-r-08-2024. Use embed-v4.0 / rerank-v4.0-pro for embed/rerank. Docs: https://docs.cohere.com/docs/models .",
+      "value": "command-a-plus-05-2026",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "command-a-plus-05-2026",
+        "command-a-03-2025",
+        "command-a-reasoning-08-2025",
+        "command-a-vision-07-2025",
+        "command-a-translate-08-2025",
+        "command-r7b-12-2024",
+        "command-r-plus-08-2024",
+        "command-r-08-2024",
+        "embed-v4.0",
+        "rerank-v4.0-pro"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "44d81996-9c18-43e4-88e1-a4122eddad13",
+      "shortCode": "temperature",
+      "label": "Temperature",
+      "type": "number",
+      "description": "Chat temperature when present on INPUT. Empty → omitted (not sent to Cohere).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d68482a9-2260-465c-928f-8117744c9853",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cda634ee-c039-4272-99d5-008f69338ac8",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether Cohere requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,128 @@
+{
+  "baseUrl": "https://",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "create-user": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{baseHost}/admin/realms/{realm}/users",
+      "required": ["username"],
+      "bodyFrom": ["username", "email", "enabled", "firstName", "lastName", "emailVerified", "attributes", "credentials", "groups", "requiredActions"]
+    },
+    "get-user": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{baseHost}/admin/realms/{realm}/users/{userId}",
+      "required": ["userId"]
+    },
+    "list-users": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{baseHost}/admin/realms/{realm}/users",
+      "queryFrom": ["search", "username", "email", "firstName", "lastName", "first", "max", "exact", "enabled", "emailVerified", "q"]
+    },
+    "update-user": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "{baseHost}/admin/realms/{realm}/users/{userId}",
+      "required": ["userId"],
+      "bodyFrom": ["username", "email", "enabled", "firstName", "lastName", "emailVerified", "attributes", "requiredActions"]
+    },
+    "delete-user": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "{baseHost}/admin/realms/{realm}/users/{userId}",
+      "required": ["userId"]
+    },
+    "reset-password": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "{baseHost}/admin/realms/{realm}/users/{userId}/reset-password",
+      "required": ["userId"],
+      "bodyFrom": ["type", "value", "temporary"]
+    },
+    "create-group": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{baseHost}/admin/realms/{realm}/groups",
+      "required": ["name"],
+      "bodyFrom": ["name", "path", "attributes"]
+    },
+    "list-groups": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{baseHost}/admin/realms/{realm}/groups",
+      "queryFrom": ["search", "first", "max", "briefRepresentation", "exact", "q"]
+    },
+    "create-client": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{baseHost}/admin/realms/{realm}/clients",
+      "required": ["clientId"],
+      "bodyFrom": ["clientId", "name", "description", "enabled", "protocol", "publicClient", "secret", "redirectUris", "webOrigins", "standardFlowEnabled", "directAccessGrantsEnabled", "serviceAccountsEnabled"]
+    },
+    "get-client": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{baseHost}/admin/realms/{realm}/clients/{clientUuid}",
+      "required": ["clientUuid"]
+    },
+    "list-clients": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{baseHost}/admin/realms/{realm}/clients",
+      "queryFrom": ["clientId", "viewableOnly", "search", "first", "max", "q"]
+    },
+    "create-role": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{baseHost}/admin/realms/{realm}/roles",
+      "required": ["name"],
+      "bodyFrom": ["name", "description", "composite", "clientRole", "attributes"]
+    },
+    "assign-role": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{baseHost}/admin/realms/{realm}/users/{userId}/role-mappings/realm",
+      "required": ["userId", "roles"],
+      "bodyFrom": ["roles"]
+    },
+    "token-client-credentials": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{baseHost}/realms/{realm}/protocol/openid-connect/token",
+      "required": ["grant_type", "client_id"],
+      "bodyFrom": ["grant_type", "client_id", "client_secret", "scope"],
+      "contentType": "application/x-www-form-urlencoded",
+      "bodyFormat": "form"
+    },
+    "token-refresh": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{baseHost}/realms/{realm}/protocol/openid-connect/token",
+      "required": ["grant_type", "refresh_token"],
+      "bodyFrom": ["grant_type", "client_id", "client_secret", "refresh_token", "scope"],
+      "contentType": "application/x-www-form-urlencoded",
+      "bodyFormat": "form"
+    },
+    "token-introspect": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{baseHost}/realms/{realm}/protocol/openid-connect/token/introspect",
+      "required": ["token"],
+      "bodyFrom": ["token", "token_type_hint", "client_id", "client_secret"],
+      "contentType": "application/x-www-form-urlencoded",
+      "bodyFormat": "form"
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

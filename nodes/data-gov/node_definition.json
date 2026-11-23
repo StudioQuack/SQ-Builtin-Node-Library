@@ -1,0 +1,297 @@
+{
+  "_id": "988b172f-a753-53b8-8047-9e217c50037d",
+  "version": "1.0.0",
+  "name": "data.gov",
+  "label": "data.gov",
+  "description": "data.gov official API via OfficialApiNode (api_spec.json). Operations: search, keywords, organizations, locations_search, location_get, harvest_record, harvest_record_raw, harvest_record_transformed. Docs: https://resources.data.gov/catalog-api/. Catalog API v4 at https://api.gsa.gov/technology/datagov/v4. The CKAN host catalog.data.gov/api/3 was retired and is deliberately unused. Auth header X-Api-Key from configuration api_key. US catalog metadata is generally public-domain; honor each dataset license. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "database",
+  "tags": [
+    "open-data",
+    "catalog",
+    "us"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "2047ad0e-0eda-5cd2-89ca-4420cdde7381",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One data.gov request. Set operation plus the fields that operation requires. Do not put the API key on this port. Example: {\"operation\":\"search\",\"q\":\"climate\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: search | keywords | organizations | locations_search | location_get | harvest_record | harvest_record_raw | harvest_record_transformed. Default: search. Example: search.",
+          "children": [],
+          "_id": "bdce9d0e-5834-4cce-8299-9531f909666f"
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Full-text query for search, or place name for locations_search. Optional. Example: climate.",
+          "children": [],
+          "_id": "51819b17-4996-4088-b53b-4287db73e6ac"
+        },
+        {
+          "shortCode": "sort",
+          "label": "sort",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search only. EXACT: relevance | popularity | distance | last_harvested_date. Omit for relevance.",
+          "children": [],
+          "_id": "b41b28c7-7334-4de3-8581-a81c04b52f59"
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search only. Page size, integer, minimum 1. Omit for the provider default 10.",
+          "children": [],
+          "_id": "3891743d-3568-414e-ae81-9a4e4b1023af"
+        },
+        {
+          "shortCode": "org_slug",
+          "label": "org_slug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search only. Organization slug from organizations, for example nasa.",
+          "children": [],
+          "_id": "31ba26ad-23a7-4a84-ac5e-328972ec3d48"
+        },
+        {
+          "shortCode": "org_type",
+          "label": "org_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search only. EXACT: Federal Government | City Government | State Government | County Government | University | Tribal | Non-Profit.",
+          "children": [],
+          "_id": "a2e67774-22d8-47fe-95a1-6c9cc2bd69fb"
+        },
+        {
+          "shortCode": "keyword",
+          "label": "keyword",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search only. One exact keyword. Omit when unused.",
+          "children": [],
+          "_id": "804c41c1-3492-4515-b312-42f65797e197"
+        },
+        {
+          "shortCode": "spatial_filter",
+          "label": "spatial_filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search only. EXACT: geospatial | non-geospatial. Omit when unused.",
+          "children": [],
+          "_id": "4d80ff20-e4a4-4f85-a426-b64614066e7d"
+        },
+        {
+          "shortCode": "spatial_geometry",
+          "label": "spatial_geometry",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search only. GeoJSON geometry string. Omit when unused.",
+          "children": [],
+          "_id": "7e326c6a-8b31-4d05-a3b3-e02364790969"
+        },
+        {
+          "shortCode": "spatial_within",
+          "label": "spatial_within",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search only. true or false. Omit for false (intersect).",
+          "children": [],
+          "_id": "e91d4c4a-919e-4b5e-86c4-a4b29b2cfbd0"
+        },
+        {
+          "shortCode": "after",
+          "label": "after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search only. Cursor from the previous response after field. Omit on the first page.",
+          "children": [],
+          "_id": "927373e7-20b2-487d-8cdf-6b1a8297f682"
+        },
+        {
+          "shortCode": "size",
+          "label": "size",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "keywords or locations_search. Integer count. Omit for the provider default.",
+          "children": [],
+          "_id": "6d997955-88a7-4c13-9dda-6949ae7d3a89"
+        },
+        {
+          "shortCode": "min_count",
+          "label": "min_count",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "keywords only. Minimum dataset count. Omit for 1.",
+          "children": [],
+          "_id": "9f16769c-d517-48d6-a808-b825a82f7b15"
+        },
+        {
+          "shortCode": "location_id",
+          "label": "location_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required for location_get. UUID from locations_search.",
+          "children": [],
+          "_id": "e812504d-77e3-4941-b50f-aeda9af48ab0"
+        },
+        {
+          "shortCode": "record_id",
+          "label": "record_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Required for harvest_record, harvest_record_raw, and harvest_record_transformed. UUID.",
+          "children": [],
+          "_id": "f951003d-3577-49e6-a60a-30e1502038cf"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "5503f857-e112-5efd-91aa-f928d34618a8",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "85a0e272-f632-5bec-ae66-f3bf650d16ba"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "34a82472-3af1-53f9-89e7-831cf4615cb7"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "ad3cb411-f41d-5ef2-a502-0ea85a2e5bc2"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "3d457126-e5d5-5d87-91d6-98c9fbfc4b4b",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: search, keywords, organizations, locations_search, location_get, harvest_record, harvest_record_raw, harvest_record_transformed.",
+      "value": "search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "search",
+        "keywords",
+        "organizations",
+        "locations_search",
+        "location_get",
+        "harvest_record",
+        "harvest_record_raw",
+        "harvest_record_transformed"
+      ]
+    },
+    {
+      "_id": "c7f4e185-b7b3-4d33-a38d-c70ecd653917",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Provider secret sent as header X-Api-Key. Bind a StudioQuack secret. Never log, never put on INPUT. The provider trial value DEMO_KEY is rate-limited.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e90e4a89-710e-5d00-95cb-5ffd8fc0068c",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 30. Keep under the daemon sandbox request budget.",
+      "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

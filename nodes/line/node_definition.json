@@ -1,0 +1,217 @@
+{
+  "_id": "3a9333ea-c9eb-5c0a-8d25-cbbd72a743d5",
+  "version": "1.0.0",
+  "name": "LINE",
+  "label": "LINE — LINE Messaging API",
+  "description": "LINE via the official LINE Messaging API. Base https://api.line.me/v2. Docs: https://developers.line.biz/en/reference/messaging-api/. Messaging API only. LINE Notify ended 2025-04-01 — do not implement Notify. Canonical vs social-media.md Line row — same node. listen = webhook signature (channel secret) as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "chat",
+  "tags": [
+    "chat"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "84b4eecd-2e25-59a4-97cc-3630ba2cab1f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One LINE operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"push-message\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "push-message",
+          "description": "Which official call to run. EXACT values: push-message | reply-message | multicast | broadcast | get-profile | get-content | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User, group, or room id for push-message; list of user ids for multicast. Official to.",
+          "children": []
+        },
+        {
+          "shortCode": "replyToken",
+          "label": "replyToken",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Webhook reply token for reply-message. Official replyToken. Single use.",
+          "children": []
+        },
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "LINE Messaging API messages [{type, text, …}]. type EXACT typical: text | image | video | audio | sticker | location | flex. Max 5.",
+          "children": []
+        },
+        {
+          "shortCode": "userId",
+          "label": "userId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User id path for get-profile.",
+          "children": []
+        },
+        {
+          "shortCode": "messageId",
+          "label": "messageId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message id path for get-content.",
+          "children": []
+        },
+        {
+          "shortCode": "notificationDisabled",
+          "label": "notificationDisabled",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Official notificationDisabled. Suppresses device notification on push/reply/multicast/broadcast.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "a662f96e-6bcf-5507-b671-9379d5962943",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "8c4bc566-7d49-5341-9950-fe0176c584a4",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: push-message, reply-message, multicast, broadcast, get-profile, get-content, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "push-message",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "push-message",
+        "reply-message",
+        "multicast",
+        "broadcast",
+        "get-profile",
+        "get-content",
+        "listen"
+      ]
+    },
+    {
+      "_id": "0bdb3ed5-2408-5637-a599-c0cfbfcc1d94",
+      "shortCode": "channel_access_token",
+      "label": "Channel access token",
+      "type": "password",
+      "description": "LINE channel access token. Header Authorization: Bearer. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "88915d10-7437-4c5a-91c5-81229168891d",
+      "shortCode": "channel_secret",
+      "label": "Channel Secret",
+      "type": "password",
+      "description": "LINE channel secret for listen webhook x-line-signature verification (StudioQuack secret). Never log. Never put on INPUT.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "32d7b33b-504b-56a7-9cbc-9a544c100d1b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

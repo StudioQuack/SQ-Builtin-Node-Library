@@ -1,0 +1,157 @@
+{
+  "baseUrl": "https://secretsmanager.{region}.amazonaws.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "aws-sigv4",
+    "configKey": "access_key_id",
+    "secretKeyConfigKey": "secret_access_key"
+  },
+  "sigv4": {
+    "service": "secretsmanager",
+    "regionConfigKey": "region",
+    "sessionTokenConfigKey": "session_token"
+  },
+  "operations": {
+    "get-secret": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/",
+      "required": [
+        "SecretId"
+      ],
+      "bodyFrom": [
+        "SecretId",
+        "VersionId",
+        "VersionStage"
+      ],
+      "contentType": "application/x-amz-json-1.1",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Target": "secretsmanager.GetSecretValue"
+      }
+    },
+    "put-secret": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/",
+      "required": [
+        "SecretId"
+      ],
+      "bodyFrom": [
+        "SecretId",
+        "SecretString",
+        "SecretBinary",
+        "Description",
+        "KmsKeyId",
+        "ClientRequestToken",
+        "Tags"
+      ],
+      "contentType": "application/x-amz-json-1.1",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Target": "secretsmanager.CreateSecret"
+      },
+      "bodyMap": {
+        "SecretId": "Name"
+      }
+    },
+    "update-secret": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/",
+      "required": [
+        "SecretId"
+      ],
+      "bodyFrom": [
+        "SecretId",
+        "Description",
+        "KmsKeyId",
+        "SecretString",
+        "SecretBinary",
+        "ClientRequestToken"
+      ],
+      "contentType": "application/x-amz-json-1.1",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Target": "secretsmanager.UpdateSecret"
+      }
+    },
+    "delete-secret": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/",
+      "required": [
+        "SecretId"
+      ],
+      "bodyFrom": [
+        "SecretId",
+        "RecoveryWindowInDays",
+        "ForceDeleteWithoutRecovery"
+      ],
+      "contentType": "application/x-amz-json-1.1",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Target": "secretsmanager.DeleteSecret"
+      }
+    },
+    "list-secrets": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/",
+      "required": [],
+      "bodyFrom": [
+        "MaxResults",
+        "NextToken",
+        "Filters",
+        "IncludePlannedDeletion",
+        "SortBy",
+        "SortOrder"
+      ],
+      "contentType": "application/x-amz-json-1.1",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Target": "secretsmanager.ListSecrets"
+      }
+    },
+    "rotate-secret": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/",
+      "required": [
+        "SecretId"
+      ],
+      "bodyFrom": [
+        "SecretId",
+        "RotationLambdaARN",
+        "RotationRules",
+        "RotateImmediately",
+        "ClientRequestToken"
+      ],
+      "contentType": "application/x-amz-json-1.1",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Target": "secretsmanager.RotateSecret"
+      }
+    },
+    "describe-secret": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/",
+      "required": [
+        "SecretId"
+      ],
+      "bodyFrom": [
+        "SecretId"
+      ],
+      "contentType": "application/x-amz-json-1.1",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Target": "secretsmanager.DescribeSecret"
+      }
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

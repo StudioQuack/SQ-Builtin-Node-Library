@@ -1,0 +1,375 @@
+{
+  "_id": "749fb105-18e6-4275-ab0d-b1a38ec6a12f",
+  "version": "1.0.0",
+  "name": "PagerDuty",
+  "label": "PagerDuty REST API v2",
+  "description": "PagerDuty REST API v2 via OfficialApiNode. Docs: https://developer.pagerduty.com/api-reference/. Operations: incident_create, incident_get, incident_list, incident_update, note_create, note_list, log_get, user_get, oncall_get, listen. REST v2 sends Accept: application/vnd.pagerduty+json;version=2 via extraHeaders. Auth secret api_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "icon": "hub",
+  "tags": [
+    "pagerduty",
+    "incidents",
+    "oncall"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "4abbc509-c8ad-4a0e-bac1-acefd465e413",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "incident_create",
+          "description": "Which official API call to run. EXACT values: incident_create | incident_get | incident_list | incident_update | note_create | note_list | log_get | user_get | oncall_get | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'incident_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Incident or user id.",
+          "children": []
+        },
+        {
+          "shortCode": "incident",
+          "label": "incident",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Incident envelope escape hatch for incident_create/update. Purpose fields title/type/service_id/urgency/status merge into incident via bodyMap. Example: {\"escalation_policy\":{\"id\":\"PT20YPA\",\"type\":\"escalation_policy_reference\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "from_email",
+          "label": "from_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PagerDuty From header (login email of a valid user). Required by incident_create, incident_update, note_create. Example: oncall@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "urgencies[]",
+          "label": "urgencies[]",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "incident_list filter. high,low.",
+          "children": []
+        },
+        {
+          "shortCode": "since",
+          "label": "since",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "incident_list ISO 8601 start.",
+          "children": []
+        },
+        {
+          "shortCode": "until",
+          "label": "until",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "incident_list ISO 8601 end.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: incident_list.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `offset` for operation: incident_list.",
+          "children": []
+        },
+        {
+          "shortCode": "statuses[]",
+          "label": "statuses[]",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `statuses[]` for operation: incident_list.",
+          "children": []
+        },
+        {
+          "shortCode": "service_ids[]",
+          "label": "service_ids[]",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `service_ids[]` for operation: incident_list.",
+          "children": []
+        },
+        {
+          "shortCode": "note",
+          "label": "note",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Note envelope escape hatch for note_create. Purpose field content merges as note.content. Example: {\"content\":\"Checked the disk.\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Incident type on incident_create/update. Nested as incident.type. EXACT create: incident. EXACT update: incident_reference. Example: incident.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Incident title on incident_create (required by PagerDuty) and incident_update. Nested as incident.title. Example: The server is on fire.",
+          "children": []
+        },
+        {
+          "shortCode": "service_id",
+          "label": "service_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Service id on incident_create. Nested as incident.service.id. Pair with service_type=service_reference. Example: PWIXJZS.",
+          "children": []
+        },
+        {
+          "shortCode": "service_type",
+          "label": "service_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Service reference type on incident_create. Nested as incident.service.type. EXACT: service_reference. Example: service_reference.",
+          "children": []
+        },
+        {
+          "shortCode": "urgency",
+          "label": "urgency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Incident urgency on create/update. Nested as incident.urgency. EXACT: high | low. Example: high.",
+          "children": []
+        },
+        {
+          "shortCode": "incident_key",
+          "label": "incident_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Dedupe key on incident_create. Nested as incident.incident_key. Example: disk-full-host-1.",
+          "children": []
+        },
+        {
+          "shortCode": "details",
+          "label": "details",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Incident body details on incident_create. Nested as incident.body.details. Example: Disk 92% full on host-1.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Incident status on incident_update. Nested as incident.status. EXACT: acknowledged | resolved. Example: acknowledged.",
+          "children": []
+        },
+        {
+          "shortCode": "resolution",
+          "label": "resolution",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resolution text on incident_update when status=resolved. Nested as incident.resolution. Example: Rolled back deploy.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note body on note_create. Nested as note.content. Example: Checked the disk.",
+          "children": []
+        },
+        {
+          "shortCode": "schedule_ids[]",
+          "label": "schedule_ids[]",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `schedule_ids[]` for operation: oncall_get.",
+          "children": []
+        },
+        {
+          "shortCode": "user_ids[]",
+          "label": "user_ids[]",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "incident_list assignee filter.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7b78e028-3f33-4f4b-8282-7cb242984425",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "64254f28-71c4-4785-b46b-8fcab93e41e0",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: incident_create, incident_get, incident_list, incident_update, note_create, note_list, log_get, user_get, oncall_get, listen. listen is BPMN ingress, not a socket.",
+      "value": "incident_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "incident_create",
+        "incident_get",
+        "incident_list",
+        "incident_update",
+        "note_create",
+        "note_list",
+        "log_get",
+        "user_get",
+        "oncall_get",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "f505b847-a681-4bd3-aacd-a6af9fc4a7a0",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "PagerDuty REST API key. Authorization: Token token=<key>. REST v2 Accept: application/vnd.pagerduty+json;version=2 is sent via extraHeaders (https://developer.pagerduty.com/api-reference/). Include requester in body when the API requires From.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b2c3d4e5-f678-4901-8abc-def012345679",
+      "shortCode": "from_email",
+      "label": "From email",
+      "type": "string",
+      "description": "Default From header for write ops (PagerDuty user email). INPUT from_email wins.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a4bb1af7-b1d7-413b-8598-4807a75211d6",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

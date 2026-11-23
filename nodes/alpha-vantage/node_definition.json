@@ -1,0 +1,235 @@
+{
+  "_id": "c6a5dcfd-5418-5c03-affc-46b40d243cb6",
+  "version": "1.0.0",
+  "name": "Alpha Vantage",
+  "label": "Alpha Vantage",
+  "description": "Alpha Vantage official API via OfficialApiNode (api_spec.json). Operations: quote, time_series_intraday, time_series_daily, time_series_weekly, search, fx_rate, crypto_daily. Docs: https://www.alphavantage.co/documentation/. Alpha Vantage terms. Free key: 25 requests/day (https://www.alphavantage.co/support/). TIME_SERIES_INTRADAY is Premium. TIME_SERIES_DAILY outputsize=full is premium-only (compact is free). Realtime and 15-minute delayed US market data are premium. Not for redistribution as a competing feed. Secrets stay in configurationParameters. jobType custom-script-executor. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "chart",
+  "tags": [
+    "finance",
+    "alphavantage"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "f43247db-9962-5216-8d7e-956e71c62107",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Alpha Vantage request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"quote\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: quote | time_series_intraday | time_series_daily | time_series_weekly | search | fx_rate | crypto_daily. Default: first listed or instance operation. Example: 'quote'.",
+          "children": [],
+          "_id": "78fd551f-80e8-52dd-9447-6464ae731253"
+        },
+        {
+          "shortCode": "datatype",
+          "label": "datatype",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Response datatype. EXACT: json | csv.",
+          "children": [],
+          "_id": "28ca2c79-e4fe-5bc9-a2da-4a1a33bc7427"
+        },
+        {
+          "shortCode": "from_currency",
+          "label": "from_currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "From currency for fx. Example: USD.",
+          "children": [],
+          "_id": "3b8826ae-7820-56d0-be3f-1cfc90f71a2e"
+        },
+        {
+          "shortCode": "interval",
+          "label": "interval",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "TIME_SERIES_INTRADAY interval. EXACT: 1min | 5min | 15min | 30min | 60min.",
+          "children": [],
+          "_id": "0b41f120-efed-524c-a2fd-0960ba9cc456"
+        },
+        {
+          "shortCode": "keywords",
+          "label": "keywords",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Symbol search keywords. Example: microsoft.",
+          "children": [],
+          "_id": "e4aaf9ab-f237-5049-81d7-961801f2adc3"
+        },
+        {
+          "shortCode": "market",
+          "label": "market",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Crypto market quote currency. Example: USD.",
+          "children": [],
+          "_id": "f010cb57-5162-5a27-94d7-7c3edf9d67ea"
+        },
+        {
+          "shortCode": "outputsize",
+          "label": "outputsize",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "TIME_SERIES_INTRADAY / DAILY outputsize. EXACT: compact | full.",
+          "children": [],
+          "_id": "ddd93a63-8423-47ee-9a10-65507f3acff8"
+        },
+        {
+          "shortCode": "symbol",
+          "label": "symbol",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Ticker for quote / time_series_* / symbol_search. Example: IBM.",
+          "children": [],
+          "_id": "1992aeda-fe2c-5464-a332-16499c35d850"
+        },
+        {
+          "shortCode": "to_currency",
+          "label": "to_currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "To currency for fx. Example: EUR.",
+          "children": [],
+          "_id": "1705d2b3-c3c9-5976-aafd-d1d600146e62"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "911efaf1-dbe5-58df-a8b7-541cee7fc91e",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "cc58eda7-80db-51f8-baf6-a261e0a47c90"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "192dcad9-f23e-52b8-b92f-d12e1988ea42"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "f25b2fb5-c6a1-523a-b5b3-83c6a0326a45"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0e311d62-3c6e-5c26-8d2a-01fcc4a85923",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: quote, time_series_intraday, time_series_daily, time_series_weekly, search, fx_rate, crypto_daily.",
+      "value": "quote",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "quote",
+        "time_series_intraday",
+        "time_series_daily",
+        "time_series_weekly",
+        "search",
+        "fx_rate",
+        "crypto_daily"
+      ]
+    },
+    {
+      "_id": "f7feb21d-a464-5202-84d1-3514400147f1",
+      "shortCode": "apikey",
+      "label": "Apikey",
+      "type": "password",
+      "description": "Provider secret. OfficialApiNode auth type `query`. Bind a StudioQuack secret. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3e2c7f13-c7ad-5b20-b26b-700be8259733",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25. Keep under the daemon sandbox request budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

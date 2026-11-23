@@ -1,0 +1,355 @@
+{
+  "_id": "1508fe82-fde9-4b24-8afb-7a2c13d05c7f",
+  "version": "1.0.0",
+  "name": "Square",
+  "label": "Square — Square API 2026-07-15 (Payments, Orders, Customers, Catalog)",
+  "description": "Square Connect v2 at https://connect.squareup.com. Docs: https://developer.squareup.com/reference/square/payments-api/create-payment. Payments use source_id + amount_money {amount,currency} + idempotency_key. Bearer access_token. location_id from config. Handler: OfficialApiNode. Never log access_token.",
+  "icon": "account_balance",
+  "tags": [
+    "square",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "cd762ee5-fd5d-4884-a8c3-5a6b2211ef30",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Square. Secrets never on this port. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "payment_create",
+          "description": "Overrides config operation. EXACT: payment_create | payment_get | refund_create | order_create | order_get | customer_create | customer_get | invoice_create | catalog_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "children": []
+        },
+        {
+          "shortCode": "environment",
+          "label": "Environment",
+          "type": "string",
+          "required": false,
+          "value": "connect.squareup.com",
+          "description": "connect.squareupsandbox.com vs connect.squareup.com. Substituted into baseUrl as https://{environment}.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "Id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id when the path uses {id}.",
+          "children": []
+        },
+        {
+          "shortCode": "source_id",
+          "label": "source_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create source_id (card nonce / payment token). Required.",
+          "children": []
+        },
+        {
+          "shortCode": "idempotency_key",
+          "label": "idempotency_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Idempotency key for payment_create / refund_create / order_create / invoice_create. Required on payment/refund. UUID.",
+          "children": []
+        },
+        {
+          "shortCode": "amount_money",
+          "label": "amount_money",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Money object for payment_create / refund_create. Official {\"amount\":100,\"currency\":\"USD\"} (amount in the smallest unit). Required on those ops.",
+          "children": []
+        },
+        {
+          "shortCode": "payment_id",
+          "label": "payment_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `payment_id` for operation: refund_create. Required by: refund_create.",
+          "children": []
+        },
+        {
+          "shortCode": "order",
+          "label": "order",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official Order object for order_create (required): location_id, line_items[{name,quantity,base_price_money}].",
+          "children": []
+        },
+        {
+          "shortCode": "given_name",
+          "label": "given_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `given_name` for operation: customer_create.",
+          "children": []
+        },
+        {
+          "shortCode": "family_name",
+          "label": "family_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `family_name` for operation: customer_create.",
+          "children": []
+        },
+        {
+          "shortCode": "email_address",
+          "label": "email_address",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `email_address` for operation: customer_create.",
+          "children": []
+        },
+        {
+          "shortCode": "invoice",
+          "label": "invoice",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official Invoice object for invoice_create (required): location_id, order_id, primary_recipient, payment_requests.",
+          "children": []
+        },
+        {
+          "shortCode": "types",
+          "label": "types",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "catalog_list query types. Comma-separated ITEM,ITEM_VARIATION,CATEGORY,TAX,DISCOUNT,MODIFIER,IMAGE.",
+          "children": []
+        },
+        {
+          "shortCode": "autocomplete",
+          "label": "autocomplete",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "payment_create autocomplete. true captures immediately (default). false authorizes only.",
+          "children": []
+        },
+        {
+          "shortCode": "customer_id",
+          "label": "customer_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "payment_create customer_id.",
+          "children": []
+        },
+        {
+          "shortCode": "reference_id",
+          "label": "reference_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Your reference on payment_create / customer_create.",
+          "children": []
+        },
+        {
+          "shortCode": "note",
+          "label": "note",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note on payment_create / customer_create.",
+          "children": []
+        },
+        {
+          "shortCode": "reason",
+          "label": "reason",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "refund_create reason.",
+          "children": []
+        },
+        {
+          "shortCode": "phone_number",
+          "label": "phone_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create phone_number.",
+          "children": []
+        },
+        {
+          "shortCode": "company_name",
+          "label": "company_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "customer_create company_name.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "89717e67-ab23-4c23-9668-586497b21e00",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "0e51b3ad-0764-4f95-b5d3-b1d9a2875575",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: payment_create | payment_get | refund_create | order_create | order_get | customer_create | customer_get | invoice_create | catalog_list | trigger. Default payment_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "payment_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "payment_create",
+        "payment_get",
+        "refund_create",
+        "order_create",
+        "order_get",
+        "customer_create",
+        "customer_get",
+        "invoice_create",
+        "catalog_list",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "1427f630-5f25-4190-8573-5791a26810d8",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Square credential (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ebd342a6-7fe0-4d33-92ef-494dec7fc8d4",
+      "shortCode": "location_id",
+      "label": "Location Id",
+      "type": "string",
+      "description": "Default location_id for Payments/Orders.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "757b4566-5eda-43c1-a0d0-026712d3070b",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "connect.squareupsandbox.com vs connect.squareup.com. Substituted into baseUrl as https://{environment}.",
+      "value": "connect.squareup.com",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "connect.squareup.com",
+        "connect.squareupsandbox.com"
+      ]
+    },
+    {
+      "_id": "949c0cef-dddb-43ec-a8b9-45fc130afa8a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

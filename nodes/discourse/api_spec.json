@@ -1,0 +1,76 @@
+{
+  "baseUrl": "https://{forum_host}",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "Api-Key",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "extraHeaders": {
+    "Api-Username": "{api_username}"
+  },
+  "operations": {
+    "topic_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/posts.json",
+      "required": [
+        "title",
+        "raw"
+      ],
+      "bodyFrom": [
+        "title",
+        "raw",
+        "category",
+        "tags",
+        "target_recipients"
+      ]
+    },
+    "topic_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/t/{topic_id}.json",
+      "required": [
+        "topic_id"
+      ]
+    },
+    "post_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/posts.json",
+      "required": [
+        "raw",
+        "topic_id"
+      ],
+      "bodyFrom": [
+        "raw",
+        "topic_id",
+        "reply_to_post_number"
+      ]
+    },
+    "user_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/u/{username}.json",
+      "required": [
+        "username"
+      ]
+    },
+    "search": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/search.json",
+      "queryFrom": [
+        "q"
+      ],
+      "required": [
+        "q"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

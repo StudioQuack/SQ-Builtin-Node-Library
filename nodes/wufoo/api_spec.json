@@ -1,0 +1,79 @@
+{
+  "baseUrl": "https://{subdomain}.wufoo.com/api/v3",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "userKey": "api_key",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "form.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/forms.json",
+      "required": [
+        "subdomain"
+      ]
+    },
+    "form.get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/forms/{identifier}.json",
+      "required": [
+        "subdomain",
+        "identifier"
+      ]
+    },
+    "entry.list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/forms/{identifier}/entries.json",
+      "required": [
+        "subdomain",
+        "identifier"
+      ],
+      "queryFrom": [
+        "pageStart",
+        "pageSize",
+        "sort",
+        "sortDirection",
+        "system",
+        "FilterId",
+        "match"
+      ]
+    },
+    "entry.submit": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/forms/{identifier}/entries.json",
+      "required": [
+        "subdomain",
+        "identifier",
+        "fields"
+      ],
+      "bodyFrom": [
+        "fields"
+      ],
+      "contentType": "application/json"
+    },
+    "webhook.register": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/forms/{identifier}/webhooks.json",
+      "required": [
+        "subdomain",
+        "identifier",
+        "url"
+      ],
+      "bodyFrom": [
+        "url",
+        "handshakeKey",
+        "metadata"
+      ]
+    },
+    "trigger.listen": {
+      "kind": "ingress"
+    }
+  }
+}

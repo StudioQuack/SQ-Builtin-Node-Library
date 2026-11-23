@@ -1,0 +1,267 @@
+{
+  "_id": "0bf57a61-88b3-499b-b9ce-33ddf8aa8dd3",
+  "version": "1.0.0",
+  "name": "Brex",
+  "label": "Brex — Brex REST api.brex.com",
+  "description": "Brex Payments API. Docs: https://developer.brex.com/openapi/payments_api/ vendor_create takes company_name, email, phone, payment_accounts. transfer_create takes amount {amount,currency}, counterparty, description, external_memo, originating_account. Header Idempotency-Key from INPUT/config idempotency_key. Bearer api_token.",
+  "icon": "account_balance",
+  "tags": [
+    "brex",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d2f61d31-0503-4d23-826c-95e12f33f632",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Brex. Secrets never on this port. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official Brex Payments API verb. EXACT: transaction_list | vendor_create | transfer_create | card_list | expense_list | trigger. Example: vendor_create.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for transaction_list, card_list, expense_list. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cursor for transaction_list and expense_list.",
+          "children": []
+        },
+        {
+          "shortCode": "company_name",
+          "label": "company_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "vendor_create required unique vendor name. Example: Schrute Farms.",
+          "children": []
+        },
+        {
+          "shortCode": "amount",
+          "label": "amount",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "transfer_create required amount {amount, currency}. amount is the smallest currency unit (USD cents). Example: {\"amount\":100000,\"currency\":\"USD\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "external_bank_account_id",
+          "label": "external_bank_account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transfer_create counterparty.payment_instrument_id (from vendor create). Example: pdinstl_….",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "vendor_create vendor email. Example: vendor@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "vendor_create vendor phone.",
+          "children": []
+        },
+        {
+          "shortCode": "payment_accounts",
+          "label": "payment_accounts",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "vendor_create payment_accounts: [{details:{type, routing_number, account_number, account_type, account_class}}]. type EXACT: ACH | DOMESTIC_WIRE | CHEQUE.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transfer_create required internal description (not shown to the vendor).",
+          "children": []
+        },
+        {
+          "shortCode": "external_memo",
+          "label": "external_memo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transfer_create required external memo (ACH description / wire instructions). Max 90 chars ACH/WIRE, 40 CHEQUE.",
+          "children": []
+        },
+        {
+          "shortCode": "originating_account",
+          "label": "originating_account",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "transfer_create originating_account {type, id}. type EXACT: BREX_CASH. Example: {\"type\":\"BREX_CASH\",\"id\":\"dpacc_…\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "approval_type",
+          "label": "approval_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "transfer_create approval_type. EXACT: MANUAL (cash admin must approve). Omit for default policy.",
+          "children": []
+        },
+        {
+          "shortCode": "idempotency_key",
+          "label": "idempotency_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Header Idempotency-Key (required by Brex on vendor_create and transfer_create). Example: a UUID.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "7bee554c-1b59-4610-95ef-8be93271750b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "973755a8-3aba-42eb-b4fb-1262ec716288",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb to run. EXACT: transaction_list | vendor_create | transfer_create | card_list | expense_list | trigger. Default transaction_list. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "value": "transaction_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "transaction_list",
+        "vendor_create",
+        "transfer_create",
+        "card_list",
+        "expense_list",
+        "trigger"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "bcddc8cc-4aa4-4efc-a0fa-ee478183aae8",
+      "shortCode": "api_token",
+      "label": "Api Token",
+      "type": "password",
+      "description": "Brex credential (bearer Authorization). StudioQuack secret. Never INPUT, never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "88942c5d-3141-428b-b8d7-31290aa5c2ee",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

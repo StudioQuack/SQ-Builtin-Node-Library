@@ -1,0 +1,74 @@
+{
+  "baseUrl": "https://api.smooch.io/v2",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "api_secret",
+    "userKey": "api_key_id"
+  },
+  "operations": {
+    "send-message": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/apps/{app_id}/conversations/{conversation_id}/messages",
+      "contentType": "application/json",
+      "required": [
+        "conversation_id"
+      ],
+      "bodyFrom": [
+        "author",
+        "text",
+        "type"
+      ],
+      "bodyMap": {
+        "text": "content.text",
+        "type": "content.type"
+      }
+    },
+    "get-conversation": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/apps/{app_id}/conversations/{conversation_id}",
+      "contentType": "application/json",
+      "required": [
+        "conversation_id"
+      ]
+    },
+    "list-conversations": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/apps/{app_id}/conversations",
+      "contentType": "application/json",
+      "queryFrom": [
+        "filter",
+        "page[size]"
+      ]
+    },
+    "update-visitor": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/apps/{app_id}/users/{user_id}",
+      "contentType": "application/json",
+      "required": [
+        "user_id"
+      ],
+      "bodyFrom": [
+        "givenName",
+        "surname",
+        "email"
+      ]
+    },
+    "list-agents": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/apps/{app_id}/integrations",
+      "contentType": "application/json"
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

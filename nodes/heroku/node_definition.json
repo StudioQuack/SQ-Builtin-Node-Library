@@ -1,0 +1,533 @@
+{
+  "_id": "bf8ee587-7209-464d-9b97-191ed3984b95",
+  "version": "1.0.0",
+  "name": "Heroku",
+  "label": "Heroku Platform API",
+  "description": "Heroku Platform API v3 at https://api.heroku.com. Handler: OfficialApiNode. Accept: application/vnd.heroku+json; version=3. Auth: Bearer api_key (Heroku API token). config_set sends a flat JSON map as the whole body. listen is ingress. Docs: https://devcenter.heroku.com/articles/platform-api-reference. Never log api_key.",
+  "icon": "hub",
+  "tags": [
+    "heroku",
+    "dynos",
+    "deploy"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "e7172083-9500-46d8-8f1e-d5ae227c870f",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "app_get",
+          "description": "Which official API call to run. EXACT values: app_get | app_list | app_create | dyno_create | dyno_restart | config_get | config_set | release_list | build_create | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'app_get'.",
+          "children": []
+        },
+        {
+          "shortCode": "app_id_or_name",
+          "label": "app_id_or_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "App uuid or name.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `name` for operation: app_create.",
+          "children": []
+        },
+        {
+          "shortCode": "region",
+          "label": "region",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `region` for operation: app_create.",
+          "children": []
+        },
+        {
+          "shortCode": "stack",
+          "label": "stack",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `stack` for operation: app_create.",
+          "children": []
+        },
+        {
+          "shortCode": "command",
+          "label": "command",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `command` for operation: dyno_create.",
+          "children": []
+        },
+        {
+          "shortCode": "attach",
+          "label": "attach",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "dyno_create attach. true attaches this request to the dyno (one-off). Default false.",
+          "children": []
+        },
+        {
+          "shortCode": "source_blob",
+          "label": "source_blob",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "build_create source_blob {url, checksum?, version?}. url is a gzip tarball URL. Example: {\"url\":\"https://…/source.tgz\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "config_vars",
+          "label": "Config vars",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "PATCH /apps/{app}/config-vars whole-body map of NAME→value (bodyMap $). Set a value to null to delete. config_set. Example: {\"LOG_LEVEL\":\"info\",\"OLD_VAR\":null}.",
+          "children": []
+        },
+        {
+          "shortCode": "size",
+          "label": "Dyno size",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "dyno_create size. EXACT: standard-1x | standard-2x | performance-m | performance-l | eco | basic | private-s | private-m | private-l | …",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "Dyno type / process",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "dyno_create type (process type). Example: web | worker | run.",
+          "children": []
+        },
+        {
+          "shortCode": "env",
+          "label": "Dyno env",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "dyno_create env overlay (NAME→value) for this one-off only.",
+          "children": []
+        },
+        {
+          "shortCode": "time_to_live",
+          "label": "TTL seconds",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "dyno_create time_to_live — seconds until the one-off is killed. Example: 1800.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "87d1f602-4e10-47f4-a569-a7696fabbce0",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "cf6d91a1-5e14-45a8-b126-33fe6c59439a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: app_get, app_list, app_create, dyno_create, dyno_restart, config_get, config_set, release_list, build_create, listen. listen is BPMN ingress, not a socket.",
+      "value": "app_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "app_get",
+        "app_list",
+        "app_create",
+        "dyno_create",
+        "dyno_restart",
+        "config_get",
+        "config_set",
+        "release_list",
+        "build_create",
+        "listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "app_get",
+          "targets": [
+            {
+              "param": "app_id_or_name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "app_create",
+          "targets": [
+            {
+              "param": "region",
+              "visible": true
+            },
+            {
+              "param": "stack",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "dyno_create",
+          "targets": [
+            {
+              "param": "app_id_or_name",
+              "visible": true
+            },
+            {
+              "param": "time_to_live",
+              "visible": true
+            },
+            {
+              "param": "size",
+              "visible": true
+            },
+            {
+              "param": "attach",
+              "visible": true
+            },
+            {
+              "param": "command",
+              "visible": true
+            },
+            {
+              "param": "env",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "dyno_restart",
+          "targets": [
+            {
+              "param": "app_id_or_name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "config_get",
+          "targets": [
+            {
+              "param": "app_id_or_name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "config_set",
+          "targets": [
+            {
+              "param": "app_id_or_name",
+              "visible": true
+            },
+            {
+              "param": "config_vars",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "release_list",
+          "targets": [
+            {
+              "param": "app_id_or_name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "build_create",
+          "targets": [
+            {
+              "param": "app_id_or_name",
+              "visible": true
+            },
+            {
+              "param": "source_blob",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "3c466a59-c87f-4cee-a530-035b67e6f98b",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Heroku API key. Authorization: Bearer. Accept: application/vnd.heroku+json; version=3 is sent on every request via extraHeaders.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bf51257d-8b42-44c3-8814-4f8434ca17bb",
+      "shortCode": "app_id_or_name",
+      "label": "Default app",
+      "type": "string",
+      "description": "Default Heroku app uuid or name when INPUT app_id_or_name is empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f1b772aa-5185-41ba-9d37-f4f2c03946ed",
+      "shortCode": "region",
+      "label": "Region",
+      "type": "string",
+      "description": "Request-body parameter `region` for operation: app_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5905a310-1eba-4e80-a643-2d296086b00e",
+      "shortCode": "stack",
+      "label": "Stack",
+      "type": "string",
+      "description": "Request-body parameter `stack` for operation: app_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d87c9230-16bc-4c31-bf64-18db0eef87f1",
+      "shortCode": "name",
+      "label": "Name",
+      "type": "string",
+      "description": "Request-body parameter `name` for operation: app_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5a43090a-4ee9-4151-9d0f-1b3d2bf45fbb",
+      "shortCode": "time_to_live",
+      "label": "TTL seconds",
+      "type": "number",
+      "description": "dyno_create time_to_live — seconds until the one-off is killed. Example: 1800.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "76318290-3126-44af-aee9-0ea289ae86e7",
+      "shortCode": "size",
+      "label": "Dyno size",
+      "type": "string",
+      "description": "dyno_create size. EXACT: standard-1x | standard-2x | performance-m | performance-l | eco | basic | private-s | private-m | private-l | …",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c3433f25-cf6c-4511-9281-f1ec04315ce1",
+      "shortCode": "attach",
+      "label": "Attach",
+      "type": "boolean",
+      "description": "dyno_create attach. true attaches this request to the dyno (one-off). Default false.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6fbfbade-4358-43c0-be04-625e33fb972f",
+      "shortCode": "command",
+      "label": "Command",
+      "type": "string",
+      "description": "Request-body parameter `command` for operation: dyno_create.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ddc7f12f-ea5f-4b5e-8cdc-46c75b3ed1bd",
+      "shortCode": "env",
+      "label": "Dyno env",
+      "type": "object",
+      "description": "dyno_create env overlay (NAME→value) for this one-off only.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e989cb83-230c-4c72-9377-0e64605af3e4",
+      "shortCode": "type",
+      "label": "Dyno type / process",
+      "type": "string",
+      "description": "dyno_create type (process type). Example: web | worker | run.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fdfce1a7-e606-4647-92af-355c0992e9ad",
+      "shortCode": "config_vars",
+      "label": "Config vars",
+      "type": "object",
+      "description": "PATCH /apps/{app}/config-vars whole-body map of NAME→value (bodyMap $). Set a value to null to delete. config_set. Example: {\"LOG_LEVEL\":\"info\",\"OLD_VAR\":null}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fa1d95a3-cf5a-4d56-b5fb-2d7afee62aac",
+      "shortCode": "source_blob",
+      "label": "Source Blob",
+      "type": "object",
+      "description": "build_create source_blob {url, checksum?, version?}. url is a gzip tarball URL. Example: {\"url\":\"https://…/source.tgz\"}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "719ce471-e416-44dc-951d-3ba0d5de26b3",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

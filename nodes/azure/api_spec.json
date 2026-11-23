@@ -1,0 +1,199 @@
+{
+  "baseUrl": "https://",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "extraHeaders": {
+    "x-ms-version": "2026-04-06",
+    "x-ms-date": "{$now:rfc1123}"
+  },
+  "operations": {
+    "blob_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{account}.blob.core.windows.net/{container}/{blob}",
+      "required": [
+        "account",
+        "container",
+        "blob"
+      ]
+    },
+    "blob_put": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "{account}.blob.core.windows.net/{container}/{blob}",
+      "required": [
+        "account",
+        "container",
+        "blob",
+        "content"
+      ],
+      "bodyFormat": "raw",
+      "bodyParam": "content",
+      "contentType": "application/octet-stream",
+      "extraHeaders": {
+        "x-ms-blob-type": "BlockBlob"
+      }
+    },
+    "blob_delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "{account}.blob.core.windows.net/{container}/{blob}",
+      "required": [
+        "account",
+        "container",
+        "blob"
+      ]
+    },
+    "blob_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{account}.blob.core.windows.net/{container}",
+      "required": [
+        "account",
+        "container"
+      ],
+      "queryFrom": [
+        "restype",
+        "comp"
+      ]
+    },
+    "functions_invoke": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{functionApp}.azurewebsites.net/api/{functionName}",
+      "required": [
+        "functionApp",
+        "functionName"
+      ],
+      "bodyFrom": [
+        "payload"
+      ],
+      "bodyMap": {
+        "payload": "$"
+      },
+      "extraHeaders": {
+        "x-functions-key": "{function_key}"
+      },
+      "queryFrom": [
+        "code"
+      ]
+    },
+    "servicebus_send": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{namespace}.servicebus.windows.net/{queue}/messages",
+      "required": [
+        "namespace",
+        "queue",
+        "message"
+      ],
+      "bodyFormat": "raw",
+      "bodyParam": "message",
+      "contentType": "application/json"
+    },
+    "servicebus_receive": {
+      "kind": "http",
+      "method": "POST",
+      "path": "{namespace}.servicebus.windows.net/{queue}/messages/head",
+      "required": [
+        "namespace",
+        "queue"
+      ],
+      "queryFrom": [
+        "timeout"
+      ]
+    },
+    "vm_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/virtualMachines/{vm}",
+      "required": [
+        "subscriptionId",
+        "resourceGroup",
+        "vm"
+      ],
+      "queryFrom": [
+        "api-version"
+      ]
+    },
+    "vm_power": {
+      "kind": "http",
+      "method": "POST",
+      "path": "management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/virtualMachines/{vm}/{powerAction}",
+      "required": [
+        "subscriptionId",
+        "resourceGroup",
+        "vm",
+        "powerAction"
+      ],
+      "queryFrom": [
+        "api-version"
+      ]
+    },
+    "aks_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.ContainerService/managedClusters/{cluster}",
+      "required": [
+        "subscriptionId",
+        "resourceGroup",
+        "cluster"
+      ],
+      "queryFrom": [
+        "api-version"
+      ]
+    },
+    "keyvault_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "{vault}.vault.azure.net/secrets/{secret}",
+      "required": [
+        "vault",
+        "secret"
+      ],
+      "queryFrom": [
+        "api-version"
+      ]
+    },
+    "monitor_query": {
+      "kind": "http",
+      "method": "GET",
+      "path": "management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/{providerNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Insights/metrics",
+      "required": [
+        "subscriptionId",
+        "resourceGroup",
+        "providerNamespace",
+        "resourceType",
+        "resourceName"
+      ],
+      "queryFrom": [
+        "api-version",
+        "metricnames",
+        "timespan",
+        "interval",
+        "aggregation"
+      ]
+    },
+    "resourcegroup_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}",
+      "required": [
+        "subscriptionId",
+        "resourceGroup"
+      ],
+      "queryFrom": [
+        "api-version"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

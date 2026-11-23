@@ -1,0 +1,212 @@
+{
+  "baseUrl": "https://dev.azure.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "basic",
+    "header": "Authorization",
+    "prefix": "",
+    "configKey": "personal_access_token"
+  },
+  "operations": {
+    "workitem_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{organization}/{project}/_apis/wit/workitems/${type}",
+      "required": [
+        "organization",
+        "project",
+        "type",
+        "fields"
+      ],
+      "queryFrom": [
+        "api-version",
+        "validateOnly",
+        "bypassRules",
+        "suppressNotifications",
+        "$expand"
+      ],
+      "contentType": "application/json-patch+json",
+      "bodyFrom": [
+        "fields"
+      ],
+      "bodyMap": {
+        "fields": "$"
+      }
+    },
+    "workitem_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{organization}/{project}/_apis/wit/workitems/{id}",
+      "required": [
+        "organization",
+        "project",
+        "id"
+      ],
+      "queryFrom": [
+        "api-version",
+        "$expand"
+      ]
+    },
+    "workitem_update": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/{organization}/{project}/_apis/wit/workitems/{id}",
+      "required": [
+        "organization",
+        "project",
+        "id",
+        "operations"
+      ],
+      "queryFrom": [
+        "api-version",
+        "validateOnly",
+        "bypassRules",
+        "suppressNotifications"
+      ],
+      "contentType": "application/json-patch+json",
+      "bodyFrom": [
+        "operations"
+      ],
+      "bodyMap": {
+        "operations": "$"
+      }
+    },
+    "workitem_query": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{organization}/{project}/_apis/wit/wiql",
+      "required": [
+        "organization",
+        "project"
+      ],
+      "queryFrom": [
+        "api-version"
+      ],
+      "bodyFrom": [
+        "query"
+      ]
+    },
+    "workitem_comment": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{organization}/{project}/_apis/wit/workItems/{id}/comments",
+      "required": [
+        "organization",
+        "project",
+        "id"
+      ],
+      "queryFrom": [
+        "api-version"
+      ],
+      "bodyFrom": [
+        "text"
+      ]
+    },
+    "workitem_link": {
+      "kind": "http",
+      "method": "PATCH",
+      "path": "/{organization}/{project}/_apis/wit/workitems/{id}",
+      "required": [
+        "organization",
+        "project",
+        "id",
+        "operations"
+      ],
+      "queryFrom": [
+        "api-version"
+      ],
+      "contentType": "application/json-patch+json",
+      "bodyFrom": [
+        "operations"
+      ],
+      "bodyMap": {
+        "operations": "$"
+      }
+    },
+    "pr_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests",
+      "required": [
+        "organization",
+        "project",
+        "repositoryId"
+      ],
+      "queryFrom": [
+        "api-version"
+      ],
+      "bodyFrom": [
+        "sourceRefName",
+        "targetRefName",
+        "title",
+        "description",
+        "reviewers",
+        "isDraft"
+      ]
+    },
+    "pr_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}",
+      "required": [
+        "organization",
+        "project",
+        "repositoryId",
+        "pullRequestId"
+      ],
+      "queryFrom": [
+        "api-version"
+      ]
+    },
+    "build_queue": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/{organization}/{project}/_apis/build/builds",
+      "required": [
+        "organization",
+        "project"
+      ],
+      "queryFrom": [
+        "api-version"
+      ],
+      "bodyFrom": [
+        "definition",
+        "sourceBranch"
+      ]
+    },
+    "build_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{organization}/{project}/_apis/build/builds/{buildId}",
+      "required": [
+        "organization",
+        "project",
+        "buildId"
+      ],
+      "queryFrom": [
+        "api-version"
+      ]
+    },
+    "release_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{organization}/{project}/_apis/release/releases/{releaseId}",
+      "baseUrl": "https://vsrm.dev.azure.com",
+      "required": [
+        "organization",
+        "project",
+        "releaseId"
+      ],
+      "queryFrom": [
+        "api-version"
+      ]
+    },
+    "git_push_listen": {
+      "kind": "ingress"
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

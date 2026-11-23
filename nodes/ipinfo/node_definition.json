@@ -1,0 +1,172 @@
+{
+  "_id": "53691951-fa1e-5c4e-bdb6-08e762386827",
+  "version": "1.0.0",
+  "name": "ipinfo",
+  "label": "ipinfo",
+  "description": "ipinfo official API via OfficialApiNode (api_spec.json). Operations: lookup (GET https://api.ipinfo.io/lookup/{ip} Core), lite (GET /lite/{ip} unlimited country/ASN), me (GET /lite/me), batch (POST /batch), lookup_legacy (deprecated GET https://ipinfo.io/{ip}/json). Docs: https://ipinfo.io/developers. Bearer token (docs also show ?token= and Basic -u $TOKEN:). Lite is unlimited with a token. Core/lookup is paid. IP lookup can be PII. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "globe",
+  "tags": [
+    "ip",
+    "ipinfo"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5d3e30a1-bbe5-58e4-9233-6385b0e3bceb",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One ipinfo request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"lookup\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: lookup | lite | me | batch | lookup_legacy. lookup = Core GET /lookup/{ip}. lite = free GET /lite/{ip}. me = GET /lite/me. lookup_legacy is deprecated (https://ipinfo.io/{ip}/json). Default: instance operation. Example: 'lite'.",
+          "children": [],
+          "_id": "4da34ad6-b68d-5a62-99c0-472b6fb44656"
+        },
+        {
+          "shortCode": "ip",
+          "label": "ip",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "IPv4 or IPv6 for lookup / lite / lookup_legacy. Example: 8.8.8.8. me uses the caller address (no ip).",
+          "children": [],
+          "_id": "063a9ad5-6374-5de1-8d6c-f80b50ff3bf8"
+        },
+        {
+          "shortCode": "ips",
+          "label": "ips",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "batch POST /batch whole-body JSON array of IPs (or /<ip>/<field> paths). Wired via bodyMap \"$\" so the list is the request body. Example: [\"8.8.8.8\",\"1.1.1.1\"].",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "bb1e77cf-26b8-5d02-bc68-1d6f9dcd0814",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "cab9fa48-01a6-5ce6-acb4-a0475de80a7c"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "fc17d4de-a305-58b6-9ef8-a801faf5c76f"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "d4a4ca93-ab5a-5117-8519-dbda6ea01f32"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5b138f51-30e9-5892-8b58-77c739f6136f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: lookup, lite, me, batch, lookup_legacy. lookup = IPinfo Core (paid). lite = IPinfo Lite (unlimited). lookup_legacy is deprecated.",
+      "value": "lookup",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "lookup",
+        "lite",
+        "me",
+        "batch",
+        "lookup_legacy"
+      ]
+    },
+    {
+      "_id": "1b50aca9-7b80-58d4-86b9-e3ff22375d79",
+      "shortCode": "token",
+      "label": "Token",
+      "type": "password",
+      "description": "IPinfo token (https://ipinfo.io/signup). OfficialApiNode auth type `bearer` (Authorization: Bearer). Docs also accept ?token= and Basic -u $TOKEN:. Never log, never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d218fd3d-b9cb-5dcf-82e3-2178da4178fd",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 20. Keep under the daemon sandbox request budget.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

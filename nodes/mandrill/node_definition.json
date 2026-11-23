@@ -1,0 +1,281 @@
+{
+  "_id": "dfa4cc19-263e-5a09-84b4-bb8061cedae5",
+  "version": "1.0.0",
+  "name": "Mandrill",
+  "label": "Mandrill — Mailchimp Transactional (Mandrill) API 1.0",
+  "description": "Mandrill (Mailchimp Transactional) API 1.0. Send takes from_email, to, subject, html, text (nested under message); api_key is posted as body key. Docs: https://mailchimp.com/developer/transactional/api/messages/. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "mail",
+  "tags": [
+    "email"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d29560e5-987d-5e35-83c6-746466d78b49",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Mandrill operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"send-html\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-html",
+          "description": "Which official call to run. EXACT values: send-html | send-template | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Mandrill message envelope escape hatch for send-html / send-template. Purpose fields from_email/from_name/to/subject/html/text/cc/bcc/reply_to/attachments merge as message.* via bodyMap. Example: {\"tags\":[\"welcome\"],\"merge_vars\":[]}.",
+          "children": []
+        },
+        {
+          "shortCode": "template_name",
+          "label": "template_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mandrill template slug for send-template. Example: welcome-v2.",
+          "children": []
+        },
+        {
+          "shortCode": "key",
+          "label": "key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mandrill API key in the JSON body (official key). Prefer config api_key (mapped to key). Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "async",
+          "label": "async",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Send asynchronously. Official async. send-html / send-template.",
+          "children": []
+        },
+        {
+          "shortCode": "template_content",
+          "label": "template_content",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Editable template sections [{name, content}] for send-template. The official API requires template_content; the node sends [] when omitted. Example: [{\"name\":\"header\",\"content\":\"<h1>Hi</h1>\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "from_email",
+          "label": "from_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sender email. Wired to message.from_email on send-html / send-template. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "from_name",
+          "label": "from_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sender name. Wired to message.from_name.",
+          "children": []
+        },
+        {
+          "shortCode": "to",
+          "label": "to",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Recipients [{email, name, type}]. type is to|cc|bcc. Wired to message.to. Example: [{\"email\":\"bob@example.com\",\"type\":\"to\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subject. Wired to message.subject. Example: Reset your password.",
+          "children": []
+        },
+        {
+          "shortCode": "html",
+          "label": "html",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTML body. Wired to message.html on send-html / send-template.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Plain-text body. Wired to message.text.",
+          "children": []
+        },
+        {
+          "shortCode": "cc",
+          "label": "cc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional extra cc (also express cc via to[].type=cc).",
+          "children": []
+        },
+        {
+          "shortCode": "bcc",
+          "label": "bcc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional extra bcc (also express bcc via to[].type=bcc).",
+          "children": []
+        },
+        {
+          "shortCode": "reply_to",
+          "label": "reply_to",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Reply-To address. Wired to message.headers.Reply-To.",
+          "children": []
+        },
+        {
+          "shortCode": "attachments",
+          "label": "attachments",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Mandrill attachments [{type, name, content}] (content is base64). Wired to message.attachments.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "49fceba4-8fc0-5370-b51c-05b97a908f91",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2430df0b-b50e-53f8-ba91-26820ffae391",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-html, send-template, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-html",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-html",
+        "send-template",
+        "listen"
+      ]
+    },
+    {
+      "_id": "93691dc8-9296-5343-a020-d7b75f798c4b",
+      "shortCode": "api_key",
+      "label": "api_key",
+      "type": "password",
+      "description": "Mandrill API key. Sent in JSON body as key (Mandrill convention). StudioQuack secret.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "efe0d984-a567-540d-a36c-b291303038b9",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

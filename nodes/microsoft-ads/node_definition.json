@@ -1,0 +1,347 @@
+{
+  "_id": "4539b6e0-d625-4201-b10e-cb9b0ca9ab79",
+  "version": "1.0.0",
+  "name": "Microsoft Ads",
+  "label": "Microsoft Advertising API v13 REST — campaigns, reports, conversions",
+  "description": "Official Microsoft Advertising REST v13 (Campaign Management + Reporting). Hosts campaign.api.bingads.microsoft.com and reporting.api.bingads.microsoft.com. Handler: OfficialApiNode via api_spec.json. SOAP is not used (full deprecation 2027-01-31). Auth: OAuth Bearer access_token. extraHeaders send DeveloperToken, CustomerId, CustomerAccountId from config developer_token / customer_id / account_id. Customer owns the ad account. Never log developer_token, Bearer, click ids, or conversion emails.",
+  "icon": "campaign",
+  "tags": [
+    "ads",
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "47fcc478-1175-4b70-a22c-c513d75f3445",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation Campaign Management / Reporting REST JSON fields (PascalCase provider keys). Do not put secrets here. INPUT operation overrides config. Required: campaign.get=AccountId+CampaignIds; campaign.list=AccountId; campaign.mutate=AccountId+Campaigns; adGroup.list=CampaignId; ad.list=AdGroupId+AdTypes; report.submit=ReportRequest; report.poll=ReportRequestId; conversion.upload=OfflineConversions; audience.mutate=Audiences.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Overrides config operation when non-blank. EXACT: campaign.get | campaign.list | campaign.mutate | adGroup.list | ad.list | report.submit | report.poll | conversion.upload | audience.mutate.",
+          "children": []
+        },
+        {
+          "shortCode": "CampaignIds",
+          "label": "CampaignIds",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "campaign.get: long campaign ids, max 100. QueryByIds body key.",
+          "children": []
+        },
+        {
+          "shortCode": "CampaignType",
+          "label": "CampaignType",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Space-delimited flags e.g. Search Shopping. Default Search when omitted. campaign.get / campaign.list.",
+          "children": []
+        },
+        {
+          "shortCode": "ReturnAdditionalFields",
+          "label": "ReturnAdditionalFields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Optional additional field flags for campaign.get, campaign.list, adGroup.list, ad.list.",
+          "children": []
+        },
+        {
+          "shortCode": "Campaigns",
+          "label": "Campaigns",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "campaign.mutate (POST /Campaigns = AddCampaigns): Campaign objects (Name, BudgetType, DailyBudget, CampaignType, …). Max 100.",
+          "children": []
+        },
+        {
+          "shortCode": "CampaignId",
+          "label": "CampaignId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "adGroup.list: parent campaign id. QueryByCampaignId body key. Required for adGroup.list.",
+          "children": []
+        },
+        {
+          "shortCode": "AdGroupId",
+          "label": "AdGroupId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ad.list: parent ad group id. QueryByAdGroupId body key. Required for ad.list.",
+          "children": []
+        },
+        {
+          "shortCode": "AdTypes",
+          "label": "AdTypes",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "ad.list: ad type enums e.g. ResponsiveSearch. Required for ad.list.",
+          "children": []
+        },
+        {
+          "shortCode": "ReportRequest",
+          "label": "ReportRequest",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "report.submit: derived report request (Type e.g. CampaignPerformanceReportRequest, Aggregation, Columns, Time, Scope). Required for report.submit. One submit per node run.",
+          "children": []
+        },
+        {
+          "shortCode": "ReportRequestId",
+          "label": "ReportRequestId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "report.poll: id from report.submit. Valid ≤ 1 day. One poll per node run. Do not download the report file here.",
+          "children": []
+        },
+        {
+          "shortCode": "OfflineConversions",
+          "label": "OfflineConversions",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "conversion.upload: ConversionName, ConversionTime UTC, MicrosoftClickId or hashed email. Max 1000. Never log.",
+          "children": []
+        },
+        {
+          "shortCode": "Audiences",
+          "label": "Audiences",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "audience.mutate (POST /Audiences = AddAudiences): RemarketingList JSON. Max 100. CustomAudience / InMarketAudience / SimilarRemarketingList cannot be added.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "700b2446-3429-462b-9157-a99a78bf5216",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Size-capped. Never log secrets or raw PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "991ab0d4-b177-43a3-8bf8-24577764e820",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: campaign.get | campaign.list | campaign.mutate | adGroup.list | ad.list | report.submit | report.poll | conversion.upload | audience.mutate.",
+      "value": "campaign.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "campaign.get",
+        "campaign.list",
+        "campaign.mutate",
+        "adGroup.list",
+        "ad.list",
+        "report.submit",
+        "report.poll",
+        "conversion.upload",
+        "audience.mutate"
+      ]
+    },
+    {
+      "_id": "7c454eb3-c1fe-4e1c-8394-e4725ce6bd19",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Entra (or documented IdP) OAuth access token (StudioQuack secret). Authorization: Bearer. Refresh outside the hot path. Never on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3702c7bf-b164-4ff2-ba2b-502a1b319f59",
+      "shortCode": "developer_token",
+      "label": "Developer token",
+      "type": "password",
+      "description": "Production developer token from ads.microsoft.com DevSettings (StudioQuack secret). Sent as header DeveloperToken on every call. Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c7e201ed-add5-47a3-92cf-47118046f6f8",
+      "shortCode": "client_id",
+      "label": "Client ID",
+      "type": "string",
+      "description": "Entra app (or documented OAuth client) id. Not a secret. Token refresh only; not sent on Advertising REST calls.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ab5252ca-525e-495e-b033-d60bf1989c93",
+      "shortCode": "client_secret",
+      "label": "Client secret",
+      "type": "password",
+      "description": "OAuth client secret (StudioQuack secret). Token refresh only; not sent on Advertising REST calls. Never log.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "59f080bc-56ba-4ac2-ba55-56df3c2ddf21",
+      "shortCode": "tenant",
+      "label": "Tenant",
+      "type": "string",
+      "description": "Entra tenant for work accounts. Default common. Token refresh only; not sent on Advertising REST calls.",
+      "value": "common",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "87149830-1695-4af6-9d99-038a390d3638",
+      "shortCode": "customer_id",
+      "label": "Customer id",
+      "type": "string",
+      "description": "Manager account. Sent as header CustomerId on every call. Put AccountId on INPUT for QueryByAccountId / AddCampaigns bodies.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5b3b813c-33d5-44ff-bc6a-80fd41f63cb4",
+      "shortCode": "account_id",
+      "label": "Account id",
+      "type": "string",
+      "description": "Ad account. Sent as header CustomerAccountId on every call. Also send INPUT AccountId when the REST body requires it.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8209b766-a773-4097-82ad-6d8d0cde973d",
+      "shortCode": "environment",
+      "label": "Environment",
+      "type": "select",
+      "description": "prod uses campaign.api.bingads.microsoft.com and reporting.api.bingads.microsoft.com. Sandbox hosts are not rewritten from this flag — spec paths are production.",
+      "value": "prod",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "prod",
+        "sandbox"
+      ]
+    },
+    {
+      "_id": "a758765c-7d54-4b6b-bfa9-ef4a9e4d39fd",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 45. Keep below the daemon invoke budget.",
+      "value": "45",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

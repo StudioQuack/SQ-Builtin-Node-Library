@@ -1,0 +1,240 @@
+{
+  "_id": "24bb1620-0697-5b78-9a7a-4ab5e59ea159",
+  "version": "1.0.0",
+  "name": "Calendly",
+  "label": "Calendly — Calendly API v2",
+  "description": "Calendly via the official Calendly API v2. Base https://api.calendly.com. Docs: https://developer.calendly.com/api-docs. Webhooks fire only for Calendly-managed bookings. Invitees are personal data. listen = webhook signing as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "icon": "event",
+  "tags": [
+    "scheduling"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "6e08df8e-0559-5b97-bd2b-205d4ac7c9fe",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Calendly operation. Set operation plus the fields that operation needs. Do not put secrets on this port. File payloads are type file. Example: {\"operation\":\"list-event-types\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "list-event-types",
+          "description": "Which official call to run. EXACT values: list-event-types | get-event | list-events | cancel-event | list-invitees | create-invitee-no-show | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "children": []
+        },
+        {
+          "shortCode": "uuid",
+          "label": "uuid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Scheduled event uuid. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "user",
+          "label": "user",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User URI (https://api.calendly.com/users/…). list-event-types and list-events require user= or organization=; omit both and the node fills user from GET /users/me. Example: leave blank for “my” lists.",
+          "children": []
+        },
+        {
+          "shortCode": "organization",
+          "label": "organization",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Organization URI. list-event-types and list-events require user= or organization=; use this for org-wide lists, or omit with user also omitted to default to current user via /users/me.",
+          "children": []
+        },
+        {
+          "shortCode": "invitee",
+          "label": "invitee",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Invitee URI for no-show. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "reason",
+          "label": "reason",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Cancel reason. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "count",
+          "label": "count",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `count` for operations: list-event-types, list-events, list-invitees.",
+          "children": []
+        },
+        {
+          "shortCode": "page_token",
+          "label": "page_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page_token` for operations: list-event-types, list-invitees.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `status` for operation: list-events.",
+          "children": []
+        },
+        {
+          "shortCode": "min_start_time",
+          "label": "min_start_time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `min_start_time` for operation: list-events.",
+          "children": []
+        },
+        {
+          "shortCode": "max_start_time",
+          "label": "max_start_time",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `max_start_time` for operation: list-events.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "8a00b4f0-ccda-5549-a5e2-b8e3937c44f7",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "7a6a3dd3-4fed-54c8-a9f0-dcc388e319ea",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: list-event-types, get-event, list-events, cancel-event, list-invitees, create-invitee-no-show, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "list-event-types",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "list-event-types",
+        "get-event",
+        "list-events",
+        "cancel-event",
+        "list-invitees",
+        "create-invitee-no-show",
+        "listen"
+      ]
+    },
+    {
+      "_id": "626f933a-1c62-5724-b178-f292d08be1f6",
+      "shortCode": "access_token",
+      "label": "Personal access token",
+      "type": "password",
+      "description": "Calendly PAT or OAuth access token. Header Authorization: Bearer. StudioQuack secret. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "400318d1-7665-5f70-895b-25667fab5ec4",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

@@ -1,0 +1,1933 @@
+{
+  "_id": "a87ca9e8-9da8-4ecd-989d-953323ae26f9",
+  "version": "1.0.0",
+  "name": "Zendesk Sell",
+  "label": "Zendesk Sell — Sales CRM API v2 (not Support)",
+  "description": "Official Zendesk Sell (Sales CRM, formerly Base) REST API v2 at https://api.getbase.com/v2. Handler: OfficialApiNode. Not Zendesk Support. Bearer OAuth access token (or dashboard personal token) from a Sell OAuth app. Leads, contacts, and deals are PII. Customer owns the Sell account. Minimize; never log access_token, emails, or phones. trigger.listen is BPMN message-event ingress. Docs: https://developer.zendesk.com/api-reference/sales-crm/introduction/",
+  "icon": "handshake",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "70ccdab7-221e-4bd2-9223-7cb1476a3b30",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Create/update take first_name, last_name, organization_name, name, email, phone, contact_id, value, content, resource_type, … (nested as data.*). Do not put access_token here. Example: {\"operation\":\"lead.create\",\"last_name\":\"Ada\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "lead.create",
+          "description": "Overrides config operation when non-blank. EXACT: lead.create | lead.get | lead.list | lead.update | contact.create | contact.get | contact.list | contact.update | deal.create | deal.get | deal.list | deal.update | deal.delete | note.create | task.create | task.get | pipeline.list | stage.list | trigger.listen.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Record id for get/update/delete path {id}.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page. Starts at 1.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "List page size. Default 25; max 100.",
+          "children": []
+        },
+        {
+          "shortCode": "sort_by",
+          "label": "sort_by",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "List sort field. Append :desc for descending.",
+          "children": []
+        },
+        {
+          "shortCode": "ids",
+          "label": "ids",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated ids filter.",
+          "children": []
+        },
+        {
+          "shortCode": "owner_id",
+          "label": "owner_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Owner user id. List filter on lead/contact/deal.list; also create/update body (data.owner_id). Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Email. List filter on lead.list / contact.list; also lead/contact create/update body (data.email). PII — do not log. Example: mark@designservices.com.",
+          "children": []
+        },
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Lead status. lead.list filter and lead.create/update body (data.status). Example: Unqualified.",
+          "children": []
+        },
+        {
+          "shortCode": "stage_id",
+          "label": "stage_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deal stage id. deal.list filter and deal.create/update body (data.stage_id). Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "pipeline_id",
+          "label": "pipeline_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "stage.list pipeline filter.",
+          "children": []
+        },
+        {
+          "shortCode": "first_name",
+          "label": "first_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Given name. lead.create/update (individual); contact.create/update when is_organization=false. Example: Mark. Nested as data.first_name. https://developer.zendesk.com/api-reference/sales-crm/resources/leads/",
+          "children": []
+        },
+        {
+          "shortCode": "last_name",
+          "label": "last_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Family name. Required on lead.create when organization_name is empty; required on contact.create when is_organization=false. Example: Johnson. Nested as data.last_name.",
+          "children": []
+        },
+        {
+          "shortCode": "organization_name",
+          "label": "organization_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Organization name. Required on lead.create when last_name is empty. Example: Design Services Company. Nested as data.organization_name.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact organization name (contact.create when is_organization=true) or deal name (deal.create required). Example: Website Redesign. Nested as data.name.",
+          "children": []
+        },
+        {
+          "shortCode": "phone",
+          "label": "phone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Phone. lead/contact create/update. PII — do not log. Example: 508-778-6516. Nested as data.phone.",
+          "children": []
+        },
+        {
+          "shortCode": "mobile",
+          "label": "mobile",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Mobile phone. lead/contact create/update. Example: 508-778-6516. Nested as data.mobile.",
+          "children": []
+        },
+        {
+          "shortCode": "fax",
+          "label": "fax",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Fax. lead/contact create/update. Example: +44-208-1234567. Nested as data.fax.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job title. lead/contact create/update. Example: CEO. Nested as data.title.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Notes. lead/contact create/update. Example: I know him via Tom. Nested as data.description.",
+          "children": []
+        },
+        {
+          "shortCode": "industry",
+          "label": "industry",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Industry. lead/contact create/update. Example: Design Services. Nested as data.industry.",
+          "children": []
+        },
+        {
+          "shortCode": "website",
+          "label": "website",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Website. lead/contact create/update. Example: designservices.com. Nested as data.website.",
+          "children": []
+        },
+        {
+          "shortCode": "twitter",
+          "label": "twitter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Twitter handle. lead/contact create/update. Example: mjohnson. Nested as data.twitter.",
+          "children": []
+        },
+        {
+          "shortCode": "facebook",
+          "label": "facebook",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Facebook handle. lead/contact create/update. Nested as data.facebook.",
+          "children": []
+        },
+        {
+          "shortCode": "linkedin",
+          "label": "linkedin",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "LinkedIn handle. lead/contact create/update. Nested as data.linkedin.",
+          "children": []
+        },
+        {
+          "shortCode": "skype",
+          "label": "skype",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Skype handle. lead/contact create/update. Nested as data.skype.",
+          "children": []
+        },
+        {
+          "shortCode": "source_id",
+          "label": "source_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Source id. lead/deal create/update. Example: 10. Nested as data.source_id.",
+          "children": []
+        },
+        {
+          "shortCode": "address",
+          "label": "address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Address {line1,city,postal_code,state,country}. lead/contact create/update. Nested as data.address.",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Tag names. JSON array of strings. lead/contact/deal/note create/update. Example: [\"important\"]. Nested as data.tags.",
+          "children": []
+        },
+        {
+          "shortCode": "custom_fields",
+          "label": "custom_fields",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Custom field map. lead/contact/deal create/update. Example: {\"known_via\":\"tom\"}. Nested as data.custom_fields.",
+          "children": []
+        },
+        {
+          "shortCode": "is_organization",
+          "label": "is_organization",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "contact.create only. true = organization (requires name); false = individual (requires last_name). Cannot change later. Nested as data.is_organization.",
+          "children": []
+        },
+        {
+          "shortCode": "parent_organization_id",
+          "label": "parent_organization_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Parent organization contact id. contact.create/update when is_organization=true. Nested as data.parent_organization_id.",
+          "children": []
+        },
+        {
+          "shortCode": "customer_status",
+          "label": "customer_status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.create/update. Example: none | current. Nested as data.customer_status.",
+          "children": []
+        },
+        {
+          "shortCode": "prospect_status",
+          "label": "prospect_status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contact.create/update. Example: none | current. Nested as data.prospect_status.",
+          "children": []
+        },
+        {
+          "shortCode": "contact_id",
+          "label": "contact_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Deal contact id. Required on deal.create. Example: 1. Nested as data.contact_id.",
+          "children": []
+        },
+        {
+          "shortCode": "value",
+          "label": "value",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Deal value. Prefer two decimal places. deal.create/update. Example: 1000. Nested as data.value.",
+          "children": []
+        },
+        {
+          "shortCode": "currency",
+          "label": "currency",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO 4217 currency for deal.create/update. Default account currency. Example: USD. Nested as data.currency.",
+          "children": []
+        },
+        {
+          "shortCode": "hot",
+          "label": "hot",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Deal hot flag. deal.create/update. Nested as data.hot.",
+          "children": []
+        },
+        {
+          "shortCode": "estimated_close_date",
+          "label": "estimated_close_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Deal estimated close date YYYY-MM-DD. deal.create/update. Example: 2024-12-31. Nested as data.estimated_close_date.",
+          "children": []
+        },
+        {
+          "shortCode": "customized_win_likelihood",
+          "label": "customized_win_likelihood",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Deal win likelihood 0-100. deal.create/update. Nested as data.customized_win_likelihood.",
+          "children": []
+        },
+        {
+          "shortCode": "loss_reason_id",
+          "label": "loss_reason_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Deal loss reason id. deal.create/update. Nested as data.loss_reason_id.",
+          "children": []
+        },
+        {
+          "shortCode": "resource_type",
+          "label": "resource_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "note.create / task.create attachment. EXACT: lead | contact | deal. Example: lead. Nested as data.resource_type.",
+          "children": []
+        },
+        {
+          "shortCode": "resource_id",
+          "label": "resource_id",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Id of the lead/contact/deal the note or task attaches to. Required on note.create. Example: 1. Nested as data.resource_id.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note or task text. Required on note.create and task.create. Example: Contact Tom. Nested as data.content.",
+          "children": []
+        },
+        {
+          "shortCode": "is_important",
+          "label": "is_important",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Star the note. note.create. Nested as data.is_important.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Note permission type. EXACT: regular | restricted. note.create. Example: regular. Nested as data.type.",
+          "children": []
+        },
+        {
+          "shortCode": "due_date",
+          "label": "due_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task due datetime UTC ISO8601. task.create. Example: 2014-09-27T16:32:56Z. Nested as data.due_date.",
+          "children": []
+        },
+        {
+          "shortCode": "remind_at",
+          "label": "remind_at",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task reminder datetime UTC ISO8601; must be before due_date. task.create. Nested as data.remind_at.",
+          "children": []
+        },
+        {
+          "shortCode": "completed",
+          "label": "completed",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Task completed flag. task.create. Nested as data.completed.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e329b330-cd18-4e73-8e60-96993e4a3982",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. May contain PII — never log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "2f10e797-4cb8-47af-ab1e-f21447c6ea26",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: lead.create | lead.get | lead.list | lead.update | contact.create | contact.get | contact.list | contact.update | deal.create | deal.get | deal.list | deal.update | deal.delete | note.create | task.create | task.get | pipeline.list | stage.list | trigger.listen. trigger.listen is ingress.",
+      "value": "lead.list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "lead.create",
+        "lead.get",
+        "lead.list",
+        "lead.update",
+        "contact.create",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "deal.create",
+        "deal.get",
+        "deal.list",
+        "deal.update",
+        "deal.delete",
+        "note.create",
+        "task.create",
+        "task.get",
+        "pipeline.list",
+        "stage.list",
+        "trigger.listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "lead.create",
+          "targets": [
+            {
+              "param": "twitter",
+              "visible": true
+            },
+            {
+              "param": "skype",
+              "visible": true
+            },
+            {
+              "param": "address",
+              "visible": true
+            },
+            {
+              "param": "industry",
+              "visible": true
+            },
+            {
+              "param": "website",
+              "visible": true
+            },
+            {
+              "param": "phone",
+              "visible": true
+            },
+            {
+              "param": "last_name",
+              "visible": true
+            },
+            {
+              "param": "custom_fields",
+              "visible": true
+            },
+            {
+              "param": "organization_name",
+              "visible": true
+            },
+            {
+              "param": "source_id",
+              "visible": true
+            },
+            {
+              "param": "linkedin",
+              "visible": true
+            },
+            {
+              "param": "owner_id",
+              "visible": true
+            },
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "first_name",
+              "visible": true
+            },
+            {
+              "param": "mobile",
+              "visible": true
+            },
+            {
+              "param": "status",
+              "visible": true
+            },
+            {
+              "param": "title",
+              "visible": true
+            },
+            {
+              "param": "facebook",
+              "visible": true
+            },
+            {
+              "param": "description",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "fax",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "lead.get",
+          "targets": [
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "lead.list",
+          "targets": [
+            {
+              "param": "owner_id",
+              "visible": true
+            },
+            {
+              "param": "status",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "lead.update",
+          "targets": [
+            {
+              "param": "twitter",
+              "visible": true
+            },
+            {
+              "param": "skype",
+              "visible": true
+            },
+            {
+              "param": "address",
+              "visible": true
+            },
+            {
+              "param": "industry",
+              "visible": true
+            },
+            {
+              "param": "website",
+              "visible": true
+            },
+            {
+              "param": "phone",
+              "visible": true
+            },
+            {
+              "param": "last_name",
+              "visible": true
+            },
+            {
+              "param": "custom_fields",
+              "visible": true
+            },
+            {
+              "param": "organization_name",
+              "visible": true
+            },
+            {
+              "param": "source_id",
+              "visible": true
+            },
+            {
+              "param": "linkedin",
+              "visible": true
+            },
+            {
+              "param": "owner_id",
+              "visible": true
+            },
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "first_name",
+              "visible": true
+            },
+            {
+              "param": "mobile",
+              "visible": true
+            },
+            {
+              "param": "status",
+              "visible": true
+            },
+            {
+              "param": "title",
+              "visible": true
+            },
+            {
+              "param": "facebook",
+              "visible": true
+            },
+            {
+              "param": "description",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "fax",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.create",
+          "targets": [
+            {
+              "param": "twitter",
+              "visible": true
+            },
+            {
+              "param": "skype",
+              "visible": true
+            },
+            {
+              "param": "address",
+              "visible": true
+            },
+            {
+              "param": "industry",
+              "visible": true
+            },
+            {
+              "param": "website",
+              "visible": true
+            },
+            {
+              "param": "phone",
+              "visible": true
+            },
+            {
+              "param": "last_name",
+              "visible": true
+            },
+            {
+              "param": "custom_fields",
+              "visible": true
+            },
+            {
+              "param": "linkedin",
+              "visible": true
+            },
+            {
+              "param": "owner_id",
+              "visible": true
+            },
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "first_name",
+              "visible": true
+            },
+            {
+              "param": "mobile",
+              "visible": true
+            },
+            {
+              "param": "title",
+              "visible": true
+            },
+            {
+              "param": "facebook",
+              "visible": true
+            },
+            {
+              "param": "description",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "fax",
+              "visible": true
+            },
+            {
+              "param": "prospect_status",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "parent_organization_id",
+              "visible": true
+            },
+            {
+              "param": "is_organization",
+              "visible": true
+            },
+            {
+              "param": "customer_status",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.get",
+          "targets": [
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.list",
+          "targets": [
+            {
+              "param": "owner_id",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "contact.update",
+          "targets": [
+            {
+              "param": "twitter",
+              "visible": true
+            },
+            {
+              "param": "skype",
+              "visible": true
+            },
+            {
+              "param": "address",
+              "visible": true
+            },
+            {
+              "param": "industry",
+              "visible": true
+            },
+            {
+              "param": "website",
+              "visible": true
+            },
+            {
+              "param": "phone",
+              "visible": true
+            },
+            {
+              "param": "last_name",
+              "visible": true
+            },
+            {
+              "param": "custom_fields",
+              "visible": true
+            },
+            {
+              "param": "linkedin",
+              "visible": true
+            },
+            {
+              "param": "owner_id",
+              "visible": true
+            },
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "first_name",
+              "visible": true
+            },
+            {
+              "param": "mobile",
+              "visible": true
+            },
+            {
+              "param": "title",
+              "visible": true
+            },
+            {
+              "param": "facebook",
+              "visible": true
+            },
+            {
+              "param": "description",
+              "visible": true
+            },
+            {
+              "param": "email",
+              "visible": true
+            },
+            {
+              "param": "fax",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "prospect_status",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "parent_organization_id",
+              "visible": true
+            },
+            {
+              "param": "is_organization",
+              "visible": true
+            },
+            {
+              "param": "customer_status",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "deal.create",
+          "targets": [
+            {
+              "param": "custom_fields",
+              "visible": true
+            },
+            {
+              "param": "source_id",
+              "visible": true
+            },
+            {
+              "param": "owner_id",
+              "visible": true
+            },
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "currency",
+              "visible": true
+            },
+            {
+              "param": "stage_id",
+              "visible": true
+            },
+            {
+              "param": "contact_id",
+              "visible": true
+            },
+            {
+              "param": "customized_win_likelihood",
+              "visible": true
+            },
+            {
+              "param": "hot",
+              "visible": true
+            },
+            {
+              "param": "loss_reason_id",
+              "visible": true
+            },
+            {
+              "param": "estimated_close_date",
+              "visible": true
+            },
+            {
+              "param": "value",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "deal.get",
+          "targets": [
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "deal.list",
+          "targets": [
+            {
+              "param": "owner_id",
+              "visible": true
+            },
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "sort_by",
+              "visible": true
+            },
+            {
+              "param": "ids",
+              "visible": true
+            },
+            {
+              "param": "stage_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "deal.update",
+          "targets": [
+            {
+              "param": "custom_fields",
+              "visible": true
+            },
+            {
+              "param": "source_id",
+              "visible": true
+            },
+            {
+              "param": "owner_id",
+              "visible": true
+            },
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "id",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "currency",
+              "visible": true
+            },
+            {
+              "param": "stage_id",
+              "visible": true
+            },
+            {
+              "param": "contact_id",
+              "visible": true
+            },
+            {
+              "param": "customized_win_likelihood",
+              "visible": true
+            },
+            {
+              "param": "hot",
+              "visible": true
+            },
+            {
+              "param": "loss_reason_id",
+              "visible": true
+            },
+            {
+              "param": "estimated_close_date",
+              "visible": true
+            },
+            {
+              "param": "value",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "deal.delete",
+          "targets": [
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "note.create",
+          "targets": [
+            {
+              "param": "tags",
+              "visible": true
+            },
+            {
+              "param": "content",
+              "visible": true
+            },
+            {
+              "param": "is_important",
+              "visible": true
+            },
+            {
+              "param": "resource_type",
+              "visible": true
+            },
+            {
+              "param": "resource_id",
+              "visible": true
+            },
+            {
+              "param": "type",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "task.create",
+          "targets": [
+            {
+              "param": "owner_id",
+              "visible": true
+            },
+            {
+              "param": "content",
+              "visible": true
+            },
+            {
+              "param": "resource_type",
+              "visible": true
+            },
+            {
+              "param": "resource_id",
+              "visible": true
+            },
+            {
+              "param": "due_date",
+              "visible": true
+            },
+            {
+              "param": "completed",
+              "visible": true
+            },
+            {
+              "param": "remind_at",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "task.get",
+          "targets": [
+            {
+              "param": "id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "stage.list",
+          "targets": [
+            {
+              "param": "page",
+              "visible": true
+            },
+            {
+              "param": "per_page",
+              "visible": true
+            },
+            {
+              "param": "pipeline_id",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "6e69a9a3-6333-46f9-906e-a9b21913a596",
+      "shortCode": "access_token",
+      "label": "Access token",
+      "type": "password",
+      "description": "Sell OAuth access token or dashboard personal token (StudioQuack secret). Sent as Authorization: Bearer. Separate OAuth app from Zendesk Support. Never log or place on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c09550ac-1d13-40f6-9347-54dc55872f9e",
+      "shortCode": "twitter",
+      "label": "Twitter",
+      "type": "string",
+      "description": "Twitter handle. lead/contact create/update. Example: mjohnson. Nested as data.twitter.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8c897a96-3adf-419d-9df2-6eb3e919835e",
+      "shortCode": "skype",
+      "label": "Skype",
+      "type": "string",
+      "description": "Skype handle. lead/contact create/update. Nested as data.skype.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "48873cb9-b0dc-429d-85ce-1583000f2cba",
+      "shortCode": "address",
+      "label": "Address",
+      "type": "object",
+      "description": "Address {line1,city,postal_code,state,country}. lead/contact create/update. Nested as data.address.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e357e296-a65d-4385-8810-b04af9f10053",
+      "shortCode": "industry",
+      "label": "Industry",
+      "type": "string",
+      "description": "Industry. lead/contact create/update. Example: Design Services. Nested as data.industry.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "19a4f046-7596-4a25-a26d-99e76c7c4e37",
+      "shortCode": "website",
+      "label": "Website",
+      "type": "string",
+      "description": "Website. lead/contact create/update. Example: designservices.com. Nested as data.website.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5cf60cec-5113-4e5b-81a5-ed085de98dce",
+      "shortCode": "phone",
+      "label": "Phone",
+      "type": "string",
+      "description": "Phone. lead/contact create/update. PII — do not log. Example: 508-778-6516. Nested as data.phone.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "deea2bd3-079c-4a02-891c-e7d27e55eeb8",
+      "shortCode": "last_name",
+      "label": "Last Name",
+      "type": "string",
+      "description": "Family name. Required on lead.create when organization_name is empty; required on contact.create when is_organization=false. Example: Johnson. Nested as data.last_name.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4dfb2fe0-5497-4659-8f67-fc49b3452cd3",
+      "shortCode": "custom_fields",
+      "label": "Custom Fields",
+      "type": "object",
+      "description": "Custom field map. lead/contact/deal create/update. Example: {\"known_via\":\"tom\"}. Nested as data.custom_fields.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "937908db-4e4d-405c-9ef0-c44b9302b3ca",
+      "shortCode": "organization_name",
+      "label": "Organization Name",
+      "type": "string",
+      "description": "Organization name. Required on lead.create when last_name is empty. Example: Design Services Company. Nested as data.organization_name.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "50079d7a-fda1-4b62-884e-e35f3d44984c",
+      "shortCode": "source_id",
+      "label": "Source ID",
+      "type": "number",
+      "description": "Source id. lead/deal create/update. Example: 10. Nested as data.source_id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cba35c2b-18b4-4faf-849c-ac4b6c03a952",
+      "shortCode": "linkedin",
+      "label": "Linkedin",
+      "type": "string",
+      "description": "LinkedIn handle. lead/contact create/update. Nested as data.linkedin.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "351374ce-95a6-4038-ba89-c9b63be558b8",
+      "shortCode": "owner_id",
+      "label": "Owner ID",
+      "type": "string",
+      "description": "Owner user id. List filter on lead/contact/deal.list; also create/update body (data.owner_id). Example: 1.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1ba3a458-e1ce-4a9d-8665-b03da37d5075",
+      "shortCode": "tags",
+      "label": "Tags",
+      "type": "list",
+      "description": "Tag names. JSON array of strings. lead/contact/deal/note create/update. Example: [\"important\"]. Nested as data.tags.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fdd1e7e4-215e-4c37-ae3e-8d81afda8d20",
+      "shortCode": "first_name",
+      "label": "First Name",
+      "type": "string",
+      "description": "Given name. lead.create/update (individual); contact.create/update when is_organization=false. Example: Mark. Nested as data.first_name. https://developer.zendesk.com/api-reference/sales-crm/resources/leads/",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "131a9401-0a96-467c-9b7d-24c1b634eae9",
+      "shortCode": "mobile",
+      "label": "Mobile",
+      "type": "string",
+      "description": "Mobile phone. lead/contact create/update. Example: 508-778-6516. Nested as data.mobile.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0bff528a-fd73-4f30-9c74-e5fbeca0ea6b",
+      "shortCode": "status",
+      "label": "Status",
+      "type": "string",
+      "description": "Lead status. lead.list filter and lead.create/update body (data.status). Example: Unqualified.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3c955236-999e-42ef-867c-9ccf4d572336",
+      "shortCode": "title",
+      "label": "Title",
+      "type": "string",
+      "description": "Job title. lead/contact create/update. Example: CEO. Nested as data.title.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6cc91dea-525d-4a9b-8047-628398911621",
+      "shortCode": "facebook",
+      "label": "Facebook",
+      "type": "string",
+      "description": "Facebook handle. lead/contact create/update. Nested as data.facebook.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c5483b95-51ee-41a1-a0fb-25c293edb1d3",
+      "shortCode": "description",
+      "label": "Description",
+      "type": "string",
+      "description": "Notes. lead/contact create/update. Example: I know him via Tom. Nested as data.description.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1babb936-bcc6-4aa2-a553-8b93c4d99678",
+      "shortCode": "email",
+      "label": "Email",
+      "type": "string",
+      "description": "Email. List filter on lead.list / contact.list; also lead/contact create/update body (data.email). PII — do not log. Example: mark@designservices.com.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "24c55934-b60d-44bd-a0ba-6a56eb8d23aa",
+      "shortCode": "fax",
+      "label": "Fax",
+      "type": "string",
+      "description": "Fax. lead/contact create/update. Example: +44-208-1234567. Nested as data.fax.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6980b88b-8cb1-4417-af68-14e110d2c2e5",
+      "shortCode": "id",
+      "label": "ID",
+      "type": "string",
+      "description": "Record id for get/update/delete path {id}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4cabf9c2-16dc-4eb4-b652-cdb3a7eff3c5",
+      "shortCode": "page",
+      "label": "Page",
+      "type": "number",
+      "description": "List page. Starts at 1.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "de639728-f2ba-4dc3-886b-038359093dac",
+      "shortCode": "per_page",
+      "label": "Per Page",
+      "type": "number",
+      "description": "List page size. Default 25; max 100.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2833e25b-fc0f-4c73-a98a-549df406aeb5",
+      "shortCode": "sort_by",
+      "label": "Sort By",
+      "type": "string",
+      "description": "List sort field. Append :desc for descending.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dce05ae8-2e10-421b-8458-e377a5a82c54",
+      "shortCode": "ids",
+      "label": "Ids",
+      "type": "string",
+      "description": "Comma-separated ids filter.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "642cc1c6-26ac-4d70-8f0e-b2b13738cc27",
+      "shortCode": "prospect_status",
+      "label": "Prospect Status",
+      "type": "string",
+      "description": "contact.create/update. Example: none | current. Nested as data.prospect_status.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5098b50f-08a4-4660-bab7-58725997a62a",
+      "shortCode": "name",
+      "label": "Name",
+      "type": "string",
+      "description": "Contact organization name (contact.create when is_organization=true) or deal name (deal.create required). Example: Website Redesign. Nested as data.name.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "95bc7318-38c0-4ae1-99da-c9965c948b13",
+      "shortCode": "parent_organization_id",
+      "label": "Parent Organization ID",
+      "type": "number",
+      "description": "Parent organization contact id. contact.create/update when is_organization=true. Nested as data.parent_organization_id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fa0dcf85-2db8-42e4-99e7-dc089da50fbe",
+      "shortCode": "is_organization",
+      "label": "Is Organization",
+      "type": "boolean",
+      "description": "contact.create only. true = organization (requires name); false = individual (requires last_name). Cannot change later. Nested as data.is_organization.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "44dc773b-b7b2-4107-8fc2-814188627dba",
+      "shortCode": "customer_status",
+      "label": "Customer Status",
+      "type": "string",
+      "description": "contact.create/update. Example: none | current. Nested as data.customer_status.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7bef7978-3519-4f30-857d-6ba7e28594bf",
+      "shortCode": "currency",
+      "label": "Currency",
+      "type": "string",
+      "description": "ISO 4217 currency for deal.create/update. Default account currency. Example: USD. Nested as data.currency.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ebe72d7b-41df-41a2-97b3-eaa625a6ae9c",
+      "shortCode": "stage_id",
+      "label": "Stage ID",
+      "type": "string",
+      "description": "Deal stage id. deal.list filter and deal.create/update body (data.stage_id). Example: 1.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4a4bc845-af84-4b86-8f5c-0493c4ce9040",
+      "shortCode": "contact_id",
+      "label": "Contact ID",
+      "type": "number",
+      "description": "Deal contact id. Required on deal.create. Example: 1. Nested as data.contact_id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7c814b25-447d-4951-95f4-a33fd9799c3f",
+      "shortCode": "customized_win_likelihood",
+      "label": "Customized Win Likelihood",
+      "type": "number",
+      "description": "Deal win likelihood 0-100. deal.create/update. Nested as data.customized_win_likelihood.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "66677905-8575-4f2c-9680-623cabfc1465",
+      "shortCode": "hot",
+      "label": "Hot",
+      "type": "boolean",
+      "description": "Deal hot flag. deal.create/update. Nested as data.hot.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "95dfd34b-f6c0-496e-885c-7cee5bff454f",
+      "shortCode": "loss_reason_id",
+      "label": "Loss Reason ID",
+      "type": "number",
+      "description": "Deal loss reason id. deal.create/update. Nested as data.loss_reason_id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3c7dd6ec-dfb2-409b-b22f-76464eb73fb7",
+      "shortCode": "estimated_close_date",
+      "label": "Estimated Close Date",
+      "type": "string",
+      "description": "Deal estimated close date YYYY-MM-DD. deal.create/update. Example: 2024-12-31. Nested as data.estimated_close_date.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "338bb07e-0667-4996-8647-c83ea2f7f19c",
+      "shortCode": "value",
+      "label": "Value",
+      "type": "number",
+      "description": "Deal value. Prefer two decimal places. deal.create/update. Example: 1000. Nested as data.value.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cc2b6843-2eb4-455f-b21a-3488842a66e2",
+      "shortCode": "content",
+      "label": "Content",
+      "type": "string",
+      "description": "Note or task text. Required on note.create and task.create. Example: Contact Tom. Nested as data.content.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c82955e0-ced3-4dd3-8994-3b9b1051bfd8",
+      "shortCode": "is_important",
+      "label": "Is Important",
+      "type": "boolean",
+      "description": "Star the note. note.create. Nested as data.is_important.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "af5655d2-04a8-4d7f-bd9b-2cf07bb2618c",
+      "shortCode": "resource_type",
+      "label": "Resource Type",
+      "type": "string",
+      "description": "note.create / task.create attachment. EXACT: lead | contact | deal. Example: lead. Nested as data.resource_type.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2314c32e-1036-4816-97c0-e04897a44e57",
+      "shortCode": "resource_id",
+      "label": "Resource ID",
+      "type": "number",
+      "description": "Id of the lead/contact/deal the note or task attaches to. Required on note.create. Example: 1. Nested as data.resource_id.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0433594d-8bce-4920-b765-69dc727b050b",
+      "shortCode": "type",
+      "label": "Type",
+      "type": "string",
+      "description": "Note permission type. EXACT: regular | restricted. note.create. Example: regular. Nested as data.type.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "78594ed2-72cf-4d9f-ad6e-66c65c5bf51d",
+      "shortCode": "due_date",
+      "label": "Due Date",
+      "type": "string",
+      "description": "Task due datetime UTC ISO8601. task.create. Example: 2014-09-27T16:32:56Z. Nested as data.due_date.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6a36f9e0-4f92-459d-ad26-35ac9b1c0d17",
+      "shortCode": "completed",
+      "label": "Completed",
+      "type": "boolean",
+      "description": "Task completed flag. task.create. Nested as data.completed.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2fe8c907-3dd8-4399-abe9-054dd6ef0115",
+      "shortCode": "remind_at",
+      "label": "Remind At",
+      "type": "string",
+      "description": "Task reminder datetime UTC ISO8601; must be before due_date. task.create. Nested as data.remind_at.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bb31c9a5-14e1-4d9d-ad74-d3d4cb9b7b91",
+      "shortCode": "pipeline_id",
+      "label": "Pipeline ID",
+      "type": "string",
+      "description": "stage.list pipeline filter.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c8d40c2b-e66b-48bd-8934-060937ad190e",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

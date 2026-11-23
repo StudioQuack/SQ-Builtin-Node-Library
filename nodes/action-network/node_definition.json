@@ -1,0 +1,419 @@
+{
+  "_id": "5f2f7b77-e696-4db2-9ee1-9986ffc18bdd",
+  "version": "1.0.0",
+  "name": "Action Network",
+  "label": "Action Network — advocacy CRM (OSDI REST v2)",
+  "description": "Official Action Network REST API v2 (OSDI 1.1.1 / HAL+JSON) at https://actionnetwork.org/api/v2. Handler: OfficialApiNode. Partner API key header OSDI-API-Token. person.create uses the person signup helper (POST /people/). Advocacy PII — minimize fields. Customer owns the Action Network list. api_key is never logged or returned. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "campaign",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "7c52816d-a78b-418c-8707-69139e761e5e",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Set operation to override config.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "person.create",
+          "description": "Overrides config operation when non-blank. EXACT catalog verb.",
+          "children": []
+        },
+        {
+          "shortCode": "person",
+          "label": "person",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "OSDI person envelope escape hatch for person.create/update, attendance.create, signature.create, personTag.add. Purpose fields (email, given_name, family_name, postal_code) merge into person via bodyMap. Example: {\"phone_numbers\":[{\"number\":\"12025550100\"}]}.",
+          "children": []
+        },
+        {
+          "shortCode": "given_name",
+          "label": "given_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OSDI given_name on person.create/update, attendance.create, signature.create, personTag.add. Nested as person.given_name. Example: Ada.",
+          "children": []
+        },
+        {
+          "shortCode": "family_name",
+          "label": "family_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "OSDI family_name on person.create/update, attendance.create, signature.create, personTag.add. Nested as person.family_name. Example: Lovelace.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Primary email on person writes. Nested as person.email_addresses[0].address. Required by Action Network on person.create unless a phone is supplied inside person. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "postal_code",
+          "label": "postal_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Postal/ZIP on person writes. Nested as person.postal_addresses[0].postal_code. Example: 20009.",
+          "children": []
+        },
+        {
+          "shortCode": "background_request",
+          "label": "background_request",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "background_request=true to process person.create asynchronously.",
+          "children": []
+        },
+        {
+          "shortCode": "add_tags",
+          "label": "add_tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Tag names to add on person.create / attendance.create. Example: [\"volunteer\"].",
+          "children": []
+        },
+        {
+          "shortCode": "remove_tags",
+          "label": "remove_tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Tag names to remove on person.create / attendance.create. Example: [\"lapsed\"].",
+          "children": []
+        },
+        {
+          "shortCode": "personId",
+          "label": "personId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Person UUID without action_network: prefix.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "1-based page. per_page max 25.",
+          "children": []
+        },
+        {
+          "shortCode": "per_page",
+          "label": "per_page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size; API hard cap 25.",
+          "children": []
+        },
+        {
+          "shortCode": "filter",
+          "label": "filter",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "oData filter (e.g. modified_date) when listing people.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event or petition title for event.create and petition.create/update. Example: Town hall.",
+          "children": []
+        },
+        {
+          "shortCode": "start_date",
+          "label": "start_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event start ISO-8601 for event.create. Example: 2026-12-01T18:00:00Z.",
+          "children": []
+        },
+        {
+          "shortCode": "end_date",
+          "label": "end_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event end ISO-8601 for event.create.",
+          "children": []
+        },
+        {
+          "shortCode": "browser_url",
+          "label": "browser_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Public URL for event.create and petition.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "capacity",
+          "label": "capacity",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Event capacity for event.create. Example: 100.",
+          "children": []
+        },
+        {
+          "shortCode": "origin_system",
+          "label": "origin_system",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Human-readable name of the system that created the record, sent on event.create and petition.create (Action Network requires it on POST). Free text; blank falls back to StudioQuack. Example: StudioQuack.",
+          "children": []
+        },
+        {
+          "shortCode": "eventId",
+          "label": "eventId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Event UUID.",
+          "children": []
+        },
+        {
+          "shortCode": "attendanceId",
+          "label": "attendanceId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Attendance UUID.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Petition description for petition.create/update.",
+          "children": []
+        },
+        {
+          "shortCode": "petitionId",
+          "label": "petitionId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Petition UUID.",
+          "children": []
+        },
+        {
+          "shortCode": "comments",
+          "label": "comments",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Signature comments for signature.create.",
+          "children": []
+        },
+        {
+          "shortCode": "triggers",
+          "label": "triggers",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Per-operation field `triggers`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "signatureId",
+          "label": "signatureId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Signature UUID.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tag name for tag.create (deduped by name). Example: volunteer.",
+          "children": []
+        },
+        {
+          "shortCode": "tagId",
+          "label": "tagId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tag UUID.",
+          "children": []
+        },
+        {
+          "shortCode": "taggingId",
+          "label": "taggingId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tagging UUID for personTag.remove.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "56baf7f7-230e-49c2-b98a-39832a63a7f1",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Minimize retained PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a06310dd-e991-4b15-99fb-353268d11785",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: person.create | person.get | person.list | person.update | event.create | event.get | event.list | attendance.create | attendance.get | attendance.list | petition.create | petition.get | petition.list | petition.update | signature.create | signature.get | signature.list | signature.update | tag.create | tag.get | tag.list | personTag.add | personTag.remove | trigger.listen.",
+      "value": "person.create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "person.create",
+        "person.get",
+        "person.list",
+        "person.update",
+        "event.create",
+        "event.get",
+        "event.list",
+        "attendance.create",
+        "attendance.get",
+        "attendance.list",
+        "petition.create",
+        "petition.get",
+        "petition.list",
+        "petition.update",
+        "signature.create",
+        "signature.get",
+        "signature.list",
+        "signature.update",
+        "tag.create",
+        "tag.get",
+        "tag.list",
+        "personTag.add",
+        "personTag.remove",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "06f79a10-9e77-41df-bdc5-9e29ca5b45c8",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Partner API key from Start Organizing → API & Sync. Header OSDI-API-Token. Scopes one list (personal or group). Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1df2bf3d-fb17-4c1c-9197-66ff5124c710",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

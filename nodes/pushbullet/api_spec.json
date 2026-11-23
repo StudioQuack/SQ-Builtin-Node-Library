@@ -1,0 +1,64 @@
+{
+  "baseUrl": "https://api.pushbullet.com/v2",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "create-push": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/pushes",
+      "contentType": "application/json",
+      "bodyFrom": [
+        "type",
+        "title",
+        "body",
+        "url",
+        "email",
+        "channel_tag",
+        "device_iden"
+      ]
+    },
+    "list-pushes": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/pushes",
+      "contentType": "application/json",
+      "queryFrom": [
+        "active",
+        "cursor",
+        "limit"
+      ]
+    },
+    "update-push": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/pushes/{iden}",
+      "contentType": "application/json",
+      "required": [
+        "iden",
+        "dismissed"
+      ],
+      "bodyFrom": [
+        "dismissed"
+      ]
+    },
+    "delete-push": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/pushes/{iden}",
+      "contentType": "application/json",
+      "required": [
+        "iden"
+      ]
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

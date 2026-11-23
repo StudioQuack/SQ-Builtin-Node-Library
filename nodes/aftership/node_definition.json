@@ -1,0 +1,203 @@
+{
+  "_id": "1f6bf262-a20d-5a3f-b306-b1032e82a202",
+  "version": "1.0.0",
+  "name": "AfterShip",
+  "label": "AfterShip Tracking API 2026-07",
+  "description": "AfterShip Tracking 2026-07. Header as-api-key. Create body is a tracking envelope in official examples; OfficialApiNode bodyFrom sends top-level fields (tracking_number, slug, …). Buyer PII on tracking pages — do not log. Docs: https://www.aftership.com/docs/tracking/quickstart/api-quick-start Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "local_shipping",
+  "tags": [
+    "aftership",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "a281d484-4878-50f1-97f2-e88c6a150acb",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "tracking_create",
+          "description": "Official API verb. EXACT: tracking_create | tracking_get | tracking_update | courier_detect | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Resource id for get/update/delete path {id} when that operation needs it.",
+          "children": []
+        },
+        {
+          "shortCode": "tracking_number",
+          "label": "tracking_number",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Carrier tracking number for tracking_create and courier_detect. Alphanumeric. Example: 9400111899562537831249.",
+          "children": []
+        },
+        {
+          "shortCode": "slug",
+          "label": "slug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Courier slug for tracking_create (aftership courier list). Example: ups.",
+          "children": []
+        },
+        {
+          "shortCode": "slug_group",
+          "label": "slug_group",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Courier slug group for tracking_create when slug is unknown. Example: amazon-group.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Human title for tracking_create. Example: Ada's charger.",
+          "children": []
+        },
+        {
+          "shortCode": "order_id",
+          "label": "order_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Merchant order id stored on the tracking (tracking_create). Example: ORD-42.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "40353f33-c7c3-53af-acc7-43f0f014d8b9",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5ba0435f-0076-5856-bbb7-d4f6c446bd36",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: tracking_create | tracking_get | tracking_update | courier_detect | trigger. trigger does not open a socket.",
+      "value": "tracking_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "tracking_create",
+        "tracking_get",
+        "tracking_update",
+        "courier_detect",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "2fb2f1c0-3328-5c83-8e0b-b52408b39e94",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "StudioQuack secret. Auth type header. Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8ecfed3b-e3ab-5a65-91f1-ef9bb961f8e0",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

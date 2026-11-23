@@ -1,0 +1,303 @@
+{
+  "_id": "75015a09-7d49-42a1-b2aa-280319afd818",
+  "version": "1.0.0",
+  "name": "Google BigQuery",
+  "label": "Google BigQuery REST v2 — jobs.query and insertAll",
+  "description": "Official BigQuery REST v2 at https://bigquery.googleapis.com. POST /bigquery/v2/projects/{projectId}/queries and tabledata.insertAll. Handler: OfficialApiNode. Bearer oauth_access_token. Customer owns the GCP project. Bytes billed to that project. oauth_access_token is never logged or returned.",
+  "icon": "database",
+  "tags": [
+    "sql",
+    "warehouse"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "34967ffa-b4df-48d1-9b1e-fcdc18ea9c81",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. execute.sql requires projectId and query; optional useLegacySql, maxResults, defaultDataset. table.insert requires projectId, datasetId, tableId, rows. Do not put oauth_access_token here. Example: {\"operation\":\"execute.sql\",\"projectId\":\"my-proj\",\"query\":\"SELECT 1\",\"useLegacySql\":false}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "execute.sql",
+          "description": "Overrides config operation when non-blank. EXACT: 'execute.sql' | 'table.insert'.",
+          "children": []
+        },
+        {
+          "shortCode": "projectId",
+          "label": "projectId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GCP project id (path). Billed project.",
+          "children": []
+        },
+        {
+          "shortCode": "query",
+          "label": "query",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "GoogleSQL for execute.sql. Official JSON key query.",
+          "children": []
+        },
+        {
+          "shortCode": "useLegacySql",
+          "label": "useLegacySql",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Official JSON key. Send false for GoogleSQL.",
+          "children": []
+        },
+        {
+          "shortCode": "maxResults",
+          "label": "maxResults",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Official JSON key maxResults (page size).",
+          "children": []
+        },
+        {
+          "shortCode": "defaultDataset",
+          "label": "defaultDataset",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "DatasetReference object {datasetId, projectId?}.",
+          "children": []
+        },
+        {
+          "shortCode": "datasetId",
+          "label": "datasetId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path dataset for table.insert.",
+          "children": []
+        },
+        {
+          "shortCode": "tableId",
+          "label": "tableId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path table for table.insert.",
+          "children": []
+        },
+        {
+          "shortCode": "rows",
+          "label": "rows",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "insertAll rows: [{json: {…}, insertId?}].",
+          "children": []
+        },
+        {
+          "shortCode": "skipInvalidRows",
+          "label": "skipInvalidRows",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Official insertAll JSON key.",
+          "children": []
+        },
+        {
+          "shortCode": "ignoreUnknownValues",
+          "label": "ignoreUnknownValues",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Official insertAll JSON key.",
+          "children": []
+        },
+        {
+          "shortCode": "location",
+          "label": "Location",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "jobs.query location (dataset location). execute.sql. Example: US | EU | us-central1.",
+          "children": []
+        },
+        {
+          "shortCode": "timeoutMs",
+          "label": "Timeout ms",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "jobs.query timeoutMs. execute.sql. Example: 10000.",
+          "children": []
+        },
+        {
+          "shortCode": "dryRun",
+          "label": "Dry run",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "jobs.query dryRun — validate and estimate bytes without running. execute.sql.",
+          "children": []
+        },
+        {
+          "shortCode": "useQueryCache",
+          "label": "Use query cache",
+          "type": "boolean",
+          "required": false,
+          "value": "true",
+          "description": "jobs.query useQueryCache. execute.sql.",
+          "children": []
+        },
+        {
+          "shortCode": "labels",
+          "label": "Labels",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "jobs.query labels map. execute.sql. Example: {\"team\":\"finance\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "templateSuffix",
+          "label": "Template suffix",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "tabledata.insertAll templateSuffix — write to tableId+suffix. table.insert.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "aec202e7-82cb-4685-a3fe-fba25a79db72",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (jobComplete, rows, schema, insertErrors).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "c16ba63a-edff-4db7-bf2f-088ec511196a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: execute.sql | table.insert.",
+      "value": "execute.sql",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "execute.sql",
+        "table.insert"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "ca8079b4-444e-47e5-9469-909c0fe1170a",
+      "shortCode": "oauth_access_token",
+      "label": "OAuth access token",
+      "type": "password",
+      "description": "Bearer access token (StudioQuack secret). Scope bigquery or cloud-platform. Never log or place on INPUT. Short-lived; refresh outside this node.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8947979b-d074-485a-a6fb-7b626adf743f",
+      "shortCode": "projectId",
+      "label": "GCP project",
+      "type": "string",
+      "description": "Default projectId when INPUT is empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0ddda483-ef96-4786-bad4-a4c247d41130",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 45. Keep below the daemon invoke budget.",
+      "value": "45",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

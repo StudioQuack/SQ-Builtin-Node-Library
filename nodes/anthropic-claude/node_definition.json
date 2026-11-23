@@ -1,0 +1,461 @@
+{
+  "_id": "58d61639-82da-4ff7-930f-1572d0982db5",
+  "version": "1.0.0",
+  "name": "Anthropic Claude",
+  "label": "Anthropic Claude",
+  "description": "Official Anthropic Claude API (Messages + Files) on the v2 agent model contract (INPUT llm_input → OUTPUT llm_output). operation selects chat (POST /v1/messages) or Files CRUD. Thinking-capable Claude models (claude-3-7, claude-*-4+) auto-enable extended thinking (budget derived from max_tokens, sampling knobs dropped per API rules) so reasoning streams on the thinking channel; an explicit thinking config always wins. Auth is StudioQuack secret api_key sent as x-api-key. File/image/PDF payloads use type file (platform ref-id). Docs: https://platform.claude.com/docs/en/api/overview. Terms: https://www.anthropic.com/legal/terms. Never log api_key. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "psychology",
+  "tags": [
+    "anthropic",
+    "claude",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "873fa20b-a3a6-42b4-aecb-2a3922dfcfb2",
+      "name": "llm_input",
+      "type": "INPUT",
+      "value": "llm_input",
+      "description": "v2 LLM request so this node can sit on the AI Agent model FUNCTION port. Shape: {messages, tools?, stream?, model?, max_tokens?, file?, file_id?, limit?, page?}. Image/PDF use type file (platform ref-id), never inline bytes. Do not put api_key here.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "messages",
+          "label": "messages",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Conversation for operation=chat. List of {role, content}. content is string or typed blocks (text / image / document). Image and PDF sources use type file (platform ref-id). Example: [{\"role\":\"user\",\"content\":\"Hello\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "tools",
+          "label": "tools",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Optional tool definitions {name, description, request} mapped to Anthropic input_schema. Omit or [] sends no tools.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for files_upload. Never inline bytes. Max 500 MB per Anthropic Files docs.",
+          "children": []
+        },
+        {
+          "shortCode": "file_id",
+          "label": "file_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Anthropic file id (file_…) for files_get and files_delete.",
+          "children": []
+        },
+        {
+          "shortCode": "inputFiles",
+          "label": "inputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "user-uploaded files and voice clips for the model",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        },
+        {
+          "shortCode": "system",
+          "label": "system",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `system` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_p",
+          "label": "top_p",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `top_p` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "top_k",
+          "label": "top_k",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `top_k` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "stop_sequences",
+          "label": "stop_sequences",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Request-body parameter `stop_sequences` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "tool_choice",
+          "label": "tool_choice",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `tool_choice` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "thinking",
+          "label": "thinking",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `thinking` for operation: chat.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `limit` for operation: files_list.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page` for operation: files_list.",
+          "children": []
+        },
+        {
+          "shortCode": "filename",
+          "label": "filename",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `filename` for operation: files_upload.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "cc7acb16-4734-4d21-a649-b4b8ed09a337",
+      "name": "llm_output",
+      "type": "OUTPUT",
+      "value": "llm_output",
+      "description": "v2 LLM response envelope. Success includes status/data from OfficialApiNode. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed Anthropic JSON (message, file metadata, or list).",
+          "children": []
+        },
+        {
+          "shortCode": "result",
+          "label": "result",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "canonical assistant payload {role,content,tool_calls?,output_files?,…}",
+          "children": []
+        },
+        {
+          "shortCode": "outputFiles",
+          "label": "outputFiles",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "files produced by the model, e.g. generated images/audio",
+          "children": [
+            {
+              "shortCode": "kind",
+              "label": "kind",
+              "type": "select",
+              "required": false,
+              "value": "",
+              "description": "File kind: image, document, audio, or video.",
+              "options": [
+                "image",
+                "document",
+                "audio",
+                "video"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "mime_type",
+              "label": "mime_type",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "RFC 1521 media type, e.g. application/pdf, image/png",
+              "children": []
+            },
+            {
+              "shortCode": "source",
+              "label": "source",
+              "type": "select",
+              "required": false,
+              "value": "base64",
+              "default": "base64",
+              "description": "How the payload is carried: base64 or url.",
+              "options": [
+                "base64",
+                "url"
+              ],
+              "children": []
+            },
+            {
+              "shortCode": "data",
+              "label": "data",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "base64-encoded payload (when source=base64) or absolute URL (when source=url)",
+              "children": []
+            },
+            {
+              "shortCode": "name",
+              "label": "name",
+              "type": "string",
+              "required": false,
+              "value": "",
+              "description": "Original filename, surfaced as the upload name",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a19ba243-ea47-414f-a6ad-5f16b84e0645",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official Anthropic verb. EXACT values: chat | files_upload | files_get | files_list | files_delete. Default chat = POST /v1/messages.",
+      "value": "chat",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "chat",
+        "files_upload",
+        "files_get",
+        "files_list",
+        "files_delete"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "c223a7a0-f3ea-4696-a928-3cd00d4f87d7",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Anthropic Console API key. Sent as header x-api-key. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b18de888-224d-4b7f-8d91-b9a46a8c71b2",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Messages model id. Default claude-sonnet-5 (current Sonnet). Current production lineup: claude-fable-5, claude-opus-5, claude-sonnet-5, claude-haiku-4-5 (alias) / claude-haiku-4-5-20251001. Still available previous: claude-opus-4-8, claude-opus-4-7, claude-opus-4-6, claude-sonnet-4-6, claude-sonnet-4-5 / claude-sonnet-4-5-20250929, claude-opus-4-5. claude-sonnet-4-5 remains valid (alias of the 20250929 snapshot) until not sooner than 2026-09-29. Verify live list via GET /v1/models. Docs: https://platform.claude.com/docs/en/about-claude/models/overview .",
+      "value": "claude-sonnet-5",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "claude-fable-5",
+        "claude-opus-5",
+        "claude-sonnet-5",
+        "claude-haiku-4-5",
+        "claude-haiku-4-5-20251001",
+        "claude-opus-4-8",
+        "claude-opus-4-7",
+        "claude-opus-4-6",
+        "claude-sonnet-4-6",
+        "claude-sonnet-4-5",
+        "claude-sonnet-4-5-20250929",
+        "claude-opus-4-5",
+        "claude-opus-4-5-20251101"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "42bbd82b-3f4e-4d6e-9bbe-136c767bcad9",
+      "shortCode": "max_tokens",
+      "label": "Max tokens",
+      "type": "number",
+      "description": "Messages max_tokens (API required). Default 1024. Positive integer.",
+      "value": "1024",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "24fef978-1274-480b-9dfb-5ab9e4126cc9",
+      "shortCode": "temperature",
+      "label": "Temperature",
+      "type": "number",
+      "description": "Messages temperature 0–1. Empty → omitted.",
+      "value": "0",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "975e5f1b-7c04-4fa7-b4ff-f425df59a8cd",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 300. Floor 1.",
+      "value": "300",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d3f4071b-2eb5-44d6-a47e-afb51e34c3ae",
+      "shortCode": "stream",
+      "label": "Stream",
+      "type": "select",
+      "description": "Purpose: controls whether Anthropic Claude requests a streamed completion and fans live deltas through helper emitPartial. Canonical flag. When true the node POSTs stream:true, parses SSE data: lines, emitPartial(\"thinking\", delta) for reasoning/thinking and emitPartial(\"answer\", delta) for content; thoughts also appear on llm_output.result.thoughts / thinking; finish_reason, usage and tool_calls are assembled at the end. Accepted: select true | false. Default: true. Invalid/blank → true. Example: true.",
+      "value": "true",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "true",
+        "false"
+      ],
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

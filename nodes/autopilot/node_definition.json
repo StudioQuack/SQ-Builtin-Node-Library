@@ -1,0 +1,209 @@
+{
+  "_id": "6189def6-6f78-49d1-9c40-a6f893254cd1",
+  "version": "1.0.0",
+  "name": "Autopilot",
+  "label": "Autopilot — legacy REST v1 (not Ortto)",
+  "description": "Official Autopilot REST v1 at https://api2.autopilothq.com/v1 only. Handler: OfficialApiNode. Header autopilotapikey. Autopilot API is not the Ortto API — do not point this node at Ortto hosts. Customer owns the Autopilot account. api_key is never logged. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "flight",
+  "tags": [
+    "email"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "c49bdb77-9d0f-4bfb-8f2c-bbd1f434f596",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Set operation to override config.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.upsert",
+          "description": "Overrides config operation when non-blank. EXACT catalog verb.",
+          "children": []
+        },
+        {
+          "shortCode": "contact",
+          "label": "contact",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Contact document for contact.upsert. Email is required. Standard fields: FirstName, LastName, Email, custom fields as custom/Name.",
+          "children": []
+        },
+        {
+          "shortCode": "contact_id_or_email",
+          "label": "contact_id_or_email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "person_… id or email for contact.get.",
+          "children": []
+        },
+        {
+          "shortCode": "bookmark",
+          "label": "bookmark",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination bookmark from the previous contacts page.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "New list name for list.create.",
+          "children": []
+        },
+        {
+          "shortCode": "list_id",
+          "label": "list_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "contactlist_… id for list ops.",
+          "children": []
+        },
+        {
+          "shortCode": "trigger_id",
+          "label": "trigger_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "API trigger id for the journey (journey.add).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "918c4b23-06ae-4930-8433-51b33fda2014",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Minimize retained PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "9267b0c4-87b6-4b07-8e33-2c249ce37801",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: contact.upsert | contact.get | contact.list | contact.delete | list.create | list.list | list.add | list.remove | list.contains | list.contacts | journey.add | trigger.listen.",
+      "value": "contact.upsert",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "contact.upsert",
+        "contact.get",
+        "contact.list",
+        "contact.delete",
+        "list.create",
+        "list.list",
+        "list.add",
+        "list.remove",
+        "list.contains",
+        "list.contacts",
+        "journey.add",
+        "trigger.listen"
+      ]
+    },
+    {
+      "_id": "848062c2-b894-4386-939d-20b76e40d089",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Autopilot API key (Settings → Autopilot API). Header autopilotapikey. Never log. Do not use Ortto keys here.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9b693ddb-1008-4dc9-9920-dac2bc48ece3",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

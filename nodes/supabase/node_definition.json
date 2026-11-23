@@ -1,0 +1,278 @@
+{
+  "_id": "86849fc8-de17-4174-a182-546b5610c911",
+  "version": "1.0.0",
+  "name": "Supabase",
+  "label": "Supabase PostgREST — Data API",
+  "description": "Supabase PostgREST Data API at {project_url}/rest/v1. Docs: https://supabase.com/docs/guides/api. table.insert/update and rpc send INPUT record as the raw JSON body (column/arg names). Auth: apikey + Authorization Bearer (same api_key). Prefer return=representation. Handler: OfficialApiNode. service_role bypasses RLS. Never log api_key.",
+  "icon": "database",
+  "tags": [
+    "sql",
+    "vector"
+  ],
+  "category": "Databases & Storage",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "b69943d5-0b77-408c-b97f-6f52d2203bd2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Table ops require table. table.get query params: select, limit, offset. table.update/table.delete: id as PostgREST filter value (e.g. eq.1). rpc requires fn. insert/update/rpc POST the entire INPUT JSON. Do not put api_key here. Example: {\"operation\":\"table.get\",\"table\":\"todos\",\"select\":\"*\",\"limit\":\"10\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "table.get",
+          "description": "Overrides config operation when non-blank. EXACT: 'table.get' | 'table.insert' | 'table.update' | 'table.delete' | 'rpc'.",
+          "children": []
+        },
+        {
+          "shortCode": "table",
+          "label": "table",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exposed table or view name (path /rest/v1/{table}).",
+          "children": []
+        },
+        {
+          "shortCode": "select",
+          "label": "select",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PostgREST select= column list.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "PostgREST limit on table.get. Example: 10.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "PostgREST offset on table.get.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PostgREST filter on column id (operator form) for table.get / table.update / table.delete. Example: eq.42 or eq.550e8400-e29b-41d4-a716-446655440000.",
+          "children": []
+        },
+        {
+          "shortCode": "fn",
+          "label": "fn",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Postgres function name for POST /rest/v1/rpc/{fn}.",
+          "children": []
+        },
+        {
+          "shortCode": "record",
+          "label": "record",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Row, row array, or RPC args merged as the JSON body for table.insert / table.update / rpc (bodyMap $). A single object is the row; an array is a bulk insert. Example: {\"title\":\"hi\",\"done\":false}.",
+          "children": []
+        },
+        {
+          "shortCode": "order",
+          "label": "order",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PostgREST order= on table.get, e.g. created_at.desc. Official query param.",
+          "children": []
+        },
+        {
+          "shortCode": "prefer",
+          "label": "prefer",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Prefer header. Default return=representation so writes return the row. Also return=minimal | resolution=merge-duplicates.",
+          "children": []
+        },
+        {
+          "shortCode": "args",
+          "label": "args",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "RPC arguments for functions with parameters (POST /rest/v1/rpc/{fn} JSON body). Example: {\"user_id\":\"42\"}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9849cf46-ded3-4564-9e78-92dc4d8b4c30",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (rows or representation). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (row array or object).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "68b5a529-e917-4a8e-8953-9b577489a84b",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: table.get | table.insert | table.update | table.delete | rpc.",
+      "value": "table.get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "table.get",
+        "table.insert",
+        "table.update",
+        "table.delete",
+        "rpc"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "d48523fe-9a11-40ad-978e-da1ba14381fd",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Sent as header apikey only (StudioQuack secret). Prefer publishable (sb_publishable_) or secret (sb_secret_). Legacy JWT anon/service_role keys are deprecated by end of 2026 (https://supabase.com/docs/guides/getting-started/api-keys). Never log or place on INPUT. Secret/service_role bypasses RLS. Authorization Bearer is not sent — new keys are not JWTs.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b34f002a-05ec-49e0-b9f8-d8673a5747db",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "319ba66c-576d-438c-b66f-beaed17eb365",
+      "shortCode": "project_url",
+      "label": "Project URL",
+      "type": "string",
+      "description": "Project REST origin including scheme, e.g. https://abcd.supabase.co. Substituted as {project_url}.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "52b7931a-7d0d-44d5-88d7-98657a151ba0",
+      "shortCode": "prefer",
+      "label": "Prefer",
+      "type": "string",
+      "description": "Default Prefer header when input.prefer is blank. Official: return=representation.",
+      "value": "return=representation",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6d54b577-c0ec-48b5-9412-92395050da19",
+      "shortCode": "args",
+      "label": "Args",
+      "type": "object",
+      "description": "RPC arguments for functions with parameters (POST /rest/v1/rpc/{fn} JSON body). Example: {\"user_id\":\"42\"}.",
+      "value": "{}",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

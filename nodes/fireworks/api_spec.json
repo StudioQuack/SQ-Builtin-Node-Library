@@ -1,0 +1,44 @@
+{
+  "baseUrl": "{base_url}",
+  "defaultTimeout": 300,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "chat": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/chat/completions",
+      "required": ["messages"],
+      "bodyFrom": ["model", "messages", "tools", "tool_choice", "stream", "temperature", "top_p", "top_k", "max_tokens", "frequency_penalty", "presence_penalty", "stop", "response_format", "user"],
+      "stream": {
+        "format": "openai-sse"
+      }
+    },
+    "completions": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/completions",
+      "required": ["prompt"],
+      "bodyFrom": ["model", "prompt", "max_tokens", "temperature", "top_p", "top_k", "stop", "stream"]
+    },
+    "embeddings": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/embeddings",
+      "required": ["input"],
+      "bodyFrom": ["model", "input", "dimensions", "normalize", "prompt_template"]
+    },
+    "image_gen": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/workflows/accounts/fireworks/models/{model}/text_to_image",
+      "required": ["prompt"],
+      "bodyFrom": ["prompt", "seed", "aspect_ratio", "output_format", "input_image", "prompt_upsampling", "safety_tolerance"]
+    }
+  }
+}

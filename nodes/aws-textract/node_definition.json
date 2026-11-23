@@ -1,0 +1,233 @@
+{
+  "_id": "ba353e49-4657-49bc-9c07-7a9f56f173c0",
+  "version": "1.0.0",
+  "name": "AWS Textract",
+  "label": "Amazon Textract — document text and IDP",
+  "description": "Official Amazon Textract JSON 1.1 API. POST https://textract.{region}.amazonaws.com/ signed with AWS SigV4 (service textract). Content-Type application/x-amz-json-1.1 and X-Amz-Target Textract.{Action} are set per operation. operation: detect_text (DetectDocumentText), analyze_document, analyze_expense, analyze_id. Prefer Document / DocumentPages as official Bytes or S3Object. ID and PII in documents — minimize retention. Docs: https://docs.aws.amazon.com/textract/latest/APIReference/Welcome.html. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "document_scanner",
+  "tags": [
+    "aws",
+    "textract",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "2062384e-d0da-4ab5-9b4d-4f5c77bfc4c1",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation Textract JSON. Prefer Document / DocumentPages as official {Bytes} or {S3Object} objects. JPEG, PNG, PDF, or TIFF. Never put AWS keys here. Example: {\"Document\":{\"S3Object\":{\"Bucket\":\"docs\",\"Name\":\"invoice.pdf\"}},\"FeatureTypes\":[\"FORMS\",\"TABLES\"]}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "detect_text",
+          "description": "Overrides config operation. EXACT: detect_text | analyze_document | analyze_expense | analyze_id.",
+          "children": []
+        },
+        {
+          "shortCode": "Document",
+          "label": "Document",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Official Document for detect_text, analyze_document, analyze_expense: {Bytes} or {S3Object:{Bucket,Name,Version?}}.",
+          "children": []
+        },
+        {
+          "shortCode": "DocumentPages",
+          "label": "DocumentPages",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Official AnalyzeID DocumentPages array of {Bytes} or {S3Object}. Identity documents = PII.",
+          "children": []
+        },
+        {
+          "shortCode": "FeatureTypes",
+          "label": "FeatureTypes",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "AnalyzeDocument FeatureTypes. EXACT: TABLES | FORMS | QUERIES | SIGNATURES | LAYOUT. Required by AnalyzeDocument.",
+          "children": []
+        },
+        {
+          "shortCode": "QueriesConfig",
+          "label": "QueriesConfig",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Optional AnalyzeDocument QueriesConfig when FeatureTypes includes QUERIES.",
+          "children": []
+        },
+        {
+          "shortCode": "AdaptersConfig",
+          "label": "AdaptersConfig",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `AdaptersConfig` for operation: analyze_document.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "84bc9c00-cdf4-4352-9a54-226da13ddfa9",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (Textract JSON). AnalyzeID / expense fields may contain PII — do not persist longer than the workflow needs. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (Blocks, ExpenseDocuments, IdentityDocuments).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "21c51c74-4a8e-4247-acfd-774605351245",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default Textract action. EXACT: detect_text | analyze_document | analyze_expense | analyze_id. Maps to X-Amz-Target Textract.DetectDocumentText | AnalyzeDocument | AnalyzeExpense | AnalyzeID.",
+      "value": "detect_text",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "detect_text",
+        "analyze_document",
+        "analyze_expense",
+        "analyze_id"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "fc0e65bc-25fd-4c23-b0f3-696452b26cc7",
+      "shortCode": "access_key_id",
+      "label": "AWS access key ID",
+      "type": "password",
+      "description": "IAM access key ID used as the SigV4 credential. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c1c34960-3ed0-4b68-b33c-6e632cecdc56",
+      "shortCode": "secret_access_key",
+      "label": "AWS secret access key",
+      "type": "password",
+      "description": "IAM secret access key used to sign SigV4. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9e0cb9b8-1d2b-48de-84fb-badc6d5c7193",
+      "shortCode": "session_token",
+      "label": "AWS session token",
+      "type": "password",
+      "description": "Optional STS session token. When set, OfficialApiNode adds x-amz-security-token. Empty for long-lived keys. StudioQuack secret. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b5bfbd48-c81a-4560-9641-6fd1d453c395",
+      "shortCode": "region",
+      "label": "AWS region",
+      "type": "string",
+      "description": "Region in textract.{region}.amazonaws.com. Example: us-east-1.",
+      "value": "us-east-1",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9c5f8abc-2113-4762-acc4-238ef257cb35",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 60. Floor 1.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-22T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

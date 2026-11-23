@@ -1,0 +1,394 @@
+{
+  "_id": "4da3dadc-5b75-4468-a18f-8039eb79d449",
+  "version": "1.0.0",
+  "name": "Basecamp",
+  "label": "Basecamp 3 API",
+  "description": "Official Basecamp 3/4 API via OfficialApiNode (nodes/basecamp/api_spec.json). extraHeaders send required User-Agent: {user_agent} (app name + contact). Official docs: https://github.com/basecamp/bc3-api. Secrets never appear on OUTPUT. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "campaign",
+  "tags": [
+    "basecamp",
+    "projects",
+    "todos"
+  ],
+  "category": "Productivity & Collaboration",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5e6c252c-a095-4bdc-9f91-c7d87ad99bda",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Basecamp official API call. Delivered as inputVariables.input. Set operation plus the path/query/body fields that operation lists in api_spec.json. Do not put secrets on this port. Example: {\"operation\":\"project_list\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "project_list",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'project_list', 'project_get', 'todo_create', 'todo_get', 'todo_complete', 'todo_list_create', 'message_create', 'document_create', 'comment_create', 'person_list', 'campfire_line', 'schedule_entry', 'listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'project_list'.",
+          "children": []
+        },
+        {
+          "shortCode": "account_id",
+          "label": "account_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Basecamp account id path (from /my/profile.json). Example: 1234567.",
+          "children": []
+        },
+        {
+          "shortCode": "project_id",
+          "label": "project_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project id path for every project-scoped op.",
+          "children": []
+        },
+        {
+          "shortCode": "vault_id",
+          "label": "vault_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Vault id path for document_create (POST …/vaults/{vault_id}/documents.json). Example: 789.",
+          "children": []
+        },
+        {
+          "shortCode": "message_board_id",
+          "label": "message_board_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message board id path for message_create (POST …/message_boards/{message_board_id}/messages.json). Example: 456.",
+          "children": []
+        },
+        {
+          "shortCode": "todoset_id",
+          "label": "todoset_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Todoset id path for todo_list_create (POST …/todosets/{todoset_id}/todolists.json). Example: 123.",
+          "children": []
+        },
+        {
+          "shortCode": "todolist_id",
+          "label": "todolist_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Todolist id path for todo_create.",
+          "children": []
+        },
+        {
+          "shortCode": "content",
+          "label": "content",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Todo title (todo_create), HTML body (message_create / document_create / comment_create), or campfire line (campfire_line). Example: Ship the invoice.",
+          "children": []
+        },
+        {
+          "shortCode": "due_on",
+          "label": "due_on",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Todo due date YYYY-MM-DD for todo_create. Example: 2026-12-01.",
+          "children": []
+        },
+        {
+          "shortCode": "todo_id",
+          "label": "todo_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request field for operations that declare `todo_id` as a path, query, or JSON body key. Omitted/blank is dropped. Example: 'example-value'.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Todolist or schedule name when that op uses it.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Todolist description.",
+          "children": []
+        },
+        {
+          "shortCode": "subject",
+          "label": "subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message subject for message_create. Example: Standup notes.",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Document title for document_create. Example: Runbook.",
+          "children": []
+        },
+        {
+          "shortCode": "recording_id",
+          "label": "recording_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request field for operations that declare `recording_id` as a path, query, or JSON body key. Omitted/blank is dropped. Example: 'example-value'.",
+          "children": []
+        },
+        {
+          "shortCode": "chat_id",
+          "label": "chat_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request field for operations that declare `chat_id` as a path, query, or JSON body key. Omitted/blank is dropped. Example: 'example-value'.",
+          "children": []
+        },
+        {
+          "shortCode": "schedule_id",
+          "label": "schedule_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request field for operations that declare `schedule_id` as a path, query, or JSON body key. Omitted/blank is dropped. Example: 'example-value'.",
+          "children": []
+        },
+        {
+          "shortCode": "summary",
+          "label": "summary",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Schedule entry summary.",
+          "children": []
+        },
+        {
+          "shortCode": "starts_at",
+          "label": "starts_at",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Schedule entry start ISO-8601.",
+          "children": []
+        },
+        {
+          "shortCode": "ends_at",
+          "label": "ends_at",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Schedule entry end ISO-8601.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "cdac78c8-7c2a-46d8-b242-9a08a8837f59",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or the raw string when not JSON. Example: {}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "a0432296-8722-44e8-a781-beb389a61eb6",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: project_list, project_get, todo_create, todo_get, todo_complete, todo_list_create, message_create, document_create, comment_create, person_list, campfire_line, schedule_entry, listen. Default: project_list. Example: project_list.",
+      "value": "project_list",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "project_list",
+        "project_get",
+        "todo_create",
+        "todo_get",
+        "todo_complete",
+        "todo_list_create",
+        "message_create",
+        "document_create",
+        "comment_create",
+        "person_list",
+        "campfire_line",
+        "schedule_entry",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "fa1f4866-f07a-4bd3-a3ae-153a0fea5676",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Provider credential for auth.type=bearer (configKey access_token). REQUIRED secret — StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e62d13ff-1f1d-445a-9324-cca6f2926bfc",
+      "shortCode": "account_id",
+      "label": "Account Id",
+      "type": "string",
+      "description": "Default Basecamp account id when INPUT account_id is empty. From GET /my/profile.json.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "630dda7e-cef1-4775-b4ae-4c677561690a",
+      "shortCode": "user_agent",
+      "label": "User Agent",
+      "type": "string",
+      "description": "Required BC3 User-Agent: application name plus a contact URL or email. Missing this header returns HTTP 400. Example: 'StudioQuack (ops@example.com)'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9387bb37-c577-465f-9b3b-47cac729c951",
+      "shortCode": "todoset_id",
+      "label": "Todoset Id",
+      "type": "string",
+      "description": "Todoset id path for todo_list_create (POST …/todosets/{todoset_id}/todolists.json). Example: 123.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "b04375cf-59ef-4f43-afa3-2a149f2d8125",
+      "shortCode": "message_board_id",
+      "label": "Message Board Id",
+      "type": "string",
+      "description": "Message board id path for message_create (POST …/message_boards/{message_board_id}/messages.json). Example: 456.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "f3c321a6-deb5-42ec-95ff-fd823c15d834",
+      "shortCode": "vault_id",
+      "label": "Vault Id",
+      "type": "string",
+      "description": "Vault id path for document_create (POST …/vaults/{vault_id}/documents.json). Example: 789.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    },
+    {
+      "_id": "017ba150-be66-4a8d-81da-49a78ac9f76a",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative → 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

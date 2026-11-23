@@ -1,0 +1,235 @@
+{
+  "_id": "0307a029-4563-59a0-af42-f3fe5632fc4a",
+  "version": "1.0.0",
+  "name": "Wikipedia / Wikidata",
+  "label": "Wikipedia / Wikidata",
+  "description": "Wikipedia / Wikidata official API via OfficialApiNode (api_spec.json). Operations: wiki_search, wiki_page, wiki_summary, wikidata_entity. Docs: https://www.mediawiki.org/wiki/API:Main_page. WMF User-Agent policy (identifying UA required). Wikipedia text CC BY-SA; Wikidata CC0. Do not scrape HTML. SPARQL is the Wikidata SPARQL node. Secrets stay in configurationParameters. jobType custom-script-executor.",
+  "icon": "book",
+  "tags": [
+    "knowledge",
+    "wikipedia",
+    "wikidata"
+  ],
+  "category": "Data & Analytics",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d9d7b8bb-d9fe-5cab-9482-3635793d1a14",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Wikipedia / Wikidata request. Set operation plus the fields that operation requires. Delivered as inputVariables.input. Do not put secrets on this port. Example: {\"operation\":\"wiki_search\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "first",
+          "description": "Which official HTTP operation to run. EXACT values: wiki_search | wiki_page | wiki_summary | wikidata_entity. Default: first listed or instance operation. Example: 'wiki_search'.",
+          "children": [],
+          "_id": "c99cef7c-787e-5b3e-88cd-332f7f9d0e96"
+        },
+        {
+          "shortCode": "exintro",
+          "label": "exintro",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "wiki_page: 1 to return only the lead section (exintro=1). Example: 1.",
+          "children": [],
+          "_id": "6d588d11-ccfe-542f-8e9c-227d98bd3ad7"
+        },
+        {
+          "shortCode": "srlimit",
+          "label": "srlimit",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "wiki_search result count (srlimit). 1-500. Example: 10.",
+          "children": [],
+          "_id": "7a0cdc5c-8d41-5a4c-a098-805d479e90e1"
+        },
+        {
+          "shortCode": "sroffset",
+          "label": "sroffset",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "wiki_search offset (sroffset). Example: 0.",
+          "children": [],
+          "_id": "90f6a7cf-9f89-5c5f-9d2e-c3be7e7980c5"
+        },
+        {
+          "shortCode": "srsearch",
+          "label": "srsearch",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "MediaWiki list=search query (srsearch). Required on wiki_search. Example: Ada Lovelace.",
+          "children": [],
+          "_id": "db9e116e-4e83-59b0-856b-a188c77bcfee"
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "URL-encoded title for wiki_summary REST /page/summary/{title}. Example: Ada_Lovelace.",
+          "children": [],
+          "_id": "112fa888-d834-50b9-a6c6-a500af199159"
+        },
+        {
+          "shortCode": "titles",
+          "label": "titles",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Page title(s) for wiki_page and wikidata_entity. Pipe-separated. Example: Ada_Lovelace.",
+          "children": [],
+          "_id": "9c600f7c-070e-5021-aa77-a068432a391f"
+        },
+        {
+          "shortCode": "language",
+          "label": "language",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Wikipedia language subdomain used in the host {language}.wikipedia.org. Overrides config language. Example: en | de | fr. Required by all ops when config is empty.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "d54a43b8-8eba-5cf5-88e3-f9f569395a61",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: {status:'ok', http_status, data}. Secrets never echoed. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact `ok` on HTTP 2xx.",
+          "children": [],
+          "_id": "54d0fe09-7f8a-53c9-80dc-b17d7ea00cc3"
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": [],
+          "_id": "e574b90f-06d9-519b-a488-27c7126af162"
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body (or raw text if not JSON). Never includes the API secret.",
+          "children": [],
+          "_id": "ec18822e-dd3f-5379-acb1-f8e9f867d24c"
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "60ac2eb7-a34c-53e0-89f2-b5ba3ce8b250",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is omitted. EXACT: wiki_search, wiki_page, wiki_summary, wikidata_entity.",
+      "value": "wiki_search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "wiki_search",
+        "wiki_page",
+        "wiki_summary",
+        "wikidata_entity"
+      ]
+    },
+    {
+      "_id": "95da5112-e591-5aaf-b69a-3c57114e4381",
+      "shortCode": "user_agent",
+      "label": "User Agent",
+      "type": "string",
+      "description": "Sent as User-Agent on every request. Must identify the app with contact per WMF UA policy.",
+      "value": "StudioQuack-Wikipedia/1.0 (https://studioquack.com; legal@studioquack.com)",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "aa7255a1-d654-529d-890c-d905015fd624",
+      "shortCode": "language",
+      "label": "Language",
+      "type": "string",
+      "description": "Wiki language subdomain (en, de, …) interpolated into https://{language}.wikipedia.org.",
+      "value": "en",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8e5a4c3b-42f0-5c76-a423-08d11a4d33d5",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 20. Keep under the daemon sandbox request budget.",
+      "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

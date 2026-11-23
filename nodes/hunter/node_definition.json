@@ -1,0 +1,263 @@
+{
+  "_id": "3587c537-16b8-4c76-85a6-4cf094b53d99",
+  "version": "1.0.0",
+  "name": "Hunter",
+  "label": "Hunter — domain search, email finder, verifier",
+  "description": "Official Hunter REST API v2 at https://api.hunter.io. Handler: OfficialApiNode. api_key sent as header X-API-KEY (never as a query string). Catalog: domain.search, email.finder, email.verifier only (no Discover/Sequences). Returned professional emails are personal data — the operator is an independent controller and must have a lawful basis. Never log api_key or emails. Customer owns the Hunter account.",
+  "icon": "person_search",
+  "tags": [
+    "enrichment"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "2abded64-0f15-4294-839f-310cca8fb9ec",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Query fields matching Hunter v2 names. domain.search needs domain or company. email.finder needs domain|company plus a name. email.verifier requires email. Do not put api_key here. Example: {\"operation\":\"email.verifier\",\"email\":\"ada@example.com\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "domain.search",
+          "description": "Overrides config. EXACT: 'domain.search' | 'email.finder' | 'email.verifier'.",
+          "children": []
+        },
+        {
+          "shortCode": "domain",
+          "label": "domain",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Company domain e.g. example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "company",
+          "label": "company",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Company name if domain unknown.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "domain.search page size 1–100 (Hunter max 100).",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "domain.search pagination offset (0–10000).",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "personal | generic.",
+          "children": []
+        },
+        {
+          "shortCode": "seniority",
+          "label": "seniority",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated: junior, senior, executive.",
+          "children": []
+        },
+        {
+          "shortCode": "department",
+          "label": "department",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated slugs: executive, it, finance, management, sales, legal, support, hr, marketing, communication, education, design, health, operations, product, research, consulting, administrative, procurement.",
+          "children": []
+        },
+        {
+          "shortCode": "required_field",
+          "label": "required_field",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated: full_name, position, phone_number (each email must include listed fields).",
+          "children": []
+        },
+        {
+          "shortCode": "first_name",
+          "label": "first_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "email.finder given name unless full_name or linkedin_handle.",
+          "children": []
+        },
+        {
+          "shortCode": "last_name",
+          "label": "last_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "email.finder family name unless full_name or linkedin_handle.",
+          "children": []
+        },
+        {
+          "shortCode": "full_name",
+          "label": "full_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Alternative to first_name+last_name.",
+          "children": []
+        },
+        {
+          "shortCode": "linkedin_handle",
+          "label": "linkedin_handle",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Public identifier. Operator must comply with that network's ToS for how they obtained it.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "email.verifier address. Empty → local required error, no HTTP.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "f0f0d49e-75e5-45de-a2bd-13e37a60995b",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (Hunter data+meta). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON. Secrets never included.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "5c8020dc-5f35-4a43-918a-69449b6fde48",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank.",
+      "value": "domain.search",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "domain.search",
+        "email.finder",
+        "email.verifier"
+      ]
+    },
+    {
+      "_id": "1034fdf3-d9ec-4755-ac74-5fb44d6cf3b2",
+      "shortCode": "api_key",
+      "label": "API key",
+      "type": "password",
+      "description": "Hunter API key. Sent only as header X-API-KEY. Never query-string. Test key test-api-key is allowed (dummy payloads). Never log. Dashboard: hunter.io API.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a2a0252f-82ad-4e2a-864a-286e4bc37776",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

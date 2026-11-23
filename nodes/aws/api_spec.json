@@ -1,0 +1,409 @@
+{
+  "baseUrl": "https://s3.{region}.amazonaws.com",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "aws-sigv4",
+    "configKey": "access_key_id",
+    "secretKeyConfigKey": "secret_access_key"
+  },
+  "sigv4": {
+    "serviceConfigKey": "service",
+    "regionConfigKey": "region",
+    "sessionTokenConfigKey": "session_token"
+  },
+  "operations": {
+    "bucket_create": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/{Bucket}",
+      "required": [
+        "Bucket",
+        "region"
+      ]
+    },
+    "bucket_delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/{Bucket}",
+      "required": [
+        "Bucket",
+        "region"
+      ]
+    },
+    "bucket_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/",
+      "required": [
+        "region"
+      ]
+    },
+    "object_get": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{Bucket}/{Key}",
+      "required": [
+        "Bucket",
+        "Key",
+        "region"
+      ]
+    },
+    "object_put": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/{Bucket}/{Key}",
+      "required": [
+        "Bucket",
+        "Key",
+        "region"
+      ],
+      "bodyFormat": "raw",
+      "bodyParam": "Body",
+      "contentType": "application/octet-stream",
+      "extraHeaders": {
+        "x-amz-acl": "{acl}",
+        "x-amz-storage-class": "{storage_class}",
+        "x-amz-server-side-encryption": "{server_side_encryption}",
+        "x-amz-tagging": "{tagging}"
+      }
+    },
+    "object_delete": {
+      "kind": "http",
+      "method": "DELETE",
+      "path": "/{Bucket}/{Key}",
+      "required": [
+        "Bucket",
+        "Key",
+        "region"
+      ]
+    },
+    "object_copy": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/{Bucket}/{Key}",
+      "required": [
+        "Bucket",
+        "Key",
+        "region",
+        "CopySource"
+      ],
+      "extraHeaders": {
+        "x-amz-copy-source": "{CopySource}"
+      }
+    },
+    "object_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/{Bucket}",
+      "required": [
+        "Bucket",
+        "region"
+      ],
+      "queryFrom": [
+        "list-type",
+        "prefix"
+      ]
+    },
+    "lambda_invoke": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://lambda.{region}.amazonaws.com",
+      "path": "/2015-03-31/functions/{FunctionName}/invocations",
+      "required": [
+        "FunctionName",
+        "region"
+      ],
+      "contentType": "application/json",
+      "bodyFrom": [
+        "Payload"
+      ],
+      "bodyMap": {
+        "Payload": "$"
+      }
+    },
+    "sqs_send": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://sqs.{region}.amazonaws.com",
+      "path": "/?Action=SendMessage&Version=2012-11-05",
+      "required": [
+        "region",
+        "QueueUrl",
+        "MessageBody"
+      ],
+      "bodyFrom": [
+        "QueueUrl",
+        "MessageBody"
+      ],
+      "bodyFormat": "form",
+      "contentType": "application/x-www-form-urlencoded"
+    },
+    "sqs_receive": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://sqs.{region}.amazonaws.com",
+      "path": "/?Action=ReceiveMessage&Version=2012-11-05",
+      "required": [
+        "region",
+        "QueueUrl"
+      ],
+      "bodyFrom": [
+        "QueueUrl"
+      ],
+      "bodyFormat": "form",
+      "contentType": "application/x-www-form-urlencoded"
+    },
+    "sqs_delete": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://sqs.{region}.amazonaws.com",
+      "path": "/?Action=DeleteMessage&Version=2012-11-05",
+      "required": [
+        "region",
+        "QueueUrl",
+        "ReceiptHandle"
+      ],
+      "bodyFrom": [
+        "QueueUrl",
+        "ReceiptHandle"
+      ],
+      "bodyFormat": "form",
+      "contentType": "application/x-www-form-urlencoded"
+    },
+    "sns_publish": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://sns.{region}.amazonaws.com",
+      "path": "/?Action=Publish&Version=2010-03-31",
+      "required": [
+        "region",
+        "Message"
+      ],
+      "bodyFrom": [
+        "TopicArn",
+        "TargetArn",
+        "PhoneNumber",
+        "Message"
+      ],
+      "bodyFormat": "form",
+      "contentType": "application/x-www-form-urlencoded"
+    },
+    "dynamodb_get": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://dynamodb.{region}.amazonaws.com",
+      "path": "/",
+      "required": [
+        "region",
+        "TableName",
+        "ItemKey"
+      ],
+      "bodyFrom": [
+        "TableName",
+        "ItemKey"
+      ],
+      "bodyMap": {
+        "ItemKey": "Key"
+      },
+      "contentType": "application/x-amz-json-1.0",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.0",
+        "X-Amz-Target": "DynamoDB_20120810.GetItem"
+      }
+    },
+    "dynamodb_put": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://dynamodb.{region}.amazonaws.com",
+      "path": "/",
+      "required": [
+        "region",
+        "TableName",
+        "Item"
+      ],
+      "bodyFrom": [
+        "TableName",
+        "Item"
+      ],
+      "contentType": "application/x-amz-json-1.0",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.0",
+        "X-Amz-Target": "DynamoDB_20120810.PutItem"
+      }
+    },
+    "dynamodb_query": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://dynamodb.{region}.amazonaws.com",
+      "path": "/",
+      "required": [
+        "region",
+        "TableName",
+        "KeyConditionExpression"
+      ],
+      "bodyFrom": [
+        "TableName",
+        "KeyConditionExpression",
+        "ExpressionAttributeValues"
+      ],
+      "contentType": "application/x-amz-json-1.0",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.0",
+        "X-Amz-Target": "DynamoDB_20120810.Query"
+      }
+    },
+    "ses_send": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://email.{region}.amazonaws.com",
+      "path": "/?Action=SendEmail&Version=2010-12-01",
+      "required": [
+        "region",
+        "Source",
+        "ToAddress",
+        "Subject"
+      ],
+      "bodyFrom": [
+        "Source",
+        "ToAddress",
+        "Subject",
+        "TextBody",
+        "HtmlBody"
+      ],
+      "bodyMap": {
+        "ToAddress": "Destination.ToAddresses.member.1",
+        "Subject": "Message.Subject.Data",
+        "TextBody": "Message.Body.Text.Data",
+        "HtmlBody": "Message.Body.Html.Data"
+      },
+      "bodyFormat": "form",
+      "contentType": "application/x-www-form-urlencoded"
+    },
+    "iam_get": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://iam.amazonaws.com",
+      "path": "/?Action=GetUser&Version=2010-05-08",
+      "bodyFrom": [
+        "UserName"
+      ],
+      "bodyFormat": "form",
+      "contentType": "application/x-www-form-urlencoded"
+    },
+    "iam_get_role": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://iam.amazonaws.com",
+      "path": "/?Action=GetRole&Version=2010-05-08",
+      "required": [
+        "RoleName"
+      ],
+      "bodyFrom": [
+        "RoleName"
+      ],
+      "bodyFormat": "form",
+      "contentType": "application/x-www-form-urlencoded"
+    },
+    "secretsmanager_get": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://secretsmanager.{region}.amazonaws.com",
+      "path": "/",
+      "required": [
+        "region",
+        "SecretId"
+      ],
+      "bodyFrom": [
+        "SecretId"
+      ],
+      "contentType": "application/x-amz-json-1.1",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Target": "secretsmanager.GetSecretValue"
+      }
+    },
+    "cloudwatch_put": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://monitoring.{region}.amazonaws.com",
+      "path": "/?Action=PutMetricData&Version=2010-08-01",
+      "required": [
+        "region",
+        "Namespace",
+        "MetricName",
+        "MetricValue"
+      ],
+      "bodyFrom": [
+        "Namespace",
+        "MetricName",
+        "MetricValue",
+        "MetricUnit"
+      ],
+      "bodyMap": {
+        "MetricName": "MetricData.member.1.MetricName",
+        "MetricValue": "MetricData.member.1.Value",
+        "MetricUnit": "MetricData.member.1.Unit"
+      },
+      "bodyFormat": "form",
+      "contentType": "application/x-www-form-urlencoded"
+    },
+    "ecs_run": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://ecs.{region}.amazonaws.com",
+      "path": "/",
+      "required": [
+        "region",
+        "taskDefinition"
+      ],
+      "bodyFrom": [
+        "cluster",
+        "taskDefinition"
+      ],
+      "contentType": "application/x-amz-json-1.1",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Target": "AmazonEC2ContainerServiceV20141113.RunTask"
+      }
+    },
+    "sts_assume": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://sts.{region}.amazonaws.com",
+      "path": "/?Action=AssumeRole&Version=2011-06-15",
+      "required": [
+        "region",
+        "RoleArn",
+        "RoleSessionName"
+      ],
+      "bodyFrom": [
+        "RoleArn",
+        "RoleSessionName"
+      ],
+      "bodyFormat": "form",
+      "contentType": "application/x-www-form-urlencoded"
+    },
+    "eventbridge_put": {
+      "kind": "http",
+      "method": "POST",
+      "baseUrl": "https://events.{region}.amazonaws.com",
+      "path": "/",
+      "required": [
+        "region",
+        "Entries"
+      ],
+      "bodyFrom": [
+        "Entries"
+      ],
+      "contentType": "application/x-amz-json-1.1",
+      "extraHeaders": {
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Target": "AWSEvents.PutEvents"
+      }
+    },
+    "listen": {
+      "kind": "ingress"
+    }
+  }
+}

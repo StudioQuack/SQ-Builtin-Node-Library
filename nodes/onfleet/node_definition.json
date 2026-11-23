@@ -1,0 +1,312 @@
+{
+  "_id": "3171abea-e6f6-53af-956e-b35031cc6b8f",
+  "version": "1.0.0",
+  "name": "Onfleet",
+  "label": "Onfleet REST v2 — tasks, destinations, workers",
+  "description": "onfleet.com/api/v2. HTTP Basic with api_key as username and empty password (auth.basicKeyPosition=username). Driver/recipient PII — do not log. trigger is ingress. Docs: https://docs.onfleet.com/reference/authentication",
+  "icon": "delivery_dining",
+  "tags": [
+    "onfleet",
+    "ecommerce"
+  ],
+  "category": "E-Commerce & Payments",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "469b7463-8586-5336-958d-3804fdcc78ff",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One official API operation. Secrets stay in configurationParameters.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "task_create",
+          "description": "Official API verb. EXACT: task_create | task_get | task_update | destination_create | worker_list | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "children": []
+        },
+        {
+          "shortCode": "taskId",
+          "label": "taskId",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Onfleet task id for task_get / task_update. Example: ~2JTzU1TqPqJ6k7a.",
+          "children": []
+        },
+        {
+          "shortCode": "states",
+          "label": "states",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "worker_list filter. Comma-separated worker states: 0=off, 1=idle, 2=active. Example: 1,2.",
+          "children": []
+        },
+        {
+          "shortCode": "teams",
+          "label": "teams",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "worker_list filter. Comma-separated team ids.",
+          "children": []
+        },
+        {
+          "shortCode": "phones",
+          "label": "phones",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "worker_list filter. Comma-separated E.164 phones. Example: +15551234567.",
+          "children": []
+        },
+        {
+          "shortCode": "destination",
+          "label": "destination",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "task_create destination: existing id string or Destination object. Official: {\"address\":{\"unparsed\":\"543 Howard St, San Francisco, CA, USA\"}}. Required for task_create.",
+          "children": []
+        },
+        {
+          "shortCode": "recipients",
+          "label": "recipients",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "task_create recipients: zero or one recipient id or Recipient object. Example: [{\"name\":\"Jane Doe\",\"phone\":\"+15551234567\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "notes",
+          "label": "notes",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task or destination notes. Max 10000 chars on tasks. Used by task_create, task_update, destination_create.",
+          "children": []
+        },
+        {
+          "shortCode": "completeAfter",
+          "label": "completeAfter",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Earliest completion time, Unix ms. task_create / task_update. Example: 1735689600000.",
+          "children": []
+        },
+        {
+          "shortCode": "completeBefore",
+          "label": "completeBefore",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Latest completion time, Unix ms. task_create / task_update.",
+          "children": []
+        },
+        {
+          "shortCode": "pickupTask",
+          "label": "pickupTask",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Whether the task is a pickup. task_create / task_update. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "merchant",
+          "label": "merchant",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Organization id shown to the recipient (task_create).",
+          "children": []
+        },
+        {
+          "shortCode": "executor",
+          "label": "executor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Organization id that fulfills the task (task_create).",
+          "children": []
+        },
+        {
+          "shortCode": "quantity",
+          "label": "quantity",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Drop-off units for routing (task_create / task_update).",
+          "children": []
+        },
+        {
+          "shortCode": "serviceTime",
+          "label": "serviceTime",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Minutes on site for routing (task_create / task_update).",
+          "children": []
+        },
+        {
+          "shortCode": "autoAssign",
+          "label": "autoAssign",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Automatic assignment options for task_create. Do not send with container.",
+          "children": []
+        },
+        {
+          "shortCode": "container",
+          "label": "container",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Container to append the task to (task_create). Official: {\"type\":\"WORKER\",\"worker\":\"<id>\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "metadata",
+          "label": "metadata",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Task metadata array [{name, type, value}] for task_create / task_update.",
+          "children": []
+        },
+        {
+          "shortCode": "address",
+          "label": "address",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "destination_create address. Official: {\"unparsed\":\"543 Howard St, San Francisco, CA, USA\"} or {\"number\",\"street\",\"city\",\"state\",\"postalCode\",\"country\"}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "ceecea57-fb17-5de1-bb09-e8964f1def97",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status. Never includes secrets.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. May contain order PII — do not log values.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "75771efb-cabe-5287-a447-922221654291",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "HTTP verb for OfficialApiNode. EXACT: task_create | task_get | task_update | destination_create | worker_list | trigger. trigger does not open a socket.",
+      "value": "task_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "task_create",
+        "task_get",
+        "task_update",
+        "destination_create",
+        "worker_list",
+        "trigger"
+      ]
+    },
+    {
+      "_id": "dbccadda-c0fd-511a-b710-0661b67266fa",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Onfleet API key. HTTP Basic username with empty password (auth.basicKeyPosition=username). Never log. Customer owns the merchant account.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "bc628d58-8e53-59c9-82be-ff4ab489eab9",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

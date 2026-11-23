@@ -1,0 +1,51 @@
+{
+  "baseUrl": "https://api.together.ai",
+  "defaultTimeout": 300,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "chat": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "required": ["messages"],
+      "bodyFrom": ["model", "messages", "max_tokens", "stop", "temperature", "top_p", "top_k", "repetition_penalty", "stream", "n", "presence_penalty", "frequency_penalty", "min_p", "seed", "response_format", "tools", "tool_choice", "reasoning_effort", "safety_model"],
+      "stream": {
+        "format": "openai-sse"
+      }
+    },
+    "completions": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/completions",
+      "required": [],
+      "bodyFrom": ["model", "prompt", "max_tokens", "stop", "temperature", "top_p", "top_k", "repetition_penalty", "stream", "n", "echo", "min_p", "seed", "safety_model"]
+    },
+    "embeddings": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/embeddings",
+      "required": [],
+      "bodyFrom": ["model", "input"]
+    },
+    "image_gen": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/images/generations",
+      "required": [],
+      "bodyFrom": ["model", "prompt", "steps", "seed", "n", "height", "width", "negative_prompt", "response_format", "guidance_scale", "output_format", "image_url", "disable_safety_checker"]
+    },
+    "list_models": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/v1/models",
+      "queryFrom": ["limit", "after"],
+      "required": []
+    }
+  }
+}

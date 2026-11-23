@@ -1,0 +1,364 @@
+{
+  "_id": "0bb75024-40a0-4b24-b821-b85085432e3b",
+  "version": "1.0.0",
+  "name": "Agile CRM",
+  "label": "Agile CRM — contacts, companies, deals",
+  "description": "Official Agile CRM REST at https://{domain}.agilecrm.com/dev/api. Handler: OfficialApiNode. HTTP Basic (email + rest_api_key). Contacts vs companies share /api/contacts distinguished by type PERSON vs COMPANY. No public webhook subscribe API. Customer owns the Agile CRM domain. Credentials are never logged. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "business",
+  "tags": [
+    "crm"
+  ],
+  "category": "CRM & Marketing",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "37bfef07-b795-4967-a81c-1ed8b158fff1",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Set operation to override config.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "contact.create",
+          "description": "Overrides config operation when non-blank. EXACT catalog verb.",
+          "children": []
+        },
+        {
+          "shortCode": "first_name",
+          "label": "first_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact first name for contact.create. Example: Ada.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "PERSON for contacts or COMPANY for company ops. Company create/update must send COMPANY.",
+          "children": []
+        },
+        {
+          "shortCode": "last_name",
+          "label": "last_name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact last name for contact.create. Example: Lovelace.",
+          "children": []
+        },
+        {
+          "shortCode": "email",
+          "label": "email",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact email for contact.create. Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "properties",
+          "label": "properties",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Agile CRM properties array [{name, type: SYSTEM|CUSTOM, subtype, value}] for contact/company create/update. Example: [{\"name\":\"email\",\"value\":\"ada@example.com\",\"type\":\"SYSTEM\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "tags",
+          "label": "tags",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Tag names for contact.create/update. JSON array of strings.",
+          "children": []
+        },
+        {
+          "shortCode": "lead_score",
+          "label": "lead_score",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Lead score integer for contact.create.",
+          "children": []
+        },
+        {
+          "shortCode": "star_value",
+          "label": "star_value",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Star value 1–5 for contact.create / company.create.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Contact, company, or deal id.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Per-operation field `page_size`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "cursor",
+          "label": "cursor",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `cursor`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "global_sort_key",
+          "label": "global_sort_key",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `global_sort_key`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `name`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "contact_ids",
+          "label": "contact_ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Per-operation field `contact_ids`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "milestone",
+          "label": "milestone",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `milestone`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "pipeline_id",
+          "label": "pipeline_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Track (pipeline) id of the deal on deal.create / deal.update; Agile CRM lists it as mandatory and milestone must belong to this track. Numeric id from Admin Settings > Deals > Tracks. Example: 5730082031140864.",
+          "children": []
+        },
+        {
+          "shortCode": "owner_id",
+          "label": "owner_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Id of the Agile CRM domain user who owns the deal on deal.create / deal.update (listed as mandatory by Agile CRM). Example: 6263975862861824.",
+          "children": []
+        },
+        {
+          "shortCode": "expected_value",
+          "label": "expected_value",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Per-operation field `expected_value`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "probability",
+          "label": "probability",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Per-operation field `probability`. Omit when unused. Never put secrets here.",
+          "children": []
+        },
+        {
+          "shortCode": "close_date",
+          "label": "close_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Per-operation field `close_date`. Omit when unused. Never put secrets here.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "58a88769-919b-44a4-9044-ba4fc012aaf3",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON body. Minimize retained PII.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "659ac963-590e-4bc3-82eb-718e391c4a1e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when input.operation is blank. EXACT: contact.create | contact.get | contact.list | contact.update | contact.delete | company.create | company.get | company.list | company.update | company.delete | deal.create | deal.get | deal.list | deal.update | deal.delete.",
+      "value": "contact.create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "contact.create",
+        "contact.get",
+        "contact.list",
+        "contact.update",
+        "contact.delete",
+        "company.create",
+        "company.get",
+        "company.list",
+        "company.update",
+        "company.delete",
+        "deal.create",
+        "deal.get",
+        "deal.list",
+        "deal.update",
+        "deal.delete"
+      ]
+    },
+    {
+      "_id": "92855a1b-c699-4f4d-b90b-34a18e24828d",
+      "shortCode": "domain",
+      "label": "Domain",
+      "type": "string",
+      "description": "Subdomain label only (acme → https://acme.agilecrm.com). No scheme, no path. Shared production suffix is agilecrm.com.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e30e9dc4-56c2-4fde-b724-7fdec0551118",
+      "shortCode": "email",
+      "label": "Email",
+      "type": "password",
+      "description": "Agile user email (Basic username). Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "79e5ee52-a9ec-4f76-802a-e5be186ec776",
+      "shortCode": "rest_api_key",
+      "label": "Rest Api Key",
+      "type": "password",
+      "description": "REST client API key (Basic password). Never log.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "df77af92-8e68-4734-ba89-5c890ce20831",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

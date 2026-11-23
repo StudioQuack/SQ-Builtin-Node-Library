@@ -1,0 +1,74 @@
+{
+  "baseUrl": "https://checkout-test.adyen.com/v72",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "header",
+    "header": "X-API-Key",
+    "prefix": "",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "payment_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/payments",
+      "bodyFrom": [
+        "amount",
+        "reference",
+        "merchantAccount",
+        "paymentMethod",
+        "returnUrl",
+        "shopperReference",
+        "shopperEmail",
+        "countryCode",
+        "channel",
+        "value",
+        "currency"
+      ],
+      "bodyMap": {
+        "value": "amount.value",
+        "currency": "amount.currency"
+      }
+    },
+    "payment_capture": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/payments/{pspReference}/captures",
+      "required": [
+        "pspReference"
+      ],
+      "bodyFrom": [
+        "amount",
+        "merchantAccount",
+        "value",
+        "currency"
+      ],
+      "bodyMap": {
+        "value": "amount.value",
+        "currency": "amount.currency"
+      }
+    },
+    "payment_refund": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/payments/{pspReference}/refunds",
+      "required": [
+        "pspReference"
+      ],
+      "bodyFrom": [
+        "amount",
+        "merchantAccount",
+        "value",
+        "currency"
+      ],
+      "bodyMap": {
+        "value": "amount.value",
+        "currency": "amount.currency"
+      }
+    },
+    "trigger": {
+      "kind": "ingress"
+    }
+  }
+}

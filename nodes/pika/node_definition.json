@@ -1,0 +1,258 @@
+{
+  "_id": "11b57261-44e0-4ac7-b68c-6bb9e9d6d873",
+  "version": "1.0.0",
+  "name": "Pika",
+  "label": "Pika",
+  "description": "Official Pika customer API at https://api.dev.pika.art. generate_video submits POST /v1/media/{vendor}/{model}/{function} and returns a job id. Poll get_job then get_content. Handler: OfficialApiNode. Auth is StudioQuack secret api_key as header X-API-Key. Image/video inputs use type file (or HTTPS URL after /v1/media/uploads). Docs: https://pika.art/api · catalog GET https://api.dev.pika.art/catalog/apis. Terms: https://dev.pika.art/terms-of-service. Never log api_key. Verify api_id in the live catalog before submit.",
+  "icon": "videocam",
+  "tags": [
+    "pika",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "5291057e-bb1b-4289-9827-a6f7c79b93a2",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "generate_video: vendor, model, function (path) plus JSON body from the catalog input_schema (prompt, image URL, etc.). get_job / get_content: request_id. Do not put api_key here. Example: {\"vendor\":\"pika\",\"model\":\"pika-2.5\",\"function\":\"text-to-video\",\"prompt\":\"a golden retriever running\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "prompt",
+          "label": "prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Text prompt when the selected catalog operation requires it. Confirm required fields via GET /catalog/apis/{api_id}?expand=inputs.",
+          "children": []
+        },
+        {
+          "shortCode": "image",
+          "label": "image",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for image-to-video ops. Prefer upload via POST /v1/media/uploads then pass the hosted url string. Never inline bytes over the size cap (20MB image).",
+          "children": []
+        },
+        {
+          "shortCode": "video",
+          "label": "video",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for video-to-video ops. Max 50MB via Pika uploads. Type file.",
+          "children": []
+        },
+        {
+          "shortCode": "request_id",
+          "label": "request_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Job id from generate_video for get_job / get_content. Poll until status completed or failed. Do not call get_content before completed.",
+          "children": []
+        },
+        {
+          "shortCode": "negative_prompt",
+          "label": "negative_prompt",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `negative_prompt` for operation: generate_video.",
+          "children": []
+        },
+        {
+          "shortCode": "aspect_ratio",
+          "label": "aspect_ratio",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `aspect_ratio` for operation: generate_video.",
+          "children": []
+        },
+        {
+          "shortCode": "resolution",
+          "label": "resolution",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `resolution` for operation: generate_video.",
+          "children": []
+        },
+        {
+          "shortCode": "duration",
+          "label": "duration",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `duration` for operation: generate_video.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `seed` for operation: generate_video.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "6f433501-0ad0-4523-aa61-e9dafe753fd2",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (job id/status or {url}). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact 'ok' on HTTP 2xx (job may still be queued).",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Provider JSON (id, status, or content url).",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "92cee585-bbd4-49db-b042-5090f4d9c53e",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "EXACT: generate_video | get_job | get_content. Default generate_video = POST /v1/media/{vendor}/{model}/{function}.",
+      "value": "generate_video",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "generate_video",
+        "get_job",
+        "get_content"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "2ed3567c-f5be-427e-bf36-9bcbda6ee1c7",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "Pika API key (PIKA_API_KEY). Sent as X-API-Key. StudioQuack secret. Never logged. Dashboard: https://dev.pika.art",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "931bd64a-e9ce-4f8b-8ea7-caae02638945",
+      "shortCode": "vendor",
+      "label": "Vendor",
+      "type": "string",
+      "description": "Path {vendor}. Default pika for first-party models. Live ids from GET /catalog/apis (also hosts other vendors on this same API).",
+      "value": "pika",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "77fd43f7-ff13-4f1d-8479-f6ab9e740276",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Path {model}. Default pika-2.5. Confirm the triple vendor/model/function is active in the catalog before paying.",
+      "value": "pika-2.5",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8ae6f19e-6190-4a11-955f-16ccb95b8d14",
+      "shortCode": "function",
+      "label": "Function",
+      "type": "string",
+      "description": "Path {function}. Default text-to-video. Other first-party examples: image-to-video, video-to-video.",
+      "value": "text-to-video",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1e478ed6-2f57-41f7-9dcb-5021e58d4466",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Per-HTTP-call timeout. Default 60. Floor 1. Poll get_job separately; do not wait for the video in generate_video.",
+      "value": "60",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

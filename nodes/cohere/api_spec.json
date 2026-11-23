@@ -1,0 +1,45 @@
+{
+  "baseUrl": "https://api.cohere.com",
+  "operationStrict": true,
+  "defaultTimeout": 300,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "api_key"
+  },
+  "operations": {
+    "chat": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/chat",
+      "required": ["messages"],
+      "bodyFrom": ["model", "messages", "tools", "strict_tools", "documents", "citation_options", "response_format", "safety_mode", "max_tokens", "temperature", "k", "p", "seed", "stop_sequences", "frequency_penalty", "presence_penalty", "stream"],
+      "stream": {
+        "format": "cohere-sse"
+      }
+    },
+    "embed": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/embed",
+      "required": ["input_type"],
+      "bodyFrom": ["model", "input_type", "texts", "images", "inputs", "embedding_types", "truncate", "output_dimension"]
+    },
+    "rerank": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v2/rerank",
+      "required": ["query", "documents"],
+      "bodyFrom": ["model", "query", "documents", "top_n", "max_tokens_per_doc"]
+    },
+    "tokenize": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/v1/tokenize",
+      "required": ["text"],
+      "bodyFrom": ["text", "model"]
+    }
+  }
+}

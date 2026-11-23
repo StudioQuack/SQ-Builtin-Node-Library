@@ -1,0 +1,1276 @@
+{
+  "_id": "871a832f-a2b3-4e7e-8891-f4f40b468a56",
+  "version": "1.0.0",
+  "name": "Asana",
+  "label": "Asana API 1.0",
+  "description": "Asana API 1.0 via OfficialApiNode (nodes/asana/api_spec.json). Official Asana REST 1.0 (app.asana.com/api/1.0). PAT or OAuth access token as bearer. OAuth app review for production distribution. Official docs: https://developers.asana.com/reference/rest-api-reference. Secrets never appear on OUTPUT. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "icon": "assignment",
+  "tags": [
+    "asana",
+    "tasks",
+    "projects"
+  ],
+  "category": "Productivity & Collaboration",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "3237ea45-c040-461c-b87c-25f9f32b50d0",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Asana official API call. Delivered as inputVariables.input. Set operation plus the path/query/body fields that operation lists in api_spec.json. Do not put secrets on this port. Example: {\"operation\":\"project_create\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "project_create",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'project_create', 'project_get', 'project_list', 'project_update', 'project_delete', 'task_create', 'task_get', 'task_list', 'task_search', 'task_update', 'task_delete', 'task_move', 'subtask_create', 'subtask_list', 'comment_add', 'comment_remove', 'tag_add', 'tag_remove', 'project_add_task', 'project_remove_task', 'user_get', 'user_list', 'listen'. listen/trigger/webhook_listen never open a socket \u2014 they return an error telling you to use a BPMN message event. Example: 'project_create'.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Asana `data` envelope escape hatch for write ops. Purpose fields (name, notes, due_on, assignee, tag, text, \u2026) merge into data via bodyMap and win on conflict. Custom/rare keys stay here. Example: {\"custom_fields\":{\"123\":\"x\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task or project name. Required by Asana on project_create / task_create / subtask_create unless supplied inside data. Nested as data.name. Example: Q4 launch.",
+          "children": []
+        },
+        {
+          "shortCode": "notes",
+          "label": "notes",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Plain-text notes for project_create/update, task_create/update, subtask_create. Nested as data.notes. Example: Kickoff Friday.",
+          "children": []
+        },
+        {
+          "shortCode": "html_notes",
+          "label": "html_notes",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTML notes (Asana rich text) for project/task writes. Nested as data.html_notes. Example: <body>Kickoff</body>.",
+          "children": []
+        },
+        {
+          "shortCode": "due_on",
+          "label": "due_on",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Due date YYYY-MM-DD for project/task writes. Nested as data.due_on. Do not send with due_at on the same task. Example: 2026-12-01.",
+          "children": []
+        },
+        {
+          "shortCode": "due_at",
+          "label": "due_at",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Due date-time ISO-8601 UTC for task_create/update and subtask_create. Nested as data.due_at. Example: 2026-12-01T17:00:00.000Z.",
+          "children": []
+        },
+        {
+          "shortCode": "start_on",
+          "label": "start_on",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Start date YYYY-MM-DD for project/task writes. Nested as data.start_on. Example: 2026-11-01.",
+          "children": []
+        },
+        {
+          "shortCode": "color",
+          "label": "color",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project color on project_create/update. EXACT: dark-pink | dark-green | dark-blue | dark-red | dark-teal | dark-brown | dark-orange | dark-purple | dark-warm-gray | light-pink | light-green | light-blue | light-red | light-teal | light-brown | light-orange | light-purple | light-warm-gray | none. Nested as data.color. Example: dark-blue.",
+          "children": []
+        },
+        {
+          "shortCode": "privacy_setting",
+          "label": "privacy_setting",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project privacy on project_create/update. EXACT: public_to_workspace | private_to_team | private. Nested as data.privacy_setting. Example: private_to_team.",
+          "children": []
+        },
+        {
+          "shortCode": "archived",
+          "label": "archived",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Archive flag on project_update. Nested as data.archived. Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "html_text",
+          "label": "html_text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTML comment body on comment_add. Nested as data.html_text. Use instead of text. Example: <body>Looks good</body>.",
+          "children": []
+        },
+        {
+          "shortCode": "tag",
+          "label": "tag",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Tag GID for tag_add / tag_remove. Nested as data.tag. Example: 1234567890.",
+          "children": []
+        },
+        {
+          "shortCode": "section",
+          "label": "section",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Section GID on task_move and project_add_task. Nested as data.section. Example: 1234567890.",
+          "children": []
+        },
+        {
+          "shortCode": "insert_before",
+          "label": "insert_before",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Neighbor task GID on task_move / project_add_task. Nested as data.insert_before. Example: 1234567890.",
+          "children": []
+        },
+        {
+          "shortCode": "insert_after",
+          "label": "insert_after",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Neighbor task GID on task_move / project_add_task. Nested as data.insert_after. Example: 1234567890.",
+          "children": []
+        },
+        {
+          "shortCode": "task",
+          "label": "task",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task GID on project_add_task (required) and project_remove_task (required). Nested as data.task. Example: 1234567890.",
+          "children": []
+        },
+        {
+          "shortCode": "project_gid",
+          "label": "project_gid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project GID path for project_get/update/delete and project_add_task/remove_task. Example: 1234567890.",
+          "children": []
+        },
+        {
+          "shortCode": "opt_fields",
+          "label": "opt_fields",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Comma-separated Asana opt_fields for project_get/list and task_get. Example: name,due_on,assignee.name.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size 1\u2013100 for project_list, task_list, task_search, user_list. Example: 50.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pagination offset token from the previous list response (not a number). Example: eyJ0eXAiOiJKV1QifQ.",
+          "children": []
+        },
+        {
+          "shortCode": "task_gid",
+          "label": "task_gid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Task GID path for task_get/update/delete/move, subtask_*, comment_add, tag_add/remove. Example: 1234567890.",
+          "children": []
+        },
+        {
+          "shortCode": "project",
+          "label": "project",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Project GID. Query filter on task_list. Body data.project (required) on task_move (addProject). Example: 1234567890.",
+          "children": []
+        },
+        {
+          "shortCode": "assignee",
+          "label": "assignee",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User GID, email, or me. Query filter on task_list. Body data.assignee on task_create/update and subtask_create. Example: me.",
+          "children": []
+        },
+        {
+          "shortCode": "workspace_gid",
+          "label": "workspace_gid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Workspace GID path for task_search. Example: 1234567890.",
+          "children": []
+        },
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Search text for task_search (query). Comment body for comment_add (data.text). Example: kickoff notes.",
+          "children": []
+        },
+        {
+          "shortCode": "completed",
+          "label": "completed",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Task completed flag for task_create/update and subtask_create (data.completed). Also query filter for task_search (true|false). Example: false.",
+          "children": []
+        },
+        {
+          "shortCode": "story_gid",
+          "label": "story_gid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Story/comment GID path for comment_remove. Example: 1234567890.",
+          "children": []
+        },
+        {
+          "shortCode": "user_gid",
+          "label": "user_gid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "User GID path for user_get. me is accepted. Example: me.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "78e471af-83ed-4aa7-ada3-5d687ec5a8b1",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP 2xx. EXACT value: 'ok'. Example: 'ok'.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or the raw string when not JSON. Example: {}.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "cbb06d74-c5de-40a8-928a-6bd36e2a455a",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: project_create, project_get, project_list, project_update, project_delete, task_create, task_get, task_list, task_search, task_update, task_delete, task_move, subtask_create, subtask_list, comment_add, comment_remove, tag_add, tag_remove, project_add_task, project_remove_task, user_get, user_list, listen. Default: project_create. Example: project_create.",
+      "value": "project_create",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "project_create",
+        "project_get",
+        "project_list",
+        "project_update",
+        "project_delete",
+        "task_create",
+        "task_get",
+        "task_list",
+        "task_search",
+        "task_update",
+        "task_delete",
+        "task_move",
+        "subtask_create",
+        "subtask_list",
+        "comment_add",
+        "comment_remove",
+        "tag_add",
+        "tag_remove",
+        "project_add_task",
+        "project_remove_task",
+        "user_get",
+        "user_list",
+        "listen"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "project_create",
+          "targets": [
+            {
+              "param": "due_on",
+              "visible": true
+            },
+            {
+              "param": "notes",
+              "visible": true
+            },
+            {
+              "param": "archived",
+              "visible": true
+            },
+            {
+              "param": "start_on",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "color",
+              "visible": true
+            },
+            {
+              "param": "privacy_setting",
+              "visible": true
+            },
+            {
+              "param": "html_notes",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "project_get",
+          "targets": [
+            {
+              "param": "opt_fields",
+              "visible": true
+            },
+            {
+              "param": "project_gid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "project_list",
+          "targets": [
+            {
+              "param": "opt_fields",
+              "visible": true
+            },
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "offset",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "project_update",
+          "targets": [
+            {
+              "param": "due_on",
+              "visible": true
+            },
+            {
+              "param": "notes",
+              "visible": true
+            },
+            {
+              "param": "archived",
+              "visible": true
+            },
+            {
+              "param": "start_on",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "color",
+              "visible": true
+            },
+            {
+              "param": "privacy_setting",
+              "visible": true
+            },
+            {
+              "param": "html_notes",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "project_gid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "project_delete",
+          "targets": [
+            {
+              "param": "project_gid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "task_create",
+          "targets": [
+            {
+              "param": "due_on",
+              "visible": true
+            },
+            {
+              "param": "notes",
+              "visible": true
+            },
+            {
+              "param": "start_on",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "html_notes",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "assignee",
+              "visible": true
+            },
+            {
+              "param": "completed",
+              "visible": true
+            },
+            {
+              "param": "due_at",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "task_get",
+          "targets": [
+            {
+              "param": "opt_fields",
+              "visible": true
+            },
+            {
+              "param": "task_gid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "task_list",
+          "targets": [
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "offset",
+              "visible": true
+            },
+            {
+              "param": "assignee",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "task_search",
+          "targets": [
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "completed",
+              "visible": true
+            },
+            {
+              "param": "text",
+              "visible": true
+            },
+            {
+              "param": "workspace_gid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "task_update",
+          "targets": [
+            {
+              "param": "due_on",
+              "visible": true
+            },
+            {
+              "param": "notes",
+              "visible": true
+            },
+            {
+              "param": "start_on",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "html_notes",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "assignee",
+              "visible": true
+            },
+            {
+              "param": "completed",
+              "visible": true
+            },
+            {
+              "param": "due_at",
+              "visible": true
+            },
+            {
+              "param": "task_gid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "task_delete",
+          "targets": [
+            {
+              "param": "task_gid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "task_move",
+          "targets": [
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "task_gid",
+              "visible": true
+            },
+            {
+              "param": "project",
+              "visible": true
+            },
+            {
+              "param": "section",
+              "visible": true
+            },
+            {
+              "param": "insert_before",
+              "visible": true
+            },
+            {
+              "param": "insert_after",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "subtask_create",
+          "targets": [
+            {
+              "param": "due_on",
+              "visible": true
+            },
+            {
+              "param": "notes",
+              "visible": true
+            },
+            {
+              "param": "start_on",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "html_notes",
+              "visible": true
+            },
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "assignee",
+              "visible": true
+            },
+            {
+              "param": "completed",
+              "visible": true
+            },
+            {
+              "param": "due_at",
+              "visible": true
+            },
+            {
+              "param": "task_gid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "subtask_list",
+          "targets": [
+            {
+              "param": "task_gid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "comment_add",
+          "targets": [
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "task_gid",
+              "visible": true
+            },
+            {
+              "param": "text",
+              "visible": true
+            },
+            {
+              "param": "html_text",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "comment_remove",
+          "targets": [
+            {
+              "param": "story_gid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "tag_add",
+          "targets": [
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "task_gid",
+              "visible": true
+            },
+            {
+              "param": "tag",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "tag_remove",
+          "targets": [
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "task_gid",
+              "visible": true
+            },
+            {
+              "param": "tag",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "project_add_task",
+          "targets": [
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "project_gid",
+              "visible": true
+            },
+            {
+              "param": "section",
+              "visible": true
+            },
+            {
+              "param": "insert_before",
+              "visible": true
+            },
+            {
+              "param": "insert_after",
+              "visible": true
+            },
+            {
+              "param": "task",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "project_remove_task",
+          "targets": [
+            {
+              "param": "data",
+              "visible": true
+            },
+            {
+              "param": "project_gid",
+              "visible": true
+            },
+            {
+              "param": "task",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "user_get",
+          "targets": [
+            {
+              "param": "user_gid",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "user_list",
+          "targets": [
+            {
+              "param": "limit",
+              "visible": true
+            },
+            {
+              "param": "offset",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "2d652757-ce20-41b4-b5a9-26c43239ba9d",
+      "shortCode": "personal_access_token",
+      "label": "Personal Access Token",
+      "type": "password",
+      "description": "Provider credential for auth.type=bearer (configKey personal_access_token). REQUIRED secret \u2014 StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5868abf8-8159-4fe4-aeb9-ffd79cad7375",
+      "shortCode": "due_on",
+      "label": "Due On",
+      "type": "string",
+      "description": "Due date YYYY-MM-DD for project/task writes. Nested as data.due_on. Do not send with due_at on the same task. Example: 2026-12-01.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7640a9a2-6ce2-44a3-bcf1-df698c6f2319",
+      "shortCode": "notes",
+      "label": "Notes",
+      "type": "string",
+      "description": "Plain-text notes for project_create/update, task_create/update, subtask_create. Nested as data.notes. Example: Kickoff Friday.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "16596935-870f-4208-a4df-cab902f457a1",
+      "shortCode": "archived",
+      "label": "Archived",
+      "type": "boolean",
+      "description": "Archive flag on project_update. Nested as data.archived. Example: false.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "928488e0-316f-4568-b0a6-cc3450a69dcd",
+      "shortCode": "start_on",
+      "label": "Start On",
+      "type": "string",
+      "description": "Start date YYYY-MM-DD for project/task writes. Nested as data.start_on. Example: 2026-11-01.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b236d710-f777-41d9-ad25-fa733b017659",
+      "shortCode": "name",
+      "label": "Name",
+      "type": "string",
+      "description": "Task or project name. Required by Asana on project_create / task_create / subtask_create unless supplied inside data. Nested as data.name. Example: Q4 launch.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "50732a31-2064-4a0d-b408-3643d47839dc",
+      "shortCode": "color",
+      "label": "Color",
+      "type": "string",
+      "description": "Project color on project_create/update. EXACT: dark-pink | dark-green | dark-blue | dark-red | dark-teal | dark-brown | dark-orange | dark-purple | dark-warm-gray | light-pink | light-green | light-blue | light-red | light-teal | light-brown | light-orange | light-purple | light-warm-gray | none. Nested as data.color. Example: dark-blue.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2635d8f8-f943-4936-ac69-e664f3ca264a",
+      "shortCode": "privacy_setting",
+      "label": "Privacy Setting",
+      "type": "string",
+      "description": "Project privacy on project_create/update. EXACT: public_to_workspace | private_to_team | private. Nested as data.privacy_setting. Example: private_to_team.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f12c244e-9699-4ee6-984f-87edaf52f1a3",
+      "shortCode": "html_notes",
+      "label": "Html Notes",
+      "type": "string",
+      "description": "HTML notes (Asana rich text) for project/task writes. Nested as data.html_notes. Example: <body>Kickoff</body>.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "26c68699-dd2a-4d97-aed5-0e0e102ef597",
+      "shortCode": "data",
+      "label": "Data",
+      "type": "object",
+      "description": "Asana `data` envelope escape hatch for write ops. Purpose fields (name, notes, due_on, assignee, tag, text, \u2026) merge into data via bodyMap and win on conflict. Custom/rare keys stay here. Example: {\"custom_fields\":{\"123\":\"x\"}}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cf4f7b9a-46f0-4471-939b-e2e2e016d8c8",
+      "shortCode": "opt_fields",
+      "label": "Opt Fields",
+      "type": "string",
+      "description": "Comma-separated Asana opt_fields for project_get/list and task_get. Example: name,due_on,assignee.name.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "76533c5d-13d0-4146-9283-8c754e1a8869",
+      "shortCode": "project_gid",
+      "label": "Project Gid",
+      "type": "string",
+      "description": "Project GID path for project_get/update/delete and project_add_task/remove_task. Example: 1234567890.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1439bbc2-fad7-4e93-9dbd-0ae01a1b9ab7",
+      "shortCode": "limit",
+      "label": "Limit",
+      "type": "number",
+      "description": "Page size 1\u2013100 for project_list, task_list, task_search, user_list. Example: 50.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "53a86fd8-56cb-4bb3-966d-d957f00a6ed5",
+      "shortCode": "offset",
+      "label": "Offset",
+      "type": "string",
+      "description": "Pagination offset token from the previous list response (not a number). Example: eyJ0eXAiOiJKV1QifQ.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "232c54ae-873b-42ea-8a8d-73eb11be604b",
+      "shortCode": "assignee",
+      "label": "Assignee",
+      "type": "string",
+      "description": "User GID, email, or me. Query filter on task_list. Body data.assignee on task_create/update and subtask_create. Example: me.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b9b13a4c-1521-4fb2-858b-1e3a7328a891",
+      "shortCode": "completed",
+      "label": "Completed",
+      "type": "boolean",
+      "description": "Task completed flag for task_create/update and subtask_create (data.completed). Also query filter for task_search (true|false). Example: false.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2a5546ed-cde9-455b-b1ed-f62f397d8c95",
+      "shortCode": "due_at",
+      "label": "Due At",
+      "type": "string",
+      "description": "Due date-time ISO-8601 UTC for task_create/update and subtask_create. Nested as data.due_at. Example: 2026-12-01T17:00:00.000Z.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a20af250-a91b-4164-bfe5-2d8798b469c4",
+      "shortCode": "task_gid",
+      "label": "Task Gid",
+      "type": "string",
+      "description": "Task GID path for task_get/update/delete/move, subtask_*, comment_add, tag_add/remove. Example: 1234567890.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f58acf33-83f1-4c26-8137-2aac8ceec102",
+      "shortCode": "project",
+      "label": "Project",
+      "type": "string",
+      "description": "Project GID. Query filter on task_list. Body data.project (required) on task_move (addProject). Example: 1234567890.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "90cf73d9-49bc-4cff-8f9a-68eca1fb868a",
+      "shortCode": "text",
+      "label": "Text",
+      "type": "string",
+      "description": "Search text for task_search (query). Comment body for comment_add (data.text). Example: kickoff notes.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "664c8993-ebc8-4cc8-8461-d9bf05cb2e23",
+      "shortCode": "section",
+      "label": "Section",
+      "type": "string",
+      "description": "Section GID on task_move and project_add_task. Nested as data.section. Example: 1234567890.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a10622af-484a-426c-8cc3-9f00b0697f7c",
+      "shortCode": "insert_before",
+      "label": "Insert Before",
+      "type": "string",
+      "description": "Neighbor task GID on task_move / project_add_task. Nested as data.insert_before. Example: 1234567890.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8e8ce123-1fb1-4a80-8b37-a9c502b83415",
+      "shortCode": "insert_after",
+      "label": "Insert After",
+      "type": "string",
+      "description": "Neighbor task GID on task_move / project_add_task. Nested as data.insert_after. Example: 1234567890.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0d84acb4-0aae-440b-b76d-6a735363ab6e",
+      "shortCode": "html_text",
+      "label": "Html Text",
+      "type": "string",
+      "description": "HTML comment body on comment_add. Nested as data.html_text. Use instead of text. Example: <body>Looks good</body>.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3d3853b5-e909-4d9e-a838-c6e0201dbce0",
+      "shortCode": "story_gid",
+      "label": "Story Gid",
+      "type": "string",
+      "description": "Story/comment GID path for comment_remove. Example: 1234567890.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "57431d03-0358-4933-b244-b76065b4f33c",
+      "shortCode": "tag",
+      "label": "Tag",
+      "type": "string",
+      "description": "Tag GID for tag_add / tag_remove. Nested as data.tag. Example: 1234567890.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "367a076f-fceb-4f10-a266-1250b3461976",
+      "shortCode": "task",
+      "label": "Task",
+      "type": "string",
+      "description": "Task GID on project_add_task (required) and project_remove_task (required). Nested as data.task. Example: 1234567890.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c58ff854-c496-4308-9d3b-44b61d9f493f",
+      "shortCode": "user_gid",
+      "label": "User Gid",
+      "type": "string",
+      "description": "User GID path for user_get. me is accepted. Example: me.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "7c84c888-c7bf-434a-b48e-c635e5792e18",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative \u2192 25. Example: 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8eb963da-5d02-4653-ba44-16d2df33f990",
+      "shortCode": "workspace_gid",
+      "label": "workspace_gid",
+      "type": "string",
+      "description": "Default workspace GID for task_search when INPUT workspace_gid is empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

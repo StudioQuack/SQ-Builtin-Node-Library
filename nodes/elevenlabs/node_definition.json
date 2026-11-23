@@ -1,0 +1,1136 @@
+{
+  "_id": "23dffe0f-54a5-4619-a757-b99844d5d46f",
+  "version": "1.0.0",
+  "name": "ElevenLabs",
+  "label": "ElevenLabs",
+  "description": "Official ElevenLabs API (TTS, STT, voices, Instant Voice Clone, dubbing) on INPUT input → OUTPUT output. operation selects the HTTP verb. Auth is StudioQuack secret api_key sent as xi-api-key. Audio in/out uses type file (platform ref-id). Docs: https://elevenlabs.io/docs/api-reference. Terms: https://elevenlabs.io/terms-of-use. Never log api_key. Voice clone requires speaker consent.",
+  "icon": "record_voice_over",
+  "tags": [
+    "elevenlabs",
+    "ai"
+  ],
+  "category": "AI & Machine Learning",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "d1dffcbc-08cf-4e12-8b97-a3183ac0db87",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. tts needs text + voice_id. stt needs file (type file) or source_url. clone_voice needs name + files (type file). dub needs target_lang + file or source_url. Do not put api_key here. Example: {\"text\":\"Hello\",\"voice_id\":\"JBFqnCBsd6RMkjVDRZzb\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "text",
+          "label": "text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "TTS body text. Empty → error, no HTTP. Model character caps apply (e.g. multilingual_v2 10 000).",
+          "children": []
+        },
+        {
+          "shortCode": "voice_id",
+          "label": "voice_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path {voice_id} for tts. Overrides config when non-blank. From voices_list.",
+          "children": []
+        },
+        {
+          "shortCode": "file",
+          "label": "file",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id sent as multipart field file for stt (audio/video to transcribe, min ~100 ms) and dub (source audio/video). Never inline bytes. Example: a ref-id of an uploaded interview.mp3.",
+          "children": []
+        },
+        {
+          "shortCode": "source_url",
+          "label": "source_url",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTTPS URL of audio/video for stt or dub when file is omitted.",
+          "children": []
+        },
+        {
+          "shortCode": "transcription_id",
+          "label": "transcription_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path id for get_transcript.",
+          "children": []
+        },
+        {
+          "shortCode": "dubbing_id",
+          "label": "dubbing_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Path id for get_dub and download_dub.",
+          "children": []
+        },
+        {
+          "shortCode": "target_lang",
+          "label": "target_lang",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Dub target language. ISO 639-1 or 639-3. Required for dub. Also used as language_code on download_dub.",
+          "children": []
+        },
+        {
+          "shortCode": "language_code",
+          "label": "language_code",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ISO code for tts/stt or download_dub path {language_code}.",
+          "children": []
+        },
+        {
+          "shortCode": "name",
+          "label": "name",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Display name for clone_voice or dub project.",
+          "children": []
+        },
+        {
+          "shortCode": "output_format",
+          "label": "output_format",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `output_format` for operation: tts.",
+          "children": []
+        },
+        {
+          "shortCode": "enable_logging",
+          "label": "enable_logging",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `enable_logging` for operation: tts.",
+          "children": []
+        },
+        {
+          "shortCode": "voice_settings",
+          "label": "voice_settings",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `voice_settings` for operation: tts.",
+          "children": []
+        },
+        {
+          "shortCode": "seed",
+          "label": "seed",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `seed` for operation: tts.",
+          "children": []
+        },
+        {
+          "shortCode": "previous_text",
+          "label": "previous_text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `previous_text` for operation: tts.",
+          "children": []
+        },
+        {
+          "shortCode": "next_text",
+          "label": "next_text",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `next_text` for operation: tts.",
+          "children": []
+        },
+        {
+          "shortCode": "diarize",
+          "label": "diarize",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `diarize` for operation: stt.",
+          "children": []
+        },
+        {
+          "shortCode": "num_speakers",
+          "label": "num_speakers",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Request-body parameter `num_speakers` for operations: stt, dub.",
+          "children": []
+        },
+        {
+          "shortCode": "timestamps_granularity",
+          "label": "timestamps_granularity",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `timestamps_granularity` for operation: stt.",
+          "children": []
+        },
+        {
+          "shortCode": "tag_audio_events",
+          "label": "tag_audio_events",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `tag_audio_events` for operation: stt.",
+          "children": []
+        },
+        {
+          "shortCode": "webhook",
+          "label": "webhook",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `webhook` for operation: stt.",
+          "children": []
+        },
+        {
+          "shortCode": "keyterms",
+          "label": "keyterms",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `keyterms` for operation: stt.",
+          "children": []
+        },
+        {
+          "shortCode": "search",
+          "label": "search",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `search` for operation: voices_list.",
+          "children": []
+        },
+        {
+          "shortCode": "page_size",
+          "label": "page_size",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `page_size` for operation: voices_list.",
+          "children": []
+        },
+        {
+          "shortCode": "next_page_token",
+          "label": "next_page_token",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `next_page_token` for operation: voices_list.",
+          "children": []
+        },
+        {
+          "shortCode": "voice_type",
+          "label": "voice_type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `voice_type` for operation: voices_list.",
+          "children": []
+        },
+        {
+          "shortCode": "category",
+          "label": "category",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Query-string parameter `category` for operation: voices_list.",
+          "children": []
+        },
+        {
+          "shortCode": "files",
+          "label": "files",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Voice sample recording(s) for clone_voice, sent as multipart field files (one part per file). Platform file ref-id(s); prefer under 2 minutes of clean speech. Example: [ref-id of sample1.mp3, ref-id of sample2.mp3].",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `description` for operation: clone_voice.",
+          "children": []
+        },
+        {
+          "shortCode": "remove_background_noise",
+          "label": "remove_background_noise",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `remove_background_noise` for operation: clone_voice.",
+          "children": []
+        },
+        {
+          "shortCode": "labels",
+          "label": "labels",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Request-body parameter `labels` for operation: clone_voice.",
+          "children": []
+        },
+        {
+          "shortCode": "source_lang",
+          "label": "source_lang",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `source_lang` for operation: dub.",
+          "children": []
+        },
+        {
+          "shortCode": "watermark",
+          "label": "watermark",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `watermark` for operation: dub.",
+          "children": []
+        },
+        {
+          "shortCode": "drop_background_audio",
+          "label": "drop_background_audio",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "Request-body parameter `drop_background_audio` for operation: dub.",
+          "children": []
+        },
+        {
+          "shortCode": "disable_voice_cloning",
+          "label": "disable_voice_cloning",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `disable_voice_cloning` for operation: dub.",
+          "children": []
+        },
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Which call. EXACT: tts | stt | get_transcript | voices_list | clone_voice | dub | get_dub | download_dub. Blank uses config.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "70ba3a7b-14e5-4054-9785-5eeac196cf80",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success: status=ok, http_status, data (provider JSON or audio body). TTS/download_dub audio is type file when the handler stores bytes. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed ElevenLabs JSON (transcript, voices, dubbing_id) or non-JSON body.",
+          "children": []
+        },
+        {
+          "shortCode": "audio",
+          "label": "audio",
+          "type": "file",
+          "required": false,
+          "value": "",
+          "description": "Platform file ref-id for tts / download_dub when stored. OfficialApiNode may instead leave bytes in data.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "56ef2e5f-5b55-4291-a5eb-0fa4102c8fe3",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official ElevenLabs verb. EXACT: tts | stt | get_transcript | voices_list | clone_voice | dub | get_dub | download_dub. Default tts = POST /v1/text-to-speech/{voice_id}.",
+      "value": "tts",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "tts",
+        "stt",
+        "get_transcript",
+        "voices_list",
+        "clone_voice",
+        "dub",
+        "get_dub",
+        "download_dub"
+      ],
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "tts",
+          "targets": [
+            {
+              "param": "voice_id",
+              "visible": true
+            },
+            {
+              "param": "model_id",
+              "visible": true
+            },
+            {
+              "param": "voice_settings",
+              "visible": true
+            },
+            {
+              "param": "previous_text",
+              "visible": true
+            },
+            {
+              "param": "next_text",
+              "visible": true
+            },
+            {
+              "param": "text",
+              "visible": true
+            },
+            {
+              "param": "seed",
+              "visible": true
+            },
+            {
+              "param": "language_code",
+              "visible": true
+            },
+            {
+              "param": "enable_logging",
+              "visible": true
+            },
+            {
+              "param": "output_format",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "stt",
+          "targets": [
+            {
+              "param": "model_id",
+              "visible": true
+            },
+            {
+              "param": "language_code",
+              "visible": true
+            },
+            {
+              "param": "timestamps_granularity",
+              "visible": true
+            },
+            {
+              "param": "source_url",
+              "visible": true
+            },
+            {
+              "param": "tag_audio_events",
+              "visible": true
+            },
+            {
+              "param": "diarize",
+              "visible": true
+            },
+            {
+              "param": "file",
+              "visible": true
+            },
+            {
+              "param": "webhook",
+              "visible": true
+            },
+            {
+              "param": "keyterms",
+              "visible": true
+            },
+            {
+              "param": "num_speakers",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get_transcript",
+          "targets": [
+            {
+              "param": "transcription_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "voices_list",
+          "targets": [
+            {
+              "param": "category",
+              "visible": true
+            },
+            {
+              "param": "page_size",
+              "visible": true
+            },
+            {
+              "param": "next_page_token",
+              "visible": true
+            },
+            {
+              "param": "voice_type",
+              "visible": true
+            },
+            {
+              "param": "search",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "clone_voice",
+          "targets": [
+            {
+              "param": "remove_background_noise",
+              "visible": true
+            },
+            {
+              "param": "description",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "files",
+              "visible": true
+            },
+            {
+              "param": "labels",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "dub",
+          "targets": [
+            {
+              "param": "source_url",
+              "visible": true
+            },
+            {
+              "param": "file",
+              "visible": true
+            },
+            {
+              "param": "num_speakers",
+              "visible": true
+            },
+            {
+              "param": "name",
+              "visible": true
+            },
+            {
+              "param": "watermark",
+              "visible": true
+            },
+            {
+              "param": "target_lang",
+              "visible": true
+            },
+            {
+              "param": "drop_background_audio",
+              "visible": true
+            },
+            {
+              "param": "source_lang",
+              "visible": true
+            },
+            {
+              "param": "disable_voice_cloning",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "get_dub",
+          "targets": [
+            {
+              "param": "dubbing_id",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "download_dub",
+          "targets": [
+            {
+              "param": "language_code",
+              "visible": true
+            },
+            {
+              "param": "dubbing_id",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "ea48a34f-d9c9-4304-8205-9adbd16d0c03",
+      "shortCode": "api_key",
+      "label": "API Key",
+      "type": "password",
+      "description": "ElevenLabs xi-api-key. StudioQuack secret binding only. Never logged. Empty → error 'api_key is required'.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d1738e42-cd65-44a5-a8ff-ed4f69e0cde5",
+      "shortCode": "voice_id",
+      "label": "Voice ID",
+      "type": "string",
+      "description": "Default TTS voice id when input.voice_id is blank. Example library id JBFqnCBsd6RMkjVDRZzb.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "86ce4392-d378-4ccb-9d84-3a8c1fe30fff",
+      "shortCode": "model_id",
+      "label": "Model ID",
+      "type": "string",
+      "description": "Default model_id. Official TTS convert default is eleven_multilingual_v2. Current TTS ids also include eleven_v3 (expressive, 70+ languages) and eleven_flash_v2_5 (low latency). STT: scribe_v2 (batch) / scribe_v2_realtime (streaming, not this HTTP op). Verify live list via GET /v1/models. Docs: https://elevenlabs.io/docs/overview/models · https://elevenlabs.io/docs/api-reference/text-to-speech/convert",
+      "value": "eleven_multilingual_v2",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "29f04394-cf30-479f-8b44-30e1e277ba34",
+      "shortCode": "voice_settings",
+      "label": "Voice Settings",
+      "type": "object",
+      "description": "Request-body parameter `voice_settings` for operation: tts.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "8a538098-6ffc-4687-8092-17b4742d21a0",
+      "shortCode": "previous_text",
+      "label": "Previous Text",
+      "type": "string",
+      "description": "Request-body parameter `previous_text` for operation: tts.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5581ee23-079f-41ed-a407-0f8a7cff9ede",
+      "shortCode": "next_text",
+      "label": "Next Text",
+      "type": "string",
+      "description": "Request-body parameter `next_text` for operation: tts.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d3c4692a-e155-4d98-866a-ed59e010d810",
+      "shortCode": "text",
+      "label": "Text",
+      "type": "string",
+      "description": "TTS body text. Empty → error, no HTTP. Model character caps apply (e.g. multilingual_v2 10 000).",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "10a9b7b7-35a9-46b6-a85e-2f7e058955f8",
+      "shortCode": "seed",
+      "label": "Seed",
+      "type": "number",
+      "description": "Request-body parameter `seed` for operation: tts.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "165cb5ae-c111-4844-8e25-9d1e1aa9011b",
+      "shortCode": "language_code",
+      "label": "Language Code",
+      "type": "string",
+      "description": "ISO code for tts/stt or download_dub path {language_code}.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1cb0dede-8df8-44b1-9dc1-52567a3c792d",
+      "shortCode": "enable_logging",
+      "label": "Enable Logging",
+      "type": "boolean",
+      "description": "Query-string parameter `enable_logging` for operation: tts.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "297b2f2e-f669-4664-a0cb-a270bb01e8a6",
+      "shortCode": "output_format",
+      "label": "Output Format",
+      "type": "string",
+      "description": "Query-string parameter `output_format` for operation: tts.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fcb2f0af-0f9d-4c1c-97bf-d0d755b2a5f8",
+      "shortCode": "timestamps_granularity",
+      "label": "Timestamps Granularity",
+      "type": "string",
+      "description": "Request-body parameter `timestamps_granularity` for operation: stt.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2e63832c-84f2-447c-9d9b-4ae7380585f6",
+      "shortCode": "source_url",
+      "label": "Source URL",
+      "type": "string",
+      "description": "HTTPS URL of audio/video for stt or dub when file is omitted.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c5173dd6-b50e-46b9-a718-242aa6b239fd",
+      "shortCode": "tag_audio_events",
+      "label": "Tag Audio Events",
+      "type": "boolean",
+      "description": "Request-body parameter `tag_audio_events` for operation: stt.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "865df21c-76c2-436f-9e16-0724a54c1672",
+      "shortCode": "diarize",
+      "label": "Diarize",
+      "type": "boolean",
+      "description": "Request-body parameter `diarize` for operation: stt.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a28646ac-b1db-4b26-a3e5-68a4494c8016",
+      "shortCode": "file",
+      "label": "File",
+      "type": "file",
+      "description": "Platform file ref-id sent as multipart field file for stt (audio/video to transcribe, min ~100 ms) and dub (source audio/video). Never inline bytes. Example: a ref-id of an uploaded interview.mp3.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "31c7e6b0-cdef-4328-9944-1d35f1408004",
+      "shortCode": "webhook",
+      "label": "Webhook",
+      "type": "string",
+      "description": "Request-body parameter `webhook` for operation: stt.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "b9d34598-fe14-4808-b498-ce5d73fa7881",
+      "shortCode": "keyterms",
+      "label": "Keyterms",
+      "type": "string",
+      "description": "Request-body parameter `keyterms` for operation: stt.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ed32124c-4a8e-473f-a194-bf87fc2fffa9",
+      "shortCode": "num_speakers",
+      "label": "Num Speakers",
+      "type": "number",
+      "description": "Request-body parameter `num_speakers` for operations: stt, dub.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "87c60446-21fc-4f49-8593-158949c09007",
+      "shortCode": "transcription_id",
+      "label": "Transcription ID",
+      "type": "string",
+      "description": "Path id for get_transcript.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "df344779-d611-4afb-b822-a82efbde7cf5",
+      "shortCode": "category",
+      "label": "Category",
+      "type": "string",
+      "description": "Query-string parameter `category` for operation: voices_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "04397a6d-c55e-4800-bd24-973e9929bd6b",
+      "shortCode": "page_size",
+      "label": "Page Size",
+      "type": "number",
+      "description": "Query-string parameter `page_size` for operation: voices_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2b5bd5d2-6296-432b-8bd4-3c263e6ccc1c",
+      "shortCode": "next_page_token",
+      "label": "Next Page Token",
+      "type": "string",
+      "description": "Query-string parameter `next_page_token` for operation: voices_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "5e53afca-03ed-4130-9d42-4d06dadef3bc",
+      "shortCode": "voice_type",
+      "label": "Voice Type",
+      "type": "string",
+      "description": "Query-string parameter `voice_type` for operation: voices_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c3183f81-5e73-4546-a8c0-98ca4f0a947a",
+      "shortCode": "search",
+      "label": "Search",
+      "type": "string",
+      "description": "Query-string parameter `search` for operation: voices_list.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "95e318c6-85da-4fbf-ae34-6ba2c6029487",
+      "shortCode": "remove_background_noise",
+      "label": "Remove Background Noise",
+      "type": "boolean",
+      "description": "Request-body parameter `remove_background_noise` for operation: clone_voice.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "590fbe34-29b2-419b-886c-f0fb14ca496c",
+      "shortCode": "description",
+      "label": "Description",
+      "type": "string",
+      "description": "Request-body parameter `description` for operation: clone_voice.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "84812114-748e-4d18-8ed6-b8e14f547f44",
+      "shortCode": "name",
+      "label": "Name",
+      "type": "string",
+      "description": "Display name for clone_voice or dub project.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3a207874-27b9-4b67-a21d-a9c57dde3520",
+      "shortCode": "files",
+      "label": "Files",
+      "type": "file",
+      "description": "Voice sample recording(s) for clone_voice, sent as multipart field files (one part per file). Platform file ref-id(s); prefer under 2 minutes of clean speech. Example: [ref-id of sample1.mp3, ref-id of sample2.mp3].",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2ac45834-9239-4857-b9e5-773927c427fd",
+      "shortCode": "labels",
+      "label": "Labels",
+      "type": "object",
+      "description": "Request-body parameter `labels` for operation: clone_voice.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "30e7688c-bbdb-46fc-b134-421b56c9915d",
+      "shortCode": "watermark",
+      "label": "Watermark",
+      "type": "boolean",
+      "description": "Request-body parameter `watermark` for operation: dub.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ea8b1e01-1a64-470b-95cb-0968a6f5c10d",
+      "shortCode": "target_lang",
+      "label": "Target Lang",
+      "type": "string",
+      "description": "Dub target language. ISO 639-1 or 639-3. Required for dub. Also used as language_code on download_dub.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e2b7210b-51fd-47cd-96ab-92b1f544c92e",
+      "shortCode": "drop_background_audio",
+      "label": "Drop Background Audio",
+      "type": "boolean",
+      "description": "Request-body parameter `drop_background_audio` for operation: dub.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3f036641-0f51-4310-b7bc-fbeb28e0f8ec",
+      "shortCode": "source_lang",
+      "label": "Source Lang",
+      "type": "string",
+      "description": "Request-body parameter `source_lang` for operation: dub.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c18c82b4-0f0f-4783-bc00-1c698182509d",
+      "shortCode": "disable_voice_cloning",
+      "label": "Disable Voice Cloning",
+      "type": "boolean",
+      "description": "Request-body parameter `disable_voice_cloning` for operation: dub.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "84133996-c297-4330-8705-dd0e516f59dc",
+      "shortCode": "dubbing_id",
+      "label": "Dubbing ID",
+      "type": "string",
+      "description": "Path id for get_dub and download_dub.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9e0dedcf-9846-4550-8de6-55ab2f975b64",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "HTTP timeout. Default 120. Floor 1.",
+      "value": "120",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-11-09T17:10:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

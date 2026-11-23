@@ -1,0 +1,287 @@
+{
+  "_id": "22b71740-3db5-4cfb-8de6-6550831c6a63",
+  "version": "1.0.0",
+  "name": "Odoo",
+  "label": "Odoo — JSON-2 External API (Odoo 19+)",
+  "description": "Official Odoo JSON-2 External API (Odoo 19+). POST /json/2/{model}/{method} with Authorization Bearer api_key. Optional X-Odoo-Database from config db. JSON-RPC /jsonrpc is deprecated (removal targeted Odoo 20, fall 2026) and is not used by this node. Docs: https://www.odoo.com/documentation/19.0/developer/reference/external_api.html. Named body args only (domain, fields, vals_list, ids, context). Host is config store_host (no scheme). Secrets never on INPUT. Accounting apps are models on the same JSON-2 surface — still one node.",
+  "icon": "account_balance",
+  "tags": [
+    "odoo",
+    "finance"
+  ],
+  "category": "Finance & Accounting",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "586575c0-f305-45c8-be4d-73897649cc19",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields for Odoo. Secrets never on this port.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": false,
+          "value": "search_read",
+          "description": "Overrides config operation. EXACT: search_read | create | write | unlink | call_kw. JSON-2 paths POST /json/2/{model}/{method}.",
+          "children": []
+        },
+        {
+          "shortCode": "model",
+          "label": "Model",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Odoo model name. Example: res.partner. Config model is used when INPUT is empty.",
+          "children": []
+        },
+        {
+          "shortCode": "method",
+          "label": "Method",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "call_kw method name. Example: search_read | create | write | unlink.",
+          "children": []
+        },
+        {
+          "shortCode": "domain",
+          "label": "Domain",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "search_read / call_kw domain. Official: [[\"is_company\",\"=\",true]].",
+          "children": []
+        },
+        {
+          "shortCode": "fields",
+          "label": "Fields",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Fields to return. Example: [\"name\",\"email\"].",
+          "children": []
+        },
+        {
+          "shortCode": "vals_list",
+          "label": "Vals List",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "create records list. Example: [{\"name\":\"Ada\",\"email\":\"ada@example.com\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "ids",
+          "label": "Ids",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "Record ids for write / unlink / call_kw. Example: [1,2].",
+          "children": []
+        },
+        {
+          "shortCode": "vals",
+          "label": "Vals",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "write values object. Example: {\"email\":\"new@example.com\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "context",
+          "label": "Context",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Odoo context object. Example: {\"lang\":\"en_US\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "limit",
+          "label": "limit",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "search_read max rows. Example: 80.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "search_read offset. Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "order",
+          "label": "order",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "search_read order clause. Example: name asc.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "b2e78d78-ea46-473f-80cc-fa6823181225",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "ok on HTTP 2xx.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "Http Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body. Never secrets or PAN.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "7063bb66-5aec-4364-a3c6-adcde0c1af68",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "JSON-2 verb. EXACT: search_read | create | write | unlink | call_kw. Default search_read. Paths are POST /json/2/{model}/{method}.",
+      "value": "search_read",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "search_read",
+        "create",
+        "write",
+        "unlink",
+        "call_kw"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "e459c20b-c4ba-4317-9fb2-aee31b450a60",
+      "shortCode": "db",
+      "label": "Db",
+      "type": "string",
+      "description": "Odoo database name. Sent as X-Odoo-Database when set (required when the host serves multiple databases).",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "4473dc50-8871-4631-bdeb-319742d23d01",
+      "shortCode": "api_key",
+      "label": "Api Key",
+      "type": "password",
+      "description": "Odoo user API key. Sent as Authorization Bearer. Never on INPUT. Generate in Preferences → Account Security. Docs cap lifetime at three months — rotate.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "37d2006e-f3f8-4810-8244-ace9c5d5fbc6",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout Seconds",
+      "type": "number",
+      "description": "Connect+read timeout seconds. Default 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "835cbbce-f278-4bc3-ab93-21231d07d377",
+      "shortCode": "store_host",
+      "label": "Store Host",
+      "type": "string",
+      "description": "Odoo hostname only, no scheme. Example mycompany.odoo.com. Combined with baseUrl https:// and path /json/2/{model}/{method}.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9ce1140e-4eda-4e23-8cca-292e68d3479d",
+      "shortCode": "model",
+      "label": "Model",
+      "type": "string",
+      "description": "Default ORM model for JSON-2 paths, e.g. res.partner. Overridable on INPUT.",
+      "value": "res.partner",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

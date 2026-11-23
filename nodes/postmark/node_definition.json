@@ -1,0 +1,410 @@
+{
+  "_id": "950733b2-20ad-5b58-b521-b628c7247405",
+  "version": "1.0.0",
+  "name": "Postmark",
+  "label": "Postmark — Postmark API",
+  "description": "Postmark via the official Postmark API. Base https://api.postmarkapp.com. Docs: https://postmarkapp.com/developer/api/email-api. Transactional only. listen = webhooks as BPMN message events. Handler: OfficialApiNode. OUTPUT is {status,http_status,data}.",
+  "icon": "mail",
+  "tags": [
+    "email"
+  ],
+  "category": "Communication & Messaging",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "82713a97-2bc5-5b75-a00e-466799c07570",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "One Postmark operation. Set operation plus the fields that operation needs. Do not put secrets on this port. Example: {\"operation\":\"send-email\"}.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": true,
+          "value": "send-email",
+          "description": "Which official call to run. EXACT values: send-email | send-template | send-batch | get-bounce | list-bounces | listen. listen is kind:ingress only (not callable from this tool). list-bounces requires count and offset query params (defaults 50 and 0 when omitted). Example: send-email.",
+          "children": []
+        },
+        {
+          "shortCode": "From",
+          "label": "From",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Sender (must be a Postmark Sender Signature). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "To",
+          "label": "To",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Recipient(s). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "Subject",
+          "label": "Subject",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Subject for send-email. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "HtmlBody",
+          "label": "HtmlBody",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "HTML body. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "TextBody",
+          "label": "TextBody",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Text body. Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "TemplateId",
+          "label": "TemplateId",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Template id for send-template. Official: TemplateId OR TemplateAlias (https://postmarkapp.com/developer/api/templates-api). Purpose: operation input. Omit when unused.",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Bounce id for get-bounce (path). Aliases: bounceID, bounce_id. Purpose: operation input.",
+          "children": []
+        },
+        {
+          "shortCode": "bounceID",
+          "label": "bounceID",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Same as id for get-bounce. Postmark API name. Purpose: operation input.",
+          "children": []
+        },
+        {
+          "shortCode": "Cc",
+          "label": "Cc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Cc` for operation: send-email.",
+          "children": []
+        },
+        {
+          "shortCode": "Bcc",
+          "label": "Bcc",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `Bcc` for operation: send-email.",
+          "children": []
+        },
+        {
+          "shortCode": "ReplyTo",
+          "label": "ReplyTo",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `ReplyTo` for operation: send-email.",
+          "children": []
+        },
+        {
+          "shortCode": "Tag",
+          "label": "Tag",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message tag: body `Tag` for send-email / send-template, or list-bounces filter (query `tag`). Example: welcome.",
+          "children": []
+        },
+        {
+          "shortCode": "Attachments",
+          "label": "Attachments",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "send-email / send-template attachments [{Name, Content, ContentType, ContentID}]. Content is base64. Never log. Example: [{\"Name\":\"a.pdf\",\"ContentType\":\"application/pdf\",\"Content\":\"...\"}].",
+          "children": []
+        },
+        {
+          "shortCode": "MessageStream",
+          "label": "MessageStream",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Message stream ID: body for send-email / send-template, or list-bounces filter (query `messagestream`). Default outbound. Example: outbound.",
+          "children": []
+        },
+        {
+          "shortCode": "TrackOpens",
+          "label": "TrackOpens",
+          "type": "boolean",
+          "required": false,
+          "value": "false",
+          "description": "send-email. true tracks opens. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "TrackLinks",
+          "label": "TrackLinks",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "send-email. EXACT: None | HtmlAndText | HtmlOnly | TextOnly. Example: HtmlAndText.",
+          "children": []
+        },
+        {
+          "shortCode": "Metadata",
+          "label": "Metadata",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "send-email / send-template metadata map. Example: {\"order\":\"1001\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "Headers",
+          "label": "Headers",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "send-email custom headers [{Name, Value}].",
+          "children": []
+        },
+        {
+          "shortCode": "TemplateAlias",
+          "label": "TemplateAlias",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Request-body parameter `TemplateAlias` for operation: send-template.",
+          "children": []
+        },
+        {
+          "shortCode": "TemplateModel",
+          "label": "TemplateModel",
+          "type": "object",
+          "required": false,
+          "value": "",
+          "description": "Template variable values for send-template (required by the API; the node sends {} when omitted). Example: {\"name\":\"Ana\",\"product\":\"Acme\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "Messages",
+          "label": "Messages",
+          "type": "list",
+          "required": false,
+          "value": "",
+          "description": "JSON array (1–500 items) for send-batch — sent as the root POST body. Alias: messages. Required by: send-batch.",
+          "children": []
+        },
+        {
+          "shortCode": "count",
+          "label": "count",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Page size for list-bounces (max 500). Required on the wire; default 50 when omitted.",
+          "children": []
+        },
+        {
+          "shortCode": "offset",
+          "label": "offset",
+          "type": "number",
+          "required": false,
+          "value": "",
+          "description": "Number of bounces to skip for list-bounces (required on the wire; the node sends 0 when omitted; count + offset ≤ 10,000). Example: 0.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list-bounces filter by bounce type. Example: HardBounce.",
+          "children": []
+        },
+        {
+          "shortCode": "inactive",
+          "label": "inactive",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list-bounces filter: true = only addresses Postmark deactivated, false = only active; omit for both. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "email_filter",
+          "label": "email_filter",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list-bounces filter by recipient email address (query `emailFilter`). Example: ada@example.com.",
+          "children": []
+        },
+        {
+          "shortCode": "message_id",
+          "label": "message_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list-bounces filter by message ID (query `messageID`). Example: 2c1b63fe-43f2-4db5-91b0-8bdfa44a9316.",
+          "children": []
+        },
+        {
+          "shortCode": "from_date",
+          "label": "from_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list-bounces start of range, inclusive, Eastern Time (query `fromdate`). Format YYYY-MM-DDTHH:MM:SS. Example: 2026-01-01T00:00:00.",
+          "children": []
+        },
+        {
+          "shortCode": "to_date",
+          "label": "to_date",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "list-bounces end of range, inclusive, Eastern Time (query `todate`). Format YYYY-MM-DDTHH:MM:SS. Example: 2026-01-31T23:59:59.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "e9c5584a-f2e7-583a-a857-5acb1ede92be",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Present on HTTP success. EXACT: ok.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "http_status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Upstream HTTP status. Example: 200.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the provider, or raw text if not JSON. Never contains secrets.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "d7353b9b-0003-5384-99df-a8567fcba78f",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Default operation when INPUT omits operation. EXACT: send-email, send-template, send-batch, get-bounce, list-bounces, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "value": "send-email",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "send-email",
+        "send-template",
+        "send-batch",
+        "get-bounce",
+        "list-bounces",
+        "listen"
+      ]
+    },
+    {
+      "_id": "3f51b85e-238f-5b70-b1cf-ca2c8579a6c3",
+      "shortCode": "server_token",
+      "label": "Server token",
+      "type": "password",
+      "description": "Postmark Server API token. Header X-Postmark-Server-Token. StudioQuack secret. Account token is not used here. Never log. Never put on INPUT.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d588cbae-633f-5db4-9f1d-4d9e26c7aa32",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}

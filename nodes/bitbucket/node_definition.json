@@ -1,0 +1,387 @@
+{
+  "_id": "1c9cff44-2920-4e74-9c12-07a8ef37b10f",
+  "version": "1.0.0",
+  "name": "Bitbucket",
+  "label": "Bitbucket Cloud REST 2.0",
+  "description": "Bitbucket Cloud REST 2.0. Docs: https://developer.atlassian.com/cloud/bitbucket/rest/ pr_create takes title, source {branch:{name}}, destination {branch:{name}}, description. pr_merge takes type, message, merge_strategy, close_source_branch. pipeline_run takes target + variables. Auth: HTTP Basic email + access_token (app password).",
+  "icon": "hub",
+  "tags": [
+    "bitbucket",
+    "git"
+  ],
+  "category": "Developer Tools",
+  "author": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "ports": [
+    {
+      "_id": "557890d9-0fc6-48e8-9290-96879f30b5e5",
+      "name": "input",
+      "type": "INPUT",
+      "value": "input",
+      "description": "Per-operation fields. Do not put secrets here. Path params such as id match api_spec.json placeholders.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "operation",
+          "label": "operation",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Official Bitbucket Cloud 2.0 verb. EXACT: repo_get | repo_list | file_get | pr_create | pr_get | pr_merge | pipeline_run | pipeline_get | commit_list | listen. Example: pr_create.",
+          "children": []
+        },
+        {
+          "shortCode": "workspace",
+          "label": "workspace",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Workspace slug (path). Example: acme.",
+          "children": []
+        },
+        {
+          "shortCode": "repo_slug",
+          "label": "repo_slug",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Repository slug (path). Example: api.",
+          "children": []
+        },
+        {
+          "shortCode": "path",
+          "label": "path",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "file_get file path. Example: README.md.",
+          "children": []
+        },
+        {
+          "shortCode": "commit",
+          "label": "commit",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "file_get commit/revision. Example: main.",
+          "children": []
+        },
+        {
+          "shortCode": "pagelen",
+          "label": "pagelen",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page size for repo_list / commit_list. Example: 25.",
+          "children": []
+        },
+        {
+          "shortCode": "page",
+          "label": "page",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Page number for repo_list / commit_list. Example: 1.",
+          "children": []
+        },
+        {
+          "shortCode": "q",
+          "label": "q",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "repo_list query filter. Example: name=\"api\".",
+          "children": []
+        },
+        {
+          "shortCode": "title",
+          "label": "title",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pr_create body `title`. Example: Fix login timeout.",
+          "children": []
+        },
+        {
+          "shortCode": "source",
+          "label": "source",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "pr_create official source {branch:{name}}. Example: {\"branch\":{\"name\":\"feature/login\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "destination",
+          "label": "destination",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "pr_create official destination {branch:{name}}. Example: {\"branch\":{\"name\":\"main\"}}.",
+          "children": []
+        },
+        {
+          "shortCode": "description",
+          "label": "description",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pr_create body `description` (markdown).",
+          "children": []
+        },
+        {
+          "shortCode": "id",
+          "label": "id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pull request id for pr_get / pr_merge. Example: 42.",
+          "children": []
+        },
+        {
+          "shortCode": "target",
+          "label": "target",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "pipeline_run official target {type, ref_type, ref_name} or {type: pipeline_commit_target, commit:{hash, type}}. Example: {\"type\":\"pipeline_ref_target\",\"ref_type\":\"branch\",\"ref_name\":\"main\"}.",
+          "children": []
+        },
+        {
+          "shortCode": "pipeline_uuid",
+          "label": "pipeline_uuid",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pipeline_get path UUID (with braces). Example: {1a2b-…}.",
+          "children": []
+        },
+        {
+          "shortCode": "include",
+          "label": "include",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "commit_list query `include` (ref to include, e.g. a branch). Example: master.",
+          "children": []
+        },
+        {
+          "shortCode": "exclude",
+          "label": "exclude",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "commit_list query `exclude` (ref to exclude). Example: develop.",
+          "children": []
+        },
+        {
+          "shortCode": "close_source_branch",
+          "label": "close_source_branch",
+          "type": "boolean",
+          "required": false,
+          "value": "",
+          "description": "pr_create / pr_merge `close_source_branch`. Example: true.",
+          "children": []
+        },
+        {
+          "shortCode": "type",
+          "label": "type",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pr_merge body `type` (must be pullrequest). Example: pullrequest.",
+          "children": []
+        },
+        {
+          "shortCode": "message",
+          "label": "message",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pr_merge commit message.",
+          "children": []
+        },
+        {
+          "shortCode": "merge_strategy",
+          "label": "merge_strategy",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "pr_merge `merge_strategy`. EXACT: merge_commit | squash | fast_forward. Example: squash.",
+          "children": []
+        },
+        {
+          "shortCode": "variables",
+          "label": "variables",
+          "type": "list",
+          "required": false,
+          "value": "[]",
+          "description": "pipeline_run body `variables`: [{key, value, secured}].",
+          "children": []
+        },
+        {
+          "shortCode": "role",
+          "label": "role",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "repo_list query `role`. EXACT: owner | admin | contributor | member.",
+          "children": []
+        },
+        {
+          "shortCode": "pull_request_id",
+          "label": "pull_request_id",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Pull request id for pr_get / pr_merge (alias of path id). Example: 42.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    },
+    {
+      "_id": "9d7ce7ee-94ce-408e-8736-ba88dc7ff29f",
+      "name": "output",
+      "type": "OUTPUT",
+      "value": "output",
+      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "required": true,
+      "isDefault": false,
+      "expandable": false,
+      "instanceEditable": false,
+      "maxConnections": 0,
+      "schema": [
+        {
+          "shortCode": "status",
+          "label": "Status",
+          "type": "string",
+          "required": false,
+          "value": "",
+          "description": "Exact ok on HTTP 2xx. Absent on failure.",
+          "children": []
+        },
+        {
+          "shortCode": "http_status",
+          "label": "HTTP Status",
+          "type": "number",
+          "required": false,
+          "value": "0",
+          "description": "Provider HTTP status code.",
+          "children": []
+        },
+        {
+          "shortCode": "data",
+          "label": "Data",
+          "type": "object",
+          "required": false,
+          "value": "{}",
+          "description": "Parsed JSON body from the official API, or raw text.",
+          "children": []
+        }
+      ],
+      "inputSchema": [],
+      "outputSchema": []
+    }
+  ],
+  "configurationParameters": [
+    {
+      "_id": "f039ab28-6e79-4e46-974b-68d6e3dd44a1",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "Official API operation. EXACT: repo_get, repo_list, file_get, pr_create, pr_get, pr_merge, pipeline_run, pipeline_get, commit_list, listen. listen is BPMN ingress, not a socket.",
+      "value": "repo_get",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "options": [
+        "repo_get",
+        "repo_list",
+        "file_get",
+        "pr_create",
+        "pr_get",
+        "pr_merge",
+        "pipeline_run",
+        "pipeline_get",
+        "commit_list",
+        "listen"
+      ],
+      "validationRules": {}
+    },
+    {
+      "_id": "5ebf9ad2-cae6-464f-bf1a-71add6b4725d",
+      "shortCode": "access_token",
+      "label": "Access Token",
+      "type": "password",
+      "description": "Atlassian API token (app passwords retired 2026-07-28). Basic auth with Atlassian account email. OAuth Bearer is an alternative the engine cannot switch at runtime — prefer API token.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0d7d74d7-8c92-475f-8e8f-bc49bb5292da",
+      "shortCode": "email",
+      "label": "Email",
+      "type": "string",
+      "description": "Atlassian account email (Basic username). Not the Bitbucket username.",
+      "value": "",
+      "required": true,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ac5645e8-aa0a-4428-af7d-affa9992611b",
+      "shortCode": "timeout_seconds",
+      "label": "Timeout (seconds)",
+      "type": "number",
+      "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
+      "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e317a888-0211-4f72-b8bc-f9a571acd7dc",
+      "shortCode": "pull_request_id",
+      "label": "Pull Request Id",
+      "type": "string",
+      "description": "Pull request id for pr_get / pr_merge (alias of path id). Example: 42.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": true,
+      "validationRules": {}
+    }
+  ],
+  "cdate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "udate": {
+    "$date": "2026-08-20T00:00:00.000Z"
+  },
+  "cuser": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "published": true,
+  "deleted": false,
+  "custom": false,
+  "jobType": "custom-script-executor",
+  "executionRequirementsDto": {
+    "ociImageRef": "sq-local/sq-builtin-node-library:1.0.0"
+  },
+  "ownerId": "5c8b0d45-1d10-4f2e-844c-2318af96b2fa",
+  "agenticNode": false,
+  "_class": "com.studioquack.flow.entity.document.TemplateDocumentEntity"
+}
