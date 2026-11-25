@@ -18,6 +18,10 @@ final class AgentSummarizer {
     static final String SUMMARIZED_FLAG_KEY = "_summarized";
     static final String SUMMARY_KIND_KEY = "_summary_kind";
     static final String SUMMARY_KIND_VALUE = "summarized_chat_history";
+    /** Cap summarizer input (~6k tokens) so compacting a giant tool output never overflows the summarizer call itself. */
+    static final int MAX_SUMMARIZER_INPUT_CHARS = 24_000;
+    static final int MAX_FALLBACK_SUMMARY_CHARS = 2_000;
+    static final int MAX_PRESERVED_USER_CHARS = 1_000;
 
     private AgentSummarizer() {
         // namespace — never instantiated
@@ -90,7 +94,7 @@ final class AgentSummarizer {
             return true;
         }
         String text = AgentJson.extractTextFromContent(map.get("content"));
-        return text.startsWith(SUMMARIZED_PREFIX) && text.endsWith(SUMMARIZED_SUFFIX);
+        return text.startsWith(SUMMARIZED_PREFIX) && text.contains(SUMMARIZED_SUFFIX);
     }
 
     static String wrapSummarized(String text) {
@@ -159,32 +163,57 @@ final class AgentSummarizer {
         return String.join("\n", parts);
     }
 
-    static String fallbackSummary(List<Map<String, Object>> messages) {
-        StringBuilder sb = new StringBuilder();
-        if (messages != null) {
-            for (Map<String, Object> m : messages) {
-                if (sb.length() > 0) {
-                    sb.append(' ');
-                }
-                sb.append(serializeForSummarization(m));
+    /**
+     * Serialize a batch of messages within {@code maxTotalChars}, budgeting per message so a
+     * single multi-megabyte tool output is truncated cleanly instead of crowding out every
+     * other turn or overflowing the summarizer LLM call.
+     */
+    static String serializeBatchForSummarization(List<Map<String, Object>> messages, int maxTotalChars) {
+        if (messages == null || messages.isEmpty() || maxTotalChars <= 0) {
+            return "";
+        }
+        int perMessageCap = Math.max(300, maxTotalChars / messages.size());
+        StringBuilder out = new StringBuilder();
+        for (Map<String, Object> m : messages) {
+            String block = serializeForSummarization(m);
+            if (block.length() > perMessageCap) {
+                int omitted = block.length() - perMessageCap;
+                block = block.substring(0, perMessageCap) + "\n...[truncated " + omitted + " chars]";
             }
+            if (out.length() > 0) {
+                out.append("\n\n");
+            }
+            if (out.length() + block.length() > maxTotalChars) {
+                int remaining = Math.max(0, maxTotalChars - out.length());
+                if (remaining > 32) {
+                    out.append(block, 0, remaining).append(" ...[truncated]");
+                }
+                break;
+            }
+            out.append(block);
         }
-        String serialized = sb.toString().replace('\n', ' ').strip();
-        if (serialized.length() > 1000) {
-            return serialized.substring(0, 1000) + " ...[truncated]";
-        }
+        return out.toString();
+    }
+
+    static String fallbackSummary(List<Map<String, Object>> messages) {
+        String serialized = serializeBatchForSummarization(messages, MAX_FALLBACK_SUMMARY_CHARS)
+                .replace('\n', ' ')
+                .strip();
         return serialized.isEmpty() ? "(empty summary)" : serialized;
     }
 
     static String callSummarizer(AgentSession session, List<Map<String, Object>> messages) {
+        return callSummarizer(session, messages, 0);
+    }
+
+    static String callSummarizer(AgentSession session, List<Map<String, Object>> messages, int contextWindow) {
         if (messages == null || messages.isEmpty() || session == null || session.llmNodeId.isBlank()) {
             return fallbackSummary(messages);
         }
-        List<String> blocks = new ArrayList<>();
-        for (Map<String, Object> m : messages) {
-            blocks.add(serializeForSummarization(m));
-        }
-        String joined = String.join("\n\n", blocks);
+        int charBudget = contextWindow > 0
+                ? Math.min(MAX_SUMMARIZER_INPUT_CHARS, Math.max(2_000, contextWindow * 2))
+                : MAX_SUMMARIZER_INPUT_CHARS;
+        String joined = serializeBatchForSummarization(messages, charBudget);
         List<Object> sumMessages = new ArrayList<>();
         sumMessages.add(Map.of("role", "system", "content", AgentConfig.SUMMARIZER_SYSTEM));
         sumMessages.add(Map.of("role", "user",
@@ -206,28 +235,66 @@ final class AgentSummarizer {
         return fallbackSummary(messages);
     }
 
-    static Map<String, Object> makeSummarySystemMessage(String summaryText) {
+    /**
+     * Build the compacted history turn as {@code role: "user"} with string content.
+     * Strict chat templates (Qwen3, Llama-3, DeepSeek, SGLang, vLLM, llama.cpp) reject
+     * system-only message arrays with HTTP 400 ("No user query found in messages."); emitting
+     * the summary as a single user message keeps every compacted history {@code [system?, user]}.
+     */
+    static Map<String, Object> makeSummaryUserMessage(String summaryText, String lastUserPrompt) {
+        StringBuilder content = new StringBuilder(wrapSummarized(summaryText));
+        if (lastUserPrompt != null && !lastUserPrompt.isBlank()) {
+            content.append("\n\nContinue the task: ").append(lastUserPrompt.strip());
+        } else {
+            content.append("\n\nContinue your task based on the summarized conversation history above.");
+        }
         Map<String, Object> m = new LinkedHashMap<>();
-        m.put("role", "system");
-        m.put("content", wrapSummarized(summaryText));
+        m.put("role", "user");
+        m.put("content", content.toString());
         m.put(SUMMARIZED_FLAG_KEY, Boolean.TRUE);
         m.put(SUMMARY_KIND_KEY, SUMMARY_KIND_VALUE);
         return m;
     }
 
-    static boolean isSummarySystemBlock(Object msg) {
-        if (!(msg instanceof Map<?, ?> map)) {
-            return false;
-        }
-        if (!"system".equals(map.get("role"))) {
-            return false;
-        }
+    static boolean isSummaryBlock(Object msg) {
         return isSummarized(msg);
+    }
+
+    private static String extractLastUserPrompt(List<Map<String, Object>> messages) {
+        if (messages == null) {
+            return null;
+        }
+        for (int i = messages.size() - 1; i >= 0; i--) {
+            Map<String, Object> m = messages.get(i);
+            if (m == null || isSummaryBlock(m) || !"user".equals(m.get("role"))) {
+                continue;
+            }
+            String text = AgentJson.extractTextFromContent(m.get("content")).strip();
+            if (!text.isEmpty()) {
+                return text.length() > MAX_PRESERVED_USER_CHARS
+                        ? text.substring(0, MAX_PRESERVED_USER_CHARS) + " ...[truncated]"
+                        : text;
+            }
+        }
+        return null;
+    }
+
+    private static String extractSummaryBody(Map<String, Object> summaryMsg) {
+        String text = AgentJson.extractTextFromContent(summaryMsg.get("content")).strip();
+        if (text.startsWith(SUMMARIZED_PREFIX)) {
+            int end = text.indexOf(SUMMARIZED_SUFFIX, SUMMARIZED_PREFIX.length());
+            if (end >= SUMMARIZED_PREFIX.length()) {
+                return text.substring(SUMMARIZED_PREFIX.length(), end).strip();
+            }
+        }
+        return text;
     }
 
     /**
      * Compact history under {@code contextWindow} tokens. {@code force} skips the
-     * local estimate short-circuit (provider overflow retry).
+     * local estimate short-circuit (provider overflow retry). Always preserves at least one
+     * {@code role: "user"} message so strict chat templates never fail with
+     * {@code No user query found in messages}.
      */
     static List<Map<String, Object>> summarizeForContextWindow(AgentSession session,
                                                                List<Map<String, Object>> history,
@@ -243,7 +310,7 @@ final class AgentSummarizer {
         Map<String, Object> coreSystem = null;
         List<Map<String, Object>> rest = new ArrayList<>(history);
         Map<String, Object> first = history.get(0);
-        if (first != null && "system".equals(first.get("role")) && !isSummarySystemBlock(first)) {
+        if (first != null && "system".equals(first.get("role")) && !isSummaryBlock(first)) {
             coreSystem = first;
             rest = new ArrayList<>(history.subList(1, history.size()));
         }
@@ -251,43 +318,45 @@ final class AgentSummarizer {
         List<Map<String, Object>> existingSummaryBlocks = new ArrayList<>();
         List<Map<String, Object>> freshMessages = new ArrayList<>();
         for (Map<String, Object> m : rest) {
-            if (isSummarySystemBlock(m)) {
+            if (isSummaryBlock(m)) {
                 existingSummaryBlocks.add(m);
             } else {
                 freshMessages.add(m);
             }
         }
 
-        List<Map<String, Object>> newHistory = new ArrayList<>(history);
-        List<Map<String, Object>> allBlocks;
+        String lastUserPrompt = extractLastUserPrompt(freshMessages);
+        List<String> summaryParts = new ArrayList<>();
+        for (Map<String, Object> existing : existingSummaryBlocks) {
+            String body = extractSummaryBody(existing);
+            if (!body.isBlank()) {
+                summaryParts.add(body);
+            }
+        }
         if (!freshMessages.isEmpty()) {
-            String freshSummary = callSummarizer(session, freshMessages);
-            Map<String, Object> newBlock = makeSummarySystemMessage(freshSummary);
-            allBlocks = new ArrayList<>(existingSummaryBlocks);
-            allBlocks.add(newBlock);
-            newHistory = new ArrayList<>();
-            if (coreSystem != null) {
-                newHistory.add(coreSystem);
-            }
-            newHistory.addAll(allBlocks);
-            AgentMemory.persistInMemoryCache(newHistory, session);
-            if (historyTokenEstimate(newHistory) <= contextWindow) {
-                return newHistory;
-            }
-        } else {
-            allBlocks = existingSummaryBlocks;
+            summaryParts.add(callSummarizer(session, freshMessages, contextWindow));
         }
 
-        if (allBlocks.size() > 1) {
-            String meta = callSummarizer(session, allBlocks);
-            Map<String, Object> single = makeSummarySystemMessage(meta);
+        String combinedSummary = String.join(" ", summaryParts).strip();
+        Map<String, Object> single = makeSummaryUserMessage(combinedSummary, lastUserPrompt);
+        List<Map<String, Object>> newHistory = new ArrayList<>();
+        if (coreSystem != null) {
+            newHistory.add(coreSystem);
+        }
+        newHistory.add(single);
+
+        if ((summaryParts.size() > 1 || (freshMessages.isEmpty() && force))
+                && (force || historyTokenEstimate(newHistory) > contextWindow)) {
+            String meta = callSummarizer(session, List.of(single), contextWindow);
+            single = makeSummaryUserMessage(meta, lastUserPrompt);
             newHistory = new ArrayList<>();
             if (coreSystem != null) {
                 newHistory.add(coreSystem);
             }
             newHistory.add(single);
-            AgentMemory.persistInMemoryCache(newHistory, session);
         }
+
+        AgentMemory.persistInMemoryCache(newHistory, session);
         return newHistory;
     }
 }
