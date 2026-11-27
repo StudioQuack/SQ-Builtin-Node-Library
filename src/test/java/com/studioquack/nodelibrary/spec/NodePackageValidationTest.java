@@ -44,7 +44,8 @@ class NodePackageValidationTest {
 
     private static final Set<String> PORT_TYPES = Set.of("INPUT", "OUTPUT", "FUNCTION");
     private static final Set<String> PARAM_TYPES = Set.of(
-            "string", "password", "number", "select", "boolean", "longtext", "file", "object", "list");
+            "string", "password", "number", "select", "boolean", "longtext", "file", "object", "list",
+            "webhook_key");
     private static final Set<String> CATEGORIES = Set.of(
             "AI & Machine Learning", "CRM & Marketing", "Communication & Messaging",
             "Data & Analytics", "Databases & Storage", "Developer Tools",
@@ -210,6 +211,17 @@ class NodePackageValidationTest {
                         e.getKey() + " baseUrl not absolute: " + opBase);
             }
         }
+        if (spec.containsKey("ingress")) {
+            assertIngressSpec(key, spec.get("ingress"), (Map<?, ?>) ops);
+        }
+    }
+
+    @Test
+    void ingressClassificationManifestHasNoCompetitorMentions() throws IOException {
+        Path manifest = Path.of("docs", "INGRESS_CLASSIFICATION.md");
+        assertTrue(Files.isRegularFile(manifest), "docs/INGRESS_CLASSIFICATION.md missing");
+        assertFalse(COMPETITOR.matcher(Files.readString(manifest)).find(),
+                "competitor mention in docs/INGRESS_CLASSIFICATION.md");
     }
 
     @ParameterizedTest(name = "{0}")
@@ -296,6 +308,34 @@ class NodePackageValidationTest {
         for (String k : List.of("service", "serviceConfigKey", "regionConfigKey", "sessionTokenConfigKey")) {
             if (m.containsKey(k) && m.get(k) != null && !(m.get(k) instanceof String)) {
                 throw new AssertionError("sigv4." + k + " must be a string");
+            }
+        }
+    }
+
+    private static void assertIngressSpec(String key, Object raw, Map<?, ?> ops) {
+        assertTrue(raw instanceof Map<?, ?>, key + ": ingress must be an object");
+        Map<?, ?> ing = (Map<?, ?>) raw;
+        if (ing.get("handshake") instanceof Map<?, ?> hs) {
+            String t = str(hs.get("type")).toLowerCase();
+            if (!t.isBlank()) {
+                assertTrue(com.studioquack.nodelibrary.core.OfficialApiSpec.IngressSpec.HANDSHAKE_TYPES.contains(t),
+                        key + ": unknown ingress.handshake.type: " + t);
+            }
+        }
+        if (ing.get("verify") instanceof Map<?, ?> vs) {
+            String t = str(vs.get("type")).toLowerCase();
+            if (!t.isBlank()) {
+                assertTrue(com.studioquack.nodelibrary.core.OfficialApiSpec.IngressSpec.VERIFY_TYPES.contains(t),
+                        key + ": unknown ingress.verify.type: " + t);
+            }
+        }
+        if (ing.get("sendAndWait") instanceof Map<?, ?> sw) {
+            String sendOp = str(sw.get("sendOperation"));
+            assertFalse(sendOp.isBlank(), key + ": ingress.sendAndWait.sendOperation blank");
+            assertTrue(ops.containsKey(sendOp), key + ": sendAndWait.sendOperation not in operations: " + sendOp);
+            String fb = str(sw.get("fallbackSendOperation"));
+            if (!fb.isBlank()) {
+                assertTrue(ops.containsKey(fb), key + ": sendAndWait.fallbackSendOperation not in operations: " + fb);
             }
         }
     }

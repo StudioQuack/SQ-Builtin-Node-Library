@@ -105,5 +105,25 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "query_challenge",
+      "method": "ANY",
+      "challengeParam": "validationToken",
+      "responseContentType": "text/plain"
+    },
+    "verify": {
+      "type": "body_field_secret",
+      "bodyPath": "value[*].clientState",
+      "secretConfigKey": "client_state"
+    },
+    "extract": {
+      "itemsPath": "value[*]",
+      "idempotencyPath": "subscriptionId",
+      "correlationKeyPath": "resource",
+      "eventTypePath": "changeType",
+      "maxItems": 100
+    }
   }
 }

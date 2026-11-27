@@ -192,26 +192,55 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "site.list",
-        "item.list",
-        "item.get",
-        "item.create",
-        "item.update",
-        "item.delete",
-        "form.list",
-        "form.submission.list",
-        "order.list",
-        "sku.list",
-        "item_list",
-        "item_create",
-        "item_update",
-        "order_list",
-        "sku_list",
-        "trigger.form",
-        "trigger.listen",
-        "trigger"
+        "site.list:Site List",
+        "item.list:Item List",
+        "item.get:Item Get",
+        "item.create:Item Create",
+        "item.update:Item Update",
+        "item.delete:Item Delete",
+        "form.list:Form List",
+        "form.submission.list:Form Submission List",
+        "order.list:Order List",
+        "sku.list:Sku List",
+        "item_list:Item List",
+        "item_create:Item Create",
+        "item_update:Item Update",
+        "order_list:Order List",
+        "sku_list:Sku List",
+        "trigger.form:Form Submission (Incoming):listen",
+        "trigger.listen:Listen (Incoming):listen",
+        "trigger:Trigger (Incoming):listen"
       ],
-      "validationRules": {}
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "trigger.form",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "trigger.listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "trigger",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            }
+          ]
+        }
+      ]
     },
     {
       "_id": "4194a806-8c9a-4799-a6bc-cf1b14f63413",
@@ -259,6 +288,19 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f63411e9-6188-54fa-bc9a-475c2dd40b14",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node.",
+      "value": "",
       "required": false,
       "instanceEditable": true,
       "visible": true,

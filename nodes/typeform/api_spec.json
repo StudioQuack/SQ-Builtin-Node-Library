@@ -98,5 +98,21 @@
     "trigger.listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "none"
+    },
+    "verify": {
+      "type": "hmac_sha256_base64",
+      "header": "typeform-signature",
+      "prefix": "sha256=",
+      "secretConfigKey": "webhook_secret"
+    },
+    "extract": {
+      "idempotencyPath": "event_id",
+      "correlationKeyPath": "form_response.form_id",
+      "eventTypePath": "event_type"
+    }
   }
 }

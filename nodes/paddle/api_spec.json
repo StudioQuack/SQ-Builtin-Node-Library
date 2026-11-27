@@ -87,5 +87,25 @@
     "trigger": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "none"
+    },
+    "verify": {
+      "type": "hmac_sha256_timestamped",
+      "signatureHeaderFormat": "paddle",
+      "header": "paddle-signature",
+      "timestampKey": "ts",
+      "signatureKey": "h1",
+      "timestampSeparator": ":",
+      "timestampToleranceSeconds": 300,
+      "secretConfigKey": "webhook_secret"
+    },
+    "extract": {
+      "idempotencyPath": "event_id",
+      "correlationKeyPath": "data.id",
+      "eventTypePath": "event_type"
+    }
   }
 }

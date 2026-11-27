@@ -188,5 +188,45 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "json_challenge",
+      "method": "POST",
+      "typePath": "type",
+      "typeValue": "1",
+      "staticResponseBody": "{\"type\":1}",
+      "responseContentType": "application/json",
+      "verifyBeforeHandshake": true
+    },
+    "verify": {
+      "type": "ed25519",
+      "header": "x-signature-ed25519",
+      "timestampHeader": "x-signature-timestamp",
+      "secretConfigKey": "public_key"
+    },
+    "extract": {
+      "idempotencyPath": "id",
+      "correlationKeyPath": "channel_id",
+      "fallbackCorrelationKeyPaths": [
+        "guild_id",
+        "id"
+      ],
+      "eventTypePath": "type",
+      "fields": {
+        "id": "id",
+        "type": "type",
+        "channelId": "channel_id",
+        "guildId": "guild_id",
+        "commandName": "data.name"
+      }
+    },
+    "sendAndWait": {
+      "sendOperation": "send-message",
+      "correlationKeyFrom": [
+        "channel_id",
+        "data.channel_id"
+      ]
+    }
   }
 }

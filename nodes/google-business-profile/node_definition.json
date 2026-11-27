@@ -212,13 +212,32 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "location_get",
-        "review_list",
-        "review_reply",
-        "post_create",
-        "trigger"
+        "location_get:Location Get",
+        "review_list:Review List",
+        "review_reply:Review Reply",
+        "post_create:Post Create",
+        "trigger:Trigger (Incoming):listen"
       ],
-      "validationRules": {}
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "trigger",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
+              "visible": true
+            }
+          ]
+        }
+      ]
     },
     {
       "_id": "9e1ed1b3-8703-4ba8-9c57-d9b56f54b1c3",
@@ -253,6 +272,45 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "59d9bedb-7e16-571d-984a-6d12d7d470dd",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "333c79cd-395e-5bcb-a840-3f575f25cbc4",
+      "shortCode": "webhook_secret",
+      "label": "Pub/Sub Push Auth Token",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header Authorization. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "92827705-9296-5ed3-8e22-31b890ec87e1",
+      "shortCode": "webhook_header_name",
+      "label": "Webhook Auth Header Name",
+      "type": "string",
+      "description": "HTTP header name carrying the provider webhook secret (default: Authorization).",
+      "value": "Authorization",
       "required": false,
       "instanceEditable": true,
       "visible": true,

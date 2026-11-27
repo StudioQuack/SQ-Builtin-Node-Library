@@ -2,9 +2,13 @@ package com.studioquack.nodelibrary.nodes.officialapi;
 
 import com.studioquack.nodelibrary.core.DataSupport;
 import com.studioquack.nodelibrary.core.NodeHandler;
+import com.studioquack.nodelibrary.core.OfficialApiIngressHandler;
+import com.studioquack.nodelibrary.core.OfficialApiSpec;
+import com.studioquack.nodelibrary.core.SelectOptionSyntax;
 import com.studioquack.nodelibrary.nodes.testemulator.HelperClient;
 import studioquack.StudioQuackHelper;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,6 +28,36 @@ public final class GithubNode implements NodeHandler {
     private static final String API_BASE = "https://api.github.com";
     private static final String ACCEPT = "application/vnd.github+json";
     private static final String API_VERSION = "2026-03-10";
+    /** Config parameter keys referenced by {@code nodes/github/node_definition.json}. */
+    private static final String CFG_OPERATION = "operation";
+    private static final String CFG_WEBHOOK_KEY = "webhook_key";
+    private static final String CFG_WEBHOOK_SECRET = "webhook_secret";
+
+    /** Library-internal GitHub webhook ingress contract ({@code X-Hub-Signature-256} + ping handshake). */
+    static final OfficialApiSpec.IngressSpec INGRESS_SPEC = OfficialApiSpec.IngressSpec.from(Map.of(
+            "handshake", Map.of(
+                    "type", "header_value_challenge",
+                    "method", "POST",
+                    "headerName", "x-github-event",
+                    "headerValue", "ping",
+                    "staticResponseBody", "{\"ok\":true,\"event\":\"ping\"}",
+                    "responseContentType", "application/json",
+                    "verifyBeforeHandshake", true),
+            "verify", Map.of(
+                    "type", "hmac_sha256_hex",
+                    "header", "x-hub-signature-256",
+                    "prefix", "sha256=",
+                    "secretConfigKey", CFG_WEBHOOK_SECRET),
+            "extract", Map.of(
+                    "idempotencyHeader", "x-github-delivery",
+                    "eventTypeHeader", "x-github-event",
+                    "correlationKeyPath", "repository.full_name",
+                    "fallbackCorrelationKeyPaths", List.of("pull_request.id", "issue.id", "head_commit.id"),
+                    "fields", Map.of(
+                            "action", "action",
+                            "repository", "repository.full_name",
+                            "sender", "sender.login",
+                            "ref", "ref"))));
 
     private final String templateId;
 
@@ -56,15 +90,33 @@ public final class GithubNode implements NodeHandler {
         int timeoutSec = 25;
         try {
             Map<String, Object> cfg = DataNodeSupport.configParams(request);
+            if (OfficialApiIngressHandler.isIngressInvocation(request, _helper)) {
+                // webhook_key binding is validated by the daemon; verify provider HMAC using webhook_secret.
+                Object ignoredKeyRef = cfg.get(CFG_WEBHOOK_KEY);
+                if (ignoredKeyRef != null) {
+                    logs.log(Map.of("message", "github ingress", "mode", "webhook"));
+                }
+                return OfficialApiIngressHandler.handle(
+                        request, _helper, INGRESS_SPEC, "github", cfg, Clock.systemUTC());
+            }
             Map<String, Object> in = DataNodeSupport.inputPort(request);
             timeoutSec = DataNodeSupport.positiveInt(cfg.get("timeout_seconds"), 25);
             int defaultPerPage = DataNodeSupport.positiveInt(cfg.get("default_per_page"), 20);
 
             String rawAction = DataNodeSupport.str(in.get("action")).trim();
+            if (rawAction.isEmpty()) {
+                rawAction = SelectOptionSyntax.extractValue(DataNodeSupport.str(cfg.get(CFG_OPERATION)));
+            }
             if (!rawAction.isEmpty()) {
                 action = rawAction;
             }
             logs.log(Map.of("message", "github start", "action", action));
+
+            if ("listen".equals(action)) {
+                return DataSupport.invalidInput(
+                        "Inbound webhook operation 'listen' requires webhook ingress mode "
+                                + "(BPMN message start / catch / boundary event).");
+            }
 
             String pat = DataNodeSupport.str(cfg.get("personal_access_token")).trim();
             Map<String, String> headers = githubHeaders(pat);
@@ -79,7 +131,7 @@ public final class GithubNode implements NodeHandler {
             } else {
                 ports = DataSupport.invalidInput(
                         "Unknown action: " + action
-                                + ". Use search_repositories, get_repo, or get_latest_release.");
+                                + ". Use search_repositories, get_repo, get_latest_release, or listen.");
             }
             logs.log(Map.of("message", "github done", "action", action));
             return ports;

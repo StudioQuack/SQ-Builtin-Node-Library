@@ -126,5 +126,35 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "zoom_url_validation",
+      "method": "POST",
+      "secretConfigKey": "webhook_secret_token",
+      "responseContentType": "application/json"
+    },
+    "verify": {
+      "type": "hmac_sha256_timestamped",
+      "signatureHeaderFormat": "zoom",
+      "header": "x-zm-signature",
+      "timestampHeader": "x-zm-request-timestamp",
+      "prefix": "v0=",
+      "timestampPrefix": "v0:",
+      "timestampSeparator": ":",
+      "timestampToleranceSeconds": 300,
+      "secretConfigKey": "webhook_secret_token"
+    },
+    "extract": {
+      "idempotencyPath": "event_ts",
+      "correlationKeyPath": "payload.object.id",
+      "eventTypePath": "event",
+      "fields": {
+        "event": "event",
+        "eventTs": "event_ts",
+        "objectId": "payload.object.id",
+        "topic": "payload.object.topic"
+      }
+    }
   }
 }

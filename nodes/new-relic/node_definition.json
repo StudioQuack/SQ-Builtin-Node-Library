@@ -194,14 +194,33 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "nrql_query",
-        "event_ingest",
-        "deploy_marker",
-        "alert_policy_get",
-        "incident_get",
-        "listen"
+        "nrql_query:Nrql Query",
+        "event_ingest:Event Ingest",
+        "deploy_marker:Deploy Marker",
+        "alert_policy_get:Alert Policy Get",
+        "incident_get:Incident Get",
+        "listen:Listen (Incoming):listen"
       ],
-      "validationRules": {}
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
+              "visible": true
+            }
+          ]
+        }
+      ]
     },
     {
       "_id": "263f9cf5-ffcd-4f8c-bd19-90d7dcee5e8a",
@@ -266,6 +285,45 @@
       "type": "number",
       "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "243d063e-34b9-5122-8ca9-ff9fd1dd6d1d",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "fe035244-2aef-5741-8fb7-36274a74a36d",
+      "shortCode": "webhook_secret",
+      "label": "Alert Webhook Auth Secret",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header X-NewRelic-Token. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "068bf46a-b2e1-5e61-ad73-586305c4b1e6",
+      "shortCode": "webhook_header_name",
+      "label": "Webhook Auth Header Name",
+      "type": "string",
+      "description": "HTTP header name carrying the provider webhook secret (default: X-NewRelic-Token).",
+      "value": "X-NewRelic-Token",
       "required": false,
       "instanceEditable": true,
       "visible": true,

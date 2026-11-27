@@ -347,22 +347,58 @@
       "isPublic": false,
       "validationRules": {},
       "options": [
-        "campaign.create",
-        "campaign.get",
-        "campaign.list",
-        "campaign.update",
-        "adset.create",
-        "adset.get",
-        "adset.list",
-        "ad.create",
-        "ad.get",
-        "insights.get",
-        "audience.create",
-        "leadForm.list",
-        "lead.get",
-        "customConversion.create",
-        "trigger.leadgen",
-        "trigger.listen"
+        "campaign.create:Campaign Create",
+        "campaign.get:Campaign Get",
+        "campaign.list:Campaign List",
+        "campaign.update:Campaign Update",
+        "adset.create:Adset Create",
+        "adset.get:Adset Get",
+        "adset.list:Adset List",
+        "ad.create:Ad Create",
+        "ad.get:Ad Get",
+        "insights.get:Insights Get",
+        "audience.create:Audience Create",
+        "leadForm.list:LeadForm List",
+        "lead.get:Lead Get",
+        "customConversion.create:CustomConversion Create",
+        "trigger.leadgen:Leadgen (Incoming):listen",
+        "trigger.listen:Listen (Incoming):listen"
+      ],
+      "filterRules": [
+        {
+          "when": "trigger.leadgen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "app_secret",
+              "visible": true
+            },
+            {
+              "param": "verify_token",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "trigger.listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "app_secret",
+              "visible": true
+            },
+            {
+              "param": "verify_token",
+              "visible": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -411,6 +447,45 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
       "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c12a8d5e-57a9-5c17-b1fa-4d18175d3f14",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6172000a-7423-5fe5-b830-3b56f5e0bc61",
+      "shortCode": "app_secret",
+      "label": "Meta App Secret",
+      "type": "password",
+      "description": "Meta App Secret for constant-time X-Hub-Signature-256 HMAC-SHA256 verification. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "55dd6d3d-93f7-5743-a69c-3f91fb42070c",
+      "shortCode": "verify_token",
+      "label": "Webhook Verify Token",
+      "type": "password",
+      "description": "Shared verify token checked during Meta GET hub.mode=subscribe handshake. Never logged.",
+      "value": "",
       "required": false,
       "instanceEditable": true,
       "visible": true,

@@ -129,5 +129,40 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "none"
+    },
+    "verify": {
+      "type": "header_secret",
+      "header": "authorization",
+      "headerConfigKey": "webhook_header_name",
+      "secretConfigKey": "webhook_secret"
+    },
+    "extract": {
+      "idempotencyPath": "message.name",
+      "correlationKeyPath": "message.thread.name",
+      "fallbackCorrelationKeyPaths": [
+        "space.name"
+      ],
+      "eventTypePath": "type",
+      "fields": {
+        "type": "type",
+        "spaceName": "space.name",
+        "threadName": "message.thread.name",
+        "text": "message.text",
+        "sender": "user.displayName"
+      }
+    },
+    "sendAndWait": {
+      "sendOperation": "create-message",
+      "correlationKeyFrom": [
+        "thread.name",
+        "parent",
+        "data.thread.name",
+        "data.space.name"
+      ]
+    }
   }
 }

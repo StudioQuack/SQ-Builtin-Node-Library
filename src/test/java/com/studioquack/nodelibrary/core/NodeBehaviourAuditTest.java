@@ -105,6 +105,11 @@ class NodeBehaviourAuditTest {
                 .filter(f -> f.severity() == Severity.ERROR && NodeContractAuditTest.VERIFIED.contains(f.node()))
                 .toList();
         assertTrue(verified.isEmpty(), "verified nodes regressed:\n" + lines(verified));
+
+        List<Finding> ingressErrors = findings.stream()
+                .filter(f -> f.severity() == Severity.ERROR && f.rule().startsWith("L2_INGRESS_"))
+                .toList();
+        assertTrue(ingressErrors.isEmpty(), "ingress behaviour errors:\n" + lines(ingressErrors));
         if (Boolean.getBoolean("nodeaudit.strict")) {
             long errors = findings.stream().filter(f -> f.severity() == Severity.ERROR).count();
             assertTrue(errors == 0, errors + " behaviour errors, see " + REPORT_DIR.resolve("behaviour.md"));
@@ -135,7 +140,145 @@ class NodeBehaviourAuditTest {
                         "op '" + op.name + "' threw " + e.getClass().getSimpleName() + ": " + e.getMessage()));
             }
         }
+        if (d.config.containsKey("webhook_key")) {
+            auditIngressBehaviour(key, d, spec, node, out);
+        }
         return collapse(out, "L2_SECRET_IN_ERROR");
+    }
+
+    /**
+     * Exercise loopback webhook ingress for every Group A/B spec node declaring {@code webhook_key}:
+     * handshake (if declared), valid event emission, and invalid signature/token 401 rejection.
+     */
+    private static void auditIngressBehaviour(String key, Definition d, OfficialApiSpec spec,
+                                              OfficialApiNode node, List<Finding> out) {
+        try {
+            OfficialApiSpec.IngressSpec ing = spec.ingress;
+            Map<String, Object> cfg = new LinkedHashMap<>();
+            Map<String, String> cfgTypes = new LinkedHashMap<>();
+            d.config.forEach((k, v) -> cfgTypes.put(k, str(v.get("type"))));
+            String testSecret = "audit-webhook-secret-123";
+            String testVerifyToken = "audit-verify-token-456";
+
+            // 1. Handshake check (if declared and not requiring Ed25519 keypair synthesis here)
+            if (ing != null && ing.handshake != null && !"none".equals(ing.handshake.type)) {
+                OfficialApiSpec.HandshakeSpec hs = ing.handshake;
+                if (!hs.tokenConfigKey.isBlank()) {
+                    cfg.put(hs.tokenConfigKey, testVerifyToken);
+                }
+                if (!hs.secretConfigKey.isBlank()) {
+                    cfg.put(hs.secretConfigKey, testSecret);
+                }
+                Map<String, Object> wr = new LinkedHashMap<>();
+                wr.put("method", "ANY".equals(hs.method) ? "GET" : hs.method);
+                Map<String, Object> query = new LinkedHashMap<>();
+                Map<String, Object> headers = new LinkedHashMap<>();
+                String rawBody = "{}";
+                if ("query_challenge".equals(hs.type)) {
+                    if (!hs.modeParam.isBlank()) {
+                        query.put(hs.modeParam, hs.modeValue);
+                    }
+                    if (!hs.tokenParam.isBlank()) {
+                        query.put(hs.tokenParam, testVerifyToken);
+                    }
+                    query.put(hs.challengeParam, "challenge-xyz");
+                } else if ("json_challenge".equals(hs.type)) {
+                    Map<String, Object> jb = new LinkedHashMap<>();
+                    if (!hs.typePath.isBlank()) {
+                        jb.put(hs.typePath, hs.typeValue);
+                    }
+                    if (!hs.challengePath.isBlank()) {
+                        jb.put(hs.challengePath, "challenge-xyz");
+                    }
+                    rawBody = Json.write(jb);
+                    wr.put("body", jb);
+                } else if ("header_echo".equals(hs.type)) {
+                    headers.put(hs.headerName, "echo-secret-val");
+                } else if ("zoom_url_validation".equals(hs.type)) {
+                    Map<String, Object> jb = Map.of("event", "endpoint.url_validation",
+                            "payload", Map.of("plainToken", "zoom-plain"));
+                    rawBody = Json.write(jb);
+                    wr.put("body", jb);
+                }
+                wr.put("query", query);
+                wr.put("headers", headers);
+                wr.put("rawBody", rawBody);
+                wr.put("rawBodyBase64", java.util.Base64.getEncoder()
+                        .encodeToString(rawBody.getBytes(StandardCharsets.UTF_8)));
+                Map<String, Object> hsReq = ingressRequest(cfg, cfgTypes, wr);
+                // Skip verifyBeforeHandshake for ed25519 (covered by OfficialApiIngressHandlerTest with real Ed25519 keypair)
+                boolean skipEd = hs.verifyBeforeHandshake && ing.verify != null && "ed25519".equals(ing.verify.type);
+                if (!skipEd) {
+                    Map<String, Object> res = node.handle(hsReq, null);
+                    if (!res.containsKey("__sq_webhook_challenge")) {
+                        out.add(new Finding(key, Severity.ERROR, "L2_INGRESS_HANDSHAKE",
+                                "ingress handshake (" + hs.type + ") did not return __sq_webhook_challenge: " + res.keySet()));
+                    }
+                }
+            }
+
+            // 2. Invalid signature/token rejection (when verify is configured)
+            if (ing != null && ing.verify != null && !"none".equals(ing.verify.type)
+                    && !ing.verify.secretConfigKey.isBlank()) {
+                Map<String, Object> badCfg = new LinkedHashMap<>();
+                badCfg.put(ing.verify.secretConfigKey,
+                        "ed25519".equals(ing.verify.type)
+                                ? "0000000000000000000000000000000000000000000000000000000000000000"
+                                : testSecret);
+                if (!ing.verify.headerConfigKey.isBlank()) {
+                    badCfg.put(ing.verify.headerConfigKey, ing.verify.header);
+                }
+                if (!ing.verify.urlConfigKey.isBlank()) {
+                    badCfg.put(ing.verify.urlConfigKey, "https://api.studioquack.com/hook");
+                }
+                String rawBody = "{\"id\":\"evt_bad\"}";
+                Map<String, Object> badWr = new LinkedHashMap<>();
+                badWr.put("method", "POST");
+                badWr.put("headers", Map.of(
+                        "content-type", "application/json",
+                        ing.verify.header.isBlank() ? "x-invalid" : ing.verify.header, "bad-sig"));
+                badWr.put("rawBody", rawBody);
+                badWr.put("rawBodyBase64", java.util.Base64.getEncoder()
+                        .encodeToString(rawBody.getBytes(StandardCharsets.UTF_8)));
+                badWr.put("body", Map.of("id", "evt_bad"));
+                Map<String, Object> badRes = node.handle(ingressRequest(badCfg, cfgTypes, badWr), null);
+                if (!badRes.containsKey("__sq_webhook_reject")) {
+                    out.add(new Finding(key, Severity.ERROR, "L2_INGRESS_REJECT",
+                            "invalid credential for verify=" + ing.verify.type
+                                    + " did not return __sq_webhook_reject: " + badRes.keySet()));
+                }
+            }
+
+            // 3. Valid event emission (without secret set -> pass-through / extract path)
+            String okBody = "{\"id\":\"evt_ok\",\"event\":\"test\"}";
+            Map<String, Object> okWr = new LinkedHashMap<>();
+            okWr.put("method", "POST");
+            okWr.put("headers", Map.of("content-type", "application/json"));
+            okWr.put("rawBody", okBody);
+            okWr.put("rawBodyBase64", java.util.Base64.getEncoder()
+                    .encodeToString(okBody.getBytes(StandardCharsets.UTF_8)));
+            okWr.put("body", Map.of("id", "evt_ok", "event", "test"));
+            Map<String, Object> okRes = node.handle(ingressRequest(Map.of(), cfgTypes, okWr), null);
+            if (!okRes.containsKey("__sq_webhook_events")) {
+                out.add(new Finding(key, Severity.ERROR, "L2_INGRESS_EVENTS",
+                        "ingress POST did not return __sq_webhook_events: " + okRes.keySet()));
+            }
+        } catch (RuntimeException e) {
+            out.add(new Finding(key, Severity.ERROR, "L2_INGRESS_EXCEPTION",
+                    "ingress audit threw " + e.getClass().getSimpleName() + ": " + e.getMessage()));
+        }
+    }
+
+    private static Map<String, Object> ingressRequest(Map<String, Object> cfg, Map<String, String> types,
+                                                      Map<String, Object> webhookRequest) {
+        List<Map<String, Object>> params = new ArrayList<>();
+        cfg.forEach((k, v) -> params.add(Map.of("shortCode", k, "value", v, "type", types.getOrDefault(k, "string"))));
+        Map<String, Object> req = new LinkedHashMap<>();
+        req.put("invocationMode", "ingress");
+        req.put("activeSelectRole", "listen");
+        req.put("webhookRequest", webhookRequest);
+        req.put("executionContext", Map.of("currentNode", Map.of("data", Map.of("configurationParameters", params))));
+        return req;
     }
 
     /** One finding per node for a rule that fails on every operation the same way. */
@@ -531,7 +674,7 @@ class NodeBehaviourAuditTest {
                 String value = str(c.get("value"));
                 if (value.isEmpty() && "select".equals(str(c.get("type")))) {
                     List<String> opts = strings(c.get("options"));
-                    value = opts.isEmpty() ? "" : opts.get(0);
+                    value = opts.isEmpty() ? "" : SelectOptionSyntax.extractValue(opts.get(0));
                 }
                 if (!value.isEmpty()) {
                     cfg.put(code, value);

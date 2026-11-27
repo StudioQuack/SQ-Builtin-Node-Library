@@ -354,5 +354,43 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "query_challenge",
+      "method": "ANY",
+      "challengeParam": "validationToken",
+      "responseContentType": "text/plain"
+    },
+    "verify": {
+      "type": "body_field_secret",
+      "bodyPath": "value[*].clientState",
+      "secretConfigKey": "client_state"
+    },
+    "extract": {
+      "itemsPath": "value[*]",
+      "idempotencyPath": "resourceData.id",
+      "correlationKeyPath": "resourceData.conversationId",
+      "fallbackCorrelationKeyPaths": [
+        "resourceData.id",
+        "subscriptionId"
+      ],
+      "eventTypePath": "changeType",
+      "fields": {
+        "subscriptionId": "subscriptionId",
+        "changeType": "changeType",
+        "resource": "resource",
+        "resourceId": "resourceData.id"
+      },
+      "maxItems": 100
+    },
+    "sendAndWait": {
+      "sendOperation": "send-message",
+      "correlationKeyFrom": [
+        "toRecipients[0].emailAddress.address",
+        "subject",
+        "data.conversationId"
+      ]
+    }
   }
 }

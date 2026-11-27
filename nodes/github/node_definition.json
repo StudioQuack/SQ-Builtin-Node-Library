@@ -194,6 +194,40 @@
   ],
   "configurationParameters": [
     {
+      "_id": "0c121f46-e72c-5bab-ab20-dc55e154bdfd",
+      "shortCode": "operation",
+      "label": "Operation",
+      "type": "select",
+      "description": "GitHub action to execute when input.action is blank. Select listen to receive inbound GitHub webhooks (X-Hub-Signature-256).",
+      "value": "search_repositories",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {},
+      "options": [
+        "search_repositories:Search Repositories",
+        "get_repo:Get Repository",
+        "get_latest_release:Get Latest Release",
+        "listen:Listen (Webhook):listen"
+      ],
+      "filterRules": [
+        {
+          "when": "listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    {
       "_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7b",
       "shortCode": "personal_access_token",
       "label": "Personal Access Token",
@@ -226,6 +260,32 @@
       "type": "number",
       "description": "Default search page size used when input.per_page is omitted, null, or <= 0 (search_repositories only). Accepted: positive number or numeric string. Omit, null, or <= 0 → 20. The outbound request still sends min(value, 100). Example: 20. Does not affect get_repo or get_latest_release.",
       "value": "20",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "ea783c96-66a5-58e2-b3eb-09e7db42b195",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) routing inbound GitHub webhooks to this node.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "00aca3fd-aa0a-529c-8be9-808fa2185621",
+      "shortCode": "webhook_secret",
+      "label": "Webhook Secret",
+      "type": "password",
+      "description": "GitHub webhook secret verified in constant time against X-Hub-Signature-256 (sha256=...). Never logged.",
+      "value": "",
       "required": false,
       "instanceEditable": true,
       "visible": true,

@@ -237,19 +237,30 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "subscriber.upsert",
-        "subscriber.get",
-        "subscriber.unsubscribe",
-        "subscriber.delete",
-        "tag.apply",
-        "tag.remove",
-        "event.record",
-        "campaign.subscribe",
-        "campaign.unsubscribe",
-        "workflow.activate",
-        "trigger.listen"
+        "subscriber.upsert:Subscriber Upsert",
+        "subscriber.get:Subscriber Get",
+        "subscriber.unsubscribe:Subscriber Unsubscribe",
+        "subscriber.delete:Subscriber Delete",
+        "tag.apply:Tag Apply",
+        "tag.remove:Tag Remove",
+        "event.record:Event Record",
+        "campaign.subscribe:Campaign Subscribe",
+        "campaign.unsubscribe:Campaign Unsubscribe",
+        "workflow.activate:Workflow Activate",
+        "trigger.listen:Listen (Incoming):listen"
       ],
-      "validationRules": {}
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "trigger.listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            }
+          ]
+        }
+      ]
     },
     {
       "_id": "92ccf123-681a-4cab-a18b-740f70af38a6",
@@ -284,6 +295,19 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6ae09884-28eb-550f-b338-76eb9a1912df",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node.",
+      "value": "",
       "required": false,
       "instanceEditable": true,
       "visible": true,

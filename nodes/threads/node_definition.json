@@ -175,14 +175,33 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "thread_create",
-        "thread_publish",
-        "thread_get",
-        "reply_create",
-        "insights_get",
-        "trigger"
+        "thread_create:Thread Create",
+        "thread_publish:Thread Publish",
+        "thread_get:Thread Get",
+        "reply_create:Reply Create",
+        "insights_get:Insights Get",
+        "trigger:Trigger (Incoming):listen"
       ],
-      "validationRules": {}
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "trigger",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "app_secret",
+              "visible": true
+            },
+            {
+              "param": "verify_token",
+              "visible": true
+            }
+          ]
+        }
+      ]
     },
     {
       "_id": "7f3f7112-3e10-489e-bab2-da4f3aaff3c2",
@@ -204,6 +223,45 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Example: 30.",
       "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "41560b0a-5648-5098-a21f-97fbc7a2e7e2",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f0843170-17bf-59dd-98bd-4da11bbb009b",
+      "shortCode": "app_secret",
+      "label": "Meta App Secret",
+      "type": "password",
+      "description": "Meta App Secret for constant-time X-Hub-Signature-256 HMAC-SHA256 verification. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "17b383e6-437d-584e-8d15-5f5e4b76ff05",
+      "shortCode": "verify_token",
+      "label": "Webhook Verify Token",
+      "type": "password",
+      "description": "Shared verify token checked during Meta GET hub.mode=subscribe handshake. Never logged.",
+      "value": "",
       "required": false,
       "instanceEditable": true,
       "visible": true,

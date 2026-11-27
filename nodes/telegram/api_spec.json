@@ -329,5 +329,32 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "none"
+    },
+    "verify": {
+      "type": "header_secret",
+      "header": "x-telegram-bot-api-secret-token",
+      "secretConfigKey": "secret_token"
+    },
+    "extract": {
+      "idempotencyPath": "update_id",
+      "correlationKeyPath": "message.chat.id",
+      "fallbackCorrelationKeyPaths": [
+        "callback_query.message.chat.id",
+        "edited_message.chat.id",
+        "channel_post.chat.id"
+      ],
+      "fields": {
+        "updateId": "update_id",
+        "chatId": "message.chat.id",
+        "fromId": "message.from.id",
+        "username": "message.from.username",
+        "text": "message.text",
+        "messageId": "message.message_id"
+      }
+    }
   }
 }

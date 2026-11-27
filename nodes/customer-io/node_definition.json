@@ -156,17 +156,28 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "customer.get",
-        "customer.list",
-        "customer.search",
-        "customer.segments",
-        "campaign.list",
-        "campaign.get",
-        "campaign.metrics",
-        "segment.list",
-        "trigger.listen"
+        "customer.get:Customer Get",
+        "customer.list:Customer List",
+        "customer.search:Customer Search",
+        "customer.segments:Customer Segments",
+        "campaign.list:Campaign List",
+        "campaign.get:Campaign Get",
+        "campaign.metrics:Campaign Metrics",
+        "segment.list:Segment List",
+        "trigger.listen:Listen (Incoming):listen"
       ],
-      "validationRules": {}
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "trigger.listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            }
+          ]
+        }
+      ]
     },
     {
       "_id": "6d96f84d-efca-4ff1-a970-e0d3c7247c4a",
@@ -205,6 +216,19 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "dda0cf70-2000-5f83-85fd-74a6b57fcac6",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node.",
+      "value": "",
       "required": false,
       "instanceEditable": true,
       "visible": true,

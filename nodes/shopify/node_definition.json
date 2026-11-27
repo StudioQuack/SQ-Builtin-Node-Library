@@ -113,20 +113,35 @@
       "isPublic": false,
       "validationRules": {},
       "options": [
-        "order_create",
-        "order_delete",
-        "order_get",
-        "order_list",
-        "order_update",
-        "product_create",
-        "product_delete",
-        "product_get",
-        "product_list",
-        "product_update",
-        "customer_get",
-        "inventory_adjust",
-        "fulfillment_create",
-        "trigger"
+        "order_create:Order Create",
+        "order_delete:Order Delete",
+        "order_get:Order Get",
+        "order_list:Order List",
+        "order_update:Order Update",
+        "product_create:Product Create",
+        "product_delete:Product Delete",
+        "product_get:Product Get",
+        "product_list:Product List",
+        "product_update:Product Update",
+        "customer_get:Customer Get",
+        "inventory_adjust:Inventory Adjust",
+        "fulfillment_create:Fulfillment Create",
+        "trigger:Trigger (Incoming):listen"
+      ],
+      "filterRules": [
+        {
+          "when": "trigger",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -175,6 +190,32 @@
       "type": "number",
       "description": "Per-request HTTP timeout seconds (connect + read). <=0 uses api_spec defaultTimeout.",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "37c529b0-2883-5a13-8d76-7b18ae0551ac",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d1590128-6384-57a9-9fff-28e165a440ac",
+      "shortCode": "webhook_secret",
+      "label": "Webhook Signing Secret",
+      "type": "password",
+      "description": "Shopify App Client Secret / Webhook Signing Secret for constant-time X-Shopify-Hmac-Sha256 Base64 HMAC verification. Never logged.",
+      "value": "",
       "required": false,
       "instanceEditable": true,
       "visible": true,

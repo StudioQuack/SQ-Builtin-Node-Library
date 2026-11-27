@@ -248,19 +248,34 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "dns_list",
-        "dns_create",
-        "dns_update",
-        "dns_delete",
-        "zone_get",
-        "cache_purge",
-        "worker_list",
-        "r2_get",
-        "cert_get",
-        "cert_upload",
-        "listen"
+        "dns_list:DNS List",
+        "dns_create:DNS Create",
+        "dns_update:DNS Update",
+        "dns_delete:DNS Delete",
+        "zone_get:Zone Get",
+        "cache_purge:Cache Purge",
+        "worker_list:Worker List",
+        "r2_get:R2 Get",
+        "cert_get:Cert Get",
+        "cert_upload:Cert Upload",
+        "listen:Listen (Incoming):listen"
       ],
-      "validationRules": {}
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            }
+          ]
+        }
+      ]
     },
     {
       "_id": "d313e60b-ab4e-4b85-966b-82c78951612e",
@@ -308,6 +323,32 @@
       "type": "number",
       "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f69cb7ec-068f-578d-9c25-3ef6c4eac936",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "36d849de-d195-52e7-a7ae-b7c5d24a12f0",
+      "shortCode": "webhook_secret",
+      "label": "Cloudflare Webhook Secret",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header cf-webhook-auth. Never logged.",
+      "value": "",
       "required": false,
       "instanceEditable": true,
       "visible": true,

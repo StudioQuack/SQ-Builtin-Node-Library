@@ -587,7 +587,15 @@ public final class StudioQuackDispatch {
             }
             System.out.println("sq-node invoke done id=" + templateId + " req=" + requestId
                     + " ms=" + ms);
-            sendJson(ex, 200, out == null ? Map.of() : out);
+            Map<String, Object> reply = out == null ? new LinkedHashMap<>() : new LinkedHashMap<>(out);
+            if (reply.isEmpty() && helper != null && helper.recordedWebhookOutcome() != null) {
+                reply.putAll(helper.recordedWebhookOutcome());
+            }
+            if (helper != null && helper.recordedCorrelationKey() != null
+                    && !reply.containsKey("__sq_correlation_key")) {
+                reply.put("__sq_correlation_key", helper.recordedCorrelationKey());
+            }
+            sendJson(ex, 200, reply);
         } catch (StudioQuackError e) {
             long ms = System.currentTimeMillis() - started;
             System.out.println("sq-node invoke exception id=" + templateId + " req=" + requestId
@@ -823,6 +831,7 @@ public final class StudioQuackDispatch {
         Map<String, Object> ctx = Json.asMap(safe.get("executionContext"));
         StudioQuackHelper helper = new StudioQuackHelper(ctx);
         helper.setRequestContext(ctx, Json.str(safe.get("helperToken")));
+        helper.setInvocationEnvelope(safe);
         String requestId = Json.str(safe.get("requestId"));
         RequestCancellation cancel = CancellationRegistry.register(requestId);
         cancel.attachHandlerThread(Thread.currentThread());

@@ -1,12 +1,17 @@
 package studioquack;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -73,6 +78,16 @@ public final class StudioQuackHelper extends ExecutionContextStore {
     private volatile long lastCancelPollMs;
     private volatile boolean lastCancelPollResult;
 
+    /** Maximum events accepted per single webhook POST invocation (DoS / fan-out bound). */
+    public static final int MAX_WEBHOOK_EVENTS = 100;
+
+    /** Invocation envelope fields populated for webhook ingress mode (or normal). */
+    private volatile String invocationMode = "normal";
+    private volatile String activeSelectRole = "";
+    private volatile Map<String, Object> webhookRequest;
+    private volatile String recordedCorrelationKey;
+    private volatile Map<String, Object> recordedWebhookOutcome;
+
     /**
      * Wrap an already-decoded execution-context map (stateful per-request use).
      *
@@ -86,6 +101,7 @@ public final class StudioQuackHelper extends ExecutionContextStore {
      */
     public StudioQuackHelper(Map<String, Object> executionContext) {
         super(executionContext);
+        bindIngressFromMap(executionContext);
     }
 
     /**
@@ -146,11 +162,380 @@ public final class StudioQuackHelper extends ExecutionContextStore {
     public StudioQuackHelper setRequestContext(Map<String, Object> executionContext, String helperToken) {
         if (executionContext != null) {
             this.executionContext = copyMap(executionContext);
+            bindIngressFromMap(executionContext);
         }
         if (helperToken != null && !helperToken.isBlank()) {
             transport.setHelperToken(helperToken);
         }
         return this;
+    }
+
+    /**
+     * Bind top-level stateful {@code /invoke} envelope fields ({@code invocationMode},
+     * {@code activeSelectRole}, {@code webhookRequest}). Top-level values win over nested
+     * {@code executionContext} keys.
+     */
+    public StudioQuackHelper setInvocationEnvelope(Map<String, Object> invokeBody) {
+        if (invokeBody != null) {
+            bindIngressFromMap(invokeBody);
+        }
+        return this;
+    }
+
+    private void bindIngressFromMap(Map<String, Object> source) {
+        if (source == null || source.isEmpty()) {
+            return;
+        }
+        String mode = Json.str(source.get("invocationMode")).trim();
+        if (!mode.isEmpty()) {
+            this.invocationMode = mode;
+        }
+        String role = Json.str(source.get("activeSelectRole")).trim();
+        if (!role.isEmpty()) {
+            this.activeSelectRole = role;
+        }
+        Object wr = source.get("webhookRequest");
+        if (wr instanceof Map<?, ?>) {
+            this.webhookRequest = copyMap(Json.asMap(wr));
+            if (this.invocationMode == null || this.invocationMode.isBlank() || "normal".equals(this.invocationMode)) {
+                this.invocationMode = "ingress";
+            }
+        }
+    }
+
+    // ---- Universal Webhook Ingress & Correlation SDK (TASK-06) ----
+
+    /** True when invoked by an inbound webhook on the node's {@code webhook_key}. */
+    public boolean isWebhookInvocation() {
+        return "ingress".equalsIgnoreCase(invocationMode) || webhookRequest != null;
+    }
+
+    /** Current invocation mode ({@code "ingress"} or {@code "normal"}). */
+    public String getInvocationMode() {
+        return isWebhookInvocation() ? "ingress" : "normal";
+    }
+
+    /** Active select role for this invocation ({@code listen | message_catch | send_and_wait}, or empty). */
+    public String getActiveSelectRole() {
+        return activeSelectRole == null ? "" : activeSelectRole;
+    }
+
+    /**
+     * Raw webhook request envelope ({@code method, path, query, queryMulti, headers, rawBody,
+     * rawBodyBase64, rawBodyEncoding, body}) or {@code null} outside ingress mode.
+     */
+    public Map<String, Object> getWebhookRequest() {
+        return webhookRequest == null ? null : copyMap(webhookRequest);
+    }
+
+    /** Case-insensitive lookup of an inbound webhook HTTP header; returns {@code null} if absent. */
+    public String getWebhookHeader(String name) {
+        if (name == null || name.isBlank() || webhookRequest == null) {
+            return null;
+        }
+        Map<String, Object> headers = Json.asMap(webhookRequest.get("headers"));
+        for (Map.Entry<String, Object> e : headers.entrySet()) {
+            if (e.getKey() != null && e.getKey().equalsIgnoreCase(name.trim())) {
+                return e.getValue() == null ? null : String.valueOf(e.getValue());
+            }
+        }
+        return null;
+    }
+
+    /** Exact raw webhook body bytes for cryptographic signature verification. */
+    public byte[] getWebhookRawBodyBytes() {
+        if (webhookRequest == null) {
+            return new byte[0];
+        }
+        String b64 = Json.str(webhookRequest.get("rawBodyBase64"));
+        if (!b64.isEmpty()) {
+            try {
+                return Base64.getDecoder().decode(b64);
+            } catch (IllegalArgumentException ignored) {
+                // fall through to rawBody
+            }
+        }
+        String raw = webhookRequest.get("rawBody") == null ? "" : String.valueOf(webhookRequest.get("rawBody"));
+        String enc = Json.str(webhookRequest.get("rawBodyEncoding"));
+        if ("base64".equalsIgnoreCase(enc) && !raw.isEmpty()) {
+            try {
+                return Base64.getDecoder().decode(raw);
+            } catch (IllegalArgumentException ignored) {
+                // fall through to UTF-8
+            }
+        }
+        return raw.getBytes(StandardCharsets.UTF_8);
+    }
+
+    /** Full parsed webhook payload (JSON object/array or parsed form-urlencoded map). */
+    public Object getWebhookPayload() {
+        return getWebhookPayload(null, null);
+    }
+
+    /** Read a dot/bracket path from the parsed webhook payload (e.g. {@code entry[0].changes[0].value.messages[0]}). */
+    public Object getWebhookPayload(String path) {
+        return getWebhookPayload(path, null);
+    }
+
+    /** Read a dot/bracket path from the parsed webhook payload with fallback default. */
+    public Object getWebhookPayload(String path, Object defaultValue) {
+        if (webhookRequest == null) {
+            return defaultValue;
+        }
+        Object root = resolveParsedWebhookBody(webhookRequest);
+        if (root == null) {
+            return defaultValue;
+        }
+        if (path == null || path.isBlank()) {
+            return root;
+        }
+        Object val = navigateSimplePath(root, path);
+        return val == null ? defaultValue : val;
+    }
+
+    /** Constant-time HMAC-SHA256 verification against exact raw webhook bytes (prefix {@code "sha256="}). */
+    public boolean verifyHmacSha256(String secret, String signatureHeader) {
+        return verifyHmacSha256(secret, signatureHeader, "sha256=", null);
+    }
+
+    /** Constant-time HMAC-SHA256 verification against exact raw webhook bytes with custom prefix. */
+    public boolean verifyHmacSha256(String secret, String signatureHeader, String prefix) {
+        return verifyHmacSha256(secret, signatureHeader, prefix, null);
+    }
+
+    /**
+     * Constant-time HMAC-SHA256 verification using {@link MessageDigest#isEqual}.
+     * Never logs the secret or raw body.
+     */
+    public boolean verifyHmacSha256(String secret, String signatureHeader, String prefix, String payloadOverride) {
+        if (secret == null || secret.isEmpty() || signatureHeader == null || signatureHeader.isBlank()) {
+            return false;
+        }
+        String presented = getWebhookHeader(signatureHeader);
+        if (presented == null || presented.isBlank()) {
+            // Allow caller to pass an already-extracted signature string directly when no header matches.
+            presented = signatureHeader.contains("=") || signatureHeader.length() >= 40 ? signatureHeader : null;
+        }
+        if (presented == null || presented.isBlank()) {
+            return false;
+        }
+        String pfx = prefix == null ? "" : prefix;
+        String candidate = presented.trim();
+        if (!pfx.isEmpty()) {
+            if (!candidate.startsWith(pfx)) {
+                return false;
+            }
+            candidate = candidate.substring(pfx.length());
+        }
+        byte[] payloadBytes = payloadOverride != null
+                ? payloadOverride.getBytes(StandardCharsets.UTF_8)
+                : getWebhookRawBodyBytes();
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            byte[] digest = mac.doFinal(payloadBytes);
+            String expectedHex = toHexLower(digest);
+            byte[] a = expectedHex.getBytes(StandardCharsets.US_ASCII);
+            byte[] b = candidate.toLowerCase(Locale.ROOT).getBytes(StandardCharsets.US_ASCII);
+            return MessageDigest.isEqual(a, b);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** Immediate handshake challenge reply (HTTP 200 {@code text/plain}). */
+    public Map<String, Object> respondWebhookChallenge(String body) {
+        return respondWebhookChallenge(body, 200, "text/plain");
+    }
+
+    /**
+     * Immediate handshake challenge reply. Posts best-effort to {@code /v1/helper/webhook-challenge}
+     * and returns the structured {@code __sq_webhook_challenge} response map.
+     */
+    public Map<String, Object> respondWebhookChallenge(String body, int status, String contentType) {
+        return respondWebhookChallenge(body, status, contentType, null);
+    }
+
+    /** Immediate handshake challenge reply with optional extra response headers (e.g. Asana {@code X-Hook-Secret}). */
+    public Map<String, Object> respondWebhookChallenge(String body, int status, String contentType,
+                                                       Map<String, String> headers) {
+        Map<String, Object> challenge = new LinkedHashMap<>();
+        challenge.put("status", status > 0 ? status : 200);
+        challenge.put("contentType", contentType == null || contentType.isBlank() ? "text/plain" : contentType);
+        challenge.put("body", body == null ? "" : body);
+        if (headers != null && !headers.isEmpty()) {
+            challenge.put("headers", new LinkedHashMap<>(headers));
+        }
+        transport.post("/v1/helper/webhook-challenge", challenge, 15);
+        Map<String, Object> envelope = new LinkedHashMap<>();
+        envelope.put("__sq_webhook_challenge", challenge);
+        this.recordedWebhookOutcome = envelope;
+        return envelope;
+    }
+
+    /**
+     * Emit 1..N normalized inbound webhook events (capped at {@link #MAX_WEBHOOK_EVENTS}).
+     * Posts best-effort to {@code /v1/helper/webhook-events} and returns {@code __sq_webhook_events}.
+     */
+    public Map<String, Object> emitWebhookEvents(List<Map<String, Object>> events) {
+        List<Map<String, Object>> bounded = new ArrayList<>();
+        if (events != null) {
+            int limit = Math.min(events.size(), MAX_WEBHOOK_EVENTS);
+            for (int i = 0; i < limit; i++) {
+                Map<String, Object> item = events.get(i);
+                if (item != null) {
+                    bounded.add(new LinkedHashMap<>(item));
+                }
+            }
+        }
+        Map<String, Object> wire = new LinkedHashMap<>();
+        wire.put("events", bounded);
+        transport.post("/v1/helper/webhook-events", wire, 15);
+        Map<String, Object> envelope = new LinkedHashMap<>();
+        envelope.put("__sq_webhook_events", bounded);
+        this.recordedWebhookOutcome = envelope;
+        return envelope;
+    }
+
+    /**
+     * Reject an unauthorized or invalid inbound webhook cleanly ({@code quotaCharge=false}).
+     * Posts best-effort to {@code /v1/helper/webhook-reject} and returns {@code __sq_webhook_reject}.
+     */
+    public Map<String, Object> rejectWebhook(int status, String reason) {
+        Map<String, Object> reject = new LinkedHashMap<>();
+        reject.put("status", status > 0 ? status : 401);
+        reject.put("reason", reason == null || reason.isBlank() ? "unauthorized" : reason);
+        transport.post("/v1/helper/webhook-reject", reject, 15);
+        Map<String, Object> envelope = new LinkedHashMap<>();
+        envelope.put("__sq_webhook_reject", reject);
+        this.recordedWebhookOutcome = envelope;
+        return envelope;
+    }
+
+    /**
+     * Record the correlation key emitted during Phase 1 of {@code send_and_wait}.
+     * Posts best-effort to {@code /v1/helper/correlation-key} and attaches to the stateful reply.
+     */
+    public void setCorrelationKey(String key) {
+        if (key == null || key.isBlank()) {
+            return;
+        }
+        String trimmed = key.trim();
+        this.recordedCorrelationKey = trimmed;
+        transport.post("/v1/helper/correlation-key", Map.of("correlationKey", trimmed), 15);
+    }
+
+    /** Package-visible for {@link StudioQuackDispatch} to merge helper-recorded correlation key. */
+    String recordedCorrelationKey() {
+        return recordedCorrelationKey;
+    }
+
+    /** Package-visible for {@link StudioQuackDispatch} to merge helper-recorded webhook outcome. */
+    Map<String, Object> recordedWebhookOutcome() {
+        return recordedWebhookOutcome;
+    }
+
+    private Object resolveParsedWebhookBody(Map<String, Object> req) {
+        Object body = req.get("body");
+        if (body != null) {
+            return body;
+        }
+        byte[] rawBytes = getWebhookRawBodyBytes();
+        if (rawBytes.length == 0) {
+            return null;
+        }
+        String rawText = new String(rawBytes, StandardCharsets.UTF_8);
+        String ct = getWebhookHeader("content-type");
+        if (ct != null && ct.toLowerCase(Locale.ROOT).contains("application/x-www-form-urlencoded")) {
+            return parseFormUrlEncoded(rawText);
+        }
+        String trimmed = rawText.trim();
+        if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+            try {
+                return Json.parse(trimmed);
+            } catch (Exception ignored) {
+                return rawText;
+            }
+        }
+        return rawText;
+    }
+
+    private static Map<String, Object> parseFormUrlEncoded(String raw) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        if (raw == null || raw.isEmpty()) {
+            return map;
+        }
+        for (String pair : raw.split("&")) {
+            if (pair.isEmpty()) {
+                continue;
+            }
+            int eq = pair.indexOf('=');
+            String k = eq >= 0 ? pair.substring(0, eq) : pair;
+            String v = eq >= 0 ? pair.substring(eq + 1) : "";
+            try {
+                k = URLDecoder.decode(k, StandardCharsets.UTF_8);
+                v = URLDecoder.decode(v, StandardCharsets.UTF_8);
+            } catch (IllegalArgumentException ignored) {
+                // keep literal
+            }
+            map.put(k, v);
+        }
+        return map;
+    }
+
+    private static Object navigateSimplePath(Object root, String path) {
+        Object cur = root;
+        int i = 0;
+        int len = path.length();
+        while (i < len && cur != null) {
+            while (i < len && path.charAt(i) == '.') {
+                i++;
+            }
+            if (i >= len) {
+                break;
+            }
+            if (path.charAt(i) == '[') {
+                int end = path.indexOf(']', i + 1);
+                if (end < 0) {
+                    return null;
+                }
+                String idxStr = path.substring(i + 1, end).trim();
+                if (cur instanceof List<?> list) {
+                    try {
+                        int idx = Integer.parseInt(idxStr);
+                        cur = (idx >= 0 && idx < list.size()) ? list.get(idx) : null;
+                    } catch (NumberFormatException e) {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+                i = end + 1;
+            } else {
+                int start = i;
+                while (i < len && path.charAt(i) != '.' && path.charAt(i) != '[') {
+                    i++;
+                }
+                String key = path.substring(start, i);
+                if (cur instanceof Map<?, ?> m) {
+                    cur = m.get(key);
+                } else {
+                    return null;
+                }
+            }
+        }
+        return cur;
+    }
+
+    private static String toHexLower(byte[] bytes) {
+        char[] hex = new char[bytes.length * 2];
+        char[] digits = "0123456789abcdef".toCharArray();
+        for (int i = 0; i < bytes.length; i++) {
+            int v = bytes[i] & 0xFF;
+            hex[i * 2] = digits[v >>> 4];
+            hex[i * 2 + 1] = digits[v & 0x0F];
+        }
+        return new String(hex);
     }
 
     /**

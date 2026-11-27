@@ -302,19 +302,19 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "workitem_create",
-        "workitem_get",
-        "workitem_update",
-        "workitem_query",
-        "workitem_comment",
-        "workitem_link",
-        "pr_create",
-        "pr_get",
-        "build_queue",
-        "build_get",
-        "release_get",
-        "git_push_listen",
-        "listen"
+        "workitem_create:Workitem Create",
+        "workitem_get:Workitem Get",
+        "workitem_update:Workitem Update",
+        "workitem_query:Workitem Query",
+        "workitem_comment:Workitem Comment",
+        "workitem_link:Workitem Link",
+        "pr_create:PR Create",
+        "pr_get:PR Get",
+        "build_queue:Build Queue",
+        "build_get:Build Get",
+        "release_get:Release Get",
+        "git_push_listen:Git Push (Incoming):listen",
+        "listen:Listen (Incoming):listen"
       ],
       "validationRules": {},
       "filterRules": [
@@ -625,6 +625,40 @@
             },
             {
               "param": "api-version",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "git_push_listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
               "visible": true
             }
           ]
@@ -976,6 +1010,45 @@
       "type": "string",
       "description": "Default REST api-version when INPUT api-version is empty. Example: 7.2.",
       "value": "7.2",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d879531d-801f-5e0a-9de8-74dc7b505f18",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "163bfa63-0ffe-582c-adc8-63272a9714c4",
+      "shortCode": "webhook_secret",
+      "label": "Service Hook Header Secret",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header X-Azure-DevOps-Token. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "d228ddd2-a11b-52af-bb7c-3ae8796675df",
+      "shortCode": "webhook_header_name",
+      "label": "Webhook Auth Header Name",
+      "type": "string",
+      "description": "HTTP header name carrying the provider webhook secret (default: X-Azure-DevOps-Token).",
+      "value": "X-Azure-DevOps-Token",
       "required": false,
       "instanceEditable": true,
       "visible": true,

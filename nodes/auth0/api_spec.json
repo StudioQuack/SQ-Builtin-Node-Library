@@ -13,7 +13,9 @@
       "kind": "http",
       "method": "POST",
       "path": "{domain}/api/v2/users",
-      "required": ["connection"],
+      "required": [
+        "connection"
+      ],
       "bodyFrom": [
         "email",
         "connection",
@@ -36,19 +38,32 @@
       "kind": "http",
       "method": "GET",
       "path": "{domain}/api/v2/users/{id}",
-      "required": ["id"]
+      "required": [
+        "id"
+      ]
     },
     "list-users": {
       "kind": "http",
       "method": "GET",
       "path": "{domain}/api/v2/users",
-      "queryFrom": ["q", "search_engine", "page", "per_page", "include_totals", "sort", "connection", "fields"]
+      "queryFrom": [
+        "q",
+        "search_engine",
+        "page",
+        "per_page",
+        "include_totals",
+        "sort",
+        "connection",
+        "fields"
+      ]
     },
     "update-user": {
       "kind": "http",
       "method": "PATCH",
       "path": "{domain}/api/v2/users/{id}",
-      "required": ["id"],
+      "required": [
+        "id"
+      ],
       "bodyFrom": [
         "email",
         "name",
@@ -69,48 +84,94 @@
       "kind": "http",
       "method": "DELETE",
       "path": "{domain}/api/v2/users/{id}",
-      "required": ["id"]
+      "required": [
+        "id"
+      ]
     },
     "create-role": {
       "kind": "http",
       "method": "POST",
       "path": "{domain}/api/v2/roles",
-      "required": ["name"],
-      "bodyFrom": ["name", "description"]
+      "required": [
+        "name"
+      ],
+      "bodyFrom": [
+        "name",
+        "description"
+      ]
     },
     "list-roles": {
       "kind": "http",
       "method": "GET",
       "path": "{domain}/api/v2/roles",
-      "queryFrom": ["name_filter", "page", "per_page", "include_totals"]
+      "queryFrom": [
+        "name_filter",
+        "page",
+        "per_page",
+        "include_totals"
+      ]
     },
     "assign-role": {
       "kind": "http",
       "method": "POST",
       "path": "{domain}/api/v2/users/{id}/roles",
-      "required": ["id", "roles"],
-      "bodyFrom": ["roles"]
+      "required": [
+        "id",
+        "roles"
+      ],
+      "bodyFrom": [
+        "roles"
+      ]
     },
     "list-clients": {
       "kind": "http",
       "method": "GET",
       "path": "{domain}/api/v2/clients",
-      "queryFrom": ["fields", "include_fields", "page", "per_page", "include_totals"]
+      "queryFrom": [
+        "fields",
+        "include_fields",
+        "page",
+        "per_page",
+        "include_totals"
+      ]
     },
     "get-log": {
       "kind": "http",
       "method": "GET",
       "path": "{domain}/api/v2/logs/{id}",
-      "required": ["id"]
+      "required": [
+        "id"
+      ]
     },
     "list-logs": {
       "kind": "http",
       "method": "GET",
       "path": "{domain}/api/v2/logs",
-      "queryFrom": ["q", "page", "per_page", "sort", "fields", "include_fields", "from", "take"]
+      "queryFrom": [
+        "q",
+        "page",
+        "per_page",
+        "sort",
+        "fields",
+        "include_fields",
+        "from",
+        "take"
+      ]
     },
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "none"
+    },
+    "verify": {
+      "type": "header_secret",
+      "header": "authorization",
+      "secretConfigKey": "webhook_secret",
+      "headerConfigKey": "webhook_header_name"
+    },
+    "extract": {}
   }
 }

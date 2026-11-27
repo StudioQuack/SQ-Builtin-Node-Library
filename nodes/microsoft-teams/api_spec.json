@@ -201,5 +201,55 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "query_challenge",
+      "method": "ANY",
+      "challengeParam": "validationToken",
+      "responseContentType": "text/plain"
+    },
+    "verify": {
+      "type": "body_field_secret",
+      "bodyPath": "value[*].clientState",
+      "secretConfigKey": "client_state"
+    },
+    "extract": {
+      "itemsPath": "value[*]",
+      "idempotencyPath": "resourceData.id",
+      "fallbackIdempotencyPaths": [
+        "subscriptionId"
+      ],
+      "correlationKeyPath": "resourceData.chatId",
+      "fallbackCorrelationKeyPaths": [
+        "resourceData.channelIdentity.channelId",
+        "subscriptionId",
+        "resource"
+      ],
+      "eventTypePath": "changeType",
+      "fields": {
+        "subscriptionId": "subscriptionId",
+        "changeType": "changeType",
+        "resource": "resource",
+        "resourceId": "resourceData.id",
+        "chatId": "resourceData.chatId",
+        "channelId": "resourceData.channelIdentity.channelId",
+        "tenantId": "tenantId"
+      },
+      "maxItems": 100
+    },
+    "sendAndWait": {
+      "sendOperation": "create-channel-message",
+      "fallbackSendOperation": "create-chat-message",
+      "fallbackWhenPresent": "chat_id",
+      "fallbackWhenBlank": "channel_id",
+      "correlationKeyFrom": [
+        "chat_id",
+        "channel_id",
+        "data.chatId",
+        "data.channelIdentity.channelId",
+        "data.id"
+      ]
+    }
   }
 }

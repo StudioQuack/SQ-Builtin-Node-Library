@@ -301,19 +301,38 @@
       "isPublic": false,
       "validationRules": {},
       "options": [
-        "lead.create",
-        "lead.upsert",
-        "lead.get",
-        "lead.describe",
-        "list.add",
-        "list.remove",
-        "campaign.request",
-        "activity.pagingToken",
-        "activity.get",
-        "form.submit",
-        "email.sendSample",
-        "asset.email.get",
-        "trigger.listen"
+        "lead.create:Lead Create",
+        "lead.upsert:Lead Upsert",
+        "lead.get:Lead Get",
+        "lead.describe:Lead Describe",
+        "list.add:List Add",
+        "list.remove:List Remove",
+        "campaign.request:Campaign Request",
+        "activity.pagingToken:Activity PagingToken",
+        "activity.get:Activity Get",
+        "form.submit:Form Submit",
+        "email.sendSample:Email SendSample",
+        "asset.email.get:Asset Email Get",
+        "trigger.listen:Listen (Incoming):listen"
+      ],
+      "filterRules": [
+        {
+          "when": "trigger.listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
+              "visible": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -349,6 +368,45 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
       "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a7089bef-1743-57c3-9fa3-03e0b9267fc0",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "73e2c157-26f9-5e05-8f34-41488641d7d2",
+      "shortCode": "webhook_secret",
+      "label": "Webhook Custom Header Secret",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header X-Marketo-Token. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "09150a0d-a555-55bf-9cdd-7a5158505ad8",
+      "shortCode": "webhook_header_name",
+      "label": "Webhook Auth Header Name",
+      "type": "string",
+      "description": "HTTP header name carrying the provider webhook secret (default: X-Marketo-Token).",
+      "value": "X-Marketo-Token",
       "required": false,
       "instanceEditable": true,
       "visible": true,

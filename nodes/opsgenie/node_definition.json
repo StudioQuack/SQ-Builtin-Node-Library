@@ -248,17 +248,36 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "alert_create",
-        "alert_get",
-        "alert_ack",
-        "alert_close",
-        "alert_note",
-        "incident_create",
-        "schedule_oncall",
-        "heartbeat_ping",
-        "listen"
+        "alert_create:Alert Create",
+        "alert_get:Alert Get",
+        "alert_ack:Alert Ack",
+        "alert_close:Alert Close",
+        "alert_note:Alert Note",
+        "incident_create:Incident Create",
+        "schedule_oncall:Schedule Oncall",
+        "heartbeat_ping:Heartbeat Ping",
+        "listen:Listen (Incoming):listen"
       ],
-      "validationRules": {}
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
+              "visible": true
+            }
+          ]
+        }
+      ]
     },
     {
       "_id": "5d37ac54-0428-4968-b380-a7a6a6adfbc9",
@@ -314,6 +333,45 @@
       "type": "number",
       "description": "Connect + read timeout. Default 25. Keep at or below the daemon stateful budget (~300s).",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a92f185d-decd-59bd-8156-f4cbf82f41bf",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "c30454df-2068-501c-ba72-d40f1ece9d85",
+      "shortCode": "webhook_secret",
+      "label": "Webhook Auth Header Secret",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header X-Opsgenie-Token. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "990a837d-7506-5863-a561-5c6baff13888",
+      "shortCode": "webhook_header_name",
+      "label": "Webhook Auth Header Name",
+      "type": "string",
+      "description": "HTTP header name carrying the provider webhook secret (default: X-Opsgenie-Token).",
+      "value": "X-Opsgenie-Token",
       "required": false,
       "instanceEditable": true,
       "visible": true,

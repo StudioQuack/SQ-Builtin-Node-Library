@@ -13,76 +13,151 @@
       "kind": "http",
       "method": "POST",
       "path": "{orgUrl}/api/v1/users",
-      "required": ["profile"],
-      "queryFrom": ["activate", "nextLogin", "provider"],
-      "bodyFrom": ["profile", "credentials", "groupIds", "type"]
+      "required": [
+        "profile"
+      ],
+      "queryFrom": [
+        "activate",
+        "nextLogin",
+        "provider"
+      ],
+      "bodyFrom": [
+        "profile",
+        "credentials",
+        "groupIds",
+        "type"
+      ]
     },
     "get-user": {
       "kind": "http",
       "method": "GET",
       "path": "{orgUrl}/api/v1/users/{userId}",
-      "required": ["userId"]
+      "required": [
+        "userId"
+      ]
     },
     "list-users": {
       "kind": "http",
       "method": "GET",
       "path": "{orgUrl}/api/v1/users",
-      "queryFrom": ["q", "search", "filter", "limit", "after"]
+      "queryFrom": [
+        "q",
+        "search",
+        "filter",
+        "limit",
+        "after"
+      ]
     },
     "update-user": {
       "kind": "http",
       "method": "POST",
       "path": "{orgUrl}/api/v1/users/{userId}",
-      "required": ["userId"],
-      "bodyFrom": ["profile", "credentials"]
+      "required": [
+        "userId"
+      ],
+      "bodyFrom": [
+        "profile",
+        "credentials"
+      ]
     },
     "delete-user": {
       "kind": "http",
       "method": "DELETE",
       "path": "{orgUrl}/api/v1/users/{userId}",
-      "required": ["userId"],
-      "queryFrom": ["sendEmail"]
+      "required": [
+        "userId"
+      ],
+      "queryFrom": [
+        "sendEmail"
+      ]
     },
     "create-group": {
       "kind": "http",
       "method": "POST",
       "path": "{orgUrl}/api/v1/groups",
-      "required": ["profile"],
-      "bodyFrom": ["profile"]
+      "required": [
+        "profile"
+      ],
+      "bodyFrom": [
+        "profile"
+      ]
     },
     "list-groups": {
       "kind": "http",
       "method": "GET",
       "path": "{orgUrl}/api/v1/groups",
-      "queryFrom": ["q", "search", "filter", "limit", "after"]
+      "queryFrom": [
+        "q",
+        "search",
+        "filter",
+        "limit",
+        "after"
+      ]
     },
     "add-user-to-group": {
       "kind": "http",
       "method": "PUT",
       "path": "{orgUrl}/api/v1/groups/{groupId}/users/{userId}",
-      "required": ["groupId", "userId"],
-      "bodyFrom": ["_empty"]
+      "required": [
+        "groupId",
+        "userId"
+      ],
+      "bodyFrom": [
+        "_empty"
+      ]
     },
     "remove-user-from-group": {
       "kind": "http",
       "method": "DELETE",
       "path": "{orgUrl}/api/v1/groups/{groupId}/users/{userId}",
-      "required": ["groupId", "userId"]
+      "required": [
+        "groupId",
+        "userId"
+      ]
     },
     "list-apps": {
       "kind": "http",
       "method": "GET",
       "path": "{orgUrl}/api/v1/apps",
-      "queryFrom": ["q", "filter", "limit", "after"]
+      "queryFrom": [
+        "q",
+        "filter",
+        "limit",
+        "after"
+      ]
     },
     "list-factors": {
       "kind": "http",
       "method": "GET",
       "path": "{orgUrl}/api/v1/users/{userId}/factors",
-      "required": ["userId"]
+      "required": [
+        "userId"
+      ]
     },
     "listen": {
       "kind": "ingress"
+    }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "header_echo",
+      "method": "GET",
+      "headerName": "x-okta-verification-challenge",
+      "responseJsonKey": "verification",
+      "responseContentType": "application/json"
+    },
+    "verify": {
+      "type": "header_secret",
+      "header": "authorization",
+      "headerConfigKey": "webhook_header_name",
+      "secretConfigKey": "webhook_secret"
+    },
+    "extract": {
+      "itemsPath": "data.events[*]",
+      "idempotencyPath": "eventId",
+      "correlationKeyPath": "actor.id",
+      "eventTypePath": "eventType",
+      "maxItems": 100
     }
   }
 }

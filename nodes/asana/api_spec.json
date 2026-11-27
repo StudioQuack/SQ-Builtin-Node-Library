@@ -371,5 +371,32 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "header_echo",
+      "method": "POST",
+      "headerName": "x-hook-secret",
+      "responseHeader": "X-Hook-Secret",
+      "responseStatus": 200
+    },
+    "verify": {
+      "type": "hmac_sha256_hex",
+      "header": "x-hook-signature",
+      "prefix": "",
+      "secretConfigKey": "webhook_secret"
+    },
+    "extract": {
+      "itemsPath": "events[*]",
+      "correlationKeyPath": "resource.gid",
+      "eventTypePath": "action",
+      "fields": {
+        "action": "action",
+        "resourceGid": "resource.gid",
+        "resourceType": "resource.resource_type",
+        "parentGid": "parent.gid"
+      },
+      "maxItems": 100
+    }
   }
 }

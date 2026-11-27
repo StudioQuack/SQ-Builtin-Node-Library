@@ -490,34 +490,53 @@
       "isPublic": false,
       "validationRules": {},
       "options": [
-        "account.create",
-        "account.get",
-        "account.list",
-        "account.update",
-        "account.delete",
-        "contact.create",
-        "contact.get",
-        "contact.list",
-        "contact.update",
-        "contact.delete",
-        "lead.create",
-        "lead.get",
-        "lead.list",
-        "lead.update",
-        "lead.convert",
-        "opportunity.create",
-        "opportunity.get",
-        "opportunity.list",
-        "opportunity.update",
-        "opportunity.delete",
-        "incident.create",
-        "incident.get",
-        "incident.list",
-        "incident.update",
-        "activity.create",
-        "whoami",
-        "fetchXml.query",
-        "trigger.listen"
+        "account.create:Account Create",
+        "account.get:Account Get",
+        "account.list:Account List",
+        "account.update:Account Update",
+        "account.delete:Account Delete",
+        "contact.create:Contact Create",
+        "contact.get:Contact Get",
+        "contact.list:Contact List",
+        "contact.update:Contact Update",
+        "contact.delete:Contact Delete",
+        "lead.create:Lead Create",
+        "lead.get:Lead Get",
+        "lead.list:Lead List",
+        "lead.update:Lead Update",
+        "lead.convert:Lead Convert",
+        "opportunity.create:Opportunity Create",
+        "opportunity.get:Opportunity Get",
+        "opportunity.list:Opportunity List",
+        "opportunity.update:Opportunity Update",
+        "opportunity.delete:Opportunity Delete",
+        "incident.create:Incident Create",
+        "incident.get:Incident Get",
+        "incident.list:Incident List",
+        "incident.update:Incident Update",
+        "activity.create:Activity Create",
+        "whoami:Whoami",
+        "fetchXml.query:FetchXml Query",
+        "trigger.listen:Listen (Incoming):listen"
+      ],
+      "filterRules": [
+        {
+          "when": "trigger.listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
+              "visible": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -566,6 +585,45 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 30. Keep below the daemon invoke budget.",
       "value": "30",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "82f60181-2a15-51ea-a722-2f5484b53542",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "a523988a-74b7-51f2-b492-45421839db2d",
+      "shortCode": "webhook_secret",
+      "label": "Dataverse Webhook Key Header",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header X-Dataverse-Token. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "6ad288a6-f203-567f-866b-5e1c896c880d",
+      "shortCode": "webhook_header_name",
+      "label": "Webhook Auth Header Name",
+      "type": "string",
+      "description": "HTTP header name carrying the provider webhook secret (default: X-Dataverse-Token).",
+      "value": "X-Dataverse-Token",
       "required": false,
       "instanceEditable": true,
       "visible": true,

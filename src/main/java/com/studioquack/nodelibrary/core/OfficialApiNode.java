@@ -38,9 +38,10 @@ import java.util.regex.Pattern;
  * ({@code status}/{@code data} plus {@code result}/{@code outputFiles});
  * specs with no stream block stay on {@code output}.
  *
- * <p>Inbound StudioQuack webhooks are BPMN message events — operations with
- * {@code kind=ingress} (listen/trigger) never open a socket; they tell the
- * operator to use a message start / catch event.
+ * <p>Inbound webhooks run through {@link OfficialApiIngressHandler} when invoked in
+ * {@code invocationMode == "ingress"} (verifying handshakes/signatures and emitting
+ * normalized {@code __sq_webhook_*} outcomes). Operations with {@code send-and-wait}
+ * run their paired outbound HTTP send in normal mode and emit {@code __sq_correlation_key}.
  */
 public final class OfficialApiNode implements NodeHandler {
 
@@ -104,6 +105,13 @@ public final class OfficialApiNode implements NodeHandler {
         Map<String, Object> cfg = DataSupport.readConfig(request);
         if ("twilio".equalsIgnoreCase(spec.key)) {
             cfg = mergeTwilioConfig(cfg);
+        }
+        if (OfficialApiIngressHandler.isIngressInvocation(request, helper)) {
+            String cfgOpName = SelectOptionSyntax.extractValue(DataSupport.cfgStr(cfg, "operation", ""));
+            OfficialApiSpec.Operation cfgOp = cfgOpName.isBlank() ? null : spec.operation(cfgOpName);
+            OfficialApiSpec.IngressSpec effectiveIngress = (cfgOp != null && cfgOp.ingress != null)
+                    ? cfgOp.ingress : spec.ingress;
+            return OfficialApiIngressHandler.handle(request, helper, effectiveIngress, spec.key, cfg, clock);
         }
         Map<String, Object> rawIn = flattenNestedToolInput(mergeToolCallArgs(DataSupport.readInput(request, helper)));
         Map<String, Object> rawLlm = flattenNestedToolInput(
@@ -181,15 +189,31 @@ public final class OfficialApiNode implements NodeHandler {
                 opName = inferred;
             }
         }
+        opName = SelectOptionSyntax.extractValue(opName);
         OfficialApiSpec.Operation op = spec.operation(opName);
         if (op == null) {
             throw invalidInput("Unknown operation: " + opName + ". Accepted: " + spec.operations.keySet());
         }
+        OfficialApiSpec.SendAndWaitSpec activeSendAndWait = null;
         if (isIngress(op)) {
-            throw invalidInput(
-                    "Inbound events are not a node operation. Use a BPMN message start / "
-                            + "intermediate catch / boundary message event; the StudioQuack webhook "
-                            + "ingress correlates onto those events.");
+            OfficialApiSpec.IngressSpec effectiveIngress = op.ingress != null ? op.ingress : spec.ingress;
+            if (isSendAndWaitOp(op, request, helper)
+                    && effectiveIngress != null
+                    && effectiveIngress.sendAndWait != null) {
+                activeSendAndWait = effectiveIngress.sendAndWait;
+                String delegatedName = pickSendAndWaitOperation(activeSendAndWait, in, cfg);
+                OfficialApiSpec.Operation delegated = spec.operation(delegatedName);
+                if (delegated == null || isIngress(delegated)) {
+                    throw invalidInput("send-and-wait target operation '" + delegatedName
+                            + "' is missing or invalid in api_spec.json");
+                }
+                op = delegated;
+            } else {
+                throw invalidInput(
+                        "Inbound webhook operation '" + op.name + "' requires webhook ingress mode "
+                                + "(BPMN message start / intermediate catch / boundary message event); "
+                                + "configure a webhook_key and trigger via inbound webhook.");
+            }
         }
         boolean stream = OfficialApiStream.enabled(op.stream, in, llmIn, cfg);
         // LLM nodes expose only llm_input, so non-streaming ops (embed, tokenize, models)
@@ -410,7 +434,18 @@ public final class OfficialApiNode implements NodeHandler {
             throw new StudioQuackError(DataSupport.httpErrorCode(resp.status()), msg,
                     Map.of("http_status", resp.status()));
         }
-        return DataSupport.ports(portKey, out);
+        Map<String, Object> result = new LinkedHashMap<>(DataSupport.ports(portKey, out));
+        if (activeSendAndWait != null) {
+            String corrKey = OfficialApiIngressHandler.resolveSendAndWaitCorrelationKey(
+                    activeSendAndWait, bodySrc, cfg, result);
+            if (!corrKey.isEmpty()) {
+                result.put("__sq_correlation_key", corrKey);
+                if (helper != null) {
+                    helper.setCorrelationKey(corrKey);
+                }
+            }
+        }
+        return result;
     }
 
     /** Redacts the auth credentials plus every password-typed config value (secret extraHeaders). */
@@ -524,6 +559,37 @@ public final class OfficialApiNode implements NodeHandler {
         }
         String n = op.name == null ? "" : op.name.toLowerCase();
         return INGRESS_NAMES.contains(n);
+    }
+
+    private static boolean isSendAndWaitOp(OfficialApiSpec.Operation op,
+                                           Map<String, Object> request,
+                                           StudioQuackHelper helper) {
+        String n = op.name == null ? "" : op.name.toLowerCase(Locale.ROOT);
+        if ("send-and-wait".equals(n) || "send_and_wait".equals(n)) {
+            return true;
+        }
+        if (helper != null && "send_and_wait".equalsIgnoreCase(helper.getActiveSelectRole())) {
+            return true;
+        }
+        if (request != null && "send_and_wait".equalsIgnoreCase(String.valueOf(request.get("activeSelectRole")))) {
+            return true;
+        }
+        return false;
+    }
+
+    private static String pickSendAndWaitOperation(OfficialApiSpec.SendAndWaitSpec sw,
+                                                   Map<String, Object> in,
+                                                   Map<String, Object> cfg) {
+        if (sw.fallbackSendOperation != null && !sw.fallbackSendOperation.isBlank()
+                && sw.fallbackWhenPresent != null && !sw.fallbackWhenPresent.isBlank()) {
+            boolean present = !blank(in, sw.fallbackWhenPresent) || !blank(cfg, sw.fallbackWhenPresent);
+            boolean targetBlank = sw.fallbackWhenBlank == null || sw.fallbackWhenBlank.isBlank()
+                    || (blank(in, sw.fallbackWhenBlank) && blank(cfg, sw.fallbackWhenBlank));
+            if (present && targetBlank) {
+                return sw.fallbackSendOperation;
+            }
+        }
+        return sw.sendOperation;
     }
 
     /**

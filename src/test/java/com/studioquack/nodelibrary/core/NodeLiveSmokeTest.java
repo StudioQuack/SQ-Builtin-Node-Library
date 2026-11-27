@@ -158,10 +158,10 @@ class NodeLiveSmokeTest {
         Map<String, Object> cfg = new LinkedHashMap<>();
         d.config.forEach((code, c) -> {
             String v = str(c.get("value"));
-            if (v.isEmpty() && "select".equals(str(c.get("type")))) {
-                List<String> opts = strings(c.get("options"));
-                v = opts.isEmpty() ? "" : opts.get(0);
-            }
+                if (v.isEmpty() && "select".equals(str(c.get("type")))) {
+                    List<String> opts = strings(c.get("options"));
+                    v = opts.isEmpty() ? "" : SelectOptionSyntax.extractValue(opts.get(0));
+                }
             if (!v.isEmpty() && !"password".equals(str(c.get("type")))) {
                 cfg.put(code, v);
             }

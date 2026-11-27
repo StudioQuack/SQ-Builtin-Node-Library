@@ -300,19 +300,30 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "person.create",
-        "person.get",
-        "person.update",
-        "person.search",
-        "company.create",
-        "company.get",
-        "company.update",
-        "group.list",
-        "note.create",
-        "customField.set",
-        "trigger.listen"
+        "person.create:Person Create",
+        "person.get:Person Get",
+        "person.update:Person Update",
+        "person.search:Person Search",
+        "company.create:Company Create",
+        "company.get:Company Get",
+        "company.update:Company Update",
+        "group.list:Group List",
+        "note.create:Note Create",
+        "customField.set:CustomField Set",
+        "trigger.listen:Listen (Incoming):listen"
       ],
-      "validationRules": {}
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "trigger.listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            }
+          ]
+        }
+      ]
     },
     {
       "_id": "189f6147-5b0a-4f6c-8748-7c1ecf6b0488",
@@ -347,6 +358,19 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2cca3f24-5414-58a0-aff8-39ad8a6017ae",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node.",
+      "value": "",
       "required": false,
       "instanceEditable": true,
       "visible": true,

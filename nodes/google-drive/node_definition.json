@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Google Drive",
   "label": "Google Drive API v3",
-  "description": "Google Drive API v3 via OfficialApiNode (nodes/google-drive/api_spec.json). Canonical Drive node (also listed under Files & Documents \u2014 one node). Official Drive API v3. Restricted scopes for broad Drive. Binary upload host is googleapis.com/upload \u2014 metadata create uses /files; download uses alt=media. Official docs: https://developers.google.com/workspace/drive/api/reference/rest/v3. OUTPUT is {status, http_status, data} or {error}. Secrets never appear on OUTPUT.",
+  "description": "Google Drive API v3 via OfficialApiNode (nodes/google-drive/api_spec.json). Canonical Drive node (also listed under Files & Documents — one node). Official Drive API v3. Restricted scopes for broad Drive. Binary upload host is googleapis.com/upload — metadata create uses /files; download uses alt=media. Official docs: https://developers.google.com/workspace/drive/api/reference/rest/v3. OUTPUT is {status, http_status, data} or {error}. Secrets never appear on OUTPUT.",
   "icon": "folder",
   "tags": [
     "google",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "copy",
-          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'copy', 'create_from_text', 'upload', 'download', 'update', 'delete', 'move', 'share', 'search', 'create_folder', 'delete_folder', 'share_folder', 'create_shared_drive', 'get_shared_drive', 'list_shared_drives', 'update_shared_drive', 'delete_shared_drive', 'listen'. listen/trigger/webhook_listen never open a socket \u2014 they return an error telling you to use a BPMN message event. Example: 'copy'.",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'copy', 'create_from_text', 'upload', 'download', 'update', 'delete', 'move', 'share', 'search', 'create_folder', 'delete_folder', 'share_folder', 'create_shared_drive', 'get_shared_drive', 'list_shared_drives', 'update_shared_drive', 'delete_shared_drive', 'listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'copy'.",
           "children": []
         },
         {
@@ -238,7 +238,7 @@
           "type": "string",
           "required": false,
           "value": "",
-          "description": "files.list orderBy (createdTime, folder, modifiedTime, name, \u2026). search. Example: modifiedTime desc.",
+          "description": "files.list orderBy (createdTime, folder, modifiedTime, name, …). search. Example: modifiedTime desc.",
           "children": []
         },
         {
@@ -338,24 +338,24 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "copy",
-        "create_from_text",
-        "upload",
-        "download",
-        "update",
-        "delete",
-        "move",
-        "share",
-        "search",
-        "create_folder",
-        "delete_folder",
-        "share_folder",
-        "create_shared_drive",
-        "get_shared_drive",
-        "list_shared_drives",
-        "update_shared_drive",
-        "delete_shared_drive",
-        "listen"
+        "copy:Copy",
+        "create_from_text:Create From Text",
+        "upload:Upload",
+        "download:Download",
+        "update:Update",
+        "delete:Delete",
+        "move:Move",
+        "share:Share",
+        "search:Search",
+        "create_folder:Create Folder",
+        "delete_folder:Delete Folder",
+        "share_folder:Share Folder",
+        "create_shared_drive:Create Shared Drive",
+        "get_shared_drive:Get Shared Drive",
+        "list_shared_drives:List Shared Drives",
+        "update_shared_drive:Update Shared Drive",
+        "delete_shared_drive:Delete Shared Drive",
+        "listen:Listen (Incoming):listen"
       ],
       "validationRules": {},
       "filterRules": [
@@ -731,6 +731,19 @@
               "visible": true
             }
           ]
+        },
+        {
+          "when": "listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "channel_token",
+              "visible": true
+            }
+          ]
         }
       ]
     },
@@ -739,7 +752,7 @@
       "shortCode": "access_token",
       "label": "Access Token",
       "type": "password",
-      "description": "Provider credential for auth.type=bearer (configKey access_token). REQUIRED secret \u2014 StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
+      "description": "Provider credential for auth.type=bearer (configKey access_token). REQUIRED secret — StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
       "value": "",
       "required": true,
       "instanceEditable": true,
@@ -999,7 +1012,7 @@
       "shortCode": "orderBy",
       "label": "Order by",
       "type": "string",
-      "description": "files.list orderBy (createdTime, folder, modifiedTime, name, \u2026). search. Example: modifiedTime desc.",
+      "description": "files.list orderBy (createdTime, folder, modifiedTime, name, …). search. Example: modifiedTime desc.",
       "value": "",
       "required": false,
       "instanceEditable": true,
@@ -1103,8 +1116,34 @@
       "shortCode": "timeout_seconds",
       "label": "Timeout (seconds)",
       "type": "number",
-      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative \u2192 25. Example: 25.",
+      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative → 25. Example: 25.",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f841d1ac-94ce-5771-a654-ae5daf1c63cd",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "f18923fb-62f8-511c-b2af-f7e428a1041c",
+      "shortCode": "channel_token",
+      "label": "Channel Token",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header X-Goog-Channel-Token. Never logged.",
+      "value": "",
       "required": false,
       "instanceEditable": true,
       "visible": true,

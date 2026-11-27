@@ -345,15 +345,30 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "form.list",
-        "form.get",
-        "form.create",
-        "response.list",
-        "response.get",
-        "webhook.register",
-        "trigger.listen"
+        "form.list:Form List",
+        "form.get:Form Get",
+        "form.create:Form Create",
+        "response.list:Response List",
+        "response.get:Response Get",
+        "webhook.register:Webhook Register",
+        "trigger.listen:Listen (Incoming):listen"
       ],
-      "validationRules": {}
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "trigger.listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            }
+          ]
+        }
+      ]
     },
     {
       "_id": "3ae4e45d-5eca-409f-b241-750b6ce1fcb9",
@@ -401,6 +416,32 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e37795cc-44e3-55ec-8b3f-8bf67ae5208b",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "2991b614-7a53-53c9-8caa-433ba13c615f",
+      "shortCode": "webhook_secret",
+      "label": "Webhook Secret",
+      "type": "password",
+      "description": "Typeform webhook secret for constant-time Typeform-Signature (sha256=<base64>) verification. Never logged.",
+      "value": "",
       "required": false,
       "instanceEditable": true,
       "visible": true,

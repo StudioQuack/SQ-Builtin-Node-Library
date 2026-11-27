@@ -168,5 +168,32 @@
     "trigger": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "none"
+    },
+    "verify": {
+      "type": "hmac_sha256_base64",
+      "header": "x-shopify-hmac-sha256",
+      "secretConfigKey": "webhook_secret"
+    },
+    "extract": {
+      "idempotencyHeader": "x-shopify-webhook-id",
+      "idempotencyPath": "id",
+      "correlationKeyPath": "id",
+      "fallbackCorrelationKeyPaths": [
+        "order_number",
+        "email"
+      ],
+      "eventTypeHeader": "x-shopify-topic",
+      "fields": {
+        "id": "id",
+        "email": "email",
+        "name": "name",
+        "totalPrice": "total_price",
+        "financialStatus": "financial_status"
+      }
+    }
   }
 }

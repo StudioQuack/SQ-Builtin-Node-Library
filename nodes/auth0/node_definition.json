@@ -355,20 +355,39 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "create-user",
-        "get-user",
-        "list-users",
-        "update-user",
-        "delete-user",
-        "create-role",
-        "list-roles",
-        "assign-role",
-        "list-clients",
-        "get-log",
-        "list-logs",
-        "listen"
+        "create-user:Create User",
+        "get-user:Get User",
+        "list-users:List Users",
+        "update-user:Update User",
+        "delete-user:Delete User",
+        "create-role:Create Role",
+        "list-roles:List Roles",
+        "assign-role:Assign Role",
+        "list-clients:List Clients",
+        "get-log:Get Log",
+        "list-logs:List Logs",
+        "listen:Listen (Incoming):listen"
       ],
-      "validationRules": {}
+      "validationRules": {},
+      "filterRules": [
+        {
+          "when": "listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
+              "visible": true
+            }
+          ]
+        }
+      ]
     },
     {
       "_id": "0ff8b1cf-9560-44b7-bd72-2647c5786e06",
@@ -403,6 +422,45 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 25.",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "837ad8e4-c16f-52f9-8faa-27bc08a7c19d",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "cc142288-c6eb-5a36-81c3-217f869bd36c",
+      "shortCode": "webhook_secret",
+      "label": "Log Stream Auth Header",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header Authorization. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "87340263-17a9-5fe8-9c1c-3dd43ee66aa4",
+      "shortCode": "webhook_header_name",
+      "label": "Webhook Auth Header Name",
+      "type": "string",
+      "description": "HTTP header name carrying the provider webhook secret (default: Authorization).",
+      "value": "Authorization",
       "required": false,
       "instanceEditable": true,
       "visible": true,

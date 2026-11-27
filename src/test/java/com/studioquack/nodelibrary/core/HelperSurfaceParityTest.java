@@ -36,7 +36,10 @@ class HelperSurfaceParityTest {
             "execute", "connect", "engineIP", "llmLocal", "returnResult", "fail", "escalate", "sendSignal",
             "sendMessage", "metric", "log", "isCancelled", "onCancel", "handleCancel", "isCancelPath",
             "setRequestContext",
-            "executeStream", "emitPartial", "llm");
+            "executeStream", "emitPartial", "llm",
+            "isWebhookInvocation", "getWebhookRequest", "getWebhookPayload", "getWebhookHeader",
+            "verifyHmacSha256", "respondWebhookChallenge", "emitWebhookEvents", "rejectWebhook",
+            "setCorrelationKey");
 
     private static final List<String> LLM = List.of(
             "completion", "chat", "local", "models", "load", "unload", "download", "downloadStatus");

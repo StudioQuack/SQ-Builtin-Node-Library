@@ -220,15 +220,34 @@
       "isPublic": false,
       "validationRules": {},
       "options": [
-        "user.upsert",
-        "user.get",
-        "user.delete",
-        "event.track",
-        "list.add",
-        "list.remove",
-        "catalog.upsert",
-        "campaign.trigger",
-        "trigger.listen"
+        "user.upsert:User Upsert",
+        "user.get:User Get",
+        "user.delete:User Delete",
+        "event.track:Event Track",
+        "list.add:List Add",
+        "list.remove:List Remove",
+        "catalog.upsert:Catalog Upsert",
+        "campaign.trigger:Campaign Trigger",
+        "trigger.listen:Listen (Incoming):listen"
+      ],
+      "filterRules": [
+        {
+          "when": "trigger.listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
+              "visible": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -268,6 +287,45 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Allow ≥60s between user update and campaign send (provider guidance).",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "64ed90bd-f7e7-5787-bcc9-38414d7bb232",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "19231cb0-0466-5ce5-96eb-56753680374b",
+      "shortCode": "webhook_secret",
+      "label": "Webhook Auth Header Secret",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header X-Iterable-Token. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3ecac864-17b3-5171-8634-42d83e436868",
+      "shortCode": "webhook_header_name",
+      "label": "Webhook Auth Header Name",
+      "type": "string",
+      "description": "HTTP header name carrying the provider webhook secret (default: X-Iterable-Token).",
+      "value": "X-Iterable-Token",
       "required": false,
       "instanceEditable": true,
       "visible": true,

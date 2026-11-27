@@ -239,17 +239,53 @@
       "isPublic": false,
       "validationRules": {},
       "options": [
-        "create-message",
-        "get-message",
-        "update-message",
-        "delete-message",
-        "list-messages",
-        "get-membership",
-        "list-memberships",
-        "get-space",
-        "list-spaces",
-        "send-and-wait",
-        "listen"
+        "create-message:Create Message",
+        "get-message:Get Message",
+        "update-message:Update Message",
+        "delete-message:Delete Message",
+        "list-messages:List Messages",
+        "get-membership:Get Membership",
+        "list-memberships:List Memberships",
+        "get-space:Get Space",
+        "list-spaces:List Spaces",
+        "send-and-wait:Send & Wait:send_and_wait",
+        "listen:Listen (Incoming):listen"
+      ],
+      "filterRules": [
+        {
+          "when": "send-and-wait",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
+              "visible": true
+            }
+          ]
+        },
+        {
+          "when": "listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
+              "visible": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -272,6 +308,45 @@
       "type": "number",
       "description": "Connect+read timeout for each official HTTPS call. Positive integer. Default 25. 0/blank → 25.",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "1545ae24-300e-5a62-9a50-1b19076cecd6",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "32062b6e-7fe1-509f-b829-61de56c7c2a8",
+      "shortCode": "webhook_secret",
+      "label": "Chat App Verification Token",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header Authorization. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "0f797bbb-5de9-51a1-a089-8a54cb474dc9",
+      "shortCode": "webhook_header_name",
+      "label": "Webhook Auth Header Name",
+      "type": "string",
+      "description": "HTTP header name carrying the provider webhook secret (default: Authorization).",
+      "value": "Authorization",
       "required": false,
       "instanceEditable": true,
       "visible": true,

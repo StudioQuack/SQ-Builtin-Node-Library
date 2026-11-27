@@ -212,5 +212,37 @@
     "trigger": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "none"
+    },
+    "verify": {
+      "type": "hmac_sha256_timestamped",
+      "signatureHeaderFormat": "stripe",
+      "header": "stripe-signature",
+      "timestampKey": "t",
+      "signatureKey": "v1",
+      "timestampSeparator": ".",
+      "timestampToleranceSeconds": 300,
+      "secretConfigKey": "webhook_signing_secret"
+    },
+    "extract": {
+      "idempotencyPath": "id",
+      "correlationKeyPath": "data.object.id",
+      "fallbackCorrelationKeyPaths": [
+        "data.object.customer",
+        "id"
+      ],
+      "eventTypePath": "type",
+      "fields": {
+        "eventId": "id",
+        "eventType": "type",
+        "livemode": "livemode",
+        "objectId": "data.object.id",
+        "customer": "data.object.customer",
+        "created": "created"
+      }
+    }
   }
 }

@@ -285,5 +285,32 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "none"
+    },
+    "verify": {
+      "type": "header_secret",
+      "header": "x-gitlab-token",
+      "secretConfigKey": "webhook_token"
+    },
+    "extract": {
+      "idempotencyHeader": "x-gitlab-event-uuid",
+      "idempotencyPath": "object_attributes.id",
+      "correlationKeyPath": "project.path_with_namespace",
+      "fallbackCorrelationKeyPaths": [
+        "project_id",
+        "object_attributes.iid"
+      ],
+      "eventTypePath": "object_kind",
+      "fields": {
+        "objectKind": "object_kind",
+        "eventType": "event_type",
+        "projectId": "project.id",
+        "projectPath": "project.path_with_namespace",
+        "ref": "ref"
+      }
+    }
   }
 }

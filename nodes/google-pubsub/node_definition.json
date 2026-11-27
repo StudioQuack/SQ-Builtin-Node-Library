@@ -141,9 +141,28 @@
       "isPublic": false,
       "validationRules": {},
       "options": [
-        "topic.publish",
-        "subscription.pull",
-        "trigger.listen"
+        "topic.publish:Topic Publish",
+        "subscription.pull:Subscription Pull",
+        "trigger.listen:Listen (Incoming):listen"
+      ],
+      "filterRules": [
+        {
+          "when": "trigger.listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
+              "visible": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -205,6 +224,45 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9d149baa-beea-5a83-a2c5-b2b3b77a7ce3",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "9e17c922-73a0-5e17-8ea5-d4ce5b621c65",
+      "shortCode": "webhook_secret",
+      "label": "Pub/Sub Push Auth Token",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header Authorization. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "29cd3d81-337f-5c2e-a502-f339db3eb9a2",
+      "shortCode": "webhook_header_name",
+      "label": "Webhook Auth Header Name",
+      "type": "string",
+      "description": "HTTP header name carrying the provider webhook secret (default: Authorization).",
+      "value": "Authorization",
       "required": false,
       "instanceEditable": true,
       "visible": true,

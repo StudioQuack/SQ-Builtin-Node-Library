@@ -59,6 +59,8 @@ public final class OfficialApiSpec {
      * Default false preserves legacy case-insensitive matching.
      */
     public final boolean operationStrict;
+    /** Optional library-internal inbound webhook & send-and-wait contract. Never read by the daemon. */
+    public final IngressSpec ingress;
 
     private OfficialApiSpec(String key, String baseUrl, String authType, String authHeader,
                             String authPrefix, String authConfigKey, String authUserKey,
@@ -67,7 +69,8 @@ public final class OfficialApiSpec {
                             Map<String, String> extraHeaders, SigV4Block sigv4,
                             Map<String, Operation> operations,
                             Map<String, String> placeholderDefaults,
-                            boolean operationStrict) {
+                            boolean operationStrict,
+                            IngressSpec ingress) {
         this.key = key;
         this.baseUrl = baseUrl;
         this.authType = authType;
@@ -84,6 +87,7 @@ public final class OfficialApiSpec {
         this.operations = operations;
         this.placeholderDefaults = placeholderDefaults;
         this.operationStrict = operationStrict;
+        this.ingress = ingress;
     }
 
     /** Load {@code nodes/<key>/api_spec.json} from the classpath, or {@code null}. */
@@ -154,7 +158,8 @@ public final class OfficialApiSpec {
                 SigV4Block.from(root.get("sigv4")),
                 ops,
                 extraHeadersMap(root.get("placeholderDefaults")),
-                strictOp);
+                strictOp,
+                IngressSpec.from(root.get("ingress")));
     }
 
     public Operation operation(String name) {
@@ -222,13 +227,15 @@ public final class OfficialApiSpec {
          * lists are valid. Input values always win when non-blank.
          */
         public final Map<String, Object> bodyDefaults;
+        /** Optional per-operation ingress override (falls back to top-level {@link OfficialApiSpec#ingress}). */
+        public final IngressSpec ingress;
 
         Operation(String name, String kind, String method, String path,
                   List<String> required, List<String> queryFrom, List<String> bodyFrom,
                   String contentType, String bodyFormat, String bodyParam, boolean fileBytes, String baseUrl,
                   Map<String, String> extraHeaders, StreamBlock stream,
                   Map<String, String> bodyMap, Map<String, String> queryMap, MimeBlock mime,
-                  Map<String, Object> bodyDefaults) {
+                  Map<String, Object> bodyDefaults, IngressSpec ingress) {
             this.name = name;
             this.kind = kind;
             this.method = method;
@@ -247,6 +254,7 @@ public final class OfficialApiSpec {
             this.queryMap = queryMap;
             this.mime = mime;
             this.bodyDefaults = bodyDefaults;
+            this.ingress = ingress;
         }
 
         /** Wire name of an input key in this op's body. */
@@ -285,7 +293,322 @@ public final class OfficialApiSpec {
                     extraHeadersMap(m.get("bodyMap")),
                     extraHeadersMap(m.get("queryMap")),
                     MimeBlock.from(m.get("mime")),
-                    objectMapRaw(m.get("bodyDefaults")));
+                    objectMapRaw(m.get("bodyDefaults")),
+                    IngressSpec.from(m.get("ingress")));
+        }
+    }
+
+    /**
+     * Library-internal webhook ingress &amp; send-and-wait specification ({@code api_spec.json#ingress}).
+     * Never read by the engine daemon — lives exclusively inside {@code SQ-Builtin-Node-Library}.
+     */
+    public static final class IngressSpec {
+        public static final Set<String> HANDSHAKE_TYPES = Set.of(
+                "none", "query_challenge", "json_challenge", "header_echo",
+                "zoom_url_validation", "header_value_challenge");
+        public static final Set<String> VERIFY_TYPES = Set.of(
+                "none", "hmac_sha256_hex", "hmac_sha256_base64", "hmac_sha256_timestamped",
+                "hmac_sha1_form", "ed25519", "header_secret", "body_field_secret");
+
+        public final HandshakeSpec handshake;
+        public final VerifySpec verify;
+        public final ExtractSpec extract;
+        public final SendAndWaitSpec sendAndWait;
+
+        public IngressSpec(HandshakeSpec handshake, VerifySpec verify,
+                           ExtractSpec extract, SendAndWaitSpec sendAndWait) {
+            this.handshake = handshake;
+            this.verify = verify;
+            this.extract = extract;
+            this.sendAndWait = sendAndWait;
+        }
+
+        public static IngressSpec from(Object raw) {
+            if (!(raw instanceof Map<?, ?> m)) {
+                return null;
+            }
+            return new IngressSpec(
+                    HandshakeSpec.from(m.get("handshake")),
+                    VerifySpec.from(m.get("verify")),
+                    ExtractSpec.from(m.get("extract")),
+                    SendAndWaitSpec.from(m.get("sendAndWait")));
+        }
+
+        /** All config parameter shortCodes referenced by this ingress spec (for contract audits). */
+        public List<String> referencedConfigKeys() {
+            List<String> keys = new ArrayList<>();
+            if (handshake != null) {
+                if (!handshake.tokenConfigKey.isBlank()) {
+                    keys.add(handshake.tokenConfigKey);
+                }
+                if (!handshake.secretConfigKey.isBlank()) {
+                    keys.add(handshake.secretConfigKey);
+                }
+            }
+            if (verify != null) {
+                if (!verify.secretConfigKey.isBlank()) {
+                    keys.add(verify.secretConfigKey);
+                }
+                if (!verify.headerConfigKey.isBlank()) {
+                    keys.add(verify.headerConfigKey);
+                }
+                if (!verify.urlConfigKey.isBlank()) {
+                    keys.add(verify.urlConfigKey);
+                }
+            }
+            return keys;
+        }
+    }
+
+    /** Inbound webhook verification handshake configuration. */
+    public static final class HandshakeSpec {
+        public final String type;
+        public final String method;
+        public final String modeParam;
+        public final String modeValue;
+        public final String tokenParam;
+        public final String tokenConfigKey;
+        public final String challengeParam;
+        public final String typePath;
+        public final String typeValue;
+        public final String challengePath;
+        public final String responseKey;
+        public final String staticResponseBody;
+        public final String headerName;
+        public final String headerValue;
+        public final String responseHeader;
+        public final String responseJsonKey;
+        public final String secretConfigKey;
+        public final int responseStatus;
+        public final String responseContentType;
+        public final boolean verifyBeforeHandshake;
+
+        public HandshakeSpec(String type, String method, String modeParam, String modeValue,
+                             String tokenParam, String tokenConfigKey, String challengeParam,
+                             String typePath, String typeValue, String challengePath, String responseKey,
+                             String staticResponseBody, String headerName, String headerValue,
+                             String responseHeader, String responseJsonKey, String secretConfigKey,
+                             int responseStatus, String responseContentType, boolean verifyBeforeHandshake) {
+            this.type = type;
+            this.method = method;
+            this.modeParam = modeParam;
+            this.modeValue = modeValue;
+            this.tokenParam = tokenParam;
+            this.tokenConfigKey = tokenConfigKey;
+            this.challengeParam = challengeParam;
+            this.typePath = typePath;
+            this.typeValue = typeValue;
+            this.challengePath = challengePath;
+            this.responseKey = responseKey;
+            this.staticResponseBody = staticResponseBody;
+            this.headerName = headerName;
+            this.headerValue = headerValue;
+            this.responseHeader = responseHeader;
+            this.responseJsonKey = responseJsonKey;
+            this.secretConfigKey = secretConfigKey;
+            this.responseStatus = responseStatus;
+            this.responseContentType = responseContentType;
+            this.verifyBeforeHandshake = verifyBeforeHandshake;
+        }
+
+        static HandshakeSpec from(Object raw) {
+            if (!(raw instanceof Map<?, ?> m)) {
+                return null;
+            }
+            String type = firstNonBlank(str(m.get("type")), "none").toLowerCase(Locale.ROOT);
+            String defaultMethod = switch (type) {
+                case "query_challenge" -> "GET";
+                case "json_challenge", "zoom_url_validation" -> "POST";
+                default -> "ANY";
+            };
+            String defaultCt = ("json_challenge".equals(type) || "zoom_url_validation".equals(type)
+                    || !str(m.get("responseJsonKey")).isBlank() || !str(m.get("staticResponseBody")).isBlank())
+                    ? "application/json" : "text/plain";
+            int status = toInt(m.get("responseStatus"), 200);
+            return new HandshakeSpec(
+                    type,
+                    firstNonBlank(str(m.get("method")), defaultMethod).toUpperCase(Locale.ROOT),
+                    str(m.get("modeParam")),
+                    str(m.get("modeValue")),
+                    str(m.get("tokenParam")),
+                    str(m.get("tokenConfigKey")),
+                    str(m.get("challengeParam")),
+                    str(m.get("typePath")),
+                    str(m.get("typeValue")),
+                    str(m.get("challengePath")),
+                    str(m.get("responseKey")),
+                    str(m.get("staticResponseBody")),
+                    str(m.get("headerName")),
+                    str(m.get("headerValue")),
+                    str(m.get("responseHeader")),
+                    str(m.get("responseJsonKey")),
+                    str(m.get("secretConfigKey")),
+                    status > 0 ? status : 200,
+                    firstNonBlank(str(m.get("responseContentType")), defaultCt),
+                    truthy(m.get("verifyBeforeHandshake")));
+        }
+    }
+
+    /** Inbound webhook cryptographic signature or shared-secret verification configuration. */
+    public static final class VerifySpec {
+        public final String type;
+        public final String header;
+        public final String headerConfigKey;
+        public final String prefix;
+        public final String secretConfigKey;
+        public final String timestampHeader;
+        public final String timestampPrefix;
+        public final String signatureHeaderFormat;
+        public final String timestampKey;
+        public final String signatureKey;
+        public final String timestampSeparator;
+        public final int timestampToleranceSeconds;
+        public final String bodyPath;
+        public final String urlConfigKey;
+
+        public VerifySpec(String type, String header, String headerConfigKey, String prefix,
+                          String secretConfigKey, String timestampHeader, String timestampPrefix,
+                          String signatureHeaderFormat, String timestampKey, String signatureKey,
+                          String timestampSeparator, int timestampToleranceSeconds,
+                          String bodyPath, String urlConfigKey) {
+            this.type = type;
+            this.header = header;
+            this.headerConfigKey = headerConfigKey;
+            this.prefix = prefix;
+            this.secretConfigKey = secretConfigKey;
+            this.timestampHeader = timestampHeader;
+            this.timestampPrefix = timestampPrefix;
+            this.signatureHeaderFormat = signatureHeaderFormat;
+            this.timestampKey = timestampKey;
+            this.signatureKey = signatureKey;
+            this.timestampSeparator = timestampSeparator;
+            this.timestampToleranceSeconds = timestampToleranceSeconds;
+            this.bodyPath = bodyPath;
+            this.urlConfigKey = urlConfigKey;
+        }
+
+        static VerifySpec from(Object raw) {
+            if (!(raw instanceof Map<?, ?> m)) {
+                return null;
+            }
+            String type = firstNonBlank(str(m.get("type")), "none").toLowerCase(Locale.ROOT);
+            String tsHeader = str(m.get("timestampHeader"));
+            String format = str(m.get("signatureHeaderFormat")).toLowerCase(Locale.ROOT);
+            if (format.isEmpty() && "hmac_sha256_timestamped".equals(type)) {
+                format = tsHeader.isEmpty() ? "stripe" : "slack";
+            }
+            String defaultSep = ("paddle".equals(format) || "slack".equals(format) || "zoom".equals(format))
+                    ? ":" : ".";
+            int tol = m.containsKey("timestampToleranceSeconds")
+                    ? toInt(m.get("timestampToleranceSeconds"), 300) : 300;
+            return new VerifySpec(
+                    type,
+                    str(m.get("header")),
+                    str(m.get("headerConfigKey")),
+                    strKeepTrailing(m.get("prefix")),
+                    str(m.get("secretConfigKey")),
+                    tsHeader,
+                    strKeepTrailing(m.get("timestampPrefix")),
+                    format,
+                    firstNonBlank(str(m.get("timestampKey")), "paddle".equals(format) ? "ts" : "t"),
+                    firstNonBlank(str(m.get("signatureKey")), "paddle".equals(format) ? "h1" : "v1"),
+                    firstNonBlank(str(m.get("timestampSeparator")), defaultSep),
+                    Math.max(0, tol),
+                    str(m.get("bodyPath")),
+                    str(m.get("urlConfigKey")));
+        }
+    }
+
+    /** Path-based inbound webhook fan-out &amp; normalized event extraction configuration. */
+    public static final class ExtractSpec {
+        public final String itemsPath;
+        public final String filterPath;
+        public final String filterEquals;
+        public final String idempotencyHeader;
+        public final String idempotencyPath;
+        public final List<String> fallbackIdempotencyPaths;
+        public final String correlationKeyPath;
+        public final List<String> fallbackCorrelationKeyPaths;
+        public final String eventTypeHeader;
+        public final String eventTypePath;
+        public final Map<String, String> fields;
+        public final int maxItems;
+
+        public ExtractSpec(String itemsPath, String filterPath, String filterEquals,
+                           String idempotencyHeader, String idempotencyPath,
+                           List<String> fallbackIdempotencyPaths, String correlationKeyPath,
+                           List<String> fallbackCorrelationKeyPaths, String eventTypeHeader,
+                           String eventTypePath, Map<String, String> fields, int maxItems) {
+            this.itemsPath = itemsPath;
+            this.filterPath = filterPath;
+            this.filterEquals = filterEquals;
+            this.idempotencyHeader = idempotencyHeader;
+            this.idempotencyPath = idempotencyPath;
+            this.fallbackIdempotencyPaths = fallbackIdempotencyPaths;
+            this.correlationKeyPath = correlationKeyPath;
+            this.fallbackCorrelationKeyPaths = fallbackCorrelationKeyPaths;
+            this.eventTypeHeader = eventTypeHeader;
+            this.eventTypePath = eventTypePath;
+            this.fields = fields;
+            this.maxItems = maxItems;
+        }
+
+        static ExtractSpec from(Object raw) {
+            if (!(raw instanceof Map<?, ?> m)) {
+                return null;
+            }
+            int max = toInt(m.get("maxItems"), 100);
+            if (max <= 0 || max > 100) {
+                max = 100;
+            }
+            return new ExtractSpec(
+                    str(m.get("itemsPath")),
+                    str(m.get("filterPath")),
+                    str(m.get("filterEquals")),
+                    str(m.get("idempotencyHeader")),
+                    str(m.get("idempotencyPath")),
+                    stringList(m.get("fallbackIdempotencyPaths")),
+                    str(m.get("correlationKeyPath")),
+                    stringList(m.get("fallbackCorrelationKeyPaths")),
+                    str(m.get("eventTypeHeader")),
+                    str(m.get("eventTypePath")),
+                    stringMap(m.get("fields")),
+                    max);
+        }
+    }
+
+    /** Phase-1 outbound delegation and correlation-key extraction for {@code send-and-wait}. */
+    public static final class SendAndWaitSpec {
+        public final String sendOperation;
+        public final String fallbackSendOperation;
+        public final String fallbackWhenPresent;
+        public final String fallbackWhenBlank;
+        public final List<String> correlationKeyFrom;
+
+        public SendAndWaitSpec(String sendOperation, String fallbackSendOperation,
+                               String fallbackWhenPresent, String fallbackWhenBlank,
+                               List<String> correlationKeyFrom) {
+            this.sendOperation = sendOperation;
+            this.fallbackSendOperation = fallbackSendOperation;
+            this.fallbackWhenPresent = fallbackWhenPresent;
+            this.fallbackWhenBlank = fallbackWhenBlank;
+            this.correlationKeyFrom = correlationKeyFrom;
+        }
+
+        static SendAndWaitSpec from(Object raw) {
+            if (!(raw instanceof Map<?, ?> m)) {
+                return null;
+            }
+            String sendOp = str(m.get("sendOperation"));
+            if (sendOp.isEmpty()) {
+                return null;
+            }
+            return new SendAndWaitSpec(
+                    sendOp,
+                    str(m.get("fallbackSendOperation")),
+                    str(m.get("fallbackWhenPresent")),
+                    str(m.get("fallbackWhenBlank")),
+                    stringList(m.get("correlationKeyFrom")));
         }
     }
 

@@ -154,5 +154,22 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "none"
+    },
+    "verify": {
+      "type": "hmac_sha256_hex",
+      "header": "sentry-hook-signature",
+      "prefix": "",
+      "secretConfigKey": "webhook_secret"
+    },
+    "extract": {
+      "idempotencyHeader": "request-id",
+      "correlationKeyPath": "data.issue.id",
+      "eventTypeHeader": "sentry-hook-resource",
+      "eventTypePath": "action"
+    }
   }
 }

@@ -294,5 +294,34 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "none"
+    },
+    "verify": {
+      "type": "hmac_sha256_hex",
+      "header": "x-hub-signature",
+      "prefix": "sha256=",
+      "secretConfigKey": "webhook_secret"
+    },
+    "extract": {
+      "idempotencyPath": "timestamp",
+      "fallbackIdempotencyPaths": [
+        "issue.id"
+      ],
+      "correlationKeyPath": "issue.key",
+      "fallbackCorrelationKeyPaths": [
+        "issue.id"
+      ],
+      "eventTypePath": "webhookEvent",
+      "fields": {
+        "webhookEvent": "webhookEvent",
+        "issueKey": "issue.key",
+        "issueId": "issue.id",
+        "summary": "issue.fields.summary",
+        "user": "user.displayName"
+      }
+    }
   }
 }

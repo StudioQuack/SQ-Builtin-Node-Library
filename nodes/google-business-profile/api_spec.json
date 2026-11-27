@@ -1,74 +1,86 @@
 {
-    "baseUrl": "https://mybusiness.googleapis.com/v4",
-    "defaultTimeout": 25,
-    "timeoutConfigKey": "timeout_seconds",
-    "auth": {
-        "type": "bearer",
-        "header": "Authorization",
-        "prefix": "Bearer ",
-        "configKey": "access_token"
+  "baseUrl": "https://mybusiness.googleapis.com/v4",
+  "defaultTimeout": 25,
+  "timeoutConfigKey": "timeout_seconds",
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "prefix": "Bearer ",
+    "configKey": "access_token"
+  },
+  "operations": {
+    "location_get": {
+      "kind": "http",
+      "method": "GET",
+      "baseUrl": "https://mybusinessbusinessinformation.googleapis.com",
+      "path": "/v1/locations/{location_id}",
+      "required": [
+        "location_id"
+      ],
+      "queryFrom": [
+        "readMask"
+      ]
     },
-    "operations": {
-        "location_get": {
-            "kind": "http",
-            "method": "GET",
-            "baseUrl": "https://mybusinessbusinessinformation.googleapis.com",
-            "path": "/v1/locations/{location_id}",
-            "required": [
-                "location_id"
-            ],
-            "queryFrom": [
-                "readMask"
-            ]
-        },
-        "review_list": {
-            "kind": "http",
-            "method": "GET",
-            "path": "/accounts/{account_id}/locations/{location_id}/reviews",
-            "required": [
-                "account_id",
-                "location_id"
-            ],
-            "queryFrom": [
-                "pageSize",
-                "pageToken",
-                "orderBy"
-            ]
-        },
-        "review_reply": {
-            "kind": "http",
-            "method": "PUT",
-            "path": "/accounts/{account_id}/locations/{location_id}/reviews/{review_id}/reply",
-            "required": [
-                "account_id",
-                "location_id",
-                "review_id",
-                "comment"
-            ],
-            "bodyFrom": [
-                "comment"
-            ]
-        },
-        "post_create": {
-            "kind": "http",
-            "method": "POST",
-            "path": "/accounts/{account_id}/locations/{location_id}/localPosts",
-            "required": [
-                "account_id",
-                "location_id",
-                "summary",
-                "topicType"
-            ],
-            "bodyFrom": [
-                "languageCode",
-                "summary",
-                "topicType",
-                "callToAction",
-                "media"
-            ]
-        },
-        "trigger": {
-            "kind": "ingress"
-        }
+    "review_list": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/accounts/{account_id}/locations/{location_id}/reviews",
+      "required": [
+        "account_id",
+        "location_id"
+      ],
+      "queryFrom": [
+        "pageSize",
+        "pageToken",
+        "orderBy"
+      ]
+    },
+    "review_reply": {
+      "kind": "http",
+      "method": "PUT",
+      "path": "/accounts/{account_id}/locations/{location_id}/reviews/{review_id}/reply",
+      "required": [
+        "account_id",
+        "location_id",
+        "review_id",
+        "comment"
+      ],
+      "bodyFrom": [
+        "comment"
+      ]
+    },
+    "post_create": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/accounts/{account_id}/locations/{location_id}/localPosts",
+      "required": [
+        "account_id",
+        "location_id",
+        "summary",
+        "topicType"
+      ],
+      "bodyFrom": [
+        "languageCode",
+        "summary",
+        "topicType",
+        "callToAction",
+        "media"
+      ]
+    },
+    "trigger": {
+      "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "none"
+    },
+    "verify": {
+      "type": "header_secret",
+      "header": "authorization",
+      "secretConfigKey": "webhook_secret",
+      "headerConfigKey": "webhook_header_name"
+    },
+    "extract": {}
+  }
 }

@@ -364,15 +364,34 @@
       "isPublic": false,
       "validationRules": {},
       "options": [
-        "user.track",
-        "user.delete",
-        "user.export",
-        "campaign.trigger",
-        "canvas.trigger",
-        "subscription.set",
-        "catalog.upsert",
-        "message.send",
-        "trigger.listen"
+        "user.track:User Track",
+        "user.delete:User Delete",
+        "user.export:User Export",
+        "campaign.trigger:Campaign Trigger",
+        "canvas.trigger:Canvas Trigger",
+        "subscription.set:Subscription Set",
+        "catalog.upsert:Catalog Upsert",
+        "message.send:Message Send",
+        "trigger.listen:Listen (Incoming):listen"
+      ],
+      "filterRules": [
+        {
+          "when": "trigger.listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            },
+            {
+              "param": "webhook_header_name",
+              "visible": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -408,6 +427,45 @@
       "type": "number",
       "description": "Per-request HTTP timeout. Positive number; <=0 → 25. Keep below the daemon invoke budget.",
       "value": "25",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "88f2b439-b721-50f5-99ba-5374d34f26d9",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "3aaf4519-3f5b-553e-9662-7339f15b3687",
+      "shortCode": "webhook_secret",
+      "label": "Webhook Auth Header Secret",
+      "type": "password",
+      "description": "Provider webhook secret verified in constant time against inbound header X-Braze-Webhook-Token. Never logged.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "628262ac-f86f-5b7c-89a0-7ca73b2daf37",
+      "shortCode": "webhook_header_name",
+      "label": "Webhook Auth Header Name",
+      "type": "string",
+      "description": "HTTP header name carrying the provider webhook secret (default: X-Braze-Webhook-Token).",
+      "value": "X-Braze-Webhook-Token",
       "required": false,
       "instanceEditable": true,
       "visible": true,

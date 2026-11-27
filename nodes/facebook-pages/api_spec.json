@@ -88,5 +88,29 @@
     "trigger": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "query_challenge",
+      "method": "GET",
+      "modeParam": "hub.mode",
+      "modeValue": "subscribe",
+      "tokenParam": "hub.verify_token",
+      "tokenConfigKey": "verify_token",
+      "challengeParam": "hub.challenge",
+      "responseContentType": "text/plain"
+    },
+    "verify": {
+      "type": "hmac_sha256_hex",
+      "header": "x-hub-signature-256",
+      "prefix": "sha256=",
+      "secretConfigKey": "app_secret"
+    },
+    "extract": {
+      "itemsPath": "entry[*].changes[*]",
+      "correlationKeyPath": "field",
+      "eventTypePath": "field",
+      "maxItems": 100
+    }
   }
 }

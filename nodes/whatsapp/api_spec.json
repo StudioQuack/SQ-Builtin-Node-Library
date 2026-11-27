@@ -97,5 +97,45 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "query_challenge",
+      "method": "GET",
+      "modeParam": "hub.mode",
+      "modeValue": "subscribe",
+      "tokenParam": "hub.verify_token",
+      "tokenConfigKey": "verify_token",
+      "challengeParam": "hub.challenge",
+      "responseContentType": "text/plain"
+    },
+    "verify": {
+      "type": "hmac_sha256_hex",
+      "header": "x-hub-signature-256",
+      "prefix": "sha256=",
+      "secretConfigKey": "app_secret"
+    },
+    "extract": {
+      "itemsPath": "entry[*].changes[?field==messages].value.messages[*]",
+      "idempotencyPath": "id",
+      "correlationKeyPath": "from",
+      "eventTypePath": "type",
+      "fields": {
+        "messageId": "id",
+        "from": "from",
+        "timestamp": "timestamp",
+        "type": "type",
+        "text": "text.body"
+      },
+      "maxItems": 100
+    },
+    "sendAndWait": {
+      "sendOperation": "send-message",
+      "correlationKeyFrom": [
+        "to",
+        "data.contacts[0].wa_id",
+        "data.messages[0].id"
+      ]
+    }
   }
 }

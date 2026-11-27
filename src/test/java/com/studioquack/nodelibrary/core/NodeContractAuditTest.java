@@ -70,6 +70,15 @@ class NodeContractAuditTest {
                 .toList();
         assertTrue(verifiedErrors.isEmpty(), "verified nodes regressed:\n" + lines(verifiedErrors));
 
+        List<Finding> ingressErrors = findings.stream()
+                .filter(f -> f.severity == Severity.ERROR
+                        && (f.rule.startsWith("DEF_INGRESS_")
+                                || f.rule.startsWith("DEF_SELECT_")
+                                || f.rule.startsWith("SPEC_INGRESS_")
+                                || f.rule.startsWith("SPEC_SEND_AND_WAIT_")))
+                .toList();
+        assertTrue(ingressErrors.isEmpty(), "ingress contract errors:\n" + lines(ingressErrors));
+
         if (Boolean.getBoolean("nodeaudit.strict")) {
             List<Finding> errors = findings.stream().filter(f -> f.severity == Severity.ERROR).toList();
             assertTrue(errors.isEmpty(), errors.size() + " contract errors, see " + REPORT_DIR.resolve("report.md"));
@@ -144,12 +153,46 @@ class NodeContractAuditTest {
                 if (opts.isEmpty()) {
                     f.add(new Finding(key, Severity.WARN, "DEF_SELECT_OPTIONS",
                             "select '" + e.getKey() + "' has no static options (fine only if the designer fills them)"));
-                } else if (!value.isEmpty() && !opts.contains(value)) {
-                    f.add(new Finding(key, Severity.ERROR, "DEF_SELECT_DEFAULT",
-                            "select '" + e.getKey() + "' default '" + value + "' is not one of " + opts));
+                } else {
+                    List<SelectOptionSyntax.ParsedOption> parsedOpts = SelectOptionSyntax.parseOptions(opts);
+                    Set<String> pureValues = new LinkedHashSet<>();
+                    List<String> ingressValues = new ArrayList<>();
+                    for (SelectOptionSyntax.ParsedOption po : parsedOpts) {
+                        if (po.value().isEmpty()) {
+                            f.add(new Finding(key, Severity.ERROR, "DEF_SELECT_OPTION_SYNTAX",
+                                    "select '" + e.getKey() + "' has blank pure value in " + opts));
+                        } else if (!pureValues.add(po.value())) {
+                            f.add(new Finding(key, Severity.ERROR, "DEF_SELECT_OPTION_DUPLICATE",
+                                    "select '" + e.getKey() + "' repeats option value '" + po.value() + "'"));
+                        }
+                        if (po.isIngressRole()) {
+                            ingressValues.add(po.value());
+                        }
+                    }
+                    if (!value.isEmpty() && !pureValues.contains(value)) {
+                        f.add(new Finding(key, Severity.ERROR, "DEF_SELECT_DEFAULT",
+                                "select '" + e.getKey() + "' default '" + value + "' is not one of " + pureValues));
+                    }
+                    if (!ingressValues.isEmpty()) {
+                        Map<String, Object> wk = d.config.get("webhook_key");
+                        if (wk == null || !"webhook_key".equals(str(wk.get("type")))) {
+                            f.add(new Finding(key, Severity.ERROR, "DEF_INGRESS_NO_WEBHOOK_KEY",
+                                    "select '" + e.getKey() + "' declares ingress role(s) " + ingressValues
+                                            + " without a webhook_key config parameter of type 'webhook_key'"));
+                        } else {
+                            Set<String> rulesShowingWebhookKey = filterRulesShowingParam(c.get("filterRules"), "webhook_key");
+                            for (String iv : ingressValues) {
+                                if (!rulesShowingWebhookKey.contains(iv)) {
+                                    f.add(new Finding(key, Severity.ERROR, "DEF_INGRESS_FILTER_RULE",
+                                            "select '" + e.getKey() + "' ingress option '" + iv
+                                                    + "' does not reveal webhook_key via filterRules"));
+                                }
+                            }
+                        }
+                    }
                 }
             }
-            if (!"password".equals(type) && SECRET_NAME.matcher(e.getKey()).find()) {
+            if (!"password".equals(type) && !"webhook_key".equals(type) && SECRET_NAME.matcher(e.getKey()).find()) {
                 f.add(new Finding(key, Severity.WARN, "DEF_SECRET_TYPE",
                         "config '" + e.getKey() + "' looks like a secret but type is '" + type + "'"));
             }
@@ -199,8 +242,17 @@ class NodeContractAuditTest {
                                   OfficialApiSpec spec, List<Finding> f) {
         Set<String> input = d.inputFields();
         Set<String> config = d.config.keySet();
-        Set<String> usedConfig = new HashSet<>(Set.of("operation", spec.timeoutConfigKey, "stream", "streaming"));
+        Set<String> usedConfig = new HashSet<>(Set.of("operation", spec.timeoutConfigKey, "stream", "streaming", "webhook_key"));
         Set<String> usedInput = new HashSet<>(RUNTIME_INPUT_KEYS);
+
+        if (spec.ingress != null) {
+            auditIngressSpec(key, d, spec, spec.ingress, usedConfig, f);
+        }
+        for (OfficialApiSpec.Operation op : spec.operations.values()) {
+            if (op.ingress != null) {
+                auditIngressSpec(key, d, spec, op.ingress, usedConfig, f);
+            }
+        }
 
         if (spec.baseUrl.isBlank() && spec.operations.values().stream().anyMatch(o -> o.baseUrl.isBlank()
                 && !"ingress".equals(o.kind))) {
@@ -213,7 +265,10 @@ class NodeContractAuditTest {
 
         Map<String, Object> opSelect = d.config.get("operation");
         if (opSelect != null) {
-            Set<String> options = new LinkedHashSet<>(strings(opSelect.get("options")));
+            Set<String> options = strings(opSelect.get("options")).stream()
+                    .map(SelectOptionSyntax::extractValue)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
             Set<String> ops = spec.operations.keySet();
             Set<String> notInSpec = minus(options, ops);
             Set<String> notInSelect = minus(ops, options);
@@ -323,6 +378,48 @@ class NodeContractAuditTest {
             f.add(new Finding(key, Severity.WARN, "SPEC_INPUT_UNUSED",
                     "INPUT field '" + i + "' is read by no operation"));
         }
+    }
+
+    private static void auditIngressSpec(String key, Definition d, OfficialApiSpec spec,
+                                         OfficialApiSpec.IngressSpec ing,
+                                         Set<String> usedConfig, List<Finding> f) {
+        for (String ck : ing.referencedConfigKeys()) {
+            usedConfig.add(ck);
+            if (!d.config.containsKey(ck)) {
+                f.add(new Finding(key, Severity.ERROR, "SPEC_INGRESS_CONFIG_MISSING",
+                        "ingress spec references config '" + ck + "' which is not declared in node_definition.json"));
+            }
+        }
+        if (ing.sendAndWait != null) {
+            OfficialApiSpec.Operation target = spec.operation(ing.sendAndWait.sendOperation);
+            if (target == null || "ingress".equals(target.kind)) {
+                f.add(new Finding(key, Severity.ERROR, "SPEC_SEND_AND_WAIT_TARGET",
+                        "sendAndWait.sendOperation '" + ing.sendAndWait.sendOperation + "' is missing or not http"));
+            }
+            if (!ing.sendAndWait.fallbackSendOperation.isBlank()) {
+                OfficialApiSpec.Operation fb = spec.operation(ing.sendAndWait.fallbackSendOperation);
+                if (fb == null || "ingress".equals(fb.kind)) {
+                    f.add(new Finding(key, Severity.ERROR, "SPEC_SEND_AND_WAIT_TARGET",
+                            "sendAndWait.fallbackSendOperation '" + ing.sendAndWait.fallbackSendOperation
+                                    + "' is missing or not http"));
+                }
+            }
+        }
+    }
+
+    private static Set<String> filterRulesShowingParam(Object rawRules, String paramCode) {
+        Set<String> matched = new LinkedHashSet<>();
+        for (Object ruleObj : Json.asList(rawRules)) {
+            Map<String, Object> rule = Json.asMap(ruleObj);
+            String when = str(rule.get("when"));
+            for (Object targetObj : Json.asList(rule.get("targets"))) {
+                Map<String, Object> target = Json.asMap(targetObj);
+                if (paramCode.equals(str(target.get("param"))) && Boolean.TRUE.equals(target.get("visible"))) {
+                    matched.add(when);
+                }
+            }
+        }
+        return matched;
     }
 
     private static void auditAuth(String key, Definition d, OfficialApiSpec spec,

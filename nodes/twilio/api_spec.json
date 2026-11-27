@@ -100,5 +100,37 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "none"
+    },
+    "verify": {
+      "type": "hmac_sha1_form",
+      "header": "x-twilio-signature",
+      "secretConfigKey": "auth_token",
+      "urlConfigKey": "webhook_url"
+    },
+    "extract": {
+      "idempotencyPath": "MessageSid",
+      "fallbackIdempotencyPaths": [
+        "SmsSid",
+        "CallSid"
+      ],
+      "correlationKeyPath": "From",
+      "fallbackCorrelationKeyPaths": [
+        "To",
+        "MessageSid"
+      ],
+      "eventTypePath": "MessageStatus",
+      "fields": {
+        "messageSid": "MessageSid",
+        "accountSid": "AccountSid",
+        "from": "From",
+        "to": "To",
+        "body": "Body",
+        "messageStatus": "MessageStatus"
+      }
+    }
   }
 }

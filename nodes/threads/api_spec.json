@@ -13,36 +13,88 @@
       "kind": "http",
       "method": "POST",
       "path": "/{threads_user_id}/threads",
-      "required": ["threads_user_id"],
-      "bodyFrom": ["media_type", "text", "image_url", "video_url"]
+      "required": [
+        "threads_user_id"
+      ],
+      "bodyFrom": [
+        "media_type",
+        "text",
+        "image_url",
+        "video_url"
+      ]
     },
     "thread_get": {
       "kind": "http",
       "method": "GET",
       "path": "/{media_id}",
-      "required": ["media_id"]
+      "required": [
+        "media_id"
+      ]
     },
     "reply_create": {
       "kind": "http",
       "method": "POST",
       "path": "/{threads_user_id}/threads",
-      "required": ["threads_user_id", "reply_to_id"],
-      "bodyFrom": ["media_type", "text", "reply_to_id"]
+      "required": [
+        "threads_user_id",
+        "reply_to_id"
+      ],
+      "bodyFrom": [
+        "media_type",
+        "text",
+        "reply_to_id"
+      ]
     },
     "insights_get": {
       "kind": "http",
       "method": "GET",
       "path": "/{media_id}/insights",
-      "required": ["media_id", "metric"],
-      "queryFrom": ["metric"]
+      "required": [
+        "media_id",
+        "metric"
+      ],
+      "queryFrom": [
+        "metric"
+      ]
     },
     "thread_publish": {
       "kind": "http",
       "method": "POST",
       "path": "/{threads_user_id}/threads_publish",
-      "required": ["threads_user_id", "creation_id"],
-      "bodyFrom": ["creation_id"]
+      "required": [
+        "threads_user_id",
+        "creation_id"
+      ],
+      "bodyFrom": [
+        "creation_id"
+      ]
     },
-    "trigger": { "kind": "ingress" }
+    "trigger": {
+      "kind": "ingress"
+    }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "query_challenge",
+      "method": "GET",
+      "modeParam": "hub.mode",
+      "modeValue": "subscribe",
+      "tokenParam": "hub.verify_token",
+      "tokenConfigKey": "verify_token",
+      "challengeParam": "hub.challenge",
+      "responseContentType": "text/plain"
+    },
+    "verify": {
+      "type": "hmac_sha256_hex",
+      "header": "x-hub-signature-256",
+      "prefix": "sha256=",
+      "secretConfigKey": "app_secret"
+    },
+    "extract": {
+      "itemsPath": "values[*]",
+      "correlationKeyPath": "field",
+      "eventTypePath": "field",
+      "maxItems": 100
+    }
   }
 }

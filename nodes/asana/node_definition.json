@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "project_create",
-          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'project_create', 'project_get', 'project_list', 'project_update', 'project_delete', 'task_create', 'task_get', 'task_list', 'task_search', 'task_update', 'task_delete', 'task_move', 'subtask_create', 'subtask_list', 'comment_add', 'comment_remove', 'tag_add', 'tag_remove', 'project_add_task', 'project_remove_task', 'user_get', 'user_list', 'listen'. listen/trigger/webhook_listen never open a socket \u2014 they return an error telling you to use a BPMN message event. Example: 'project_create'.",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'project_create', 'project_get', 'project_list', 'project_update', 'project_delete', 'task_create', 'task_get', 'task_list', 'task_search', 'task_update', 'task_delete', 'task_move', 'subtask_create', 'subtask_list', 'comment_add', 'comment_remove', 'tag_add', 'tag_remove', 'project_add_task', 'project_remove_task', 'user_get', 'user_list', 'listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'project_create'.",
           "children": []
         },
         {
@@ -40,7 +40,7 @@
           "type": "object",
           "required": false,
           "value": "{}",
-          "description": "Asana `data` envelope escape hatch for write ops. Purpose fields (name, notes, due_on, assignee, tag, text, \u2026) merge into data via bodyMap and win on conflict. Custom/rare keys stay here. Example: {\"custom_fields\":{\"123\":\"x\"}}.",
+          "description": "Asana `data` envelope escape hatch for write ops. Purpose fields (name, notes, due_on, assignee, tag, text, …) merge into data via bodyMap and win on conflict. Custom/rare keys stay here. Example: {\"custom_fields\":{\"123\":\"x\"}}.",
           "children": []
         },
         {
@@ -202,7 +202,7 @@
           "type": "number",
           "required": false,
           "value": "0",
-          "description": "Page size 1\u2013100 for project_list, task_list, task_search, user_list. Example: 50.",
+          "description": "Page size 1–100 for project_list, task_list, task_search, user_list. Example: 50.",
           "children": []
         },
         {
@@ -347,29 +347,29 @@
       "visible": true,
       "isPublic": false,
       "options": [
-        "project_create",
-        "project_get",
-        "project_list",
-        "project_update",
-        "project_delete",
-        "task_create",
-        "task_get",
-        "task_list",
-        "task_search",
-        "task_update",
-        "task_delete",
-        "task_move",
-        "subtask_create",
-        "subtask_list",
-        "comment_add",
-        "comment_remove",
-        "tag_add",
-        "tag_remove",
-        "project_add_task",
-        "project_remove_task",
-        "user_get",
-        "user_list",
-        "listen"
+        "project_create:Project Create",
+        "project_get:Project Get",
+        "project_list:Project List",
+        "project_update:Project Update",
+        "project_delete:Project Delete",
+        "task_create:Task Create",
+        "task_get:Task Get",
+        "task_list:Task List",
+        "task_search:Task Search",
+        "task_update:Task Update",
+        "task_delete:Task Delete",
+        "task_move:Task Move",
+        "subtask_create:Subtask Create",
+        "subtask_list:Subtask List",
+        "comment_add:Comment Add",
+        "comment_remove:Comment Remove",
+        "tag_add:Tag Add",
+        "tag_remove:Tag Remove",
+        "project_add_task:Project Add Task",
+        "project_remove_task:Project Remove Task",
+        "user_get:User Get",
+        "user_list:User List",
+        "listen:Listen (Incoming):listen"
       ],
       "validationRules": {},
       "filterRules": [
@@ -862,6 +862,19 @@
               "visible": true
             }
           ]
+        },
+        {
+          "when": "listen",
+          "targets": [
+            {
+              "param": "webhook_key",
+              "visible": true
+            },
+            {
+              "param": "webhook_secret",
+              "visible": true
+            }
+          ]
         }
       ]
     },
@@ -870,7 +883,7 @@
       "shortCode": "personal_access_token",
       "label": "Personal Access Token",
       "type": "password",
-      "description": "Provider credential for auth.type=bearer (configKey personal_access_token). REQUIRED secret \u2014 StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
+      "description": "Provider credential for auth.type=bearer (configKey personal_access_token). REQUIRED secret — StudioQuack secret binding only; never put this on INPUT. Never logged. Example: 'redacted-token'.",
       "value": "",
       "required": true,
       "instanceEditable": true,
@@ -987,7 +1000,7 @@
       "shortCode": "data",
       "label": "Data",
       "type": "object",
-      "description": "Asana `data` envelope escape hatch for write ops. Purpose fields (name, notes, due_on, assignee, tag, text, \u2026) merge into data via bodyMap and win on conflict. Custom/rare keys stay here. Example: {\"custom_fields\":{\"123\":\"x\"}}.",
+      "description": "Asana `data` envelope escape hatch for write ops. Purpose fields (name, notes, due_on, assignee, tag, text, …) merge into data via bodyMap and win on conflict. Custom/rare keys stay here. Example: {\"custom_fields\":{\"123\":\"x\"}}.",
       "value": "",
       "required": false,
       "instanceEditable": true,
@@ -1026,7 +1039,7 @@
       "shortCode": "limit",
       "label": "Limit",
       "type": "number",
-      "description": "Page size 1\u2013100 for project_list, task_list, task_search, user_list. Example: 50.",
+      "description": "Page size 1–100 for project_list, task_list, task_search, user_list. Example: 50.",
       "value": "",
       "required": false,
       "instanceEditable": true,
@@ -1234,7 +1247,7 @@
       "shortCode": "timeout_seconds",
       "label": "Timeout (seconds)",
       "type": "number",
-      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative \u2192 25. Example: 25.",
+      "description": "Connect+read timeout for the official HTTPS call. Positive integer. Blank/0/negative → 25. Example: 25.",
       "value": "25",
       "required": false,
       "instanceEditable": true,
@@ -1248,6 +1261,32 @@
       "label": "workspace_gid",
       "type": "string",
       "description": "Default workspace GID for task_search when INPUT workspace_gid is empty.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e47006b4-b7df-5797-b735-27556c41961b",
+      "shortCode": "webhook_key",
+      "label": "Webhook Key",
+      "type": "webhook_key",
+      "description": "Engine Webhook API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node.",
+      "value": "",
+      "required": false,
+      "instanceEditable": true,
+      "visible": true,
+      "isPublic": false,
+      "validationRules": {}
+    },
+    {
+      "_id": "e9fc62ab-9ce8-5975-a392-c9800ce5a0d4",
+      "shortCode": "webhook_secret",
+      "label": "Asana Webhook Secret",
+      "type": "password",
+      "description": "Secret received in X-Hook-Secret during handshake, used for constant-time X-Hook-Signature HMAC-SHA256 verification. Never logged.",
       "value": "",
       "required": false,
       "instanceEditable": true,

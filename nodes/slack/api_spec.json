@@ -502,5 +502,56 @@
     "listen": {
       "kind": "ingress"
     }
+  },
+  "ingress": {
+    "handshake": {
+      "type": "json_challenge",
+      "method": "POST",
+      "typePath": "type",
+      "typeValue": "url_verification",
+      "challengePath": "challenge",
+      "responseKey": "challenge",
+      "responseContentType": "application/json",
+      "verifyBeforeHandshake": true
+    },
+    "verify": {
+      "type": "hmac_sha256_timestamped",
+      "signatureHeaderFormat": "slack",
+      "header": "x-slack-signature",
+      "timestampHeader": "x-slack-request-timestamp",
+      "prefix": "v0=",
+      "timestampPrefix": "v0:",
+      "timestampSeparator": ":",
+      "timestampToleranceSeconds": 300,
+      "secretConfigKey": "signing_secret"
+    },
+    "extract": {
+      "idempotencyPath": "event_id",
+      "correlationKeyPath": "event.thread_ts",
+      "fallbackCorrelationKeyPaths": [
+        "event.channel",
+        "event.ts"
+      ],
+      "eventTypePath": "event.type",
+      "fields": {
+        "eventId": "event_id",
+        "teamId": "team_id",
+        "eventType": "event.type",
+        "channel": "event.channel",
+        "user": "event.user",
+        "text": "event.text",
+        "ts": "event.ts",
+        "threadTs": "event.thread_ts"
+      }
+    },
+    "sendAndWait": {
+      "sendOperation": "send-message",
+      "correlationKeyFrom": [
+        "thread_ts",
+        "data.ts",
+        "channel",
+        "data.channel"
+      ]
+    }
   }
 }
