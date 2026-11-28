@@ -55,20 +55,27 @@ public final class AiAgentNode implements NodeHandler {
             List<Map<String, Object>> turnFiles = new ArrayList<>(cfg.files());
             turnFiles.addAll(cfg.voices());
             session.inputFiles.addAll(AgentJson.filesToContentBlocks(turnFiles));
+            int dataToolsN = 0;
+            for (Map<String, Object> td : session.toolDefinitions) {
+                if ("data".equals(td.get("port_value"))) {
+                    dataToolsN++;
+                }
+            }
             AgentJson.log(helper, "ai-agent tools_ready n=" + session.toolDefinitions.size()
+                    + " data_tools_n=" + dataToolsN
                     + " has_memory=" + session.useRemoteMemory
                     + " has_thoughts=" + session.thoughtsConnected()
                     + " files_n=" + cfg.files().size()
                     + " voices_n=" + cfg.voices().size());
 
-            String rag = AgentRag.prefetchRelevantDocuments(session, cfg.mergedStatic());
-            AgentJson.log(helper, "ai-agent pre_rag_done rag_chars="
-                    + (rag == null ? 0 : rag.length()));
-
+            // Pre-RAG on turn start is deliberately removed: connected `data` nodes are exposed
+            // as on-demand RAG search tools so the agent searches relevant keywords when needed.
             AgentMemory.Prepared prepared = AgentMemory.prepareInitialHistory(
-                    session, cfg.role(), cfg.instructions(), cfg.mergedStatic(), cfg.files(), rag,
+                    session, cfg.role(), cfg.instructions(), cfg.mergedStatic(), cfg.files(),
                     cfg.threadMessages());
-            AgentMemory.addHistoryMessage(session, List.of(prepared.userMessage()));
+            if (!prepared.messagesToPersist().isEmpty()) {
+                AgentMemory.addHistoryMessage(session, prepared.messagesToPersist());
+            }
 
             Map<String, Object> finalPayload = AgentLoop.run(
                     session, prepared.history(), cfg.maxIterations(), cfg.contextWindow());

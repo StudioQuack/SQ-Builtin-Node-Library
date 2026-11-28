@@ -13,8 +13,8 @@ Handler: `AiAgentNode` → `AgentLoop`. Dispatch: `NodeLibraryApp` routes the in
 | Port | Direction | Type | maxConnections | Schema | How the node uses it |
 | --- | --- | --- | --- | --- | --- |
 | `model` | FUNCTION | `model` | 1 | Request `{messages, tools, stream:true}`. Response: assistant payload (possibly wrapped). | **Required at runtime.** Zero connections fail with `Missing required LLM connection on \`model\` FUNCTION port.` The agent may call this port **N times per run** (first round + one call per tool-loop iteration). Prefer `executeStream`; fall back to atomic `execute`. |
-| `memory` | FUNCTION | `memory` | 1 | Request `{operation, key, value?, start?, stop?}`. Response `{status, value}` or `{data:{value}}`. | Optional. The agent adapts history onto a **generic cache** schema: append is `RPUSH` of a JSON message at `sq:memory:<internal-uuid>`; read is `LRANGE 0 -1`. Wire Redis Cache (or any SET/GET/DEL/RPUSH/LRANGE node). Never `add_message` / `get_history`. Unconnected → in-process cache. Remote failures fall back to in-memory. |
-| `data` | FUNCTION | `data` | unbounded (`0`) | Request `{operation:QUERY, query, embedding?, topK, filter}`. Response `matches` / `data.value`. | Pre-RAG: every connected **generic vector-DB** is invoked once with the merged prompt **before** the first LLM call (parallel, cap 8). The LLM still sees `{query}`; the agent maps onto the peer schema (`vector.query` / `collection.query` / `QUERY`, `topK`/`n_results`/`limit`, `filter`/`where`). |
+| `memory` | FUNCTION | `memory` | 1 | Request `{operation, key, value?, start?, stop?}`. Response `{status, value}` or `{data:{value}}`. | Optional. Persists full execution history (including tool calls and tool outputs) across runs on a **generic cache** schema: `RPUSH` / `LRANGE 0 -1` / `LTRIM` / `DEL` at `sq:memory:<workflowId:nodeId:conversationId>` (falls back to a per-invoke UUID when no conversation id is present). On follow-up turns, reads existing memory and diffs against the incoming chat thread so only new messages are appended without duplicating prior turns. Wire Redis Cache (or any SET/GET/DEL/RPUSH/LRANGE/LTRIM node). Unconnected → in-process cache. Remote failures fall back to in-memory. |
+| `data` | FUNCTION | `data` | unbounded (`0`) | Request `{operation:QUERY, query, embedding?, topK, filter}`. Response `matches` / `data.value`. | On-demand RAG search tools. Pre-RAG at turn start is **not** run. Every connected **generic vector-DB** is exposed to the model as a callable tool with `{query, topK?}` (with `DATA_SOURCE_RAG_RULES` injected into the system prompt) so the agent searches relevant keywords when needed before answering. The agent maps onto the peer schema (`vector.query` / `collection.query` / `QUERY`, `topK`/`n_results`/`limit`, `filter`/`where`). |
 | `tools` | FUNCTION | `tools` | unbounded | Request `{request, name, description}` (DuckTape wrapper). Response `{response}` or a bare value. | DuckTape tools. Name + description live on the **connection edge**. The agent may invoke this port **N times per run** (every model `tool_calls` entry, parallel cap 8). Duplicate `(name, args)` in one run returns a cached-style `tool_result`. |
 | `sub_agent` | FUNCTION | `sub_agent` | unbounded | Request `{role?, instructions?, prompt, files?}`. Response `{final_answer, output_files?}`. | Synthesises tool `delegate_to_agent`. Sub-agent instance config wins over master overrides. `files` are forwarded. **No** `conversation_id` passthrough. |
 | `thoughts` | FUNCTION | `thoughts` | (observability) | Payload `{thoughts}` — a single string, the human-readable reasoning text. | Live side-channel. One `execute("thoughts", {thoughts})` **per** thinking block, **per** tool-dispatch notice, **per** summary — not a dump at the end — plus live deltas via `emitPartial(port='thoughts', channel='thinking')`. Unconnected → drop. Failures never fail the agent. |
@@ -47,7 +47,7 @@ A connection appears in the tool catalog only when DuckTape supplies a non-empty
 
 JSON Schema `request.properties` come from mappings whose `sourcePath` is `request` (`targetPath` = the target node's input field). Types are normalised (`list`→`array`, `dict`→`object`, …).
 
-`data` tools are invoked at pre-RAG (and again if the model calls them) with a generic vector query `{operation:"QUERY", query, topK, filter}` plus `embedding` when the model supplied one. `AgentPortMapping` projects that onto the peer INPUT schema. Retrieved documents are injected as a system message (`Retrieved Context`) before the user turn.
+`data` tools are **never** invoked automatically at turn start (pre-RAG is removed). Every connected `data` node is exposed to the model as a callable RAG search tool (`{query, topK?}`) and `DATA_SOURCE_RAG_RULES` instruct the model to search relevant keywords when needed before answering. When called, `AgentPortMapping` projects `{operation:"QUERY", query, topK, filter}` (plus optional `embedding`) onto the peer INPUT schema and returns the retrieved matches as a `tool` message.
 
 ### FUNCTION `sub_agent`
 
@@ -100,7 +100,7 @@ Instance-editable. No secrets on this node — API keys live on the connected pr
 
 ### Per-invoke session
 
-`AgentConfig.setup` allocates `AgentSession`: `llmNodeId` from the `model` edge, optional `memoryId` / `thoughtsNodeId`, and a fresh UUID `conversationId`. Concurrent dispatches do not share history (Python process-globals are gone). `AgentMemory.release` drops the in-memory bucket in `finally`.
+`AgentConfig.setup` allocates `AgentSession`: `llmNodeId` from the `model` edge, optional `memoryId` / `thoughtsNodeId`, and a deterministic `conversationId` scoped from `workflowId:nodeId:conversationId` when the execution context carries a conversation id (falling back to a fresh UUID for non-conversational runs). Concurrent dispatches do not share mutable state. `AgentMemory.release` drops only the in-process JVM fallback bucket in `finally` — remote memory stays persisted across runs.
 
 ### Helper channel (UDS)
 
@@ -114,12 +114,11 @@ Instance-editable. No secrets on this node — API keys live on the connected pr
 
 ### Agent loop (`AgentLoop.run`)
 
-1. Merge config + `main_input`. Build tool catalog (`tools` + `data` + optional `delegate_to_agent`).
-2. Pre-RAG: execute every `data` tool with the merged prompt (parallel, max 8 workers). Inject a `Retrieved Context` system message when documents return.
-3. `prepareInitialHistory`: core system (role + instructions + optional `STRICT_TOOL_CALL_RULES`), optional RAG message, user turn (text + file blocks). Old stored `system` rows from memory are demoted to `user`.
-4. Round 0: optional context compaction → `safeCallLlm` → persist assistant message.
-5. If `tool_calls` is empty, stop and return that payload.
-6. Else for `it = 1..maxIterations`: emit `tool_call` thoughts → dispatch tools in parallel (max 8) → optionally refresh from remote memory → another LLM round. Stop when the model returns no `tool_calls`.
+1. Merge config + `main_input`. Build tool catalog (`tools` + on-demand RAG `data` tools + optional `delegate_to_agent`). Pre-RAG is **not** run at turn start.
+2. `prepareInitialHistory`: build core system (`role` + `instructions` + optional `STRICT_TOOL_CALL_RULES` + `DATA_SOURCE_RAG_RULES` when any `data` node is wired). Read existing history from `memory`, diff against incoming full chat (`threadMessages`), trim/clear on prompt-edit divergence, and persist only the new diff messages. Old stored `system` rows from memory are demoted to `user`.
+3. Round 0: optional context compaction (persisted back to remote memory when connected) → `safeCallLlm` → persist assistant message.
+4. If `tool_calls` is empty, stop and return that payload.
+5. Else for `it = 1..maxIterations`: emit `tool_call` thoughts → dispatch tools (including any on-demand `data` RAG searches the model requested) in parallel (max 8) → persist tool results → another LLM round. Stop when the model returns no `tool_calls`.
 
 Every `tool_use` gets a `tool_result` (Anthropic-strict), including errors.
 
@@ -134,7 +133,7 @@ Thinking text also republishes on FUNCTION `thoughts` after the round (`publishT
 
 ### Memory
 
-- Remote: `execute("memory", {operation:"RPUSH"|"LRANGE", key:"sq:memory:<uuid>", value?, start?, stop?})` after `AgentPortMapping` projects onto the peer cache schema.
+- Remote: `execute("memory", {operation:"RPUSH"|"LRANGE"|"LTRIM"|"DEL", key:"sq:memory:<scoped-conversation-id>", value?, start?, stop?})` after `AgentPortMapping` projects onto the peer cache schema. On subsequent turns of the same conversation, stored history is loaded and compared against the incoming chat transcript so only new messages are appended — preserving prior tool calls and tool outputs without duplicating chat turns.
 - Local: `ConcurrentHashMap<conversationId, CopyOnWriteArrayList>` — released at end of invoke, so it does **not** persist across runs unless a memory node is wired.
 - `add`/`get` failures log a warning (shape/ids only) and fall back to the local bucket.
 

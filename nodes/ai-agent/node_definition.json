@@ -4,7 +4,7 @@
   "version": "2",
   "name": "AI Agent",
   "label": "AI Agent",
-  "description": "Multimodal agent orchestrator (templateId 5c8b0d45-1d10-4f2e-844c-2318af96b2f1). Accepts text plus image/audio/video/document attachments on INPUT main_input, calls the connected LLM on FUNCTION model, fans out to connected tools / sub-agents / data sources, emits the final answer plus generated media on OUTPUT main_output, and publishes live reasoning and tool-dispatch events on FUNCTION thoughts. The model request is {messages, tools} plus optional inputFiles; the model may return outputFiles. The handler prefers helper executeStream for that call and falls back to atomic execute when executeStream is missing or returns a non-stream result; provider envelopes (result / response / llm_output / output / data / value, and one-element lists) are unwrapped to the canonical assistant payload. Preserves v1 dynamics: edge-time tool name + description, alias-resolved tool/sub-agent dispatch, in-memory ↔ remote memory fallback, pre-RAG over data sources, wrapper response merge, and the Anthropic-strict every-tool_use-has-a-tool_result invariant. conversation_id is generated internally and is never exposed on main_input or main_output. A missing model connection fails the run with RuntimeError. Example main_input: {\"prompt\":\"Where is order 42?\",\"files\":[{\"kind\":\"image\",\"mime_type\":\"image/jpeg\",\"source\":\"base64\",\"data\":\"/9j/…\",\"name\":\"label.jpg\"}]}. Data protection: prompts, attachments, and conversation context leave this host to the configured model provider (GDPR/data-processing notice). Secrets belong only in configurationParameters and are never logged.",
+  "description": "Multimodal agent orchestrator (templateId 5c8b0d45-1d10-4f2e-844c-2318af96b2f1). Accepts text plus image/audio/video/document attachments on INPUT main_input, calls the connected LLM on FUNCTION model, fans out to connected tools / sub-agents / data sources, emits the final answer plus generated media on OUTPUT main_output, and publishes live reasoning and tool-dispatch events on FUNCTION thoughts. The model request is {messages, tools} plus optional inputFiles; the model may return outputFiles. The handler prefers helper executeStream for that call and falls back to atomic execute when executeStream is missing or returns a non-stream result; provider envelopes (result / response / llm_output / output / data / value, and one-element lists) are unwrapped to the canonical assistant payload. Preserves v1 dynamics: edge-time tool name + description, alias-resolved tool/sub-agent dispatch, diff-synced cross-run remote memory (preserving tool calls and tool outputs across turns without duplicating full chat history), on-demand RAG over connected data sources (never pre-fetched blindly at turn start), wrapper response merge, and the Anthropic-strict every-tool_use-has-a-tool_result invariant. conversation_id is scoped internally from the execution context (or a fresh UUID when non-conversational) and is never exposed on main_input or main_output. A missing model connection fails the run with RuntimeError. Example main_input: {\"prompt\":\"Where is order 42?\",\"files\":[{\"kind\":\"image\",\"mime_type\":\"image/jpeg\",\"source\":\"base64\",\"data\":\"/9j/…\",\"name\":\"label.jpg\"}]}. Data protection: prompts, attachments, and conversation context leave this host to the configured model provider (GDPR/data-processing notice). Secrets belong only in configurationParameters and are never logged.",
   "icon": "psychology",
   "tags": [
     "agent",
@@ -36,7 +36,7 @@
           "type": "object",
           "required": false,
           "value": "{}",
-          "description": "Conversation history the provider must complete. Purpose: built by the agent from system (role+instructions+STRICT_TOOL_CALL_RULES), optional pre-RAG context, prior memory, and the current user turn. Accepted value: list of {role, content, tool_calls?, thinking?, thoughts?, tool_call_id?, name?}. content is a string or a list of typed blocks (text/image/audio/video/document/tool_use/tool_result). MULTIMODAL FILES travel here: main_input.files are hoisted into the latest user message as {type:'image'|'audio'|'video'|'document', …} blocks. Omit is illegal at runtime (the agent always sends at least system+user). Example: [{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"Read this PDF.\"},{\"type\":\"document\",\"mime_type\":\"application/pdf\",\"source\":\"base64\",\"data\":\"JVBERi0…\",\"name\":\"spec.pdf\"}]}].",
+          "description": "Conversation history the provider must complete. Purpose: built by the agent from system (role+instructions+STRICT_TOOL_CALL_RULES+on-demand DATA_SOURCE_RAG_RULES when data tools are wired), diff-synced prior memory, and the current user turn. Accepted value: list of {role, content, tool_calls?, thinking?, thoughts?, tool_call_id?, name?}. content is a string or a list of typed blocks (text/image/audio/video/document/tool_use/tool_result). MULTIMODAL FILES travel here: main_input.files are hoisted into the latest user message as {type:'image'|'audio'|'video'|'document', …} blocks. Omit is illegal at runtime (the agent always sends at least system+user). Example: [{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"Read this PDF.\"},{\"type\":\"document\",\"mime_type\":\"application/pdf\",\"source\":\"base64\",\"data\":\"JVBERi0…\",\"name\":\"spec.pdf\"}]}].",
           "children": []
         },
         {
@@ -326,7 +326,7 @@
       "name": "memory",
       "type": "FUNCTION",
       "value": "memory",
-      "description": "Optional remote short-term memory (maxConnections=1). Purpose: persist turns across runs on a GENERIC cache node (Redis Cache, or any node whose INPUT speaks SET/GET/DEL/RPUSH/LRANGE). The agent itself adapts chat history onto that schema: append is RPUSH of a JSON message at key sq:memory:<internal-uuid>; read is LRANGE 0 -1. conversation_id is never sent on the wire and never taken from main_input. Unconnected → in-process cache. Remote failures log a warning and fall back to in-memory. Responses unwrap from value / data.value / history / matches lists (JSON strings are parsed). Example append: {\"operation\":\"RPUSH\",\"key\":\"sq:memory:b3c1e2a0-…\",\"value\":{\"role\":\"user\",\"content\":\"Where is order 42?\"}}.",
+      "description": "Optional remote conversation memory (maxConnections=1). Purpose: persist full execution turns (including tool calls and tool outputs) across runs on a GENERIC cache node (Redis Cache, or any node whose INPUT speaks SET/GET/DEL/RPUSH/LRANGE/LTRIM). The agent scopes the key as sq:memory:<workflowId:nodeId:conversationId> (or a fresh UUID for non-conversational runs), reads existing history via LRANGE 0 -1, compares it against the incoming full chat thread, trims/clears on prompt-edit divergence (LTRIM/DEL), and appends only the new diff turns via RPUSH — never duplicating prior chat messages. conversation_id is never taken from main_input or written to main_output. Unconnected → in-process cache. Remote failures log a warning and fall back to in-memory. Responses unwrap from value / data.value / history / matches lists (JSON strings are parsed). Example append: {\"operation\":\"RPUSH\",\"key\":\"sq:memory:wf1:node1:conv1\",\"value\":{\"role\":\"user\",\"content\":\"Where is order 42?\"}}.",
       "required": false,
       "isDefault": false,
       "expandable": false,
@@ -340,7 +340,7 @@
           "type": "string",
           "required": false,
           "value": "",
-          "description": "Generic cache verb the agent emits. Purpose: the connected cache node branches on this through its normal INPUT.operation (or an alias the mapper projects onto: command/op). EXACT values this agent sends: 'RPUSH' (append one serialized turn) | 'LRANGE' (read the conversation list). The mapper remaps to a peer-declared synonym when the peer schema lists LPUSH/lpush (for append) or lrange (for read). Never 'add_message' or 'get_history'. Omit is not used. Example append: 'RPUSH'. Example read: 'LRANGE'.",
+          "description": "Generic cache verb the agent emits. Purpose: the connected cache node branches on this through its normal INPUT.operation (or an alias the mapper projects onto: command/op). EXACT values this agent sends: 'RPUSH' (append one serialized turn) | 'LRANGE' (read the conversation list) | 'LTRIM' (trim diverged suffix) | 'DEL' (clear before reset/compaction). Never 'add_message' or 'get_history'. Omit is not used. Example append: 'RPUSH'. Example read: 'LRANGE'.",
           "children": []
         },
         {
@@ -349,7 +349,7 @@
           "type": "string",
           "required": false,
           "value": "",
-          "description": "Cache key for this agent's short-term history. Purpose: isolate this invoke from every other agent (including sub-agents). Accepted value: 'sq:memory:' plus the internal uuid4 generated per invoke. Never read from main_input or written to main_output. Empty conversation id still uses the prefix (key 'sq:memory:'). Example: 'sq:memory:9f1c6d2e-4a11-4b22-8c33-77aa00bbcc11'.",
+          "description": "Cache key for this agent's conversation history. Purpose: persist across turns of the same conversation while isolating different workflows and sibling/sub-agents. Accepted value: 'sq:memory:' plus scoped workflowId:nodeId:conversationId (or internal uuid4 when non-conversational). Never read from main_input or written to main_output. Example: 'sq:memory:wf1:agent1:9f1c6d2e-4a11-4b22-8c33-77aa00bbcc11'.",
           "children": []
         },
         {
@@ -358,7 +358,7 @@
           "type": "object",
           "required": false,
           "value": "{}",
-          "description": "Serialized turn stored when operation='RPUSH'. Purpose: append one canonical message. Accepted shape: {role, content, tool_calls?, …} after normalizeMessageForStorage. Omitted on LRANGE. The peer may persist this as JSON. Example: {\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"Order 42 is in bin A.\"}]}.",
+          "description": "Serialized turn stored when operation='RPUSH'. Purpose: append one canonical message. Accepted shape: {role, content, tool_calls?, …} after normalizeMessageForStorage. Omitted on LRANGE/LTRIM/DEL. The peer may persist this as JSON. Example: {\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"Order 42 is in bin A.\"}]}.",
           "children": []
         },
         {
@@ -367,7 +367,7 @@
           "type": "number",
           "required": false,
           "value": "0",
-          "description": "Inclusive list index for operation='LRANGE'. Purpose: window the remote list; the agent always sends 0 (full history — windowing/compaction stay in the agent). Accepted values: integers. Default 0. Negative indexes follow Redis (from the tail). Example: 0.",
+          "description": "Inclusive list index for operation='LRANGE' or 'LTRIM'. Purpose: window or trim the remote list; the agent sends 0. Accepted values: integers. Default 0. Negative indexes follow Redis (from the tail). Example: 0.",
           "children": []
         },
         {
@@ -376,7 +376,7 @@
           "type": "number",
           "required": false,
           "value": "-1",
-          "description": "Inclusive list end for operation='LRANGE'. Purpose: the agent always sends -1 (through the last element). Accepted values: integers. -1 means the last element on Redis-style lists. Example: -1.",
+          "description": "Inclusive list end for operation='LRANGE' (-1) or 'LTRIM' (keepCount - 1). Accepted values: integers. -1 means the last element on Redis-style lists. Example: -1.",
           "children": []
         },
         {
@@ -424,7 +424,7 @@
       "name": "data",
       "type": "FUNCTION",
       "value": "data",
-      "description": "Optional data sources for pre-RAG retrieval (maxConnections=0 means unbounded). Purpose: before the first LLM call, the agent executes every connected GENERIC vector-DB / search node (PGVector, Pinecone, Chroma, Qdrant, or any compatible INPUT schema) with a similarity-query payload and injects retrieved documents into history. The LLM still sees a tool with {query}; the agent maps that onto the peer's declared fields (operation/QUERY, query, embedding?, topK, filter). Each connection is also exposed as a tool named from the connection-edge DuckTape 'name'. Unconnected → skip pre-RAG. Example call: {\"operation\":\"QUERY\",\"query\":\"order 42 warehouse location\",\"topK\":5,\"filter\":{}}.",
+      "description": "Optional data sources for on-demand RAG retrieval (maxConnections=0 means unbounded). Purpose: every connected GENERIC vector-DB / search node (PGVector, Pinecone, Chroma, Qdrant, or any compatible INPUT schema) is exposed to the LLM as a callable RAG search tool ({query, topK?}). Pre-RAG at conversation/turn start is NOT performed; instead the agent decides relevant search keywords and queries connected data tools on demand before answering. The agent maps tool calls onto the peer's declared fields (operation/QUERY, query, embedding?, topK, filter). Example call: {\"operation\":\"QUERY\",\"query\":\"order 42 warehouse location\",\"topK\":5,\"filter\":{}}.",
       "required": false,
       "isDefault": false,
       "expandable": false,
@@ -447,7 +447,7 @@
           "type": "string",
           "required": false,
           "value": "",
-          "description": "Free-text retrieval query. Purpose: filled by the agent with the merged user prompt during pre-RAG, or with the model's tool args when the LLM calls the data source as a tool (the LLM-facing catalog still exposes {query:string}). Accepted value: any string. Empty query still invokes the node; the source decides what that means. Example: 'invoice 8831 line items'.",
+          "description": "Free-text keyword or semantic retrieval query. Purpose: filled by the model's tool args when the LLM calls the data source as an on-demand RAG tool (the LLM-facing catalog exposes {query:string, topK?:integer}). Accepted value: any string. Example: 'invoice 8831 line items'.",
           "children": []
         },
         {
@@ -465,7 +465,7 @@
           "type": "number",
           "required": false,
           "value": "5",
-          "description": "Neighbor count for the similarity query. Purpose: default 5 when the model/pre-RAG omit it. Accepted values: integers ≥ 1. Non-positive / blank / non-numeric → 5. Mapped onto peer fields topK | top_k | n_results | limit | k. Example: 5. Example for a narrow lookup: 3.",
+          "description": "Neighbor count for the similarity query. Purpose: default 5 when the model omits it. Accepted values: integers ≥ 1. Non-positive / blank / non-numeric → 5. Mapped onto peer fields topK | top_k | n_results | limit | k. Example: 5. Example for a narrow lookup: 3.",
           "children": []
         },
         {
@@ -483,7 +483,7 @@
           "type": "string",
           "required": false,
           "value": "data_tool",
-          "description": "Data-source tool name shown to the LLM. Purpose: read from the connection edge (DuckTape sourcePath=name), not from this default. Required (together with description) for the connection to appear in the tool catalog. NOT sent on the wire to the peer (avoids colliding with Pinecone index name). Accepted value: non-empty identifier. Default 'data_tool' is only a schema placeholder. Example: 'orders_kb'.",
+          "description": "Optional data-source tool name shown to the LLM. Purpose: read from the connection edge (DuckTape sourcePath=name); if omitted, synthesized automatically from the connected node's name so the source is always callable for RAG. NOT sent on the wire to the peer. Example: 'orders_kb'.",
           "children": []
         },
         {
@@ -492,7 +492,7 @@
           "type": "string",
           "required": false,
           "value": "",
-          "description": "When-to-call text shown to the LLM. Purpose: read from the connection edge. Empty description drops the connection from the tool catalog (has_config && name && description must all be true). NOT sent on the wire to the peer. Example: 'Search internal order records by order id or customer name.'.",
+          "description": "Optional when-to-call text shown to the LLM. Purpose: read from the connection edge; if omitted, a default RAG search description is synthesized automatically. NOT sent on the wire to the peer. Example: 'Search internal order records by order id or customer name.'.",
           "children": []
         }
       ],
@@ -512,7 +512,7 @@
           "type": "list",
           "required": false,
           "value": "[]",
-          "description": "Retrieved neighbors. Purpose: injected as Retrieved Context when non-empty. Accepted value: list of objects or strings ({id?, document|text|title?, score?, metadata?}). Also accepted envelopes: documents, value, data.matches, data.value, result, response. Empty → that source contributes nothing. Example: [{\"id\":\"42\",\"document\":\"Order 42 is in bin A-12\",\"score\":0.91}].",
+          "description": "Retrieved neighbors returned to the model as a tool result. Accepted value: list of objects or strings ({id?, document|text|title?, score?, metadata?}). Also accepted envelopes: documents, value, data.matches, data.value, result, response. Example: [{\"id\":\"42\",\"document\":\"Order 42 is in bin A-12\",\"score\":0.91}].",
           "children": []
         },
         {
@@ -521,7 +521,7 @@
           "type": "string",
           "required": false,
           "value": "",
-          "description": "Failure message from the data node. Purpose: a failed source contributes no documents (pre-RAG continues). Never contains secrets. Empty/omit on success. Example: 'collection not found'.",
+          "description": "Failure message from the data node. Returned to the model as a tool error message so it can refine or proceed. Never contains secrets. Empty/omit on success. Example: 'collection not found'.",
           "children": []
         }
       ]

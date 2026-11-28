@@ -202,4 +202,59 @@ class AgentConfigTest {
         assertEquals(1, snap.threadMessages().size());
         assertEquals("hi", snap.threadMessages().get(0).get("content"));
     }
+
+    @Test
+    void resolveConversationIdIsDeterministicAndScopedAcrossRuns() {
+        Map<String, Object> ctx = Map.of(
+                "workflowId", "wf-1",
+                "agenticInfo", Map.of("conversationId", "conv-42"));
+        StudioQuackHelper h1 = new StudioQuackHelper(ctx);
+        StudioQuackHelper h2 = new StudioQuackHelper(ctx);
+
+        String k1 = AgentConfig.resolveConversationId(h1, "agent-node-1");
+        String k2 = AgentConfig.resolveConversationId(h2, "agent-node-1");
+        assertEquals("wf-1:agent-node-1:conv-42", k1);
+        assertEquals(k1, k2);
+    }
+
+    @Test
+    void resolveConversationIdIsolatesSiblingAgentsAndWorkflowsInSameRoom() {
+        StudioQuackHelper wfA = new StudioQuackHelper(Map.of(
+                "workflowId", "wf-a",
+                "agenticInfo", Map.of("conversationId", "room-9")));
+        StudioQuackHelper wfB = new StudioQuackHelper(Map.of(
+                "workflowId", "wf-b",
+                "agenticInfo", Map.of("conversationId", "room-9")));
+
+        String agent1 = AgentConfig.resolveConversationId(wfA, "node-1");
+        String agent2 = AgentConfig.resolveConversationId(wfA, "node-2");
+        String otherWf = AgentConfig.resolveConversationId(wfB, "node-1");
+
+        assertFalse(agent1.equals(agent2));
+        assertFalse(agent1.equals(otherWf));
+    }
+
+    @Test
+    void resolveConversationIdHashesUnsafeCharactersAndFallsBackToUuidWhenAbsent() {
+        StudioQuackHelper unsafe = new StudioQuackHelper(Map.of(
+                "workflowId", "wf-1",
+                "agenticInfo", Map.of("conversationId", "bad id\r\nFLUSHALL")));
+        String key = AgentConfig.resolveConversationId(unsafe, "node-1");
+        assertTrue(key.startsWith("wf-1:node-1:h_"));
+        assertFalse(key.contains("\r"));
+        assertFalse(key.contains("\n"));
+        assertFalse(key.contains(" "));
+
+        StudioQuackHelper empty = new StudioQuackHelper(Map.of("workflowId", "wf-1"));
+        String u1 = AgentConfig.resolveConversationId(empty, "node-1");
+        String u2 = AgentConfig.resolveConversationId(empty, "node-1");
+        assertFalse(u1.equals(u2));
+    }
+
+    @Test
+    void preRagPromptRemovedAndOnDemandRagRulesPresent() {
+        assertFalse(AgentConfig.STRICT_TOOL_CALL_RULES.contains("Retrieved Context"));
+        assertTrue(AgentConfig.DATA_SOURCE_RAG_RULES.contains("{data_tools}"));
+        assertTrue(AgentConfig.DATA_SOURCE_RAG_RULES.contains("NOT pre-fetched"));
+    }
 }

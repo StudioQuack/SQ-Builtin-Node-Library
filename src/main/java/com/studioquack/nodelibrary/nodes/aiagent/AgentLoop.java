@@ -46,13 +46,24 @@ final class AgentLoop {
             emitToolCallThought(session, iteration, toolCalls);
             List<Map<String, Object>> toolOutputs = dispatchTools(session, toolCalls, recentCalls);
             current.addAll(toolOutputs);
-            try {
-                List<Map<String, Object>> remote = AgentMemory.getHistory(session);
-                if (remote != null && remote.size() > current.size()) {
-                    current = remote;
+            if (session.useRemoteMemory) {
+                try {
+                    Map<String, Object> coreSystem = (!current.isEmpty()
+                            && "system".equals(current.get(0).get("role")))
+                            ? current.get(0) : null;
+                    int localNonSystem = coreSystem != null ? current.size() - 1 : current.size();
+                    List<Map<String, Object>> remote = AgentMemory.getHistory(session);
+                    if (remote != null && remote.size() > localNonSystem) {
+                        List<Map<String, Object>> merged = new ArrayList<>(remote.size() + 1);
+                        if (coreSystem != null) {
+                            merged.add(coreSystem);
+                        }
+                        merged.addAll(remote);
+                        current = merged;
+                    }
+                } catch (Exception ignored) {
+                    // keep local history
                 }
-            } catch (Exception ignored) {
-                // keep local history
             }
             payload = doRound(session, current, contextWindow, iteration);
             AgentMemory.addHistoryMessage(session, payload);

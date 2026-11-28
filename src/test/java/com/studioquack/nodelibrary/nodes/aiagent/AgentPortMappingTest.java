@@ -41,6 +41,22 @@ class AgentPortMappingTest {
     }
 
     @Test
+    void memoryTrimAndClearEmitLtrimAndDel() {
+        AgentSession session = new AgentSession(null, "", "", "", "mem-1", true, "wf1:n1:c1");
+        Map<String, Object> trim = AgentPortMapping.memoryTrim(session, 0, 3);
+        assertEquals("LTRIM", trim.get("operation"));
+        assertEquals("sq:memory:wf1:n1:c1", trim.get("key"));
+        assertEquals(0, trim.get("start"));
+        assertEquals(3, trim.get("stop"));
+
+        Map<String, Object> del = AgentPortMapping.memoryClear(session);
+        assertEquals("DEL", del.get("operation"));
+        assertEquals("sq:memory:wf1:n1:c1", del.get("key"));
+        assertFalse(del.containsKey("start"));
+        assertFalse(del.containsKey("value"));
+    }
+
+    @Test
     void projectOntoRedisSchemaKeepsGenericFields() {
         List<Map<String, Object>> fields = List.of(
                 Map.of("shortCode", "operation", "description", "EXACT: SET | GET | DEL | RPUSH | LRANGE"),

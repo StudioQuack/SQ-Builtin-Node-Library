@@ -2,10 +2,13 @@ package com.studioquack.nodelibrary.nodes.aiagent;
 
 import studioquack.StudioQuackHelper;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Agent instance config + FUNCTION-port discovery (Python {@code get_config_and_input}
@@ -17,11 +20,9 @@ import java.util.UUID;
  */
 final class AgentConfig {
 
-    /** Verbatim from {@code ai agent.py} {@code STRICT_TOOL_CALL_RULES}. */
+    /** Verbatim from {@code ai agent.py} {@code STRICT_TOOL_CALL_RULES} (pre-RAG prompt removed; RAG is on-demand via data tools). */
     static final String STRICT_TOOL_CALL_RULES =
-            "If a 'Retrieved Context' system message is provided before the user's message, use those relevant documents as the primary context for your answer. "
-                    + "If the provided relevant documents are insufficient, incomplete, outdated, or do not cover the user's follow-up need, use the available data tools with a clear, descriptive query before answering.\n"
-                    + "IMPORTANT: If your instructions define a multi-phase workflow, you MUST complete ALL phases before producing a final text answer. "
+            "IMPORTANT: If your instructions define a multi-phase workflow, you MUST complete ALL phases before producing a final text answer. "
                     + "Every response you give MUST include tool calls or thinking content (if enabled) until the very last phase is complete. "
                     + "A text-only response with no tool calls is treated as your FINAL answer and terminates your execution.\n"
                     + "\n"
@@ -102,6 +103,22 @@ final class AgentConfig {
                     + "question or task prominent at the END of the summary so the next assistant "
                     + "response can address it. Do not invent information. Output ONLY the summary text "
                     + "— no preamble, no markdown, no role labels, no enclosing quotes.";
+
+    /**
+     * System-prompt guidance injected whenever one or more {@code data} FUNCTION tools are wired.
+     * Pre-RAG on turn start is deliberately removed; the agent decides what keywords to search
+     * and invokes its connected data tools on demand before answering.
+     */
+    static final String DATA_SOURCE_RAG_RULES =
+            "=== CONNECTED DATA SOURCES (ON-DEMAND RAG) ===\n"
+                    + "You have connected knowledge/data search tool(s): {data_tools}.\n"
+                    + "Documents are NOT pre-fetched automatically at the start of a turn. "
+                    + "Before answering any question that may depend on stored documents, domain knowledge, or facts in these sources, "
+                    + "extract the key terms/concepts from the user's request and query the relevant data tool(s) for RAG context first. "
+                    + "If the initial search is incomplete or misses details, refine your keywords and query again before giving a final answer. "
+                    + "For purely conversational messages that clearly do not require lookup (such as greetings or acknowledgements), you may answer directly.";
+
+    private static final Pattern SAFE_KEY_SEGMENT = Pattern.compile("^[A-Za-z0-9_.-]{1,128}$");
 
     static final String DEFAULT_ROLE = "You are a helpful AI assistant.";
     static final int DEFAULT_MAX_ITERATIONS = 10;
@@ -263,7 +280,12 @@ final class AgentConfig {
     }
 
     /**
-     * Discover model/memory/thoughts connections and allocate a per-invoke conversation id.
+     * Discover model/memory/thoughts connections and resolve the conversation key.
+     *
+     * <p>When the execution context carries a conversation id (e.g. DuckBot), the memory key is
+     * deterministically scoped to {@code workflowId:nodeId:conversationId} so follow-up runs of
+     * the same conversation resume the same remote memory bucket while staying isolated from
+     * other workflows and sibling/sub-agents. Non-conversational runs allocate a fresh UUID.
      *
      * @throws IllegalStateException when the {@code model} FUNCTION port is unwired
      */
@@ -291,7 +313,52 @@ final class AgentConfig {
                 thoughtsId,
                 memoryId,
                 useRemote,
-                UUID.randomUUID().toString());
+                resolveConversationId(helper, myNodeId));
+    }
+
+    /**
+     * Deterministic memory key for conversational runs ({@code workflowId:nodeId:conversationId}
+     * with non-blank segments), else a per-invoke random UUID. Unsafe/oversized segments are
+     * hashed so Redis keys stay clean and free of untrusted whitespace/control characters.
+     */
+    static String resolveConversationId(StudioQuackHelper helper, String myNodeId) {
+        if (helper == null) {
+            return UUID.randomUUID().toString();
+        }
+        String externalConvId = AgentJson.nonBlankString(helper.getConversationId());
+        if (externalConvId == null) {
+            return UUID.randomUUID().toString();
+        }
+        String wfId = AgentJson.nonBlankString(helper.getWorkflowId());
+        String nodeId = AgentJson.nonBlankString(myNodeId);
+        List<String> parts = new ArrayList<>(3);
+        if (wfId != null) {
+            parts.add(safeKeySegment(wfId));
+        }
+        if (nodeId != null) {
+            parts.add(safeKeySegment(nodeId));
+        }
+        parts.add(safeKeySegment(externalConvId));
+        return String.join(":", parts);
+    }
+
+    private static String safeKeySegment(String segment) {
+        if (SAFE_KEY_SEGMENT.matcher(segment).matches()) {
+            return segment;
+        }
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256")
+                    .digest(segment.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hex = new StringBuilder(34);
+            hex.append("h_");
+            for (int i = 0; i < 16; i++) {
+                hex.append(Character.forDigit((digest[i] >> 4) & 0xf, 16));
+                hex.append(Character.forDigit(digest[i] & 0xf, 16));
+            }
+            return hex.toString();
+        } catch (Exception e) {
+            return UUID.nameUUIDFromBytes(segment.getBytes(StandardCharsets.UTF_8)).toString();
+        }
     }
 
     static int parsePositiveInt(Object raw, int fallback) {

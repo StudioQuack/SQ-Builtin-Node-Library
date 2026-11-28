@@ -154,6 +154,26 @@ public class ExecutionContextStore {
     }
 
     /**
+     * Workflow definition id from the context ({@code workflowId}).
+     */
+    public String getWorkflowId() {
+        return Json.str(executionContext.get("workflowId"));
+    }
+
+    /**
+     * Conversation id from {@code agenticInfo.conversationId} (falling back to top-level
+     * {@code conversationId}). Empty string when this run is not attached to a conversation.
+     */
+    public String getConversationId() {
+        Map<String, Object> agentic = Json.asMap(executionContext.get("agenticInfo"));
+        String conv = Json.str(agentic.get("conversationId")).trim();
+        if (!conv.isEmpty()) {
+            return conv;
+        }
+        return Json.str(executionContext.get("conversationId")).trim();
+    }
+
+    /**
      * Current node object ({@code currentNode}).
      *
      * <pre>{@code

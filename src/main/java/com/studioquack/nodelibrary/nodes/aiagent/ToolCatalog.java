@@ -12,9 +12,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * DuckTape tool catalog + {@code delegate_to_agent} + pre-RAG (Python
- * {@code build_tool_definitions} / {@code build_delegation_tool} /
- * resolvers). Pre-RAG lives in {@link AgentRag}.
+ * DuckTape tool catalog + on-demand RAG {@code data} tools + {@code delegate_to_agent}
+ * (Python {@code build_tool_definitions} / {@code build_delegation_tool} / resolvers).
  */
 final class ToolCatalog {
 
@@ -747,13 +746,18 @@ final class ToolCatalog {
 
     /**
      * Build LLM-facing tool defs from DuckTape on {@code tools} + {@code data} ports.
-     * Requires name AND description AND at least one mapped field (Python {@code has_config}).
+     * Tools require DuckTape config (or target schema fields) plus name &amp; description.
+     * Connected {@code data} sources are ALWAYS exposed as on-demand RAG search tools with
+     * required {@code query} (and optional {@code topK}), falling back to synthesized
+     * name/description when DuckTape omits them.
      */
     static List<Map<String, Object>> buildToolDefinitions(StudioQuackHelper helper) {
         List<Map<String, Object>> defs = new ArrayList<>();
         if (helper == null) {
             return defs;
         }
+        Set<String> usedNames = new LinkedHashSet<>();
+        int dataSourceOrdinal = 0;
         for (String portValue : List.of("tools", "data")) {
             List<Object> connectionDetails = helper.getConnectionDetailListByPortValue(portValue);
             if (connectionDetails == null) {
@@ -821,8 +825,11 @@ final class ToolCatalog {
                         if ("query".equals(srcPath)) {
                             Map<String, Object> q = new LinkedHashMap<>();
                             q.put("type", "string");
+                            q.put("description", "Search keywords or semantic query to retrieve relevant documents.");
                             AgentJson.asMap(inputSchema.get("properties")).put("query", q);
-                            AgentJson.asList(inputSchema.get("required")).add("query");
+                            if (!AgentJson.asList(inputSchema.get("required")).contains("query")) {
+                                AgentJson.asList(inputSchema.get("required")).add("query");
+                            }
                             hasConfig = true;
                         } else if ("name".equals(srcPath)) {
                             toolName = srcVal == null ? null : AgentJson.str(srcVal);
@@ -831,6 +838,36 @@ final class ToolCatalog {
                             toolDescription = srcVal == null ? "" : AgentJson.str(srcVal);
                         }
                     }
+                }
+
+                if ("data".equals(portValue) && nodeId != null && !AgentJson.str(nodeId).isBlank()) {
+                    dataSourceOrdinal++;
+                    Map<String, Object> props = AgentJson.asMap(inputSchema.get("properties"));
+                    List<Object> required = AgentJson.asList(inputSchema.get("required"));
+                    if (!props.containsKey("query")) {
+                        Map<String, Object> q = new LinkedHashMap<>();
+                        q.put("type", "string");
+                        q.put("description", "Search keywords or semantic query to retrieve relevant documents.");
+                        props.put("query", q);
+                    }
+                    if (!required.contains("query")) {
+                        required.add("query");
+                    }
+                    if (!props.containsKey("topK")) {
+                        Map<String, Object> tk = new LinkedHashMap<>();
+                        tk.put("type", "integer");
+                        tk.put("description", "Optional maximum number of relevant documents to retrieve (default 5).");
+                        props.put("topK", tk);
+                    }
+                    if (toolName == null || toolName.isBlank()) {
+                        toolName = defaultDataToolName(cd, dataSourceOrdinal, usedNames);
+                    }
+                    if (toolDescription == null || toolDescription.isBlank()) {
+                        String label = displayLabelForDataConnection(cd, toolName);
+                        toolDescription = "Search connected data source '" + label
+                                + "' using relevant keywords or a semantic query to retrieve documents for RAG before answering.";
+                    }
+                    hasConfig = true;
                 }
 
                 if ("tools".equals(portValue) && !targetFields.isEmpty()) {
@@ -888,6 +925,7 @@ final class ToolCatalog {
                         List<String> aliases = new ArrayList<>(buildToolAliases(toolName, cd));
                         aliases.sort(String::compareTo);
                         def.put("aliases", aliases);
+                        usedNames.add(toolName);
                         defs.add(def);
                     } catch (Exception e) {
                         AgentJson.log(helper, "ai-agent tool_def_error nodeId=" + nodeId
@@ -897,6 +935,47 @@ final class ToolCatalog {
             }
         }
         return defs;
+    }
+
+    /** Synthesise a valid, unique tool identifier for a {@code data} edge without a DuckTape name. */
+    private static String defaultDataToolName(Map<String, Object> cd, int ordinal, Set<String> usedNames) {
+        String raw = displayLabelForDataConnection(cd, "");
+        String base = raw.toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9]+", "_")
+                .replaceAll("^_+|_+$", "");
+        if (base.isEmpty()) {
+            base = ordinal <= 1 ? "search_data" : "search_data_" + ordinal;
+        } else {
+            base = "search_" + base;
+        }
+        if (base.length() > 48) {
+            base = base.substring(0, 48).replaceAll("_+$", "");
+        }
+        String candidate = base;
+        int suffix = 2;
+        while (usedNames.contains(candidate)) {
+            candidate = base + "_" + suffix++;
+        }
+        return candidate;
+    }
+
+    private static String displayLabelForDataConnection(Map<String, Object> cd, String fallback) {
+        if (cd != null) {
+            for (String key : List.of("nodeName", "label", "name")) {
+                String v = AgentJson.nonBlankString(cd.get(key));
+                if (v != null) {
+                    return v;
+                }
+            }
+            Map<String, Object> data = AgentJson.asMap(cd.get("data"));
+            for (String key : List.of("label", "name")) {
+                String v = AgentJson.nonBlankString(data.get(key));
+                if (v != null) {
+                    return v;
+                }
+            }
+        }
+        return fallback == null || fallback.isBlank() ? "data_source" : fallback;
     }
 
     static Map<String, Object> buildDelegationTool(StudioQuackHelper helper) {

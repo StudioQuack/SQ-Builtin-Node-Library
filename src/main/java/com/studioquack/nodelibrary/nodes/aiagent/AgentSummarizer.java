@@ -356,7 +356,7 @@ final class AgentSummarizer {
             newHistory.add(single);
         }
 
-        AgentMemory.persistInMemoryCache(newHistory, session);
+        AgentMemory.replaceHistory(session, newHistory);
         return newHistory;
     }
 }

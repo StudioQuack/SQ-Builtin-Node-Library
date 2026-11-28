@@ -12,10 +12,10 @@ import java.util.Set;
 
 /**
  * Adapts AI Agent memory/data intents onto a generic cache or vector-DB
- * port schema. History windowing and pre-RAG stay in {@link AgentMemory} /
- * {@link AgentRag}; this class only shapes the helper {@code execute} payload
- * so a Redis cache, PGVector, or any compatible node can consume it through
- * its normal INPUT fields — never {@code add_message} / {@code get_history}.
+ * port schema. History diff-sync and windowing stay in {@link AgentMemory};
+ * this class only shapes the helper {@code execute} payload so a Redis cache,
+ * PGVector, or any compatible node can consume it through its normal INPUT
+ * fields — never {@code add_message} / {@code get_history}.
  */
 final class AgentPortMapping {
 
@@ -27,6 +27,8 @@ final class AgentPortMapping {
             "QUERY", "query", "search");
     private static final List<String> APPEND_OPS = List.of("RPUSH", "LPUSH", "rpush", "lpush");
     private static final List<String> RANGE_OPS = List.of("LRANGE", "lrange");
+    private static final List<String> TRIM_OPS = List.of("LTRIM", "ltrim");
+    private static final List<String> DELETE_OPS = List.of("DEL", "del", "delete");
 
     private AgentPortMapping() {
         // namespace — never instantiated
@@ -58,10 +60,29 @@ final class AgentPortMapping {
         return project(session, "memory", nodeId, canonical);
     }
 
+    /** Trim the conversation list to an inclusive index window ({@code LTRIM start stop}). */
+    static Map<String, Object> memoryTrim(AgentSession session, int start, int stop) {
+        Map<String, Object> canonical = new LinkedHashMap<>();
+        canonical.put("operation", "LTRIM");
+        canonical.put("key", memoryKey(session == null ? "" : session.conversationId));
+        canonical.put("start", start);
+        canonical.put("stop", stop);
+        String nodeId = session == null ? "" : session.memoryId;
+        return project(session, "memory", nodeId, canonical);
+    }
+
+    /** Delete the conversation list ({@code DEL key}) before rewriting compacted or reset history. */
+    static Map<String, Object> memoryClear(AgentSession session) {
+        Map<String, Object> canonical = new LinkedHashMap<>();
+        canonical.put("operation", "DEL");
+        canonical.put("key", memoryKey(session == null ? "" : session.conversationId));
+        String nodeId = session == null ? "" : session.memoryId;
+        return project(session, "memory", nodeId, canonical);
+    }
+
     /**
      * Semantic search → generic vector query. {@code extra} may carry
-     * {@code embedding}/{@code topK}/{@code filter} from a model tool call;
-     * pre-RAG typically has only {@code query}.
+     * {@code embedding}/{@code topK}/{@code filter} from a model tool call.
      */
     static Map<String, Object> dataQuery(AgentSession session, String nodeId, String query,
                                          Map<String, Object> extra) {
@@ -286,6 +307,8 @@ final class AgentPortMapping {
             case "QUERY", "SEARCH" -> QUERY_OPS;
             case "RPUSH", "LPUSH" -> APPEND_OPS;
             case "LRANGE" -> RANGE_OPS;
+            case "LTRIM" -> TRIM_OPS;
+            case "DEL", "DELETE" -> DELETE_OPS;
             default -> List.of(want);
         };
         for (String c : candidates) {

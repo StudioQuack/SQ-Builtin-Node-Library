@@ -327,4 +327,57 @@ class ToolCatalogSchemaTypesTest {
         Map<String, Object> tools = (Map<String, Object>) ((Map<?, ?>) schema.get("properties")).get("tools");
         assertEquals("object", ((Map<?, ?>) tools.get("items")).get("type"));
     }
+
+    @Test
+    void dataPortNodesWithoutDuckTapeStillExposeOnDemandRagToolWithQuery() {
+        studioquack.StudioQuackHelper helper = new studioquack.StudioQuackHelper(Map.of(
+                "currentNode", Map.of(
+                        "id", "agent-1",
+                        "connectionList", List.of(
+                                Map.of("portValue", "data",
+                                        "connectionDetailList", List.of(
+                                                Map.of("nodeId", "pg-1", "nodeName", "PGVector",
+                                                        "portDto", Map.of("value", "input", "schema", List.of())),
+                                                Map.of("nodeId", "pg-2", "nodeName", "PGVector",
+                                                        "portDto", Map.of("value", "input", "schema", List.of()))))))));
+        List<Map<String, Object>> defs = ToolCatalog.buildToolDefinitions(helper);
+        assertEquals(2, defs.size());
+        assertEquals("search_pgvector", defs.get(0).get("name"));
+        assertEquals("search_pgvector_2", defs.get(1).get("name"));
+        assertEquals("data", defs.get(0).get("port_value"));
+        @SuppressWarnings("unchecked")
+        Map<String, Object> req = (Map<String, Object>) defs.get(0).get("request");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> props = (Map<String, Object>) req.get("properties");
+        assertTrue(props.containsKey("query"));
+        assertTrue(props.containsKey("topK"));
+        assertTrue(((List<?>) req.get("required")).contains("query"));
+        assertTrue(String.valueOf(defs.get(0).get("description")).contains("PGVector"));
+    }
+
+    @Test
+    void dataPortWithDuckTapeNameAndDescriptionPreservesThemAndAddsQuery() {
+        studioquack.StudioQuackHelper helper = new studioquack.StudioQuackHelper(Map.of(
+                "currentNode", Map.of(
+                        "id", "agent-1",
+                        "connectionList", List.of(
+                                Map.of("portValue", "data",
+                                        "connectionDetailList", List.of(
+                                                Map.of("nodeId", "pg-1", "nodeName", "PGVector",
+                                                        "portDto", Map.of("value", "input", "schema", List.of()))))),
+                        "edgeTransformListForCurrentNode", List.of(
+                                Map.of("sourceNodeId", "agent-1", "sourcePortShortCode", "data",
+                                        "targetNodeId", "pg-1", "targetPortShortCode", "input",
+                                        "sourcePath", "name", "sourcePathValue", "orders_kb"),
+                                Map.of("sourceNodeId", "agent-1", "sourcePortShortCode", "data",
+                                        "targetNodeId", "pg-1", "targetPortShortCode", "input",
+                                        "sourcePath", "description", "sourcePathValue", "Search order docs.")))));
+        List<Map<String, Object>> defs = ToolCatalog.buildToolDefinitions(helper);
+        assertEquals(1, defs.size());
+        assertEquals("orders_kb", defs.get(0).get("name"));
+        assertEquals("Search order docs.", defs.get(0).get("description"));
+        @SuppressWarnings("unchecked")
+        Map<String, Object> req = (Map<String, Object>) defs.get(0).get("request");
+        assertTrue(((List<?>) req.get("required")).contains("query"));
+    }
 }
