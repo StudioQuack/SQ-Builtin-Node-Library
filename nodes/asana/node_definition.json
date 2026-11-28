@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Asana",
   "label": "Asana API 1.0",
-  "description": "Asana API 1.0 via OfficialApiNode (nodes/asana/api_spec.json). Official Asana REST 1.0 (app.asana.com/api/1.0). PAT or OAuth access token as bearer. OAuth app review for production distribution. Official docs: https://developers.asana.com/reference/rest-api-reference. Secrets never appear on OUTPUT. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "description": "Asana API 1.0 via OfficialApiNode (nodes/asana/api_spec.json). Official Asana REST 1.0 (app.asana.com/api/1.0). PAT or OAuth access token as bearer. OAuth app review for production distribution. Official docs: https://developers.asana.com/reference/rest-api-reference. Secrets never appear on OUTPUT. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) + provider signing/verification secret (webhook_secret) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
   "icon": "assignment",
   "tags": [
     "asana",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "project_create",
-          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'project_create', 'project_get', 'project_list', 'project_update', 'project_delete', 'task_create', 'task_get', 'task_list', 'task_search', 'task_update', 'task_delete', 'task_move', 'subtask_create', 'subtask_list', 'comment_add', 'comment_remove', 'tag_add', 'tag_remove', 'project_add_task', 'project_remove_task', 'user_get', 'user_list', 'listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'project_create'.",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'project_create', 'project_get', 'project_list', 'project_update', 'project_delete', 'task_create', 'task_get', 'task_list', 'task_search', 'task_update', 'task_delete', 'task_move', 'subtask_create', 'subtask_list', 'comment_add', 'comment_remove', 'tag_add', 'tag_remove', 'project_add_task', 'project_remove_task', 'user_get', 'user_list', 'listen'. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'project_create'.",
           "children": []
         },
         {
@@ -295,7 +295,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -340,7 +340,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: project_create, project_get, project_list, project_update, project_delete, task_create, task_get, task_list, task_search, task_update, task_delete, task_move, subtask_create, subtask_list, comment_add, comment_remove, tag_add, tag_remove, project_add_task, project_remove_task, user_get, user_list, listen. Default: project_create. Example: project_create.",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: project_create, project_get, project_list, project_update, project_delete, task_create, task_get, task_list, task_search, task_update, task_delete, task_move, subtask_create, subtask_list, comment_add, comment_remove, tag_add, tag_remove, project_add_task, project_remove_task, user_get, user_list, listen. Default: project_create. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (webhook_secret), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event. Example: project_create.",
       "value": "project_create",
       "required": true,
       "instanceEditable": true,

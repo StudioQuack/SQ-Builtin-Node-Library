@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "TheHive",
   "label": "TheHive 5 API v1 — alerts, cases, observables, tasks, query",
-  "description": "TheHive 5 API v1. Docs: https://docs.strangebee.com/thehive/api-docs. create-alert requires type, source, sourceRef, title, description. create-case requires title, description. Search ops POST /api/v1/query with INPUT query. Handler: OfficialApiNode. Bearer api_key. thehiveHost is the origin. Never log api_key or case bodies.",
+  "description": "TheHive 5 API v1. Docs: https://docs.strangebee.com/thehive/api-docs. create-alert requires type, source, sourceRef, title, description. create-case requires title, description. Search ops POST /api/v1/query with INPUT query. Handler: OfficialApiNode. Bearer api_key. thehiveHost is the origin. Never log api_key or case bodies. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) + provider signing/verification config (webhook_secret, webhook_header_name) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "bug_report",
   "tags": [
     "soar"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "create-alert",
-          "description": "Overrides config operation when non-blank. EXACT: create-alert | get-alert | search-alerts | update-alert | delete-alert | promote-alert | merge-alert | create-case | get-case | search-cases | update-case | delete-case | get-timeline | add-case-attachment | create-observable | get-observable | search-observables | update-observable | delete-observable | execute-analyzer | create-task | get-task | search-tasks | update-task | delete-task | create-log | get-log | create-comment | search-comments | execute-query | listen.",
+          "description": "Overrides config operation when non-blank. EXACT: create-alert | get-alert | search-alerts | update-alert | delete-alert | promote-alert | merge-alert | create-case | get-case | search-cases | update-case | delete-case | get-timeline | add-case-attachment | create-observable | get-observable | search-observables | update-observable | delete-observable | execute-analyzer | create-task | get-task | search-tasks | update-task | delete-task | create-log | get-log | create-comment | search-comments | execute-query | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -374,7 +374,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status:ok, http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -419,7 +419,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default verb. Search/* and get-log POST /api/v1/query. listen is ingress.",
+      "description": "Default verb. Search/* and get-log POST /api/v1/query. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (webhook_secret, webhook_header_name), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "search-cases",
       "required": true,
       "instanceEditable": true,
@@ -523,7 +523,7 @@
       "shortCode": "webhook_key",
       "label": "Webhook Key",
       "type": "webhook_key",
-      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "description": "Engine Node-scoped API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node via full URL key (.../runtime/message-events/<apiKey>) or X-SQ-WEBHOOK-KEY header (verified alongside the provider's secret header).",
       "value": "",
       "required": false,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "FigJam",
   "label": "Figma REST API (FigJam files)",
-  "description": "Figma REST API (FigJam files) via OfficialApiNode (nodes/figjam/api_spec.json). Official Figma REST. Canvas writes are plugin/widget only — this node is file metadata + comments. webhook_listen is ingress (BPMN), not a socket. Official docs: https://www.figma.com/developers/api. OUTPUT is {status, http_status, data}. Failures raise a BPMN error. Secrets never appear on OUTPUT.",
+  "description": "Figma REST API (FigJam files) via OfficialApiNode (nodes/figjam/api_spec.json). Official Figma REST. Canvas writes are plugin/widget only — this node is file metadata + comments. Official docs: https://www.figma.com/developers/api. OUTPUT is {status, http_status, data}. Failures raise a BPMN error. Secrets never appear on OUTPUT. Inbound webhooks: selecting the :listen operation (webhook_listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "brush",
   "tags": [
     "figma",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "file_get",
-          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'file_get', 'comments_list', 'comment_post', 'comment_delete', 'project_files', 'webhook_listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'file_get'.",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'file_get', 'comments_list', 'comment_post', 'comment_delete', 'project_files', 'webhook_listen'. webhook_listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'file_get'.",
           "children": []
         },
         {
@@ -106,7 +106,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -151,7 +151,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: file_get, comments_list, comment_post, comment_delete, project_files, webhook_listen. Default: file_get. Example: file_get.",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: file_get, comments_list, comment_post, comment_delete, project_files, webhook_listen. Default: file_get. Selecting webhook_listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event. Example: file_get.",
       "value": "file_get",
       "required": true,
       "instanceEditable": true,

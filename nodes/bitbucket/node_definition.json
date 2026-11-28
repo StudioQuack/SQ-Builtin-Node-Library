@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Bitbucket",
   "label": "Bitbucket Cloud REST 2.0",
-  "description": "Bitbucket Cloud REST 2.0. Docs: https://developer.atlassian.com/cloud/bitbucket/rest/ pr_create takes title, source {branch:{name}}, destination {branch:{name}}, description. pr_merge takes type, message, merge_strategy, close_source_branch. pipeline_run takes target + variables. Auth: HTTP Basic email + access_token (app password).",
+  "description": "Bitbucket Cloud REST 2.0. Docs: https://developer.atlassian.com/cloud/bitbucket/rest/ pr_create takes title, source {branch:{name}}, destination {branch:{name}}, description. pr_merge takes type, message, merge_strategy, close_source_branch. pipeline_run takes target + variables. Auth: HTTP Basic email + access_token (app password). Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "hub",
   "tags": [
     "bitbucket",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "",
-          "description": "Official Bitbucket Cloud 2.0 verb. EXACT: repo_get | repo_list | file_get | pr_create | pr_get | pr_merge | pipeline_run | pipeline_get | commit_list | listen. Example: pr_create.",
+          "description": "Official Bitbucket Cloud 2.0 verb. EXACT: repo_get | repo_list | file_get | pr_create | pr_get | pr_merge | pipeline_run | pipeline_get | commit_list | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: pr_create.",
           "children": []
         },
         {
@@ -249,7 +249,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status:ok, http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -294,7 +294,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official API operation. EXACT: repo_get, repo_list, file_get, pr_create, pr_get, pr_merge, pipeline_run, pipeline_get, commit_list, listen. listen is BPMN ingress, not a socket.",
+      "description": "Official API operation. EXACT: repo_get, repo_list, file_get, pr_create, pr_get, pr_merge, pipeline_run, pipeline_get, commit_list, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "repo_get",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Loop Returns",
   "label": "Loop Returns API v1",
-  "description": "Shopify-centric returns. Header X-Authorization. Never log buyer PII.",
+  "description": "Shopify-centric returns. Header X-Authorization. Never log buyer PII. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "assignment_return",
   "tags": [
     "loop",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "return_list",
-          "description": "Official API verb. EXACT: return_list | return_get | return_process | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "description": "Official API verb. EXACT: return_list | return_get | return_process | trigger. Blank uses configurationParameters.operation. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -106,7 +106,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "status=ok + data on 2xx. Inbound webhook events (:listen) emit normalized event data on output. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -151,7 +151,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb for OfficialApiNode. EXACT: return_list | return_get | return_process | trigger. trigger does not open a socket.",
+      "description": "HTTP verb for OfficialApiNode. EXACT: return_list | return_get | return_process | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "return_list",
       "required": true,
       "instanceEditable": true,

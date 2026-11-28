@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "HubSpot",
   "label": "HubSpot — CRM + Marketing Hub (one node)",
-  "description": "Official HubSpot REST at https://api.hubapi.com. Handler: OfficialApiNode. Auth: Service Key or private-app / static token as Authorization: Bearer. Legacy hapikey query auth is dead — never send hapikey. CRM objects use /crm/objects/2026-03 (https://developers.hubspot.com/docs/api-reference/latest/overview). Lists use /crm/lists/2026-03 (v1 lists sunset 2026-04-30). Marketing Hub (lists, forms, transactional email, workflow enroll) is THIS node. trigger.listen is ingress. Customer owns the HubSpot account. Contacts/emails are PII. Never log access_token.",
+  "description": "Official HubSpot REST at https://api.hubapi.com. Handler: OfficialApiNode. Auth: Service Key or private-app / static token as Authorization: Bearer. Legacy hapikey query auth is dead — never send hapikey. CRM objects use /crm/objects/2026-03 (https://developers.hubspot.com/docs/api-reference/latest/overview). Lists use /crm/lists/2026-03 (v1 lists sunset 2026-04-30). Marketing Hub (lists, forms, transactional email, workflow enroll) is THIS node. Customer owns the HubSpot account. Contacts/emails are PII. Never log access_token. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "hub",
   "tags": [
     "crm",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "contact.upsert",
-          "description": "Overrides config. EXACT catalog verb including trigger.listen.",
+          "description": "Overrides config. EXACT catalog verb including trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -501,7 +501,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data. trigger.listen: BPMN message event (project app webhooks). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data. Inbound project-app webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -546,7 +546,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. Marketing Hub verbs live here (not a second node).",
+      "description": "Default operation when input.operation is blank. Marketing Hub verbs live here (not a second node). Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.get",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "CloudConvert",
   "label": "CloudConvert API v2",
-  "description": "CloudConvert API v2. Official API https://cloudconvert.com/docs/getting-started/introduction. One node; pick operation. Upload/download/convert/sign payloads use type file (Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.) Handler: OfficialApiNode + api_spec.json. API v1 is retired (2022). Official create path is POST /v2/jobs (tasks: import/convert/export). Files processed on CloudConvert infra — DPA. import/upload uses type file.",
+  "description": "CloudConvert API v2. Official API https://cloudconvert.com/docs/getting-started/introduction. One node; pick operation. Upload/download/convert/sign payloads use type file (Platform file ref-id (sq-file: / sq-ref:gridfs:). Never inline bytes or base64 as the stored type.) Handler: OfficialApiNode + api_spec.json. API v1 is retired (2022). Official create path is POST /v2/jobs (tasks: import/convert/export). Files processed on CloudConvert infra — DPA. import/upload uses type file. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "sync",
   "tags": [
     "cloudconvert",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "convert",
-          "description": "Overrides config operation. Accepted: convert, capture_website, archive_create, job_create, job_get, job_delete, task_cancel, task_delete, file_download, listen.",
+          "description": "Overrides config operation. Accepted: convert, capture_website, archive_create, job_create, job_get, job_delete, task_cancel, task_delete, file_download, listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -151,7 +151,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status, http_status, data, file?}. Inbound webhook events (:listen) emit normalized event data on output. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -205,7 +205,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "description": "Official HTTP verb for this invoke. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "convert",
       "required": true,
       "instanceEditable": true,

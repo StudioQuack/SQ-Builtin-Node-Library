@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Meta Ads",
   "label": "Meta Marketing API v26.0 — campaigns, ads, insights, Lead Ads",
-  "description": "Official Meta Marketing API + Graph API v26.0 at https://graph.facebook.com/v26.0. Pinned to the version the Marketing API versioning page documents as current as of 2026-08-22 (https://developers.facebook.com/docs/marketing-api/overview/versioning/). Handler: OfficialApiNode. Paid ads + Lead Ads only. trigger.leadgen / trigger.listen are BPMN ingress. Never log access_token.",
+  "description": "Official Meta Marketing API + Graph API v26.0 at https://graph.facebook.com/v26.0. Pinned to the version the Marketing API versioning page documents as current as of 2026-08-22 (https://developers.facebook.com/docs/marketing-api/overview/versioning/). Handler: OfficialApiNode. Paid ads + Lead Ads only. Never log access_token. Inbound webhooks: selecting a :listen operation (trigger.leadgen / trigger.listen) via webhook_key ($webhookKeyRef) + provider signing/verification secrets (app_secret, verify_token) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "campaign",
   "tags": [
     "ads",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "campaign.create",
-          "description": "Overrides config operation when non-blank. EXACT: campaign.create | campaign.get | campaign.list | campaign.update | adset.create | adset.get | adset.list | ad.create | ad.get | insights.get | audience.create | leadForm.list | lead.get | customConversion.create | trigger.leadgen | trigger.listen.",
+          "description": "Overrides config operation when non-blank. EXACT: campaign.create | campaign.get | campaign.list | campaign.update | adset.create | adset.get | adset.list | ad.create | ad.get | insights.get | audience.create | leadForm.list | lead.get | customConversion.create | trigger.leadgen | trigger.listen. trigger.leadgen / trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -294,7 +294,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -339,7 +339,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: campaign.create | campaign.get | campaign.list | campaign.update | adset.create | adset.get | adset.list | ad.create | ad.get | insights.get | audience.create | leadForm.list | lead.get | customConversion.create | trigger.leadgen | trigger.listen.",
+      "description": "Default operation when input.operation is blank. EXACT: campaign.create | campaign.get | campaign.list | campaign.update | adset.create | adset.get | adset.list | ad.create | ad.get | insights.get | audience.create | leadForm.list | lead.get | customConversion.create | trigger.leadgen | trigger.listen. Selecting trigger.leadgen / trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (app_secret, verify_token), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "campaign.list",
       "required": true,
       "instanceEditable": true,

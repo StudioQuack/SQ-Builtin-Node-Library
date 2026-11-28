@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Dropbox",
   "label": "Dropbox API v2 — files and folders",
-  "description": "Dropbox API v2 — files and folders. Official API https://www.dropbox.com/developers/documentation/http/documentation. One node; pick operation. Handler: OfficialApiNode + api_spec.json. Content upload/download officially uses content.dropboxapi.com with Dropbox-API-Arg. OfficialApiNode posts JSON to api.dropboxapi.com; large files need upload_session on the content host. Production apps need Dropbox approval. Scoped vs full Dropbox.",
+  "description": "Dropbox API v2 — files and folders. Official API https://www.dropbox.com/developers/documentation/http/documentation. One node; pick operation. Handler: OfficialApiNode + api_spec.json. Content upload/download officially uses content.dropboxapi.com with Dropbox-API-Arg. OfficialApiNode posts JSON to api.dropboxapi.com; large files need upload_session on the content host. Production apps need Dropbox approval. Scoped vs full Dropbox. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "folder",
   "tags": [
     "dropbox",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "copy_file",
-          "description": "Overrides config operation. Accepted: copy_file, delete_file, download, move_file, upload, copy_folder, create_folder, delete_folder, list_folder, move_folder, search, listen.",
+          "description": "Overrides config operation. Accepted: copy_file, delete_file, download, move_file, upload, copy_folder, create_folder, delete_folder, list_folder, move_folder, search, listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -159,7 +159,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status, http_status, data, file?}. Inbound webhook events (:listen) emit normalized event data on output. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -213,7 +213,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "description": "Official HTTP verb for this invoke. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "copy_file",
       "required": true,
       "instanceEditable": true,

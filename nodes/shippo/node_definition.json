@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Shippo",
   "label": "Shippo REST 2018-02-08 — address, shipment, rate, label, track",
-  "description": "Shippo multi-carrier labels. Authorization: ShippoToken api_token. Docs: https://docs.goshippo.com/api-reference/shipments/create-a-new-shipment. address_validate uses name/street1/city/zip/country; shipment_create uses address_from, address_to, parcels; label_create uses rate or instalabel shipment. Handler: OfficialApiNode. Never log api_token.",
+  "description": "Shippo multi-carrier labels. Authorization: ShippoToken api_token. Docs: https://docs.goshippo.com/api-reference/shipments/create-a-new-shipment. address_validate uses name/street1/city/zip/country; shipment_create uses address_from, address_to, parcels; label_create uses rate or instalabel shipment. Handler: OfficialApiNode. Never log api_token. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "local_shipping",
   "tags": [
     "shippo",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "address_validate",
-          "description": "Official API verb. EXACT: address_validate | shipment_create | rate_get | label_create | track_get | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "description": "Official API verb. EXACT: address_validate | shipment_create | rate_get | label_create | track_get | trigger. Blank uses configurationParameters.operation. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -276,7 +276,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "status=ok + data on 2xx. Inbound webhook events (:listen) emit normalized event data on output. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -321,7 +321,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb for OfficialApiNode. EXACT: address_validate | shipment_create | rate_get | label_create | track_get | trigger. trigger does not open a socket.",
+      "description": "HTTP verb for OfficialApiNode. EXACT: address_validate | shipment_create | rate_get | label_create | track_get | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "address_validate",
       "required": true,
       "instanceEditable": true,

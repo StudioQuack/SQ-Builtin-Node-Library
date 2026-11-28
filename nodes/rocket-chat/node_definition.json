@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Rocket.Chat",
   "label": "Rocket.Chat — Rocket.Chat REST API",
-  "description": "Rocket.Chat via the official Rocket.Chat REST API. Host is customer-supplied (config host). Docs: https://developer.rocket.chat/apidocs and https://developer.rocket.chat/apidocs/authentication-api. Every authenticated call sends X-Auth-Token (auth_token) plus X-User-Id ({user_id} extraHeader). listen = BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "description": "Rocket.Chat via the official Rocket.Chat REST API. Host is customer-supplied (config host). Docs: https://developer.rocket.chat/apidocs and https://developer.rocket.chat/apidocs/authentication-api. Every authenticated call sends X-Auth-Token (auth_token) plus X-User-Id ({user_id} extraHeader). Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) + provider signing/verification config (webhook_secret, webhook_header_name) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "forum",
   "tags": [
     "chat"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": true,
           "value": "post-message",
-          "description": "Which official call to run. EXACT values: post-message | send-dm | list-channels | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: post-message | send-dm | list-channels | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: first verb.",
           "children": []
         },
         {
@@ -95,7 +95,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -140,7 +140,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: post-message, send-dm, list-channels, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: post-message, send-dm, list-channels, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (webhook_secret, webhook_header_name), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "post-message",
       "required": true,
       "instanceEditable": true,
@@ -230,7 +230,7 @@
       "shortCode": "webhook_key",
       "label": "Webhook Key",
       "type": "webhook_key",
-      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "description": "Engine Node-scoped API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node via full URL key (.../runtime/message-events/<apiKey>) or X-SQ-WEBHOOK-KEY header (verified alongside the provider's secret header).",
       "value": "",
       "required": false,
       "instanceEditable": true,

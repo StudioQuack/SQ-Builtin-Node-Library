@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Netlify",
   "label": "Netlify API",
-  "description": "Netlify API via OfficialApiNode. Docs: https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/. Operations: deploy_create, deploy_get, deploy_list, deploy_cancel, site_get, site_list, site_delete, listen. Auth secret token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "description": "Netlify API via OfficialApiNode. Docs: https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/. Operations: deploy_create, deploy_get, deploy_list, deploy_cancel, site_get, site_list, site_delete, listen. Auth secret token is instance config only (never on INPUT, never logged). Failures are output.error. JDK HTTP, official API only. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "hub",
   "tags": [
     "netlify",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "deploy_create",
-          "description": "Which official API call to run. EXACT values: deploy_create | deploy_get | deploy_list | deploy_cancel | site_get | site_list | site_delete | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'deploy_create'.",
+          "description": "Which official API call to run. EXACT values: deploy_create | deploy_get | deploy_list | deploy_cancel | site_get | site_list | site_delete | listen. Prefer the instance config operation select. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'deploy_create'.",
           "children": []
         },
         {
@@ -78,7 +78,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status:ok, http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -123,7 +123,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official API operation. EXACT: deploy_create, deploy_get, deploy_list, deploy_cancel, site_get, site_list, site_delete, listen. listen is BPMN ingress, not a socket.",
+      "description": "Official API operation. EXACT: deploy_create, deploy_get, deploy_list, deploy_cancel, site_get, site_list, site_delete, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "deploy_create",
       "required": true,
       "instanceEditable": true,

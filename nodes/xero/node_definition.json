@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Xero",
   "label": "Xero — Xero Accounting API 2.0",
-  "description": "Official Xero Accounting API 2.0. Docs: https://developer.xero.com/documentation/api/accounting/overview. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. Expense Claims / Receipts / Employees decommissioned 2026-04-28 — omitted. Partner review required for Custom Connections.",
+  "description": "Official Xero Accounting API 2.0. Docs: https://developer.xero.com/documentation/api/accounting/overview. One node; operations via `operation`. Expense Claims / Receipts / Employees decommissioned 2026-04-28 — omitted. Partner review required for Custom Connections. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "xero",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "contact_create",
-          "description": "Overrides config operation. EXACT: contact_create | contact_get | contact_list | contact_update | invoice_create | invoice_get | invoice_list | invoice_update | payment_create | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "description": "Overrides config operation. EXACT: contact_create | contact_get | contact_list | contact_update | invoice_create | invoice_get | invoice_list | invoice_update | payment_create | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -285,7 +285,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -330,7 +330,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: contact_create | contact_get | contact_list | contact_update | invoice_create | invoice_get | invoice_list | invoice_update | payment_create | trigger. Default contact_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "description": "HTTP verb to run. EXACT: contact_create | contact_get | contact_list | contact_update | invoice_create | invoice_get | invoice_list | invoice_update | payment_create | trigger. Default contact_create. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact_create",
       "required": true,
       "instanceEditable": true,

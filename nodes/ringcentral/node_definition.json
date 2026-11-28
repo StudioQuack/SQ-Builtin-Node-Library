@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "RingCentral",
   "label": "RingCentral — RingEX REST API + Team Messaging",
-  "description": "RingCentral via the official RingEX REST API v1.0 plus Team Messaging. Base https://platform.ringcentral.com/restapi/v1.0. Docs: https://developers.ringcentral.com/api-reference and https://developers.ringcentral.com/guide/team-messaging/posting. OAuth JWT or 3-legged. Sandbox host is platform.devtest.ringcentral.com. SMS 10DLC. create-meeting was removed — the Programmable Meetings API is discontinued (https://developers.ringcentral.com/meetings-api). create-post uses POST /team-messaging/v1/chats/{chatId}/posts (not legacy /glip/...). listen = webhooks as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "description": "RingCentral via the official RingEX REST API v1.0 plus Team Messaging. Base https://platform.ringcentral.com/restapi/v1.0. Docs: https://developers.ringcentral.com/api-reference and https://developers.ringcentral.com/guide/team-messaging/posting. OAuth JWT or 3-legged. Sandbox host is platform.devtest.ringcentral.com. SMS 10DLC. create-meeting was removed — the Programmable Meetings API is discontinued (https://developers.ringcentral.com/meetings-api). create-post uses POST /team-messaging/v1/chats/{chatId}/posts (not legacy /glip/...). Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "phone",
   "tags": [
     "voice",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": true,
           "value": "send-sms",
-          "description": "Which official call to run. EXACT values: send-sms | send-fax | ringout | create-post | create-contact | update-contact | find-contact | listen. create-meeting was removed (Programmable Meetings API discontinued). listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: send-sms | send-fax | ringout | create-post | create-contact | update-contact | find-contact | listen. create-meeting was removed (Programmable Meetings API discontinued). listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: first verb.",
           "children": []
         },
         {
@@ -186,7 +186,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -231,7 +231,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: send-sms, send-fax, ringout, create-post, create-contact, update-contact, find-contact, listen. create-meeting was removed (Programmable Meetings API discontinued). listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: send-sms, send-fax, ringout, create-post, create-contact, update-contact, find-contact, listen. create-meeting was removed (Programmable Meetings API discontinued). Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "send-sms",
       "required": true,
       "instanceEditable": true,

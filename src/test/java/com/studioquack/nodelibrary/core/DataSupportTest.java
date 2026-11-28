@@ -32,6 +32,23 @@ class DataSupportTest {
     }
 
     @Test
+    void httpErrorDetailExtractsJsonApiTitleAndSourcePointer() {
+        String body = "{\"errors\":[{\"title\":\"The tag was not provided.\",\"detail\":\"\","
+                + "\"code\":\"field_missing\",\"source\":{\"pointer\":\"/data/attributes/tag\"}}]}";
+        String detail = DataSupport.httpErrorDetail(body);
+        assertEquals("The tag was not provided. (/data/attributes/tag)", detail);
+    }
+
+    @Test
+    void httpErrorDetailExtractsWebexErrorsDescriptionOverGenericMessage() {
+        String body = "{\"message\":\"The request could not be understood by the server due to malformed syntax. "
+                + "The message body will contain more information\","
+                + "\"errors\":[{\"description\":\"Start time must be in the future.\"}]}";
+        assertEquals("Start time must be in the future.", DataSupport.httpErrorDetail(body));
+        assertEquals("HTTP 400: Start time must be in the future.", DataSupport.httpStatusMessage(400, body));
+    }
+
+    @Test
     void clarifyInvoiceNinjaTierDetailMentionsUpgrade() {
         String in = "Feature not available with free / unpaid account";
         String out = DataSupport.clarifyInvoiceNinjaTierDetail(in);

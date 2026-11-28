@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "LinkedIn Ads",
   "label": "LinkedIn Marketing API 202608 — ad accounts, campaigns, creatives, conversions",
-  "description": "Official LinkedIn Marketing API on https://api.linkedin.com/rest/. Handler: OfficialApiNode. NOT social share. Bearer oauth_access_token. extraHeaders send Linkedin-Version: 202608 and X-Restli-Protocol-Version: 2.0.0 (https://learn.microsoft.com/en-us/linkedin/marketing/versioning?view=li-lms-2026-08). trigger.lead is ingress. Leads are PII. Customer owns the ad account. oauth_access_token is never logged or returned.",
+  "description": "Official LinkedIn Marketing API on https://api.linkedin.com/rest/. Handler: OfficialApiNode. NOT social share. Bearer oauth_access_token. extraHeaders send Linkedin-Version: 202608 and X-Restli-Protocol-Version: 2.0.0 (https://learn.microsoft.com/en-us/linkedin/marketing/versioning?view=li-lms-2026-08). Leads are PII. Customer owns the ad account. oauth_access_token is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.lead) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "ads_click",
   "tags": [
     "ads"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "account.list",
-          "description": "Overrides config. EXACT Marketing API verbs including trigger.lead.",
+          "description": "Overrides config. EXACT Marketing API verbs including trigger.lead. trigger.lead (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -338,7 +338,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -383,7 +383,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT ads verbs.",
+      "description": "Default operation when input.operation is blank. EXACT ads verbs. Selecting trigger.lead (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "account.list",
       "required": true,
       "instanceEditable": true,

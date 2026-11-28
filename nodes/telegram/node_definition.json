@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Telegram",
   "label": "Telegram — Telegram Bot API",
-  "description": "Telegram via the official Telegram Bot API. Base https://api.telegram.org. Docs: https://core.telegram.org/bots/api. Canonical messaging node; social-media.md is discovery only — same folder nodes/telegram. listen = setWebhook HTTPS or getUpdates, delivered as a BPMN message event. secret_token header for webhook verify. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "description": "Telegram via the official Telegram Bot API. Base https://api.telegram.org. Docs: https://core.telegram.org/bots/api. Canonical messaging node; social-media.md is discovery only — same folder nodes/telegram. Receives setWebhook HTTPS push deliveries verified with X-Telegram-Bot-Api-Secret-Token (getUpdates long-poll is not opened). Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file (ref-id). Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) + provider signing/verification secret (secret_token) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "send",
   "tags": [
     "chat"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": true,
           "value": "send-message",
-          "description": "Which official call to run. EXACT values: send-message | send-photo | send-document | send-audio | send-video | send-animation | send-sticker | send-location | send-media-group | send-chat-action | edit-message | delete-message | pin-message | unpin-message | get-file | get-chat | get-chat-administrators | get-chat-member | leave-chat | set-chat-title | set-chat-description | answer-callback-query | answer-inline-query | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: send-message | send-photo | send-document | send-audio | send-video | send-animation | send-sticker | send-location | send-media-group | send-chat-action | edit-message | delete-message | pin-message | unpin-message | get-file | get-chat | get-chat-administrators | get-chat-member | leave-chat | set-chat-title | set-chat-description | answer-callback-query | answer-inline-query | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: first verb.",
           "children": []
         },
         {
@@ -266,7 +266,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -311,7 +311,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: send-message, send-photo, send-document, send-audio, send-video, send-animation, send-sticker, send-location, send-media-group, send-chat-action, edit-message, delete-message, pin-message, unpin-message, get-file, get-chat, get-chat-administrators, get-chat-member, leave-chat, set-chat-title, set-chat-description, answer-callback-query, answer-inline-query, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: send-message, send-photo, send-document, send-audio, send-video, send-animation, send-sticker, send-location, send-media-group, send-chat-action, edit-message, delete-message, pin-message, unpin-message, get-file, get-chat, get-chat-administrators, get-chat-member, leave-chat, set-chat-title, set-chat-description, answer-callback-query, answer-inline-query, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (secret_token), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "send-message",
       "required": true,
       "instanceEditable": true,
@@ -391,7 +391,7 @@
       "shortCode": "webhook_key",
       "label": "Webhook Key",
       "type": "webhook_key",
-      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "description": "Engine Node-scoped API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node via full URL key (.../runtime/message-events/<apiKey>) or X-SQ-WEBHOOK-KEY header (verified alongside the provider's secret header).",
       "value": "",
       "required": false,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Flickr",
   "label": "Flickr API",
-  "description": "Official Flickr REST (api_key query, format=json&nojsoncallback=1). photo_search, photo_get, people_get. photo_upload omitted (multipart + OAuth 1.0a not supported by OfficialApiNode). trigger is kind:ingress (flickr.push is experimental Pro-only PubSubHubbub — use BPMN message event). Licence is per photo.",
+  "description": "Official Flickr REST (api_key query, format=json&nojsoncallback=1). photo_search, photo_get, people_get. photo_upload omitted (multipart + OAuth 1.0a not supported by OfficialApiNode). flickr.push is experimental Pro-only PubSubHubbub. Licence is per photo. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "photo_camera",
   "tags": [
     "flickr",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "photo_search",
-          "description": "Overrides config operation. EXACT: photo_search | photo_get | people_get | trigger. Example: 'photo_search'.",
+          "description": "Overrides config operation. EXACT: photo_search | photo_get | people_get | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'photo_search'.",
           "children": []
         },
         {
@@ -132,7 +132,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data} on 2xx. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data} on 2xx. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -177,7 +177,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: photo_search | photo_get | people_get | trigger. Example: 'photo_search'.",
+      "description": "Default operation when input.operation is blank. EXACT: photo_search | photo_get | people_get | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event. Example: 'photo_search'.",
       "value": "photo_search",
       "required": true,
       "instanceEditable": true,

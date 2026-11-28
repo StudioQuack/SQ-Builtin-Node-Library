@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Jotform",
   "label": "Jotform — forms, submissions, reports",
-  "description": "Official Jotform REST API v1. Handler: OfficialApiNode. api_key sent as header APIKEY (never apiKey on the query string). Config host selects the official API hostname (api.jotform.com / eu-api.jotform.com / hipaa-api.jotform.com) and is substituted into baseUrl as https://{host}. Keys are region-bound. trigger.listen is ingress (BPMN message event), not POST /form/{id}/webhooks. Submissions are respondent PII. Customer owns the Jotform account. Never log api_key or answers.",
+  "description": "Official Jotform REST API v1. Handler: OfficialApiNode. api_key sent as header APIKEY (never apiKey on the query string). Config host selects the official API hostname (api.jotform.com / eu-api.jotform.com / hipaa-api.jotform.com) and is substituted into baseUrl as https://{host}. Keys are region-bound. Configure the webhook URL in Jotform (no POST /form/{id}/webhooks registration op). Submissions are respondent PII. Customer owns the Jotform account. Never log api_key or answers. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "assignment",
   "tags": [
     "forms"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "form.list",
-          "description": "Overrides config. EXACT: form.list | form.get | submission.list | submission.get | submission.delete | report.list | trigger.listen.",
+          "description": "Overrides config. EXACT: form.list | form.get | submission.list | submission.get | submission.delete | report.list | trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -95,7 +95,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (Jotform content envelope). trigger.listen: BPMN message event. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (Jotform content envelope). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -140,7 +140,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank.",
+      "description": "Default operation when input.operation is blank. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "form.list",
       "required": true,
       "instanceEditable": true,

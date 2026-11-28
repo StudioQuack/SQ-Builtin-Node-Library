@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Freshworks CRM",
   "label": "Freshworks CRM (Freshsales) REST — contacts, accounts, deals",
-  "description": "Official Freshsales / Freshworks CRM REST (unversioned) at https://{bundleAlias}.{hostSuffix}/crm/sales/api. Handler: OfficialApiNode. Auth: Authorization: Token token=<apiKey>. List endpoints need a saved view_id. trigger.listen is ingress — there is no REST webhook-subscribe; use Freshsales Workflow “Trigger webhook” into a BPMN message event. Customer owns the CRM tenant. Do not call Freshdesk/Freshservice from this node. apiKey is never logged or returned.",
+  "description": "Official Freshsales / Freshworks CRM REST (unversioned) at https://{bundleAlias}.{hostSuffix}/crm/sales/api. Handler: OfficialApiNode. Auth: Authorization: Token token=<apiKey>. List endpoints need a saved view_id. No REST webhook-subscribe; configure Freshsales Workflow \"Trigger webhook\" to deliver inbound webhooks. Customer owns the CRM tenant. Do not call Freshdesk/Freshservice from this node. apiKey is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) + provider signing/verification config (webhook_secret, webhook_header_name) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "contacts",
   "tags": [
     "crm"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "contact.create",
-          "description": "Overrides config operation when non-blank. EXACT catalog verbs: contact.* account.* deal.* appointment.* task.* note.* salesActivity.get | salesActivity.list | trigger.listen. trigger.listen never opens a socket.",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs: contact.* account.* deal.* appointment.* task.* note.* salesActivity.get | salesActivity.list | trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -140,7 +140,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -185,7 +185,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank.",
+      "description": "Default operation when input.operation is blank. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (webhook_secret, webhook_header_name), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.get",
       "required": true,
       "instanceEditable": true,
@@ -306,7 +306,7 @@
       "shortCode": "webhook_key",
       "label": "Webhook Key",
       "type": "webhook_key",
-      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "description": "Engine Node-scoped API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node via full URL key (.../runtime/message-events/<apiKey>) or X-SQ-WEBHOOK-KEY header (verified alongside the provider's secret header).",
       "value": "",
       "required": false,
       "instanceEditable": true,

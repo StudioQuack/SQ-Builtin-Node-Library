@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Mailgun",
   "label": "Mailgun — Mailgun API v3",
-  "description": "Mailgun via the official Mailgun API v3. Base https://{region} (api.mailgun.net US, api.eu.mailgun.net EU, api.au.mailgun.net AU). Docs: https://documentation.mailgun.com/docs/mailgun/api-reference/send/mailgun/messages/post-v3--domain-name--messages. Basic auth username is the literal api. send-email posts multipart/form-data (bodyFormat multipart) as Mailgun documents; pass attachment as the platform file list [{kind, mime_type, source, data|url, name}] (one part per item; a single ContentBlock and legacy {dataBase64|url, fileName, contentType} still accepted). listen = webhooks as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "description": "Mailgun via the official Mailgun API v3. Base https://{region} (api.mailgun.net US, api.eu.mailgun.net EU, api.au.mailgun.net AU). Docs: https://documentation.mailgun.com/docs/mailgun/api-reference/send/mailgun/messages/post-v3--domain-name--messages. Basic auth username is the literal api. send-email posts multipart/form-data (bodyFormat multipart) as Mailgun documents; pass attachment as the platform file list [{kind, mime_type, source, data|url, name}] (one part per item; a single ContentBlock and legacy {dataBase64|url, fileName, contentType} still accepted). Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "mail",
   "tags": [
     "email"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": true,
           "value": "send-email",
-          "description": "Which official call to run. EXACT values: send-email | get-event | list-events | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: send-email | get-event | list-events | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: first verb.",
           "children": []
         },
         {
@@ -176,7 +176,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -221,7 +221,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: send-email, get-event, list-events, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: send-email, get-event, list-events, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "send-email",
       "required": true,
       "instanceEditable": true,

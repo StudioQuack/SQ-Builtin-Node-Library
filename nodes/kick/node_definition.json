@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Kick",
   "label": "Kick Public API v1 (+ v2 livestream list)",
-  "description": "Official Kick Public API via OfficialApiNode. Base https://api.kick.com. Paths /public/v1/users, /public/v1/channels, /public/v1/users/livestreams, /public/v2/livestreams, /public/v1/chat. GET /public/v1/livestreams is deprecated (Kick OpenAPI). Bearer access_token. trigger is EventSub-style ingress (BPMN message event). Never return stream keys. Official API only — do not scrape kick.com. Docs: https://docs.kick.com · https://api.kick.com/swagger/doc.yaml",
+  "description": "Official Kick Public API via OfficialApiNode. Base https://api.kick.com. Paths /public/v1/users, /public/v1/channels, /public/v1/users/livestreams, /public/v2/livestreams, /public/v1/chat. GET /public/v1/livestreams is deprecated (Kick OpenAPI). Bearer access_token. Supports EventSub-style webhooks. Never return stream keys. Official API only — do not scrape kick.com. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Docs: https://docs.kick.com · https://api.kick.com/swagger/doc.yaml",
   "icon": "videocam",
   "tags": [
     "kick",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "user_get",
-          "description": "Overrides config operation when non-blank. EXACT: user_get | channel_get | livestream_get (deprecated GET /public/v1/livestreams) | livestream_user | livestream_list | chat_send | trigger. trigger is ingress, not HTTP.",
+          "description": "Overrides config operation when non-blank. EXACT: user_get | channel_get | livestream_get (deprecated GET /public/v1/livestreams) | livestream_user | livestream_list | chat_send | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -132,7 +132,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data. Never return stream.key or ingest URL even if the token has streamkey:read. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data. Never return stream.key or ingest URL even if the token has streamkey:read. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -177,7 +177,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. trigger does not open a socket. livestream_get is Kick-deprecated; prefer livestream_user or livestream_list.",
+      "description": "Default operation when input.operation is blank. livestream_get is Kick-deprecated; prefer livestream_user or livestream_list. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "channel_get",
       "required": true,
       "instanceEditable": true,

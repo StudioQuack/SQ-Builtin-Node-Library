@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Folk",
   "label": "Folk External API REST v1 — people, companies, notes",
-  "description": "Official Folk External API REST v1 at https://api.folk.app (OpenAPI 2025-06-09). NOT GraphQL. Handler: OfficialApiNode. Bearer workspace apiKey. Pin X-API-Version from config apiVersion (default 2025-06-09). People/companies/notes are PII. Customer owns the Folk workspace. trigger.listen is ingress (BPMN message event). apiKey is never logged or returned.",
+  "description": "Official Folk External API REST v1 at https://api.folk.app (OpenAPI 2025-06-09). NOT GraphQL. Handler: OfficialApiNode. Bearer workspace apiKey. Pin X-API-Version from config apiVersion (default 2025-06-09). People/companies/notes are PII. Customer owns the Folk workspace. apiKey is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "groups",
   "tags": [
     "crm"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "person.create",
-          "description": "Overrides config operation when non-blank. EXACT: 'person.create' | 'person.get' | 'person.update' | 'person.search' | 'company.create' | 'company.get' | 'company.update' | 'group.list' | 'note.create' | 'customField.set' | 'trigger.listen'. trigger.listen never opens a socket.",
+          "description": "Overrides config operation when non-blank. EXACT: 'person.create' | 'person.get' | 'person.update' | 'person.search' | 'company.create' | 'company.get' | 'company.update' | 'group.list' | 'note.create' | 'customField.set' | 'trigger.listen'. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -248,7 +248,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -293,7 +293,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: person.create | person.get | person.update | person.search | company.create | company.get | company.update | group.list | note.create | customField.set | trigger.listen.",
+      "description": "Default operation when input.operation is blank. EXACT: person.create | person.get | person.update | person.search | company.create | company.get | company.update | group.list | note.create | customField.set | trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "person.get",
       "required": true,
       "instanceEditable": true,

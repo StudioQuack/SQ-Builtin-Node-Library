@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Typeform",
   "label": "Typeform — Create + Responses + Webhooks",
-  "description": "Official Typeform Create, Responses, and Webhooks REST at https://api.typeform.com (US). EU accounts: api.eu.typeform.com or api.typeform.eu via config api_host. Handler: OfficialApiNode. Bearer access_token. Form responses are respondent PII. Customer owns the Typeform account. Minimize. Never log tokens, answers, or HMAC secrets. trigger.listen is BPMN message-event ingress. Docs: https://www.typeform.com/developers/",
+  "description": "Official Typeform Create, Responses, and Webhooks REST at https://api.typeform.com (US). EU accounts: api.eu.typeform.com or api.typeform.eu via config api_host. Handler: OfficialApiNode. Bearer access_token. Form responses are respondent PII. Customer owns the Typeform account. Minimize. Never log tokens, answers, or HMAC secrets. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) + provider signing/verification secret (webhook_secret) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Docs: https://www.typeform.com/developers/",
   "icon": "quiz",
   "tags": [
     "forms"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "form.list",
-          "description": "Overrides config operation when non-blank. EXACT: form.list | form.get | form.create | response.list | response.get | webhook.register | trigger.listen.",
+          "description": "Overrides config operation when non-blank. EXACT: form.list | form.get | form.create | response.list | response.get | webhook.register | trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -293,7 +293,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -338,7 +338,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: form.list | form.get | form.create | response.list | response.get | webhook.register | trigger.listen. trigger.listen is ingress.",
+      "description": "Default operation when input.operation is blank. EXACT: form.list | form.get | form.create | response.list | response.get | webhook.register | trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (webhook_secret), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "form.list",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "GoCardless",
   "label": "GoCardless — GoCardless Bank Debits API (GoCardless-Version 2015-07-06)",
-  "description": "Official GoCardless Bank Debits API (GoCardless-Version 2015-07-06). Docs: https://developer.gocardless.com/api-reference. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. ACH/BACS/SEPA. Collect bank details via GoCardless Drop-in — do not put IBAN/account numbers on INPUT if a mandate token exists. Sandbox: api-sandbox.gocardless.com.",
+  "description": "Official GoCardless Bank Debits API (GoCardless-Version 2015-07-06). Docs: https://developer.gocardless.com/api-reference. One node; operations via `operation`. ACH/BACS/SEPA. Collect bank details via GoCardless Drop-in — do not put IBAN/account numbers on INPUT if a mandate token exists. Sandbox: api-sandbox.gocardless.com. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "gocardless",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "customer_create",
-          "description": "Overrides config operation. EXACT: customer_create | mandate_create | payment_create | payout_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "description": "Overrides config operation. EXACT: customer_create | mandate_create | payment_create | payout_list | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -249,7 +249,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -294,7 +294,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: customer_create | mandate_create | payment_create | payout_list | trigger. Default customer_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "description": "HTTP verb to run. EXACT: customer_create | mandate_create | payment_create | payout_list | trigger. Default customer_create. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "customer_create",
       "required": true,
       "instanceEditable": true,

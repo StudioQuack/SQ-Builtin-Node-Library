@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Lemlist",
   "label": "lemlist REST v2 — campaigns, leads, enrichment",
-  "description": "Official lemlist REST v2 at https://api.lemlist.com/api. Handler: OfficialApiNode. HTTP Basic empty-user + api_key password. LinkedIn profile URL fields are operator-supplied data only — this node does not scrape LinkedIn; operator must honor LinkedIn terms. trigger.listen is ingress. Customer owns the lemlist account. api_key is never logged or returned.",
+  "description": "Official lemlist REST v2 at https://api.lemlist.com/api. Handler: OfficialApiNode. HTTP Basic empty-user + api_key password. LinkedIn profile URL fields are operator-supplied data only — this node does not scrape LinkedIn; operator must honor LinkedIn terms. Customer owns the lemlist account. api_key is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "outgoing_mail",
   "tags": [
     "outreach"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "lead.create",
-          "description": "Overrides config operation when non-blank. EXACT catalog verbs including trigger.listen.",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs including trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -320,7 +320,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -365,7 +365,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT lemlist verbs.",
+      "description": "Default operation when input.operation is blank. EXACT lemlist verbs. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "campaign.list",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Calendly",
   "label": "Calendly — Calendly API v2",
-  "description": "Calendly via the official Calendly API v2. Base https://api.calendly.com. Docs: https://developer.calendly.com/api-docs. Webhooks fire only for Calendly-managed bookings. Invitees are personal data. listen = webhook signing as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "description": "Calendly via the official Calendly API v2. Base https://api.calendly.com. Docs: https://developer.calendly.com/api-docs. Webhooks fire only for Calendly-managed bookings. Invitees are personal data. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Attachments use type file (ref-id). Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "event",
   "tags": [
     "scheduling"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": true,
           "value": "list-event-types",
-          "description": "Which official call to run. EXACT values: list-event-types | get-event | list-events | cancel-event | list-invitees | create-invitee-no-show | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: list-event-types | get-event | list-events | cancel-event | list-invitees | create-invitee-no-show | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: first verb.",
           "children": []
         },
         {
@@ -131,7 +131,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -176,7 +176,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: list-event-types, get-event, list-events, cancel-event, list-invitees, create-invitee-no-show, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: list-event-types, get-event, list-events, cancel-event, list-invitees, create-invitee-no-show, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "list-event-types",
       "required": true,
       "instanceEditable": true,

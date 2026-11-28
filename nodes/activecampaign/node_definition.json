@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "ActiveCampaign",
   "label": "ActiveCampaign — CRM + email automation (REST v3)",
-  "description": "Official ActiveCampaign REST API v3 (/api/3). Handler: OfficialApiNode. Header Api-Token. Account API host from Settings → Developer (US typically *.api-us1.com). Contact–organization endpoints are deprecated — use Account–Contact. Customer owns the ActiveCampaign account. api_key is never logged or returned. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "description": "Official ActiveCampaign REST API v3 (/api/3). Handler: OfficialApiNode. Header Api-Token. Account API host from Settings → Developer (US typically *.api-us1.com). Contact–organization endpoints are deprecated — use Account–Contact. Customer owns the ActiveCampaign account. api_key is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
   "icon": "contacts",
   "tags": [
     "crm",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "contact.create",
-          "description": "Overrides config operation when non-blank. EXACT catalog verb.",
+          "description": "Overrides config operation when non-blank. EXACT catalog verb. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -201,7 +201,7 @@
           "type": "object",
           "required": false,
           "value": "{}",
-          "description": "Per-operation field `accountContact`. Omit when unused. Never put secrets here.",
+          "description": "accountContact.create/update body {account, contact} using flat scalar IDs (not nested objects). Example: {\"account\":1,\"contact\":2}.",
           "children": []
         },
         {
@@ -219,7 +219,7 @@
           "type": "object",
           "required": false,
           "value": "{}",
-          "description": "Per-operation field `deal`. Omit when unused. Never put secrets here.",
+          "description": "deal.create/update body {title, value (cents), currency (lowercase), group (pipeline id), stage, owner, status (0 open|1 won|2 lost), contact}. Requires pipeline/currency configured in account.",
           "children": []
         },
         {
@@ -237,7 +237,7 @@
           "type": "object",
           "required": false,
           "value": "{}",
-          "description": "Per-operation field `note`. Omit when unused. Never put secrets here.",
+          "description": "deal.note.create/update body {note, relid, reltype}. Example: {\"note\":\"Follow up\",\"relid\":12,\"reltype\":\"Deal\"}.",
           "children": []
         },
         {
@@ -255,7 +255,7 @@
           "type": "object",
           "required": false,
           "value": "{}",
-          "description": "Per-operation field `tag`. Omit when unused. Never put secrets here.",
+          "description": "tag.create/update body {tag, tagType}. Use key 'tag' (not 'name'). tagType EXACT: contact | template. Example: {\"tag\":\"vip\",\"tagType\":\"contact\"}.",
           "children": []
         },
         {
@@ -291,7 +291,7 @@
           "type": "object",
           "required": false,
           "value": "{}",
-          "description": "Per-operation field `ecomCustomer`. Omit when unused. Never put secrets here.",
+          "description": "ecommerce.customer.create/update body {connectionid, externalid, email} (requires an existing connection id). Example: {\"connectionid\":\"1\",\"externalid\":\"cust-1\",\"email\":\"ada@example.com\"}.",
           "children": []
         },
         {
@@ -300,7 +300,7 @@
           "type": "object",
           "required": false,
           "value": "{}",
-          "description": "Per-operation field `connection`. Omit when unused. Never put secrets here.",
+          "description": "connection.create/update body {service, externalid, name, logoUrl, linkUrl}. Example: {\"service\":\"shopify\",\"externalid\":\"store-1\",\"name\":\"Acme\",\"logoUrl\":\"https://example.com/logo.png\",\"linkUrl\":\"https://example.com\"}.",
           "children": []
         }
       ],
@@ -312,7 +312,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -357,7 +357,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: contact.create | contact.get | contact.list | contact.update | contact.delete | contactList.add | contactList.remove | contactTag.add | contactTag.remove | account.create | account.get | account.list | account.update | account.delete | accountContact.create | accountContact.update | accountContact.delete | deal.create | deal.get | deal.list | deal.update | deal.delete | deal.note.create | deal.note.update | list.list | tag.create | tag.get | tag.list | tag.update | tag.delete | ecommerce.order.create | ecommerce.order.get | ecommerce.order.list | ecommerce.order.update | ecommerce.order.delete | ecommerce.customer.create | ecommerce.customer.get | ecommerce.customer.list | ecommerce.customer.update | ecommerce.customer.delete | ecommerce.orderProduct.get | ecommerce.orderProduct.list | connection.create | connection.get | connection.list | connection.update | connection.delete | trigger.listen.",
+      "description": "Default operation when input.operation is blank. EXACT: contact.create | contact.get | contact.list | contact.update | contact.delete | contactList.add | contactList.remove | contactTag.add | contactTag.remove | account.create | account.get | account.list | account.update | account.delete | accountContact.create | accountContact.update | accountContact.delete | deal.create | deal.get | deal.list | deal.update | deal.delete | deal.note.create | deal.note.update | list.list | tag.create | tag.get | tag.list | tag.update | tag.delete | ecommerce.order.create | ecommerce.order.get | ecommerce.order.list | ecommerce.order.update | ecommerce.order.delete | ecommerce.customer.create | ecommerce.customer.get | ecommerce.customer.list | ecommerce.customer.update | ecommerce.customer.delete | ecommerce.orderProduct.get | ecommerce.orderProduct.list | connection.create | connection.get | connection.list | connection.update | connection.delete | trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.create",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Hotjar",
   "label": "Hotjar — survey REST v1 + survey webhook ingress",
-  "description": "Official Hotjar HTTP API v1 at https://api.hotjar.io. Handler: OfficialApiNode. OAuth client-credentials is fetched by the operator; paste the access token as Bearer (this node does not call /v1/oauth/token). Survey list/get/responses and user lookup. trigger.listen is ingress for survey_response (and recording metadata) webhooks — not a socket. Identify/Events are browser JavaScript only and are not operations. No heatmap export and no recording scrape. Customer owns the Hotjar site. Survey answers are PII. Never log access_token.",
+  "description": "Official Hotjar HTTP API v1 at https://api.hotjar.io. Handler: OfficialApiNode. OAuth client-credentials is fetched by the operator; paste the access token as Bearer (this node does not call /v1/oauth/token). Survey list/get/responses and user lookup. Supports survey_response and recording metadata webhooks. Identify/Events are browser JavaScript only and are not operations. No heatmap export and no recording scrape. Customer owns the Hotjar site. Survey answers are PII. Never log access_token. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "analytics",
   "tags": [
     "analytics"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "survey.list",
-          "description": "Overrides config. EXACT: 'survey.list' | 'survey.get' | 'survey.response.list' | 'user.lookup' | 'trigger.listen'.",
+          "description": "Overrides config. EXACT: 'survey.list' | 'survey.get' | 'survey.response.list' | 'user.lookup' | 'trigger.listen'. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -122,7 +122,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (surveys/responses). trigger.listen: BPMN message event. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (surveys/responses). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -167,7 +167,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank.",
+      "description": "Default operation when input.operation is blank. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "survey.response.list",
       "required": true,
       "instanceEditable": true,

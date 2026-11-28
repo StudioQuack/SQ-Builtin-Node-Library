@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Marketo",
   "label": "Adobe Marketo Engage REST — leads, lists, campaigns, assets",
-  "description": "Official Adobe Marketo Engage REST at https://{munchkin_id}.mktorest.com/rest. Handler: OfficialApiNode. Authorization Bearer access_token only — query access_token dies 2026-08-31. Customer supplies the token or runs 2-legged Identity outside this node (see README). trigger.listen is ingress. Leads are PII. Customer owns the Marketo subscription. access_token is never logged or returned.",
+  "description": "Official Adobe Marketo Engage REST at https://{munchkin_id}.mktorest.com/rest. Handler: OfficialApiNode. Authorization Bearer access_token only — query access_token dies 2026-08-31. Customer supplies the token or runs 2-legged Identity outside this node (see README). Leads are PII. Customer owns the Marketo subscription. access_token is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) + provider signing/verification config (webhook_secret, webhook_header_name) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "hub",
   "tags": [
     "email"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "lead.create",
-          "description": "Overrides config. EXACT REST verbs including trigger.listen.",
+          "description": "Overrides config. EXACT REST verbs including trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -248,7 +248,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -293,7 +293,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT REST verbs.",
+      "description": "Default operation when input.operation is blank. EXACT REST verbs. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (webhook_secret, webhook_header_name), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "lead.get",
       "required": true,
       "instanceEditable": true,
@@ -379,7 +379,7 @@
       "shortCode": "webhook_key",
       "label": "Webhook Key",
       "type": "webhook_key",
-      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "description": "Engine Node-scoped API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node via full URL key (.../runtime/message-events/<apiKey>) or X-SQ-WEBHOOK-KEY header (verified alongside the provider's secret header).",
       "value": "",
       "required": false,
       "instanceEditable": true,

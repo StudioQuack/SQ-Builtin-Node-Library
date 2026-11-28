@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Plaid",
   "label": "Plaid — Plaid API 2020-09-14",
-  "description": "Official Plaid API 2020-09-14. Docs: https://plaid.com/docs/api/. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. No screen-scraping. End-user consent via Plaid Link (this node only creates link_token). access_token is a secret — prefer config, never logs. Sandbox: sandbox.plaid.com. processor_token is for Stripe/Adyen — not bank passwords.",
+  "description": "Official Plaid API 2020-09-14. Docs: https://plaid.com/docs/api/. One node; operations via `operation`. No screen-scraping. End-user consent via Plaid Link (this node only creates link_token). access_token is a secret — prefer config, never logs. Sandbox: sandbox.plaid.com. processor_token is for Stripe/Adyen — not bank passwords. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "plaid",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "link_token_create",
-          "description": "Overrides config operation. EXACT: link_token_create | item_public_token_exchange | accounts_get | transactions_sync | auth_get | identity_get | processor_token_create | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "description": "Overrides config operation. EXACT: link_token_create | item_public_token_exchange | accounts_get | transactions_sync | auth_get | identity_get | processor_token_create | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -141,7 +141,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -186,7 +186,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: link_token_create | item_public_token_exchange | accounts_get | transactions_sync | auth_get | identity_get | processor_token_create | trigger. Default link_token_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "description": "HTTP verb to run. EXACT: link_token_create | item_public_token_exchange | accounts_get | transactions_sync | auth_get | identity_get | processor_token_create | trigger. Default link_token_create. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "link_token_create",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Zoom",
   "label": "Zoom — Zoom Meeting API v2",
-  "description": "Zoom via the official Zoom Meeting API v2. Base https://api.zoom.us/v2. Docs: https://developers.zoom.us/docs/api/meetings/. OAuth user or Server-to-Server account token minted outside StudioQuack (JWT apps are retired). Server-to-Server cannot use the `me` keyword — pass a real userId or email. Recordings are personal data. listen = Marketplace event subscriptions as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "description": "Zoom via the official Zoom Meeting API v2. Base https://api.zoom.us/v2. Docs: https://developers.zoom.us/docs/api/meetings/. OAuth user or Server-to-Server account token minted outside StudioQuack (JWT apps are retired). Server-to-Server cannot use the `me` keyword — pass a real userId or email. Recordings are personal data. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) + provider signing/verification secret (webhook_secret_token) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "videocam",
   "tags": [
     "video"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": true,
           "value": "create-meeting",
-          "description": "Which official call to run. EXACT values: create-meeting | get-meeting | list-meetings | update-meeting | delete-meeting | list-registrants | add-registrant | list-recordings | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: create-meeting | get-meeting | list-meetings | update-meeting | delete-meeting | list-registrants | add-registrant | list-recordings | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: first verb.",
           "children": []
         },
         {
@@ -248,7 +248,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -293,7 +293,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: create-meeting, get-meeting, list-meetings, update-meeting, delete-meeting, list-registrants, add-registrant, list-recordings, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: create-meeting, get-meeting, list-meetings, update-meeting, delete-meeting, list-registrants, add-registrant, list-recordings, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (webhook_secret_token), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "create-meeting",
       "required": true,
       "instanceEditable": true,

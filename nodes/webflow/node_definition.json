@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Webflow",
   "label": "Webflow — Data API v2 CMS items and forms",
-  "description": "Official Webflow Data API v2 at https://api.webflow.com/v2. Handler: OfficialApiNode. Bearer site token or OAuth access token in access_token. Form submissions are respondent PII. Customer owns the Webflow site/workspace. Minimize; never log tokens or formResponse. v1 (no /v2) is retired for this node. trigger.form and trigger.listen are BPMN message-event ingress. Docs: https://developers.webflow.com/data/reference/rest-introduction",
+  "description": "Official Webflow Data API v2 at https://api.webflow.com/v2. Handler: OfficialApiNode. Bearer site token or OAuth access token in access_token. Form submissions are respondent PII. Customer owns the Webflow site/workspace. Minimize; never log tokens or formResponse. v1 (no /v2) is retired for this node. Inbound webhooks: selecting a :listen operation (trigger.form / trigger.listen / trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Docs: https://developers.webflow.com/data/reference/rest-introduction",
   "icon": "web",
   "tags": [
     "forms"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "site.list",
-          "description": "Overrides config operation when non-blank. EXACT: site.list | item.list | item.get | item.create | item.update | item.delete | form.list | form.submission.list | order.list | sku.list | trigger.form | trigger.listen. Underscore aliases: item_list | item_create | item_update | order_list | sku_list | trigger.",
+          "description": "Overrides config operation when non-blank. EXACT: site.list | item.list | item.get | item.create | item.update | item.delete | form.list | form.submission.list | order.list | sku.list | trigger.form | trigger.listen. Underscore aliases: item_list | item_create | item_update | order_list | sku_list | trigger. trigger.form / trigger.listen / trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -140,7 +140,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -185,7 +185,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT dotted CRM verbs plus order.list | sku.list. Underscore aliases match the ecommerce catalog row. trigger* is ingress.",
+      "description": "Default operation when input.operation is blank. EXACT dotted CRM verbs plus order.list | sku.list. Underscore aliases match the ecommerce catalog row. Selecting trigger.form / trigger.listen / trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "site.list",
       "required": true,
       "instanceEditable": true,

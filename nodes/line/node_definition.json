@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "LINE",
   "label": "LINE — LINE Messaging API",
-  "description": "LINE via the official LINE Messaging API. Base https://api.line.me/v2. Docs: https://developers.line.biz/en/reference/messaging-api/. Messaging API only. LINE Notify ended 2025-04-01 — do not implement Notify. Canonical vs social-media.md Line row — same node. listen = webhook signature (channel secret) as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "description": "LINE via the official LINE Messaging API. Base https://api.line.me/v2. Docs: https://developers.line.biz/en/reference/messaging-api/. Messaging API only. LINE Notify ended 2025-04-01 — do not implement Notify. Canonical vs social-media.md Line row — same node. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "chat",
   "tags": [
     "chat"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": true,
           "value": "push-message",
-          "description": "Which official call to run. EXACT values: push-message | reply-message | multicast | broadcast | get-profile | get-content | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: push-message | reply-message | multicast | broadcast | get-profile | get-content | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: first verb.",
           "children": []
         },
         {
@@ -95,7 +95,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -140,7 +140,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: push-message, reply-message, multicast, broadcast, get-profile, get-content, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: push-message, reply-message, multicast, broadcast, get-profile, get-content, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "push-message",
       "required": true,
       "instanceEditable": true,

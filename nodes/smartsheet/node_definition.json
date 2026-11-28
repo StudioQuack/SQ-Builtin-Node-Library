@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Smartsheet",
   "label": "Smartsheet API 2.0",
-  "description": "Smartsheet API 2.0 via OfficialApiNode (nodes/smartsheet/api_spec.json). Official Smartsheet API 2.0. Enterprise admins may block tokens. Developer agreement applies. Official docs: https://developers.smartsheet.com/api/smartsheet. OUTPUT is {status, http_status, data} or {error}. Secrets never appear on OUTPUT.",
+  "description": "Smartsheet API 2.0 via OfficialApiNode (nodes/smartsheet/api_spec.json). Official Smartsheet API 2.0. Enterprise admins may block tokens. Developer agreement applies. Official docs: https://developers.smartsheet.com/api/smartsheet. OUTPUT is {status, http_status, data} or {error}. Secrets never appear on OUTPUT. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "grid_on",
   "tags": [
     "smartsheet",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "row_create",
-          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'row_create', 'row_update', 'row_delete', 'sheet_create', 'sheet_copy', 'sheet_get', 'folder_create', 'folder_copy', 'workspace_copy', 'comment_create', 'user_add', 'listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'row_create'.",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'row_create', 'row_update', 'row_delete', 'sheet_create', 'sheet_copy', 'sheet_get', 'folder_create', 'folder_copy', 'workspace_copy', 'comment_create', 'user_add', 'listen'. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'row_create'.",
           "children": []
         },
         {
@@ -204,7 +204,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -249,7 +249,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: row_create, row_update, row_delete, sheet_create, sheet_copy, sheet_get, folder_create, folder_copy, workspace_copy, comment_create, user_add, listen. Default: row_create. Example: row_create.",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: row_create, row_update, row_delete, sheet_create, sheet_copy, sheet_get, folder_create, folder_copy, workspace_copy, comment_create, user_add, listen. Default: row_create. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event. Example: row_create.",
       "value": "row_create",
       "required": true,
       "instanceEditable": true,

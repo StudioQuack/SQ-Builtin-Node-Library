@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Beehiiv",
   "label": "Beehiiv — publications, subscriptions, posts (REST v2)",
-  "description": "Official Beehiiv REST v2 at https://api.beehiiv.com/v2. Handler: OfficialApiNode. Bearer api_token. Offset page is deprecated (max 100 pages); prefer cursor. Webhooks on Scale+. Customer owns the Beehiiv publication. api_token is never logged. https://developers.beehiiv.com/welcome/pagination",
+  "description": "Official Beehiiv REST v2 at https://api.beehiiv.com/v2. Handler: OfficialApiNode. Bearer api_token. Offset page is deprecated (max 100 pages); prefer cursor. Webhooks on Scale+. Customer owns the Beehiiv publication. api_token is never logged. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). https://developers.beehiiv.com/welcome/pagination",
   "icon": "newspaper",
   "tags": [
     "email"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "subscription.create",
-          "description": "Overrides config operation when non-blank. EXACT catalog verb.",
+          "description": "Overrides config operation when non-blank. EXACT catalog verb. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -200,7 +200,7 @@
           "type": "string",
           "required": false,
           "value": "",
-          "description": "Webhook callback URL (Scale+). Inbound events still use trigger.listen / BPMN ingress.",
+          "description": "Webhook callback URL (Scale+). Inbound webhook deliveries are received via the trigger.listen (:listen) operation and webhook_key.",
           "children": []
         },
         {
@@ -230,7 +230,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -275,7 +275,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: subscription.create | subscription.get | subscription.update | subscription.delete | post.list | post.get | publication.get | webhook.create | trigger.listen.",
+      "description": "Default operation when input.operation is blank. EXACT: subscription.create | subscription.get | subscription.update | subscription.delete | post.list | post.get | publication.get | webhook.create | trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "subscription.create",
       "required": true,
       "instanceEditable": true,

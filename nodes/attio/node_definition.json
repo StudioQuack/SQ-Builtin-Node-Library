@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Attio",
   "label": "Attio — CRM records, lists, tasks (REST v2)",
-  "description": "Official Attio REST API v2 (OpenAPI 2.0.0) at https://api.attio.com. Handler: OfficialApiNode. Bearer workspace token (single-workspace API key). Prefer OAuth for multi-workspace apps — engine auth is Bearer only. person.upsert / company.upsert are PUT upsert-by-matching-attribute. Customer owns the Attio workspace. api_key is never logged. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "description": "Official Attio REST API v2 (OpenAPI 2.0.0) at https://api.attio.com. Handler: OfficialApiNode. Bearer workspace token (single-workspace API key). Prefer OAuth for multi-workspace apps — engine auth is Bearer only. person.upsert / company.upsert are PUT upsert-by-matching-attribute. Customer owns the Attio workspace. api_key is never logged. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
   "icon": "recent_actors",
   "tags": [
     "crm"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "record.create",
-          "description": "Overrides config operation when non-blank. EXACT catalog verb.",
+          "description": "Overrides config operation when non-blank. EXACT catalog verb. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -284,7 +284,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -329,7 +329,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: record.create | record.get | record.update | record.search | record.delete | person.upsert | company.upsert | list.create | list.entry.create | list.entry.update | list.entry.delete | list.entry.search | attribute.create | attribute.archive | selectOption.create | task.create | task.update | trigger.listen.",
+      "description": "Default operation when input.operation is blank. EXACT: record.create | record.get | record.update | record.search | record.delete | person.upsert | company.upsert | list.create | list.entry.create | list.entry.update | list.entry.delete | list.entry.search | attribute.create | attribute.archive | selectOption.create | task.create | task.update | trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "record.create",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Squarespace Commerce",
   "label": "Squarespace Commerce APIs — Orders 1.0, Inventory 1.0, Products v2",
-  "description": "Squarespace Commerce Orders 1.0, Inventory 1.0, Products v2 (URI /v2/commerce/products, not /2.0), Webhook Subscriptions 1.0. Partner/plan gated. Bearer API key. trigger is ingress. Docs: https://developers.squarespace.com/commerce-apis/versioning",
+  "description": "Squarespace Commerce Orders 1.0, Inventory 1.0, Products v2 (URI /v2/commerce/products, not /2.0), Webhook Subscriptions 1.0. Partner/plan gated. Bearer API key. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Docs: https://developers.squarespace.com/commerce-apis/versioning",
   "icon": "storefront",
   "tags": [
     "squarespace",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "order_list",
-          "description": "Official API verb. EXACT: order_list | order_get | inventory_get | product_list | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "description": "Official API verb. EXACT: order_list | order_get | inventory_get | product_list | trigger. Blank uses configurationParameters.operation. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -79,7 +79,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "status=ok + data on 2xx. Inbound webhook events (:listen) emit normalized event data on output. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -124,7 +124,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb for OfficialApiNode. EXACT: order_list | order_get | inventory_get | product_list | trigger. trigger does not open a socket.",
+      "description": "HTTP verb for OfficialApiNode. EXACT: order_list | order_get | inventory_get | product_list | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "order_list",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Microsoft Outlook",
   "label": "Microsoft Outlook — Microsoft Graph v1.0 mail/calendar/contacts",
-  "description": "Microsoft Outlook via the official Microsoft Graph v1.0 mail/calendar/contacts. Base https://graph.microsoft.com/v1.0. Docs: https://learn.microsoft.com/en-us/graph/api/user-sendmail?view=graph-rest-1.0 and https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview. Graph v1.0 only (no beta). All paths use /me (delegated — a signed-in user). App-only / client-credentials MUST call /users/{id|userPrincipalName}/... instead of /me (/me returns 400 'only valid with delegated authentication'). This node does not swap the path. Mailbox data is personal data. Admin consent for app-only Mail.Send. send-and-wait and listen are BPMN message events, not Graph RPCs. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data}. Attachments use type file (ref-id). Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "description": "Microsoft Outlook via the official Microsoft Graph v1.0 mail/calendar/contacts. Base https://graph.microsoft.com/v1.0. Docs: https://learn.microsoft.com/en-us/graph/api/user-sendmail?view=graph-rest-1.0 and https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview. Graph v1.0 only (no beta). All paths use /me (delegated — a signed-in user). App-only / client-credentials MUST call /users/{id|userPrincipalName}/... instead of /me (/me returns 400 'only valid with delegated authentication'). This node does not swap the path. Mailbox data is personal data. Admin consent for app-only Mail.Send. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data}. Attachments use type file (ref-id). Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) + provider signing/verification secret (client_state) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event); selecting the :send_and_wait operation (send-and-wait) performs the outbound send and waits on correlationKey for the matching inbound webhook reply.",
   "icon": "mail",
   "tags": [
     "email",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": true,
           "value": "send-message",
-          "description": "Which official call to run. EXACT values: send-message | reply-message | get-message | list-messages | update-message | delete-message | move-message | create-draft | send-draft | get-draft | update-draft | delete-draft | add-attachment | get-attachment | list-attachments | download-attachment | create-folder | get-folder | list-folders | update-folder | delete-folder | create-calendar | get-calendar | list-calendars | update-calendar | delete-calendar | create-contact | get-contact | list-contacts | update-contact | delete-contact | send-and-wait | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: send-message | reply-message | get-message | list-messages | update-message | delete-message | move-message | create-draft | send-draft | get-draft | update-draft | delete-draft | add-attachment | get-attachment | list-attachments | download-attachment | create-folder | get-folder | list-folders | update-folder | delete-folder | create-calendar | get-calendar | list-calendars | update-calendar | delete-calendar | create-contact | get-contact | list-contacts | update-contact | delete-contact | send-and-wait | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port); send-and-wait (:send_and_wait role) sends the outbound message and waits on correlationKey for the matching inbound webhook reply. Example: first verb.",
           "children": []
         },
         {
@@ -267,7 +267,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) and matched webhook replies (:send_and_wait) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -312,7 +312,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: send-message, reply-message, get-message, list-messages, update-message, delete-message, move-message, create-draft, send-draft, get-draft, update-draft, delete-draft, add-attachment, get-attachment, list-attachments, download-attachment, create-folder, get-folder, list-folders, update-folder, delete-folder, create-calendar, get-calendar, list-calendars, update-calendar, delete-calendar, create-contact, get-contact, list-contacts, update-contact, delete-contact, send-and-wait, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: send-message, reply-message, get-message, list-messages, update-message, delete-message, move-message, create-draft, send-draft, get-draft, update-draft, delete-draft, add-attachment, get-attachment, list-attachments, download-attachment, create-folder, get-folder, list-folders, update-folder, delete-folder, create-calendar, get-calendar, list-calendars, update-calendar, delete-calendar, create-contact, get-contact, list-contacts, update-contact, delete-contact, send-and-wait, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (client_state), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event; selecting send-and-wait (:send_and_wait role) reveals the same webhook fields, sends the outbound message, and waits on correlationKey for the matching inbound webhook reply.",
       "value": "send-message",
       "required": true,
       "instanceEditable": true,

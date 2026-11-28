@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Postmark",
   "label": "Postmark — Postmark API",
-  "description": "Postmark via the official Postmark API. Base https://api.postmarkapp.com. Docs: https://postmarkapp.com/developer/api/email-api. Transactional only. listen = webhooks as BPMN message events. Handler: OfficialApiNode. OUTPUT is {status,http_status,data}.",
+  "description": "Postmark via the official Postmark API. Base https://api.postmarkapp.com. Docs: https://postmarkapp.com/developer/api/email-api. Transactional only. Handler: OfficialApiNode. OUTPUT is {status,http_status,data}. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "mail",
   "tags": [
     "email"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": true,
           "value": "send-email",
-          "description": "Which official call to run. EXACT values: send-email | send-template | send-batch | get-bounce | list-bounces | listen. listen is kind:ingress only (not callable from this tool). list-bounces requires count and offset query params (defaults 50 and 0 when omitted). Example: send-email.",
+          "description": "Which official call to run. EXACT values: send-email | send-template | send-batch | get-bounce | list-bounces | listen. list-bounces requires count and offset query params (defaults 50 and 0 when omitted). listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: send-email.",
           "children": []
         },
         {
@@ -302,7 +302,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -347,7 +347,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: send-email, send-template, send-batch, get-bounce, list-bounces, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: send-email, send-template, send-batch, get-bounce, list-bounces, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "send-email",
       "required": true,
       "instanceEditable": true,

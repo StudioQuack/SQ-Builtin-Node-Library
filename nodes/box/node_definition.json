@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Box",
   "label": "Box Platform API 2.0 — files and folders",
-  "description": "Box Platform API 2.0. Docs: https://developer.box.com/reference/. upload POSTs multipart attributes+file to https://upload.box.com/api/2.0/files/content (not api.box.com). Direct upload max 50 MB. Bearer access_token minted outside StudioQuack.",
+  "description": "Box Platform API 2.0. Docs: https://developer.box.com/reference/. upload POSTs multipart attributes+file to https://upload.box.com/api/2.0/files/content (not api.box.com). Direct upload max 50 MB. Bearer access_token minted outside StudioQuack. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "folder",
   "tags": [
     "box",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "",
-          "description": "Official Box Platform API 2.0 verb. EXACT: copy_file | delete_file | download | get_file | search | share_file | upload | create_folder | get_folder | delete_folder | share_folder | update_folder | listen. Example: upload.",
+          "description": "Official Box Platform API 2.0 verb. EXACT: copy_file | delete_file | download | get_file | search | share_file | upload | create_folder | get_folder | delete_folder | share_folder | update_folder | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: upload.",
           "children": []
         },
         {
@@ -168,7 +168,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status, http_status, data, file?}. Inbound webhook events (:listen) emit normalized event data on output. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -222,7 +222,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "description": "Official HTTP verb for this invoke. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "copy_file",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Slack",
   "label": "Slack — Slack Web API + Events API",
-  "description": "Slack Web API at https://slack.com/api. Docs: https://api.slack.com/methods. chat.postMessage uses channel, text, blocks, thread_ts. upload-file is only files.getUploadURLExternal (filename + length) — the 3-step upload (get URL, PUT bytes, completeUploadExternal) is not a single engine call. Bearer bot_token. Handler: OfficialApiNode. listen / send-and-wait are ingress. Never log bot_token.",
+  "description": "Slack Web API at https://slack.com/api. Docs: https://api.slack.com/methods. chat.postMessage uses channel, text, blocks, thread_ts. upload-file is only files.getUploadURLExternal (filename + length) — the 3-step upload (get URL, PUT bytes, completeUploadExternal) is not a single engine call. Bearer bot_token. Handler: OfficialApiNode. Never log bot_token. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) + provider signing/verification secret (signing_secret) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event); selecting the :send_and_wait operation (send-and-wait) performs the outbound send and waits on correlationKey for the matching inbound webhook reply.",
   "icon": "forum",
   "tags": [
     "chat"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": true,
           "value": "send-message",
-          "description": "Which official call to run. EXACT values: send-message | update-message | delete-message | get-permalink | search-messages | archive-channel | close-channel | create-channel | get-channel | list-channels | channel-history | invite-channel | join-channel | kick-channel | leave-channel | list-channel-members | open-dm | rename-channel | get-replies | set-purpose | set-topic | unarchive-channel | upload-file | get-file | list-files | add-reaction | remove-reaction | list-reactions | add-star | remove-star | list-stars | get-user | list-users | update-user-profile | create-usergroup | list-usergroups | update-usergroup | send-and-wait | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: send-message | update-message | delete-message | get-permalink | search-messages | archive-channel | close-channel | create-channel | get-channel | list-channels | channel-history | invite-channel | join-channel | kick-channel | leave-channel | list-channel-members | open-dm | rename-channel | get-replies | set-purpose | set-topic | unarchive-channel | upload-file | get-file | list-files | add-reaction | remove-reaction | list-reactions | add-star | remove-star | list-stars | get-user | list-users | update-user-profile | create-usergroup | list-usergroups | update-usergroup | send-and-wait | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port); send-and-wait (:send_and_wait role) sends the outbound message and waits on correlationKey for the matching inbound webhook reply. Example: first verb.",
           "children": []
         },
         {
@@ -338,7 +338,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) and matched webhook replies (:send_and_wait) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -383,7 +383,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: send-message, update-message, delete-message, get-permalink, search-messages, archive-channel, close-channel, create-channel, get-channel, list-channels, channel-history, invite-channel, join-channel, kick-channel, leave-channel, list-channel-members, open-dm, rename-channel, get-replies, set-purpose, set-topic, unarchive-channel, upload-file, get-file, list-files, add-reaction, remove-reaction, list-reactions, add-star, remove-star, list-stars, get-user, list-users, update-user-profile, create-usergroup, list-usergroups, update-usergroup, send-and-wait, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: send-message, update-message, delete-message, get-permalink, search-messages, archive-channel, close-channel, create-channel, get-channel, list-channels, channel-history, invite-channel, join-channel, kick-channel, leave-channel, list-channel-members, open-dm, rename-channel, get-replies, set-purpose, set-topic, unarchive-channel, upload-file, get-file, list-files, add-reaction, remove-reaction, list-reactions, add-star, remove-star, list-stars, get-user, list-users, update-user-profile, create-usergroup, list-usergroups, update-usergroup, send-and-wait, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (signing_secret), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event; selecting send-and-wait (:send_and_wait role) reveals the same webhook fields, sends the outbound message, and waits on correlationKey for the matching inbound webhook reply.",
       "value": "send-message",
       "required": true,
       "instanceEditable": true,

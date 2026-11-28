@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Square",
   "label": "Square — Square API 2026-07-15 (Payments, Orders, Customers, Catalog)",
-  "description": "Square Connect v2 at https://connect.squareup.com. Docs: https://developer.squareup.com/reference/square/payments-api/create-payment. Payments use source_id + amount_money {amount,currency} + idempotency_key. Bearer access_token. location_id from config. Handler: OfficialApiNode. Never log access_token.",
+  "description": "Square Connect v2 at https://connect.squareup.com. Docs: https://developer.squareup.com/reference/square/payments-api/create-payment. Payments use source_id + amount_money {amount,currency} + idempotency_key. Bearer access_token. location_id from config. Handler: OfficialApiNode. Never log access_token. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "square",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "payment_create",
-          "description": "Overrides config operation. EXACT: payment_create | payment_get | refund_create | order_create | order_get | customer_create | customer_get | invoice_create | catalog_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "description": "Overrides config operation. EXACT: payment_create | payment_get | refund_create | order_create | order_get | customer_create | customer_get | invoice_create | catalog_list | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -213,7 +213,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -258,7 +258,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: payment_create | payment_get | refund_create | order_create | order_get | customer_create | customer_get | invoice_create | catalog_list | trigger. Default payment_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "description": "HTTP verb to run. EXACT: payment_create | payment_get | refund_create | order_create | order_get | customer_create | customer_get | invoice_create | catalog_list | trigger. Default payment_create. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "payment_create",
       "required": true,
       "instanceEditable": true,

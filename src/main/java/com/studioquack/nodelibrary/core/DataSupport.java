@@ -397,7 +397,7 @@ public final class DataSupport {
         if (!fromErrors.isEmpty()) {
             return fromErrors;
         }
-        return firstText(map, 0, "message", "exception", "detail", "info", "title");
+        return firstText(map, 0, "message", "exception", "detail", "info", "title", "error_description");
     }
 
     private static String firstText(Map<?, ?> map, int depth, String... keys) {
@@ -410,7 +410,7 @@ public final class DataSupport {
         return "";
     }
 
-    /** String, {@code {message|info|detail|code}}, or a list of those. */
+    /** String, {@code {message|info|detail|title|description|code}} (plus JSON:API {@code source.pointer}), or a list of those. */
     private static String textValue(Object v, int depth) {
         if (v == null || depth > 4) {
             return "";
@@ -419,7 +419,12 @@ public final class DataSupport {
             return s.isBlank() ? "" : s.trim();
         }
         if (v instanceof Map<?, ?> nested) {
-            return firstText(nested, depth, "message", "info", "detail", "code");
+            String msg = firstText(nested, depth, "message", "info", "detail", "title", "description", "code");
+            String pointer = extractSourcePointer(nested);
+            if (!msg.isEmpty() && !pointer.isEmpty() && !msg.contains(pointer)) {
+                return msg + " (" + pointer + ")";
+            }
+            return msg;
         }
         if (v instanceof List<?> list) {
             StringBuilder sb = new StringBuilder();
@@ -437,6 +442,23 @@ public final class DataSupport {
                 }
             }
             return sb.toString();
+        }
+        return "";
+    }
+
+    /** Extract JSON:API {@code source.pointer} or {@code source.parameter} when present. */
+    private static String extractSourcePointer(Map<?, ?> nested) {
+        Object srcObj = nested.get("source");
+        if (!(srcObj instanceof Map<?, ?> src)) {
+            return "";
+        }
+        Object pointer = src.get("pointer");
+        if (pointer instanceof String s && !s.isBlank()) {
+            return s.trim();
+        }
+        Object parameter = src.get("parameter");
+        if (parameter instanceof String s && !s.isBlank()) {
+            return s.trim();
         }
         return "";
     }

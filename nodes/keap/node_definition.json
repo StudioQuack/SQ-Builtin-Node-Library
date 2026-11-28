@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Keap",
   "label": "Keap REST v2 — contacts, companies, notes, tags, ecommerce, email",
-  "description": "Official Keap REST v2 at https://api.infusionsoft.com. Handler: OfficialApiNode. Bearer access_token (customer-supplied; node does not refresh OAuth). trigger.listen is ingress (BPMN message event). Contacts/emails are PII. Consent required before email.send. Customer owns the Keap account. access_token is never logged or returned.",
+  "description": "Official Keap REST v2 at https://api.infusionsoft.com. Handler: OfficialApiNode. Bearer access_token (customer-supplied; node does not refresh OAuth). Contacts/emails are PII. Consent required before email.send. Customer owns the Keap account. access_token is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "contacts",
   "tags": [
     "crm",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "contact.upsert",
-          "description": "Overrides config operation when non-blank. EXACT catalog verbs including trigger.listen.",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs including trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -384,7 +384,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -429,7 +429,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT catalog verbs.",
+      "description": "Default operation when input.operation is blank. EXACT catalog verbs. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.get",
       "required": true,
       "instanceEditable": true,

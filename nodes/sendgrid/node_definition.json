@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "SendGrid",
   "label": "SendGrid — Twilio SendGrid Web API v3",
-  "description": "SendGrid v3 at https://api.sendgrid.com. Docs: https://www.twilio.com/docs/sendgrid/api-reference/mail-send/mail-send. send-email takes flat to/cc/bcc/from/subject/text/html and nests them into personalizations[0] / from.email / content[0]|[1] via bodyMap. Bearer api_key. Handler: OfficialApiNode. Never log api_key or message bodies.",
+  "description": "SendGrid v3 at https://api.sendgrid.com. Docs: https://www.twilio.com/docs/sendgrid/api-reference/mail-send/mail-send. send-email takes flat to/cc/bcc/from/subject/text/html and nests them into personalizations[0] / from.email / content[0]|[1] via bodyMap. Bearer api_key. Handler: OfficialApiNode. Never log api_key or message bodies. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "mail",
   "tags": [
     "email"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": true,
           "value": "send-email",
-          "description": "Which official call to run. EXACT values: send-email | upsert-contact | get-contact | list-contacts | delete-contact | create-list | get-list | list-lists | update-list | delete-list | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: send-email | upsert-contact | get-contact | list-contacts | delete-contact | create-list | get-list | list-lists | update-list | delete-list | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: first verb.",
           "children": []
         },
         {
@@ -293,7 +293,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -338,7 +338,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: send-email, upsert-contact, get-contact, list-contacts, delete-contact, create-list, get-list, list-lists, update-list, delete-list, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: send-email, upsert-contact, get-contact, list-contacts, delete-contact, create-list, get-list, list-lists, update-list, delete-list, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "send-email",
       "required": true,
       "instanceEditable": true,

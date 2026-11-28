@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Sentry",
   "label": "Sentry REST API",
-  "description": "Sentry Web API via OfficialApiNode. Docs: https://docs.sentry.io/api/. Operations: event_get, event_list, issue_get, issue_list, issue_update, issue_delete, project_create, project_get, project_update, release_create, release_get, org_get, team_get, listen. Auth secret auth_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "description": "Sentry Web API via OfficialApiNode. Docs: https://docs.sentry.io/api/. Operations: event_get, event_list, issue_get, issue_list, issue_update, issue_delete, project_create, project_get, project_update, release_create, release_get, org_get, team_get, listen. Auth secret auth_token is instance config only (never on INPUT, never logged). Failures are output.error. JDK HTTP, official API only. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) + provider signing/verification secret (webhook_secret) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "hub",
   "tags": [
     "sentry",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "event_get",
-          "description": "Which official API call to run. EXACT values: event_get | event_list | issue_get | issue_list | issue_update | issue_delete | project_create | project_get | project_update | release_create | release_get | org_get | team_get | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'event_get'.",
+          "description": "Which official API call to run. EXACT values: event_get | event_list | issue_get | issue_list | issue_update | issue_delete | project_create | project_get | project_update | release_create | release_get | org_get | team_get | listen. Prefer the instance config operation select. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'event_get'.",
           "children": []
         },
         {
@@ -178,7 +178,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status:ok, http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -223,7 +223,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official API operation. EXACT: event_get, event_list, issue_get, issue_list, issue_update, issue_delete, project_create, project_get, project_update, release_create, release_get, org_get, team_get, listen. listen is BPMN ingress only — do not invoke from agent tools or expect HTTP; use a message start/catch event instead.",
+      "description": "Official API operation. EXACT: event_get, event_list, issue_get, issue_list, issue_update, issue_delete, project_create, project_get, project_update, release_create, release_get, org_get, team_get, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (webhook_secret), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "event_get",
       "required": true,
       "instanceEditable": true,

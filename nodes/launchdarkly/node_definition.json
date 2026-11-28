@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "LaunchDarkly",
   "label": "LaunchDarkly REST API",
-  "description": "LaunchDarkly REST API via OfficialApiNode. Docs: https://launchdarkly.com/docs/api. Operations: flag_get, flag_list, flag_toggle, flag_patch, segment_get, environment_list, listen. Auth is Authorization: <token> with no Bearer prefix. Every request sends LD-API-Version: 20240415 via extraHeaders (https://launchdarkly.com/docs/guides/api/api-migration-guide). Auth secret api_token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "description": "LaunchDarkly REST API via OfficialApiNode. Docs: https://launchdarkly.com/docs/api. Operations: flag_get, flag_list, flag_toggle, flag_patch, segment_get, environment_list, listen. Auth is Authorization: <token> with no Bearer prefix. Every request sends LD-API-Version: 20240415 via extraHeaders (https://launchdarkly.com/docs/guides/api/api-migration-guide). Auth secret api_token is instance config only (never on INPUT, never logged). Failures are output.error. JDK HTTP, official API only. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "hub",
   "tags": [
     "launchdarkly",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "flag_get",
-          "description": "Which official API call to run. EXACT values: flag_get | flag_list | flag_toggle | flag_patch | segment_get | environment_list | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'flag_get'.",
+          "description": "Which official API call to run. EXACT values: flag_get | flag_list | flag_toggle | flag_patch | segment_get | environment_list | listen. Prefer the instance config operation select. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'flag_get'.",
           "children": []
         },
         {
@@ -96,7 +96,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status:ok, http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -141,7 +141,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official API operation. EXACT: flag_get, flag_list, flag_toggle, flag_patch, segment_get, environment_list, listen. listen is BPMN ingress, not a socket.",
+      "description": "Official API operation. EXACT: flag_get, flag_list, flag_toggle, flag_patch, segment_get, environment_list, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "flag_get",
       "required": true,
       "instanceEditable": true,

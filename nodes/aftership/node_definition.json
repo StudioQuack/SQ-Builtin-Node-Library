@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "AfterShip",
   "label": "AfterShip Tracking API 2026-07",
-  "description": "AfterShip Tracking 2026-07. Header as-api-key. Create body is a tracking envelope in official examples; OfficialApiNode bodyFrom sends top-level fields (tracking_number, slug, …). Buyer PII on tracking pages — do not log. Docs: https://www.aftership.com/docs/tracking/quickstart/api-quick-start Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "description": "AfterShip Tracking 2026-07. Header as-api-key. Create body is a tracking envelope in official examples; OfficialApiNode bodyFrom sends top-level fields (tracking_number, slug, …). Buyer PII on tracking pages — do not log. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Docs: https://www.aftership.com/docs/tracking/quickstart/api-quick-start Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
   "icon": "local_shipping",
   "tags": [
     "aftership",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "tracking_create",
-          "description": "Official API verb. EXACT: tracking_create | tracking_get | tracking_update | courier_detect | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "description": "Official API verb. EXACT: tracking_create | tracking_get | tracking_update | courier_detect | trigger. Blank uses configurationParameters.operation. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -96,7 +96,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "status=ok + data on 2xx. Inbound webhook events (:listen) emit normalized event data on output. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -141,7 +141,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb for OfficialApiNode. EXACT: tracking_create | tracking_get | tracking_update | courier_detect | trigger. trigger does not open a socket.",
+      "description": "HTTP verb for OfficialApiNode. EXACT: tracking_create | tracking_get | tracking_update | courier_detect | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "tracking_create",
       "required": true,
       "instanceEditable": true,

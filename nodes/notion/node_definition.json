@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Notion",
   "label": "Notion API 2026-03-11",
-  "description": "Notion API 2026-03-11 via OfficialApiNode. Base https://api.notion.com/v1. Docs: https://developers.notion.com/reference/patch-page. Sends Notion-Version: 2026-03-11. Pages must be shared with the integration. Use in_trash not archived. page_update/database_page_update take properties plus icon and cover. OUTPUT is {status,http_status,data}.",
+  "description": "Notion API 2026-03-11 via OfficialApiNode. Base https://api.notion.com/v1. Docs: https://developers.notion.com/reference/patch-page. Sends Notion-Version: 2026-03-11. Pages must be shared with the integration. Use in_trash not archived. page_update/database_page_update take properties plus icon and cover. OUTPUT is {status,http_status,data}. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "article",
   "tags": [
     "notion",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": true,
           "value": "page_create",
-          "description": "Which official Notion call to run. EXACT: page_create | page_archive | page_get | page_update | page_search | database_get | database_page_create | database_page_get | database_page_list | database_page_update | block_append | block_list | block_get | user_get | user_list | data_source_get | data_source_search | listen. Example: page_update.",
+          "description": "Which official Notion call to run. EXACT: page_create | page_archive | page_get | page_update | page_search | database_get | database_page_create | database_page_get | database_page_list | database_page_update | block_append | block_list | block_get | user_get | user_list | data_source_get | data_source_search | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: page_update.",
           "children": []
         },
         {
@@ -205,7 +205,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -250,7 +250,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: page_create, page_archive, page_get, page_update, page_search, database_get, database_page_create, database_page_get, database_page_list, database_page_update, block_append, block_list, block_get, user_get, user_list, data_source_get, data_source_search, listen. Default: page_create. Example: page_create.",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: page_create, page_archive, page_get, page_update, page_search, database_get, database_page_create, database_page_get, database_page_list, database_page_update, block_append, block_list, block_get, user_get, user_list, data_source_get, data_source_search, listen. Default: page_create. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event. Example: page_create.",
       "value": "page_create",
       "required": true,
       "instanceEditable": true,

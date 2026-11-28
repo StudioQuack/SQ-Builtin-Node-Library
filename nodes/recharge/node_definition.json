@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "ReCharge",
   "label": "ReCharge Subscriptions API 2021-11",
-  "description": "Shopify subscriptions. Header X-Recharge-Access-Token. Version 2021-11 (still the latest dated version; also 2021-01). Pin via extraHeader X-Recharge-Version from config api_version. PCI stays with ReCharge/Shopify. Docs: https://developer.rechargepayments.com/2021-11/authentication",
+  "description": "Shopify subscriptions. Header X-Recharge-Access-Token. Version 2021-11 (still the latest dated version; also 2021-01). Pin via extraHeader X-Recharge-Version from config api_version. PCI stays with ReCharge/Shopify. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Docs: https://developer.rechargepayments.com/2021-11/authentication",
   "icon": "autorenew",
   "tags": [
     "recharge",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "customer_get",
-          "description": "Official API verb. EXACT: customer_get | subscription_list | subscription_skip | charge_list | address_update | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "description": "Official API verb. EXACT: customer_get | subscription_list | subscription_skip | charge_list | address_update | trigger. Blank uses configurationParameters.operation. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -186,7 +186,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "status=ok + data on 2xx. Inbound webhook events (:listen) emit normalized event data on output. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -231,7 +231,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb for OfficialApiNode. EXACT: customer_get | subscription_list | subscription_skip | charge_list | address_update | trigger. trigger does not open a socket.",
+      "description": "HTTP verb for OfficialApiNode. EXACT: customer_get | subscription_list | subscription_skip | charge_list | address_update | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "customer_get",
       "required": true,
       "instanceEditable": true,

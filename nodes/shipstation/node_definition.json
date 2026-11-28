@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "ShipStation",
   "label": "ShipStation API V2 — shipments and labels",
-  "description": "ShipStation API v2 at https://api.shipstation.com. Docs: https://docs.shipstation.com/shipments/create. shipment_create sends official shipments[] (V2 has no sales-order endpoints). label_create sends shipment or rate_id/shipment_id. Auth header API-Key. Handler: OfficialApiNode. Never log api_key.",
+  "description": "ShipStation API v2 at https://api.shipstation.com. Docs: https://docs.shipstation.com/shipments/create. shipment_create sends official shipments[] (V2 has no sales-order endpoints). label_create sends shipment or rate_id/shipment_id. Auth header API-Key. Handler: OfficialApiNode. Never log api_key. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "local_shipping",
   "tags": [
     "shipstation",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "order_list",
-          "description": "Official API verb. EXACT: order_list | shipment_create | label_create | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "description": "Official API verb. EXACT: order_list | shipment_create | label_create | trigger. Blank uses configurationParameters.operation. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -141,7 +141,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "status=ok + data on 2xx. Inbound webhook events (:listen) emit normalized event data on output. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -186,7 +186,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb for OfficialApiNode. EXACT: order_list | shipment_create | label_create | trigger. trigger does not open a socket.",
+      "description": "HTTP verb for OfficialApiNode. EXACT: order_list | shipment_create | label_create | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "order_list",
       "required": true,
       "instanceEditable": true,

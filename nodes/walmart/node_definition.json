@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Walmart Marketplace",
   "label": "Walmart Marketplace US v3 — orders, items, inventory",
-  "description": "US Marketplace host marketplace.walmartapis.com/v3. Header WM_SEC.ACCESS_TOKEN (not Authorization Bearer; refresh out of band). extraHeaders send required WM_QOS.CORRELATION_ID, WM_SVC.NAME, and optional WM_CONSUMER.CHANNEL.TYPE from config/input. CA/MX hosts differ. Acknowledge within 4 hours. Never log buyer email. Docs: https://developer.walmart.com/us-marketplace/docs/lag-time-api-overview",
+  "description": "US Marketplace host marketplace.walmartapis.com/v3. Header WM_SEC.ACCESS_TOKEN (not Authorization Bearer; refresh out of band). extraHeaders send required WM_QOS.CORRELATION_ID, WM_SVC.NAME, and optional WM_CONSUMER.CHANNEL.TYPE from config/input. CA/MX hosts differ. Acknowledge within 4 hours. Never log buyer email. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Docs: https://developer.walmart.com/us-marketplace/docs/lag-time-api-overview",
   "icon": "storefront",
   "tags": [
     "walmart",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "order_list",
-          "description": "Official API verb. EXACT: order_list | order_ack | item_get | inventory_update | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "description": "Official API verb. EXACT: order_list | order_ack | item_get | inventory_update | trigger. Blank uses configurationParameters.operation. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -151,7 +151,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "status=ok + data on 2xx. Inbound webhook events (:listen) emit normalized event data on output. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -196,7 +196,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb for OfficialApiNode. EXACT: order_list | order_ack | item_get | inventory_update | trigger. trigger does not open a socket.",
+      "description": "HTTP verb for OfficialApiNode. EXACT: order_list | order_ack | item_get | inventory_update | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "order_list",
       "required": true,
       "instanceEditable": true,

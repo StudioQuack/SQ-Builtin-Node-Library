@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Mailjet",
   "label": "Mailjet — Mailjet Email v3.1 + SMS v4",
-  "description": "Mailjet via the official Mailjet Email v3.1 + SMS v4. Base https://api.mailjet.com. Docs: https://dev.mailjet.com/email/reference/send-emails/ and https://dev.mailjet.com/sms/reference/overview/authentication/. send-email takes From/To/Subject/TextPart/HTMLPart nested into Messages[0] via bodyMap. Email uses Basic api_key:api_secret (v3.1). send-sms (POST /v4/sms-send) overrides Authorization with Bearer {sms_token}. Handler: OfficialApiNode (api_spec.json). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "description": "Mailjet via the official Mailjet Email v3.1 + SMS v4. Base https://api.mailjet.com. Docs: https://dev.mailjet.com/email/reference/send-emails/ and https://dev.mailjet.com/sms/reference/overview/authentication/. send-email takes From/To/Subject/TextPart/HTMLPart nested into Messages[0] via bodyMap. Email uses Basic api_key:api_secret (v3.1). send-sms (POST /v4/sms-send) overrides Authorization with Bearer {sms_token}. Handler: OfficialApiNode (api_spec.json). Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
   "icon": "mail",
   "tags": [
     "email",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": true,
           "value": "send-email",
-          "description": "Which official call to run. EXACT values: send-email | send-email-template | send-sms | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: send-email | send-email-template | send-sms | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: first verb.",
           "children": []
         },
         {
@@ -159,7 +159,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -204,7 +204,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: send-email, send-email-template, send-sms, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: send-email, send-email-template, send-sms, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "send-email",
       "required": true,
       "instanceEditable": true,

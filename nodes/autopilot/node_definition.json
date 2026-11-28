@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Autopilot",
   "label": "Autopilot — legacy REST v1 (not Ortto)",
-  "description": "Official Autopilot REST v1 at https://api2.autopilothq.com/v1 only. Handler: OfficialApiNode. Header autopilotapikey. Autopilot API is not the Ortto API — do not point this node at Ortto hosts. Customer owns the Autopilot account. api_key is never logged. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "description": "Official Autopilot REST v1 at https://api2.autopilothq.com/v1 only. Handler: OfficialApiNode. Header autopilotapikey. Autopilot API is not the Ortto API — do not point this node at Ortto hosts. Customer owns the Autopilot account. api_key is never logged. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
   "icon": "flight",
   "tags": [
     "email"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "contact.upsert",
-          "description": "Overrides config operation when non-blank. EXACT catalog verb.",
+          "description": "Overrides config operation when non-blank. EXACT catalog verb. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -95,7 +95,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -140,7 +140,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: contact.upsert | contact.get | contact.list | contact.delete | list.create | list.list | list.add | list.remove | list.contains | list.contacts | journey.add | trigger.listen.",
+      "description": "Default operation when input.operation is blank. EXACT: contact.upsert | contact.get | contact.list | contact.delete | list.create | list.list | list.add | list.remove | list.contains | list.contacts | journey.add | trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.upsert",
       "required": true,
       "instanceEditable": true,

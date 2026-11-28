@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Google Forms",
   "label": "Google Forms API v1 — forms, responses, Pub/Sub watches",
-  "description": "Official Google Forms API v1 at https://forms.googleapis.com. Handler: OfficialApiNode. Auth: OAuth access token as Bearer (customer supplies a current token). Watches publish to the customer's Cloud Pub/Sub topic (forms.watches.create) — not Drive files.watch. Watches last seven days. trigger.listen is ingress (BPMN message event); a Pub/Sub subscription must forward into message-event ingress. Customer owns the Google account / Workspace. Responses are respondent PII. Never log tokens.",
+  "description": "Official Google Forms API v1 at https://forms.googleapis.com. Handler: OfficialApiNode. Auth: OAuth access token as Bearer (customer supplies a current token). Watches publish to the customer's Cloud Pub/Sub topic (forms.watches.create) — not Drive files.watch. Watches last seven days. Forward watch events via a Cloud Pub/Sub HTTP push subscription. Customer owns the Google account / Workspace. Responses are respondent PII. Never log tokens. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) + provider signing/verification config (webhook_secret, webhook_header_name) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "assignment",
   "tags": [
     "forms"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "form.get",
-          "description": "Overrides config operation when non-blank. EXACT: 'form.get' | 'form.create' | 'form.update' | 'question.list' | 'response.list' | 'response.get' | 'watch.responses' | 'trigger.listen'. trigger.listen never opens a socket.",
+          "description": "Overrides config operation when non-blank. EXACT: 'form.get' | 'form.create' | 'form.update' | 'question.list' | 'response.list' | 'response.get' | 'watch.responses' | 'trigger.listen'. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -131,7 +131,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data. question.list is the same GET as form.get (project items[]). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data. question.list is the same GET as form.get (project items[]). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -176,7 +176,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank.",
+      "description": "Default operation when input.operation is blank. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (webhook_secret, webhook_header_name), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "form.get",
       "required": true,
       "instanceEditable": true,
@@ -469,7 +469,7 @@
       "shortCode": "webhook_key",
       "label": "Webhook Key",
       "type": "webhook_key",
-      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "description": "Engine Node-scoped API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node via full URL key (.../runtime/message-events/<apiKey>) or X-SQ-WEBHOOK-KEY header (verified alongside the provider's secret header).",
       "value": "",
       "required": false,
       "instanceEditable": true,

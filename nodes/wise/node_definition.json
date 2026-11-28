@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Wise",
   "label": "Wise — Wise Platform API",
-  "description": "Official Wise Platform API. Docs: https://docs.wise.com. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. SCA and sanctions screening are Wise’s. StudioQuack does not custody funds. Sandbox: api.wise-sandbox.com (V1 api.sandbox.transferwise.tech retired 2026-06-30). Deprecated: balance_list GET /v1/borderless-accounts — use balances_list GET /v4/profiles/{profileId}/balances (types=STANDARD,SAVINGS). Deprecated: statement_get borderless-accounts/.../statement.json — use balance_statement_get GET /v1/profiles/{profileId}/balance-statements/{balanceId}/statement.json.",
+  "description": "Official Wise Platform API. Docs: https://docs.wise.com. One node; operations via `operation`. SCA and sanctions screening are Wise’s. StudioQuack does not custody funds. Sandbox: api.wise-sandbox.com (V1 api.sandbox.transferwise.tech retired 2026-06-30). Deprecated: balance_list GET /v1/borderless-accounts — use balances_list GET /v4/profiles/{profileId}/balances (types=STANDARD,SAVINGS). Deprecated: statement_get borderless-accounts/.../statement.json — use balance_statement_get GET /v1/profiles/{profileId}/balance-statements/{balanceId}/statement.json. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "wise",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "balance_list",
-          "description": "Overrides config operation. EXACT: balance_list | balances_list | currency_list | statement_get | balance_statement_get | rate_get | profile_get | profile_list | recipient_list | quote_create | quote_get | transfer_create | transfer_get | transfer_list | transfer_delete | transfer_execute | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "description": "Overrides config operation. EXACT: balance_list | balances_list | currency_list | statement_get | balance_statement_get | rate_get | profile_get | profile_list | recipient_list | quote_create | quote_get | transfer_create | transfer_get | transfer_list | transfer_delete | transfer_execute | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -240,7 +240,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -285,7 +285,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: balance_list | balances_list | currency_list | statement_get | balance_statement_get | rate_get | profile_get | profile_list | recipient_list | quote_create | quote_get | transfer_create | transfer_get | transfer_list | transfer_delete | transfer_execute | trigger. Default balance_list. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "description": "HTTP verb to run. EXACT: balance_list | balances_list | currency_list | statement_get | balance_statement_get | rate_get | profile_get | profile_list | recipient_list | quote_create | quote_get | transfer_create | transfer_get | transfer_list | transfer_delete | transfer_execute | trigger. Default balance_list. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "balance_list",
       "required": true,
       "instanceEditable": true,

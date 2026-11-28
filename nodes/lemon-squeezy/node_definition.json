@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Lemon Squeezy",
   "label": "Lemon Squeezy — Lemon Squeezy JSON:API v1",
-  "description": "Official Lemon Squeezy JSON:API v1 (Stripe-owned since 2024; API unchanged). Docs: https://docs.lemonsqueezy.com/api. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. Merchant of record; tax handled by Lemon Squeezy. Accept: application/vnd.api+json (engine sends JSON).",
+  "description": "Official Lemon Squeezy JSON:API v1 (Stripe-owned since 2024; API unchanged). Docs: https://docs.lemonsqueezy.com/api. One node; operations via `operation`. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. Merchant of record; tax handled by Lemon Squeezy. Accept: application/vnd.api+json (engine sends JSON). Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "lemon",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "order_get",
-          "description": "Overrides config operation. EXACT: order_get | subscription_get | subscription_cancel | customer_get | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "description": "Overrides config operation. EXACT: order_get | subscription_get | subscription_cancel | customer_get | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -52,7 +52,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -97,7 +97,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: order_get | subscription_get | subscription_cancel | customer_get | trigger. Default order_get. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "description": "HTTP verb to run. EXACT: order_get | subscription_get | subscription_cancel | customer_get | trigger. Default order_get. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "order_get",
       "required": true,
       "instanceEditable": true,

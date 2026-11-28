@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Mautic",
   "label": "Mautic REST /api/v2 (7.x API Platform)",
-  "description": "Official Mautic 7.x API Platform REST at /api/v2 on the customer instance (https://devdocs.mautic.org/en/7.1/rest_api/api_v2.html). Handler: OfficialApiNode. Bearer oauth_access_token. instance_host is hostname only (https assumed). CRUD uses /api/v2; points/DNC/campaign/segment/email-send stay on classic /api (legacy). Enable API in Mautic. Contacts are PII. oauth_access_token is never logged or returned.",
+  "description": "Official Mautic 7.x API Platform REST at /api/v2 on the customer instance (https://devdocs.mautic.org/en/7.1/rest_api/api_v2.html). Handler: OfficialApiNode. Bearer oauth_access_token. instance_host is hostname only (https assumed). CRUD uses /api/v2; points/DNC/campaign/segment/email-send stay on classic /api (legacy). Enable API in Mautic. Contacts are PII. oauth_access_token is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "people",
   "tags": [
     "email",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "contact.create",
-          "description": "Overrides config. EXACT /api verbs including trigger.listen.",
+          "description": "Overrides config. EXACT /api verbs including trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -294,7 +294,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -339,7 +339,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT /api verbs.",
+      "description": "Default operation when input.operation is blank. EXACT /api verbs. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.get",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Infisical",
   "label": "Infisical Public REST API",
-  "description": "Infisical Public REST API (secrets v4, folders v2) via OfficialApiNode. Docs: https://infisical.com/docs/api-reference/overview/introduction. Operations: get-secret, list-secrets, create-secret, update-secret, delete-secret, list-folders, listen. delete-secret sends official JSON body (projectId, environment, optional secretPath/type) — https://infisical.com/docs/api-reference/endpoints/secrets/delete. Auth secret access_token is instance config only (never on INPUT, never logged). GET/access operations still call the official GET (or access) HTTP method. Retrieved secret material must not be logged and should stay in StudioQuack secret bindings (bind OUTPUT `data` into a secret; do not print it, persist it in engine variables, or leave it on a logged edge). listen is kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "description": "Infisical Public REST API (secrets v4, folders v2) via OfficialApiNode. Docs: https://infisical.com/docs/api-reference/overview/introduction. Operations: get-secret, list-secrets, create-secret, update-secret, delete-secret, list-folders, listen. delete-secret sends official JSON body (projectId, environment, optional secretPath/type) — https://infisical.com/docs/api-reference/endpoints/secrets/delete. Auth secret access_token is instance config only (never on INPUT, never logged). GET/access operations still call the official GET (or access) HTTP method. Retrieved secret material must not be logged and should stay in StudioQuack secret bindings (bind OUTPUT `data` into a secret; do not print it, persist it in engine variables, or leave it on a logged edge). Failures are output.error. JDK HTTP, official API only. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "lock",
   "tags": [
     "secrets"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "get-secret",
-          "description": "Which official API call to run. EXACT values: get-secret | list-secrets | create-secret | update-secret | delete-secret | list-folders | listen. Prefer the instance config operation select. listen is ingress: no HTTP — use a BPMN message event. Example: 'get-secret'.",
+          "description": "Which official API call to run. EXACT values: get-secret | list-secrets | create-secret | update-secret | delete-secret | list-folders | listen. Prefer the instance config operation select. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'get-secret'.",
           "children": []
         },
         {
@@ -122,7 +122,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status:ok, http_status, data}. Secret bytes in data must not be logged; bind them into StudioQuack secrets. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status:ok, http_status, data}. Secret bytes in data must not be logged; bind them into StudioQuack secrets. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -167,7 +167,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official API operation. EXACT: get-secret, list-secrets, create-secret, update-secret, delete-secret, list-folders, listen. listen is BPMN ingress, not a socket.",
+      "description": "Official API operation. EXACT: get-secret, list-secrets, create-secret, update-secret, delete-secret, list-folders, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "get-secret",
       "required": true,
       "instanceEditable": true,

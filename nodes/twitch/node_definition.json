@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Twitch",
   "label": "Twitch Helix API",
-  "description": "Official Twitch Helix API via OfficialApiNode. Base https://api.twitch.tv/helix. Operations: stream_get, user_get, clip_create, chat_send, trigger (EventSub ingress). Auth secret access_token is instance config only (never on INPUT, never logged). extraHeaders send required Client-Id: {client_id}. Failures are output.error. Official API only. https://dev.twitch.tv/docs/api/",
+  "description": "Official Twitch Helix API via OfficialApiNode. Base https://api.twitch.tv/helix. Operations: stream_get, user_get, clip_create, chat_send, trigger (EventSub webhooks). Auth secret access_token is instance config only (never on INPUT, never logged). extraHeaders send required Client-Id: {client_id}. Failures are output.error. Official API only. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). https://dev.twitch.tv/docs/api/",
   "icon": "videocam",
   "tags": [
     "twitch",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "stream_get",
-          "description": "Overrides config operation when non-blank. EXACT: 'stream_get' | 'user_get' | 'clip_create' | 'chat_send' | 'trigger'. trigger is EventSub ingress (BPMN message event), not HTTP. Example: 'user_get'.",
+          "description": "Overrides config operation when non-blank. EXACT: 'stream_get' | 'user_get' | 'clip_create' | 'chat_send' | 'trigger'. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'user_get'.",
           "children": []
         },
         {
@@ -151,7 +151,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status:ok, http_status, data}. Never includes access_token. trigger returns a BPMN message-event instruction. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status:ok, http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Never includes access_token. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -196,7 +196,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official Helix verb. EXACT: stream_get | user_get | clip_create | chat_send | trigger. trigger is BPMN EventSub ingress, not a socket. Default user_get.",
+      "description": "Official Helix verb. EXACT: stream_get | user_get | clip_create | chat_send | trigger. Default user_get. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "user_get",
       "required": true,
       "instanceEditable": true,

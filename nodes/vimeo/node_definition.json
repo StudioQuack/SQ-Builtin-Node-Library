@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Vimeo",
   "label": "Vimeo API 3.4",
-  "description": "Official Vimeo REST API 3.4 via OfficialApiNode. Base https://api.vimeo.com. extraHeaders send Accept: application/vnd.vimeo.*+json;version=3.4 (https://developer.vimeo.com/api/common-formats). Operations: video_get, video_list, video_upload (placeholder POST /me/videos only — tus binary is out of band), folder_list (/me/projects), trigger (ingress). Auth secret access_token is instance config only. Official API only.",
+  "description": "Official Vimeo REST API 3.4 via OfficialApiNode. Base https://api.vimeo.com. extraHeaders send Accept: application/vnd.vimeo.*+json;version=3.4 (https://developer.vimeo.com/api/common-formats). Operations: video_get, video_list, video_upload (placeholder POST /me/videos only — tus binary is out of band), folder_list (/me/projects), trigger. Auth secret access_token is instance config only. Official API only. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "play_circle",
   "tags": [
     "vimeo",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "video_get",
-          "description": "Overrides config operation when non-blank. EXACT: 'video_get' | 'video_list' | 'video_upload' | 'folder_list' | 'trigger'. trigger is ingress (BPMN message event), not HTTP. Example: 'video_get'.",
+          "description": "Overrides config operation when non-blank. EXACT: 'video_get' | 'video_list' | 'video_upload' | 'folder_list' | 'trigger'. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'video_get'.",
           "children": []
         },
         {
@@ -133,7 +133,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status:ok, http_status, data}. Never includes access_token. trigger returns a BPMN message-event instruction. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status:ok, http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Never includes access_token. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -178,7 +178,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official Vimeo verb. EXACT: video_get | video_list | video_upload | folder_list | trigger. trigger is BPMN ingress, not a socket. Default video_get.",
+      "description": "Official Vimeo verb. EXACT: video_get | video_list | video_upload | folder_list | trigger. Default video_get. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "video_get",
       "required": true,
       "instanceEditable": true,

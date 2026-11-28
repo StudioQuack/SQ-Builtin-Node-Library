@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "PandaDoc",
   "label": "PandaDoc Public API — documents and templates",
-  "description": "PandaDoc Public API — documents and templates. Official API https://developers.pandadoc.com/. One node; pick operation. Downloaded payloads may appear as OUTPUT file. Handler: OfficialApiNode + api_spec.json. Templates are this node, not a second node. Rate limits per action. Customer is the e-sign sender.",
+  "description": "PandaDoc Public API — documents and templates. Official API https://developers.pandadoc.com/. One node; pick operation. Downloaded payloads may appear as OUTPUT file. Handler: OfficialApiNode + api_spec.json. Templates are this node, not a second node. Rate limits per action. Customer is the e-sign sender. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "draw",
   "tags": [
     "pandadoc",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "document_create_from_template",
-          "description": "Overrides config operation. Accepted: document_create_from_template, document_create_from_file, document_send, document_get, document_list, document_download, document_delete, template_list, session_create, listen.",
+          "description": "Overrides config operation. Accepted: document_create_from_template, document_create_from_file, document_send, document_get, document_list, document_download, document_delete, template_list, session_create, listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -232,7 +232,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status, http_status, data, file?}. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status, http_status, data, file?}. Inbound webhook events (:listen) emit normalized event data on output. Secrets redacted. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -286,7 +286,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official HTTP verb for this invoke. listen/webhook_listen are ingress — use a BPMN message event.",
+      "description": "Official HTTP verb for this invoke. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "document_create_from_template",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Elastic Security",
   "label": "Kibana Cases API (Elastic Security) — not Elasticsearch REST",
-  "description": "Official Kibana Cases REST via OfficialApiNode. Docs: https://www.elastic.co/docs/api/doc/kibana/group/endpoint-cases. Cases live on Kibana, not Elasticsearch :9200. kibanaHost is host[:port] without scheme. Auth Authorization: ApiKey {api_key}. get-case-status uses GET /api/cases/_find (retired GET /api/cases/status). listen is BPMN ingress. Case text may be PII/threat intel — do not log.",
+  "description": "Official Kibana Cases REST via OfficialApiNode. Docs: https://www.elastic.co/docs/api/doc/kibana/group/endpoint-cases. Cases live on Kibana, not Elasticsearch :9200. kibanaHost is host[:port] without scheme. Auth Authorization: ApiKey {api_key}. get-case-status uses GET /api/cases/_find (retired GET /api/cases/status). Case text may be PII/threat intel — do not log. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) + provider signing/verification config (webhook_secret, webhook_header_name) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "gavel",
   "tags": [
     "soar"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "create-case",
-          "description": "Overrides config operation when non-blank. EXACT: create-case | get-case | list-cases | update-case | delete-case | get-case-status | add-comment | get-comment | list-comments | update-comment | remove-comment | add-tag | remove-tag | create-connector | listen.",
+          "description": "Overrides config operation when non-blank. EXACT: create-case | get-case | list-cases | update-case | delete-case | get-case-status | add-comment | get-comment | list-comments | update-comment | remove-comment | add-tag | remove-tag | create-connector | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -320,7 +320,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status:ok, http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -365,7 +365,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default verb. listen is BPMN ingress. get-case-status is _find counts, not retired /status.",
+      "description": "Default verb. get-case-status is _find counts, not retired /status. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (webhook_secret, webhook_header_name), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "list-cases",
       "required": true,
       "instanceEditable": true,
@@ -1190,7 +1190,7 @@
       "shortCode": "webhook_key",
       "label": "Webhook Key",
       "type": "webhook_key",
-      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "description": "Engine Node-scoped API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node via full URL key (.../runtime/message-events/<apiKey>) or X-SQ-WEBHOOK-KEY header (verified alongside the provider's secret header).",
       "value": "",
       "required": false,
       "instanceEditable": true,

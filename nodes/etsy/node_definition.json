@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Etsy",
   "label": "Etsy Open API v3 — listings, receipts, shop",
-  "description": "Etsy Open API v3. Bearer OAuth access token (operator refreshes) plus required x-api-key header (keystring:shared_secret) on every request since 2026-02-09. extraHeaders sends x-api-key from config api_key and shared_secret. No scraping etsy.com. Receipts are the official order object. Docs: https://developer.etsy.com/documentation/essentials/requests",
+  "description": "Etsy Open API v3. Bearer OAuth access token (operator refreshes) plus required x-api-key header (keystring:shared_secret) on every request since 2026-02-09. extraHeaders sends x-api-key from config api_key and shared_secret. No scraping etsy.com. Receipts are the official order object. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Docs: https://developer.etsy.com/documentation/essentials/requests",
   "icon": "storefront",
   "tags": [
     "etsy",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "listing_get",
-          "description": "Official API verb. EXACT: listing_get | listing_list | listing_create | order_list | receipt_get | shop_get | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "description": "Official API verb. EXACT: listing_get | listing_list | listing_create | order_list | receipt_get | shop_get | trigger. Blank uses configurationParameters.operation. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -348,7 +348,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "status=ok + data on 2xx. Inbound webhook events (:listen) emit normalized event data on output. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -393,7 +393,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb for OfficialApiNode. EXACT: listing_get | listing_list | listing_create | order_list | receipt_get | shop_get | trigger. trigger does not open a socket.",
+      "description": "HTTP verb for OfficialApiNode. EXACT: listing_get | listing_list | listing_create | order_list | receipt_get | shop_get | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "listing_get",
       "required": true,
       "instanceEditable": true,

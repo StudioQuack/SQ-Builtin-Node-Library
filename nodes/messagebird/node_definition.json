@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "MessageBird",
   "label": "MessageBird — Bird SMS API",
-  "description": "Bird (formerly MessageBird) via the current regional platform API. Base https://{platform_host} (default us1.platform.bird.com). Docs: https://bird.com/en-us/docs/guides/sms/sending-sms and https://bird.com/en-us/docs/guides/authentication. Auth: Bearer bk_{region}_… key (config key access_key kept). Send is POST /v1/sms/messages with to, from, text, category. Legacy rest.messagebird.com + AccessKey / originator / body / recipients / GET /balance are retired — see README. Sender-ID and category rules vary by country. listen = status/inbound as BPMN message events. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "description": "Bird (formerly MessageBird) via the current regional platform API. Base https://{platform_host} (default us1.platform.bird.com). Docs: https://bird.com/en-us/docs/guides/sms/sending-sms and https://bird.com/en-us/docs/guides/authentication. Auth: Bearer bk_{region}_… key (config key access_key kept). Send is POST /v1/sms/messages with to, from, text, category. Legacy rest.messagebird.com + AccessKey / originator / body / recipients / GET /balance are retired — see README. Sender-ID and category rules vary by country. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data} or {error}. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "sms",
   "tags": [
     "sms"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": true,
           "value": "send-sms",
-          "description": "Which official call to run. EXACT values: send-sms | listen. get-balance was removed (no SMS-key balance on platform.bird.com). listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: send-sms | listen. get-balance was removed (no SMS-key balance on platform.bird.com). listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: first verb.",
           "children": []
         },
         {
@@ -77,7 +77,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -122,7 +122,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: send-sms, listen. get-balance was removed (no SMS-key wallet read on platform.bird.com). listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: send-sms, listen. get-balance was removed (no SMS-key wallet read on platform.bird.com). Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "send-sms",
       "required": true,
       "instanceEditable": true,

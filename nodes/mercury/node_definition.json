@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Mercury",
   "label": "Mercury — Mercury API v1",
-  "description": "Official Mercury API v1. Docs: https://docs.mercury.com. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. US business banking. Webhooks exist in live only (not sandbox). Prefer recipientId over raw routing numbers. payment_create requires recipientId, amount, paymentMethod (ach|check|domesticWire), and idempotencyKey.",
+  "description": "Official Mercury API v1. Docs: https://docs.mercury.com. One node; operations via `operation`. US business banking. Webhooks exist in live only (not sandbox). Prefer recipientId over raw routing numbers. payment_create requires recipientId, amount, paymentMethod (ach|check|domesticWire), and idempotencyKey. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "mercury",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "account_list",
-          "description": "Overrides config operation. EXACT: account_list | transaction_list | recipient_create | payment_create | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "description": "Overrides config operation. EXACT: account_list | transaction_list | recipient_create | payment_create | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -132,7 +132,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -177,7 +177,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: account_list | transaction_list | recipient_create | payment_create | trigger. Default account_list. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "description": "HTTP verb to run. EXACT: account_list | transaction_list | recipient_create | payment_create | trigger. Default account_list. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "account_list",
       "required": true,
       "instanceEditable": true,

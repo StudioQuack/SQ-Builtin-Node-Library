@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Drift",
   "label": "Drift REST (Salesloft) — contacts and conversations",
-  "description": "Official Drift backend at https://driftapi.com (live 2026-08-20). Contacts are visitors, not seats. trigger.listen is BPMN ingress (app Events URL). Sunset announced Mar 2026 — existing accounts still work. Customer owns the Drift/Salesloft account. Chat PII; minimize. OfficialApiNode.",
+  "description": "Official Drift backend at https://driftapi.com (live 2026-08-20). Contacts are visitors, not seats. Configure the app Events URL for inbound webhooks. Sunset announced Mar 2026 — existing accounts still work. Customer owns the Drift/Salesloft account. Chat PII; minimize. OfficialApiNode. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "chat",
   "tags": [
     "chat"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "contact.create",
-          "description": "Overrides config operation.",
+          "description": "Overrides config operation. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -140,7 +140,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "status=ok + data. Never includes accessToken. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "status=ok + data. Inbound webhook events (:listen) emit normalized event data on output. Never includes accessToken. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -185,7 +185,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default verb.",
+      "description": "Default verb. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.get",
       "required": true,
       "instanceEditable": true,

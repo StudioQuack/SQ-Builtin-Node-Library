@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "TikTok",
   "label": "TikTok — Content Posting / Display / Research API v2",
-  "description": "TikTok Content Posting API at https://open.tiktokapis.com. Docs: https://developers.tiktok.com/doc/content-posting-api-get-started. direct_post_* send official post_info + source_info (not a flat media blob). creator_info is POST with an empty body. Bearer access_token. Handler: OfficialApiNode. Never log access_token.",
+  "description": "TikTok Content Posting API at https://open.tiktokapis.com. Docs: https://developers.tiktok.com/doc/content-posting-api-get-started. direct_post_* send official post_info + source_info (not a flat media blob). creator_info is POST with an empty body. Bearer access_token. Handler: OfficialApiNode. Never log access_token. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "videocam",
   "tags": [
     "tiktok",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "creator_info",
-          "description": "Overrides config operation when non-blank. EXACT: creator_info | direct_post_video | direct_post_photo | upload_inbox | publish_status | video_list | insights_get | research_query | trigger.",
+          "description": "Overrides config operation when non-blank. EXACT: creator_info | direct_post_video | direct_post_photo | upload_inbox | publish_status | video_list | insights_get | research_query | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -222,7 +222,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data. trigger is ingress. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -267,7 +267,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. trigger does not open a socket.",
+      "description": "Default operation when input.operation is blank. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "creator_info",
       "required": true,
       "instanceEditable": true,

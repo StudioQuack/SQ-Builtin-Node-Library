@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Clockify",
   "label": "Clockify API",
-  "description": "Clockify API v1 via OfficialApiNode. Base https://{region_host}/api/v1. Default region_host api.clockify.me; EU Germany euc1.clockify.me; USA use2.clockify.me; UK euw2.clockify.me; AU apse2.clockify.me (https://docs.clockify.me/). X-Api-Key auth. OUTPUT is {status, http_status, data} or {error}.",
+  "description": "Clockify API v1 via OfficialApiNode. Base https://{region_host}/api/v1. Default region_host api.clockify.me; EU Germany euc1.clockify.me; USA use2.clockify.me; UK euw2.clockify.me; AU apse2.clockify.me (https://docs.clockify.me/). X-Api-Key auth. OUTPUT is {status, http_status, data} or {error}. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "schedule",
   "tags": [
     "clockify",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "project_create",
-          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'project_create', 'project_get', 'project_list', 'project_update', 'project_delete', 'tag_create', 'tag_list', 'tag_update', 'tag_delete', 'task_create', 'task_get', 'task_list', 'task_update', 'task_delete', 'time_entry_create', 'time_entry_get', 'time_entry_update', 'time_entry_delete', 'listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'project_create'.",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'project_create', 'project_get', 'project_list', 'project_update', 'project_delete', 'tag_create', 'tag_list', 'tag_update', 'tag_delete', 'task_create', 'task_get', 'task_list', 'task_update', 'task_delete', 'time_entry_create', 'time_entry_get', 'time_entry_update', 'time_entry_delete', 'listen'. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'project_create'.",
           "children": []
         },
         {
@@ -214,7 +214,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -259,7 +259,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: project_create, project_get, project_list, project_update, project_delete, tag_create, tag_list, tag_update, tag_delete, task_create, task_get, task_list, task_update, task_delete, time_entry_create, time_entry_get, time_entry_update, time_entry_delete, listen. Default: project_create. Example: project_create.",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: project_create, project_get, project_list, project_update, project_delete, tag_create, tag_list, tag_update, tag_delete, task_create, task_get, task_list, task_update, task_delete, time_entry_create, time_entry_get, time_entry_update, time_entry_delete, listen. Default: project_create. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event. Example: project_create.",
       "value": "project_create",
       "required": true,
       "instanceEditable": true,

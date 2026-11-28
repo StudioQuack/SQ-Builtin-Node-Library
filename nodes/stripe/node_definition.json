@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Stripe",
   "label": "Stripe — Stripe REST v1, pin 2026-07-29.dahlia (Stripe-Version)",
-  "description": "Stripe API at https://api.stripe.com. Docs: https://docs.stripe.com/api. POST bodies are application/x-www-form-urlencoded (official). payment_intent_create requires amount (integer cents) + currency. Bearer secret_key. Optional Stripe-Version from config api_version. Handler: OfficialApiNode. Never log secret_key.",
+  "description": "Stripe API at https://api.stripe.com. Docs: https://docs.stripe.com/api. POST bodies are application/x-www-form-urlencoded (official). payment_intent_create requires amount (integer cents) + currency. Bearer secret_key. Optional Stripe-Version from config api_version. Handler: OfficialApiNode. Never log secret_key. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) + provider signing/verification secret (webhook_signing_secret) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "stripe",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "balance_get",
-          "description": "Overrides config operation. EXACT: balance_get | payment_intent_create | payment_intent_get | payment_intent_confirm | customer_create | customer_get | customer_list | customer_update | customer_delete | coupon_create | coupon_list | meter_event_create | refund_create | subscription_create | invoice_get | payout_list | charge_get | charge_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "description": "Overrides config operation. EXACT: balance_get | payment_intent_create | payment_intent_get | payment_intent_confirm | customer_create | customer_get | customer_list | customer_update | customer_delete | coupon_create | coupon_list | meter_event_create | refund_create | subscription_create | invoice_get | payout_list | charge_get | charge_list | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -312,7 +312,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -357,7 +357,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: balance_get | payment_intent_create | payment_intent_get | payment_intent_confirm | customer_create | customer_get | customer_list | customer_update | customer_delete | coupon_create | coupon_list | meter_event_create | refund_create | subscription_create | invoice_get | payout_list | charge_get | charge_list | trigger. Default balance_get. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "description": "HTTP verb to run. EXACT: balance_get | payment_intent_create | payment_intent_get | payment_intent_confirm | customer_create | customer_get | customer_list | customer_update | customer_delete | coupon_create | coupon_list | meter_event_create | refund_create | subscription_create | invoice_get | payout_list | charge_get | charge_list | trigger. Default balance_get. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (webhook_signing_secret), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "balance_get",
       "required": true,
       "instanceEditable": true,

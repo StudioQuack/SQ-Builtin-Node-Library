@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "HighLevel",
   "label": "HighLevel — CRM contacts, opportunities, tasks, calendar",
-  "description": "Official HighLevel (LeadConnector) Public API at https://services.leadconnectorhq.com. Handler: OfficialApiNode. Bearer location PIT or OAuth location access token. API v1 reached end-of-support 2025-12-31 — not called. extraHeaders send Version: v3 (current named version; https://marketplace.gohighlevel.com/docs/ghl/contacts/get-contact/). Date version 2021-07-28 remains documented as legacy. Marketing/SMS sends are out of scope. trigger.listen is ingress. Customer owns the HighLevel sub-account. Never log access_token.",
+  "description": "Official HighLevel (LeadConnector) Public API at https://services.leadconnectorhq.com. Handler: OfficialApiNode. Bearer location PIT or OAuth location access token. API v1 reached end-of-support 2025-12-31 — not called. extraHeaders send Version: v3 (current named version; https://marketplace.gohighlevel.com/docs/ghl/contacts/get-contact/). Date version 2021-07-28 remains documented as legacy. Marketing/SMS sends are out of scope. Customer owns the HighLevel sub-account. Never log access_token. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "hub",
   "tags": [
     "crm"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "contact.upsert",
-          "description": "Overrides config operation when non-blank. EXACT catalog verbs including trigger.listen.",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs including trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -419,7 +419,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). trigger.listen: use a BPMN message event — this op does not open a socket. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -464,7 +464,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank.",
+      "description": "Default operation when input.operation is blank. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.upsert",
       "required": true,
       "instanceEditable": true,

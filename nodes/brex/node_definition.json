@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Brex",
   "label": "Brex — Brex REST api.brex.com",
-  "description": "Brex Payments API. Docs: https://developer.brex.com/openapi/payments_api/ vendor_create takes company_name, email, phone, payment_accounts. transfer_create takes amount {amount,currency}, counterparty, description, external_memo, originating_account. Header Idempotency-Key from INPUT/config idempotency_key. Bearer api_token.",
+  "description": "Brex Payments API. Docs: https://developer.brex.com/openapi/payments_api/ vendor_create takes company_name, email, phone, payment_accounts. transfer_create takes amount {amount,currency}, counterparty, description, external_memo, originating_account. Header Idempotency-Key from INPUT/config idempotency_key. Bearer api_token. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "brex",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "",
-          "description": "Official Brex Payments API verb. EXACT: transaction_list | vendor_create | transfer_create | card_list | expense_list | trigger. Example: vendor_create.",
+          "description": "Official Brex Payments API verb. EXACT: transaction_list | vendor_create | transfer_create | card_list | expense_list | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: vendor_create.",
           "children": []
         },
         {
@@ -159,7 +159,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -204,7 +204,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: transaction_list | vendor_create | transfer_create | card_list | expense_list | trigger. Default transaction_list. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "description": "HTTP verb to run. EXACT: transaction_list | vendor_create | transfer_create | card_list | expense_list | trigger. Default transaction_list. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "transaction_list",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Threads",
   "label": "Threads — API v1.0 posts, replies, insights",
-  "description": "Official Threads API v1.0 on https://graph.threads.net/v1.0 (graph.threads.com is an equivalent host; not Facebook Graph). Handler: OfficialApiNode. Two-step publish: container create then threads_publish (https://developers.facebook.com/docs/threads/posts/). Also media get, replies, media insights. threads_user_token is never logged or returned. Profile cap 250 published posts / 24 h. Do not scrape threads.net. Customer owns the Meta Threads app.",
+  "description": "Official Threads API v1.0 on https://graph.threads.net/v1.0 (graph.threads.com is an equivalent host; not Facebook Graph). Handler: OfficialApiNode. Two-step publish: container create then threads_publish (https://developers.facebook.com/docs/threads/posts/). Also media get, replies, media insights. threads_user_token is never logged or returned. Profile cap 250 published posts / 24 h. Do not scrape threads.net. Customer owns the Meta Threads app. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) + provider signing/verification secrets (app_secret, verify_token) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "forum",
   "tags": [
     "threads",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "thread_create",
-          "description": "Overrides config operation when non-blank. EXACT: thread_create | thread_publish | thread_get | reply_create | insights_get | trigger.",
+          "description": "Overrides config operation when non-blank. EXACT: thread_create | thread_publish | thread_get | reply_create | insights_get | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -123,7 +123,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (container/media/insights JSON). trigger is ingress. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (container/media/insights JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -168,7 +168,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT includes thread_publish (official second publish step). trigger does not open a socket.",
+      "description": "Default operation when input.operation is blank. EXACT includes thread_publish (official second publish step). Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (app_secret, verify_token), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "thread_create",
       "required": true,
       "instanceEditable": true,

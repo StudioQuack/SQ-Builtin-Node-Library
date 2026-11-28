@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Statuspage",
   "label": "Statuspage REST API",
-  "description": "Statuspage API v1 at https://api.statuspage.io/v1. Docs: https://developer.statuspage.io/. Incident/component/subscriber fields nest under incident / component / subscriber. Auth: Authorization OAuth {api_key}. Handler: OfficialApiNode. Never log api_key.",
+  "description": "Statuspage API v1 at https://api.statuspage.io/v1. Docs: https://developer.statuspage.io/. Incident/component/subscriber fields nest under incident / component / subscriber. Auth: Authorization OAuth {api_key}. Handler: OfficialApiNode. Never log api_key. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "hub",
   "tags": [
     "statuspage",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "page_get",
-          "description": "Which official API call to run. EXACT values: page_get | incident_create | incident_update | incident_list | component_get | component_update | subscriber_add | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'page_get'.",
+          "description": "Which official API call to run. EXACT values: page_get | incident_create | incident_update | incident_list | component_get | component_update | subscriber_add | listen. Prefer the instance config operation select. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'page_get'.",
           "children": []
         },
         {
@@ -187,7 +187,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status:ok, http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -232,7 +232,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official API operation. EXACT: page_get, incident_create, incident_update, incident_list, component_get, component_update, subscriber_add, listen. listen is BPMN ingress, not a socket.",
+      "description": "Official API operation. EXACT: page_get, incident_create, incident_update, incident_list, component_get, component_update, subscriber_add, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "page_get",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Unbounce",
   "label": "Unbounce — REST API v0.4 pages and leads",
-  "description": "Official Unbounce REST API v0.4 at https://api.unbounce.com. Handler: OfficialApiNode. HTTP Basic (api_key as username). Page leads are PII. Customer owns the Unbounce account. Minimize; never log api_key or form_data. v0.3 removed May 2018. trigger.listen is BPMN message-event ingress (Unbounce has no REST webhook register — paste the StudioQuack ingress URL in the product UI). Docs: https://developer.unbounce.com/api_reference/",
+  "description": "Official Unbounce REST API v0.4 at https://api.unbounce.com. Handler: OfficialApiNode. HTTP Basic (api_key as username). Page leads are PII. Customer owns the Unbounce account. Minimize; never log api_key or form_data. v0.3 removed May 2018. Unbounce has no REST webhook register — paste the StudioQuack webhook URL in the Unbounce UI. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Docs: https://developer.unbounce.com/api_reference/",
   "icon": "web",
   "tags": [
     "forms"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "page.list",
-          "description": "Overrides config operation when non-blank. EXACT: page.list | page.get | form.list | lead.list | lead.get | trigger.listen.",
+          "description": "Overrides config operation when non-blank. EXACT: page.list | page.get | form.list | lead.list | lead.get | trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -122,7 +122,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -167,7 +167,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: page.list | page.get | form.list | lead.list | lead.get | trigger.listen. trigger.listen is ingress.",
+      "description": "Default operation when input.operation is blank. EXACT: page.list | page.get | form.list | lead.list | lead.get | trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "page.list",
       "required": true,
       "instanceEditable": true,

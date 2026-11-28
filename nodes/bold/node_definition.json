@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Bold Commerce",
   "label": "Bold Subscriptions API v1",
-  "description": "Bold Subscriptions API v1. Docs: https://developer.boldcommerce.com/api/subscriptions PATCH wraps fields in {subscription:{…}}. Header Bold-API-Version-Date from config. Bearer api_token.",
+  "description": "Bold Subscriptions API v1. Docs: https://developer.boldcommerce.com/api/subscriptions PATCH wraps fields in {subscription:{…}}. Header Bold-API-Version-Date from config. Bearer api_token. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "autorenew",
   "tags": [
     "bold",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "",
-          "description": "Official Bold Subscriptions verb. EXACT: subscription_get | subscription_update | trigger. Example: subscription_update.",
+          "description": "Official Bold Subscriptions verb. EXACT: subscription_get | subscription_update | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: subscription_update.",
           "children": []
         },
         {
@@ -106,7 +106,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "status=ok + data on 2xx. Inbound webhook events (:listen) emit normalized event data on output. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -151,7 +151,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb for OfficialApiNode. EXACT: subscription_get | subscription_update | trigger. trigger does not open a socket.",
+      "description": "HTTP verb for OfficialApiNode. EXACT: subscription_get | subscription_update | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "subscription_get",
       "required": true,
       "instanceEditable": true,

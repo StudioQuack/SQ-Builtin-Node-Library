@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Brevo",
   "label": "Brevo REST API v3 — contacts, lists, transactional send",
-  "description": "Official Brevo REST API v3 at https://api.brevo.com/v3. Handler: OfficialApiNode. Header api-key. Contacts, attributes, senders, list membership, transactional SMTP, marketing send-now. trigger.listen is BPMN ingress. Customer owns the Brevo account. Minimize: send only the contact/message fields required. api_key is never logged or returned.",
+  "description": "Official Brevo REST API v3 at https://api.brevo.com/v3. Handler: OfficialApiNode. Header api-key. Contacts, attributes, senders, list membership, transactional SMTP, marketing send-now. Customer owns the Brevo account. Minimize: send only the contact/message fields required. api_key is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "forward_to_inbox",
   "tags": [
     "email",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "contact.create",
-          "description": "Overrides config operation when non-blank. EXACT: contact.create | contact.upsert | contact.get | contact.list | contact.update | contact.delete | contactAttribute.create | contactAttribute.getAll | contactAttribute.update | contactAttribute.delete | email.send | email.sendTemplate | sender.create | sender.list | sender.delete | list.add | campaign.send | trigger.listen. trigger.listen is ingress (BPMN message event, no socket).",
+          "description": "Overrides config operation when non-blank. EXACT: contact.create | contact.upsert | contact.get | contact.list | contact.update | contact.delete | contactAttribute.create | contactAttribute.getAll | contactAttribute.update | contactAttribute.delete | email.send | email.sendTemplate | sender.create | sender.list | sender.delete | list.add | campaign.send | trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -348,7 +348,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -393,7 +393,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: contact.create, contact.upsert, contact.get, contact.list, contact.update, contact.delete, contactAttribute.create, contactAttribute.getAll, contactAttribute.update, contactAttribute.delete, email.send, email.sendTemplate, sender.create, sender.list, sender.delete, list.add, campaign.send, trigger.listen.",
+      "description": "Default operation when input.operation is blank. EXACT: contact.create, contact.upsert, contact.get, contact.list, contact.update, contact.delete, contactAttribute.create, contactAttribute.getAll, contactAttribute.update, contactAttribute.delete, email.send, email.sendTemplate, sender.create, sender.list, sender.delete, list.add, campaign.send, trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.upsert",
       "required": true,
       "instanceEditable": true,

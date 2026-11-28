@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "monday",
   "label": "monday.com GraphQL API 2026-07 — boards and items",
-  "description": "Official monday.com platform GraphQL API. Single HTTP endpoint POST https://api.monday.com/v2 (not REST). Handler: OfficialApiNode. Auth: header Authorization with the raw token (no Bearer prefix). extraHeaders send API-Version: {api_version} (default 2026-07, Current until 2026-10-01; then 2026-10). https://developer.monday.com/api-reference/docs/api-versioning. Sales CRM is a board template on this same API. OfficialApiNode does not inject GraphQL documents — INPUT must include query and optional variables. trigger.listen is BPMN ingress. Customer owns the monday account. Never log token or column_values.",
+  "description": "Official monday.com platform GraphQL API. Single HTTP endpoint POST https://api.monday.com/v2 (not REST). Handler: OfficialApiNode. Auth: header Authorization with the raw token (no Bearer prefix). extraHeaders send API-Version: {api_version} (default 2026-07, Current until 2026-10-01; then 2026-10). https://developer.monday.com/api-reference/docs/api-versioning. Sales CRM is a board template on this same API. OfficialApiNode does not inject GraphQL documents — INPUT must include query and optional variables. Customer owns the monday account. Never log token or column_values. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "view_kanban",
   "tags": [
     "crm"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "board.create",
-          "description": "Overrides config operation when non-blank. EXACT: board.create | board.get | board.list | board.archive | column.create | column.list | group.create | group.list | group.delete | item.create | item.get | item.list | item.update | item.delete | item.move | item.changeColumn | item.changeColumns | item.addUpdate | item.byColumn | trigger.listen.",
+          "description": "Overrides config operation when non-blank. EXACT: board.create | board.get | board.list | board.archive | column.create | column.list | group.create | group.list | group.delete | item.create | item.get | item.list | item.update | item.delete | item.move | item.changeColumn | item.changeColumns | item.addUpdate | item.byColumn | trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -104,7 +104,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -149,7 +149,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: board.create | board.get | board.list | board.archive | column.create | column.list | group.create | group.list | group.delete | item.create | item.get | item.list | item.update | item.delete | item.move | item.changeColumn | item.changeColumns | item.addUpdate | item.byColumn | trigger.listen.",
+      "description": "Default operation when input.operation is blank. EXACT: board.create | board.get | board.list | board.archive | column.create | column.list | group.create | group.list | group.delete | item.create | item.get | item.list | item.update | item.delete | item.move | item.changeColumn | item.changeColumns | item.addUpdate | item.byColumn | trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "board.list",
       "required": true,
       "instanceEditable": true,

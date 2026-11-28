@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "PayPal",
   "label": "PayPal — PayPal REST Orders v2 + Payouts v1 + Payments captures",
-  "description": "Official PayPal REST Orders v2 + Payouts v1 + Payments captures. Docs: https://developer.paypal.com/docs/api/orders/v2/. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. Bind a client-credentials access_token (or refresh it outside the graph). Sandbox host is api-m.sandbox.paypal.com. PCI: PayPal JS / vault tokens only.",
+  "description": "Official PayPal REST Orders v2 + Payouts v1 + Payments captures. Docs: https://developer.paypal.com/docs/api/orders/v2/. One node; operations via `operation`. HARD PCI: cardholder data never enters the graph. Use processor tokens (pm_, nonce, encryptedCard, vault id) only. Never PAN, CVC, track data, or raw bank account numbers on INPUT/OUTPUT/logs. API keys are StudioQuack password secrets. Bind a client-credentials access_token (or refresh it outside the graph). Sandbox host is api-m.sandbox.paypal.com. PCI: PayPal JS / vault tokens only. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "paypal",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "order_create",
-          "description": "Overrides config operation. EXACT: order_create | order_capture | refund | payout_create | payout_get | payout_item_get | payout_item_cancel | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "description": "Overrides config operation. EXACT: order_create | order_capture | refund | payout_create | payout_get | payout_item_get | payout_item_cancel | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -168,7 +168,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -213,7 +213,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: order_create | order_capture | refund | payout_create | payout_get | payout_item_get | payout_item_cancel | trigger. Default order_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "description": "HTTP verb to run. EXACT: order_create | order_capture | refund | payout_create | payout_get | payout_item_get | payout_item_cancel | trigger. Default order_create. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "order_create",
       "required": true,
       "instanceEditable": true,

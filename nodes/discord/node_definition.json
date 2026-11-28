@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Discord",
   "label": "Discord — Discord API v10",
-  "description": "Discord via the official Discord API v10. Base https://discord.com/api/v10. Docs: https://discord.com/developers/docs/reference. Canonical messaging node; social-media.md is discovery only — same folder nodes/discord. Incoming webhooks are send-only (send-webhook). listen = interactions HTTP or gateway events as BPMN message events. Privileged intents required for list-members. No user-token selfbots. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data}. Failures raise a BPMN error. Inbound provider events are BPMN message events (operation listen), not a Webhook node.",
+  "description": "Discord via the official Discord API v10. Base https://discord.com/api/v10. Docs: https://discord.com/developers/docs/reference. Canonical messaging node; social-media.md is discovery only — same folder nodes/discord. Incoming webhooks are send-only (send-webhook). Supports Discord HTTP Interactions webhooks (Gateway WebSockets are not opened). Privileged intents required for list-members. No user-token selfbots. Handler: OfficialApiNode (api_spec.json). OUTPUT is {status,http_status,data}. Failures raise a BPMN error. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) + provider signing/verification config (public_key) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event); selecting the :send_and_wait operation (send-and-wait) performs the outbound send and waits on correlationKey for the matching inbound webhook reply.",
   "icon": "forum",
   "tags": [
     "chat",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": true,
           "value": "send-message",
-          "description": "Which official call to run. EXACT values: send-message | send-webhook | get-message | list-messages | delete-message | add-reaction | create-channel | get-channel | list-channels | update-channel | delete-channel | list-members | add-role | remove-role | send-and-wait | listen. listen / send-and-wait are kind:ingress — the handler does not open a socket; use a BPMN message start/catch/boundary event. Example: first verb.",
+          "description": "Which official call to run. EXACT values: send-message | send-webhook | get-message | list-messages | delete-message | add-reaction | create-channel | get-channel | list-channels | update-channel | delete-channel | list-members | add-role | remove-role | send-and-wait | listen. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port); send-and-wait (:send_and_wait role) sends the outbound message and waits on correlationKey for the matching inbound webhook reply. Example: first verb.",
           "children": []
         },
         {
@@ -267,7 +267,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Result object. Success: {status:'ok', http_status, data}. Ingress operations return a message telling the operator to use a BPMN message event. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Result object. Success: {status:'ok', http_status, data}. Inbound webhook events (:listen) and matched webhook replies (:send_and_wait) emit normalized event data on output. Secrets never appear. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -312,7 +312,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when INPUT omits operation. EXACT: send-message, send-webhook, get-message, list-messages, delete-message, add-reaction, create-channel, get-channel, list-channels, update-channel, delete-channel, list-members, add-role, remove-role, send-and-wait, listen. listen/send-and-wait instruct the operator to use BPMN message events.",
+      "description": "Default operation when INPUT omits operation. EXACT: send-message, send-webhook, get-message, list-messages, delete-message, add-reaction, create-channel, get-channel, list-channels, update-channel, delete-channel, list-members, add-role, remove-role, send-and-wait, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (public_key), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event; selecting send-and-wait (:send_and_wait role) reveals the same webhook fields, sends the outbound message, and waits on correlationKey for the matching inbound webhook reply.",
       "value": "send-message",
       "required": true,
       "instanceEditable": true,

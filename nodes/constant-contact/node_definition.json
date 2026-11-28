@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Constant Contact",
   "label": "Constant Contact V3 REST — contacts, lists, email campaigns",
-  "description": "Official Constant Contact V3 REST at https://api.cc.email/v3. Handler: OfficialApiNode. OAuth access token as Bearer (customer supplies the token). API-key auth is retired. email.send is campaign activity test-send; production send is campaign.schedule. trigger.listen is BPMN ingress (V3 partner webhooks are billing topics only). Customer owns the account. access_token is never logged or returned.",
+  "description": "Official Constant Contact V3 REST at https://api.cc.email/v3. Handler: OfficialApiNode. OAuth access token as Bearer (customer supplies the token). API-key auth is retired. email.send is campaign activity test-send; production send is campaign.schedule. V3 partner webhooks are billing topics only. Customer owns the account. access_token is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "contact_mail",
   "tags": [
     "email"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "contact.create",
-          "description": "Overrides config operation when non-blank. EXACT: contact.create | contact.get | contact.list | contact.update | contact.delete | list.create | list.add | campaign.create | campaign.get | campaign.schedule | email.send | trigger.listen. trigger.listen is ingress (BPMN message event, no socket).",
+          "description": "Overrides config operation when non-blank. EXACT: contact.create | contact.get | contact.list | contact.update | contact.delete | list.create | list.add | campaign.create | campaign.get | campaign.schedule | email.send | trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -266,7 +266,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -311,7 +311,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: contact.create, contact.get, contact.list, contact.update, contact.delete, list.create, list.add, campaign.create, campaign.get, campaign.schedule, email.send, trigger.listen.",
+      "description": "Default operation when input.operation is blank. EXACT: contact.create, contact.get, contact.list, contact.update, contact.delete, list.create, list.add, campaign.create, campaign.get, campaign.schedule, email.send, trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.create",
       "required": true,
       "instanceEditable": true,

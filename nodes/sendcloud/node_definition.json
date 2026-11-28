@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Sendcloud",
   "label": "Sendcloud API v3 — shipments, labels, shipping options",
-  "description": "EU fulfillment via Sendcloud API v3 at https://panel.sendcloud.sc/api/v3. Docs: https://sendcloud.dev/api/v3/shipments/create-and-announce-a-shipment-synchronously. parcel_create requires ship_with, to_address, from_address, parcels. Basic auth public_key:secret_key. Handler: OfficialApiNode. Never log keys or addresses.",
+  "description": "EU fulfillment via Sendcloud API v3 at https://panel.sendcloud.sc/api/v3. Docs: https://sendcloud.dev/api/v3/shipments/create-and-announce-a-shipment-synchronously. parcel_create requires ship_with, to_address, from_address, parcels. Basic auth public_key:secret_key. Handler: OfficialApiNode. Never log keys or addresses. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "local_shipping",
   "tags": [
     "sendcloud",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "parcel_create",
-          "description": "Official API v3 verb. EXACT: parcel_create (POST /shipments/announce) | label_create (GET /parcels/{id}/documents/label) | shipping_method_list (POST /shipping-options) | trigger. Blank uses configurationParameters.operation. trigger is ingress (BPMN message event), not an HTTP call.",
+          "description": "Official API v3 verb. EXACT: parcel_create (POST /shipments/announce) | label_create (GET /parcels/{id}/documents/label) | shipping_method_list (POST /shipping-options) | trigger. Blank uses configurationParameters.operation. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -150,7 +150,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "status=ok + data on 2xx. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "status=ok + data on 2xx. Inbound webhook events (:listen) emit normalized event data on output. Secrets never present. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -195,7 +195,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb for OfficialApiNode v3. EXACT: parcel_create | label_create | shipping_method_list | trigger. trigger does not open a socket.",
+      "description": "HTTP verb for OfficialApiNode v3. EXACT: parcel_create | label_create | shipping_method_list | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "parcel_create",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Zoho CRM",
   "label": "Zoho CRM — REST API v8 (Zoho-oauthtoken, DC hosts)",
-  "description": "Official Zoho CRM REST API v8 at https://www.zohoapis.com/crm/v8 (US default). Handler: OfficialApiNode. Auth header Authorization: Zoho-oauthtoken {access_token} (not RFC 6750 Bearer). Pick api_host from the token api_domain hostname (US/EU/IN/AU/CN/JP/CA; SA accounts at accounts.zoho.sa). Records are PII. Customer owns the Zoho CRM org. Minimize; never log access_token or field values. trigger.listen is BPMN message-event ingress. Docs: https://www.zoho.com/crm/developer/docs/api/v8/",
+  "description": "Official Zoho CRM REST API v8 at https://www.zohoapis.com/crm/v8 (US default). Handler: OfficialApiNode. Auth header Authorization: Zoho-oauthtoken {access_token} (not RFC 6750 Bearer). Pick api_host from the token api_domain hostname (US/EU/IN/AU/CN/JP/CA; SA accounts at accounts.zoho.sa). Records are PII. Customer owns the Zoho CRM org. Minimize; never log access_token or field values. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) + provider signing/verification config (webhook_secret, webhook_header_name) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Docs: https://www.zoho.com/crm/developer/docs/api/v8/",
   "icon": "contacts",
   "tags": [
     "crm"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "account.list",
-          "description": "Overrides config operation when non-blank. EXACT catalog verbs: module.create | .upsert | .get | .list | .update | .delete (quote/salesOrder/purchaseOrder have no upsert), plus lead.fields and trigger.listen.",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs: module.create |.upsert |.get |.list |.update |.delete (quote/salesOrder/purchaseOrder have no upsert), plus lead.fields and trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -248,7 +248,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -293,7 +293,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: account.create | account.upsert | account.get | account.list | account.update | account.delete | contact.create | contact.upsert | contact.get | contact.list | contact.update | contact.delete | deal.create | deal.upsert | deal.get | deal.list | deal.update | deal.delete | lead.create | lead.upsert | lead.get | lead.list | lead.update | lead.delete | lead.fields | product.create | product.upsert | product.get | product.list | product.update | product.delete | invoice.create | invoice.upsert | invoice.get | invoice.list | invoice.update | invoice.delete | quote.create | quote.get | quote.list | quote.update | quote.delete | salesOrder.create | salesOrder.get | salesOrder.list | salesOrder.update | salesOrder.delete | purchaseOrder.create | purchaseOrder.get | purchaseOrder.list | purchaseOrder.update | purchaseOrder.delete | vendor.create | vendor.upsert | vendor.get | vendor.list | vendor.update | vendor.delete | trigger.listen. trigger.listen is ingress. Pick api_host for the org DC.",
+      "description": "Default operation when input.operation is blank. EXACT: account.create | account.upsert | account.get | account.list | account.update | account.delete | contact.create | contact.upsert | contact.get | contact.list | contact.update | contact.delete | deal.create | deal.upsert | deal.get | deal.list | deal.update | deal.delete | lead.create | lead.upsert | lead.get | lead.list | lead.update | lead.delete | lead.fields | product.create | product.upsert | product.get | product.list | product.update | product.delete | invoice.create | invoice.upsert | invoice.get | invoice.list | invoice.update | invoice.delete | quote.create | quote.get | quote.list | quote.update | quote.delete | salesOrder.create | salesOrder.get | salesOrder.list | salesOrder.update | salesOrder.delete | purchaseOrder.create | purchaseOrder.get | purchaseOrder.list | purchaseOrder.update | purchaseOrder.delete | vendor.create | vendor.upsert | vendor.get | vendor.list | vendor.update | vendor.delete | trigger.listen. Pick api_host for the org DC. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (webhook_secret, webhook_header_name), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.list",
       "required": true,
       "instanceEditable": true,
@@ -2666,7 +2666,7 @@
       "shortCode": "webhook_key",
       "label": "Webhook Key",
       "type": "webhook_key",
-      "description": "Engine Webhook API Key binding ($webhookKeyRef) supporting URL key, X-SQ-WEBHOOK-KEY header, or k/{keyId} with provider secret header.",
+      "description": "Engine Node-scoped API Key binding ($webhookKeyRef) routing inbound HTTP webhooks to this node via full URL key (.../runtime/message-events/<apiKey>) or X-SQ-WEBHOOK-KEY header (verified alongside the provider's secret header).",
       "value": "",
       "required": false,
       "instanceEditable": true,

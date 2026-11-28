@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "QuickBooks",
   "label": "QuickBooks — QuickBooks Online Accounting API v3, minorversion=75",
-  "description": "Official QuickBooks Online Accounting API v3, minorversion=75. Docs: https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/invoice. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. Pin minorversion=75 on query. Employee is a payroll/HR record, not an Intuit login. Sandbox host sandbox-quickbooks.api.intuit.com. No PAN on payment_create.",
+  "description": "Official QuickBooks Online Accounting API v3, minorversion=75. Docs: https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/invoice. One node; operations via `operation`. Pin minorversion=75 on query. Employee is a payroll/HR record, not an Intuit login. Sandbox host sandbox-quickbooks.api.intuit.com. No PAN on payment_create. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "quickbooks",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "bill_create",
-          "description": "Overrides config operation. EXACT: bill_create | bill_get | bill_list | bill_update | bill_delete | customer_create | customer_get | customer_list | customer_update | employee_create | employee_get | employee_list | estimate_create | estimate_get | estimate_list | estimate_update | estimate_send | invoice_create | invoice_get | invoice_list | invoice_update | invoice_send | payment_create | payment_get | payment_list | payment_update | payment_delete | payment_void | purchase_get | purchase_list | report_transaction | vendor_create | vendor_get | vendor_list | vendor_update | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "description": "Overrides config operation. EXACT: bill_create | bill_get | bill_list | bill_update | bill_delete | customer_create | customer_get | customer_list | customer_update | employee_create | employee_get | employee_list | estimate_create | estimate_get | estimate_list | estimate_update | estimate_send | invoice_create | invoice_get | invoice_list | invoice_update | invoice_send | payment_create | payment_get | payment_list | payment_update | payment_delete | payment_void | purchase_get | purchase_list | report_transaction | vendor_create | vendor_get | vendor_list | vendor_update | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -267,7 +267,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -312,7 +312,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: bill_create | bill_get | bill_list | bill_update | bill_delete | customer_create | customer_get | customer_list | customer_update | employee_create | employee_get | employee_list | estimate_create | estimate_get | estimate_list | estimate_update | estimate_send | invoice_create | invoice_get | invoice_list | invoice_update | invoice_send | payment_create | payment_get | payment_list | payment_update | payment_delete | payment_void | purchase_get | purchase_list | report_transaction | vendor_create | vendor_get | vendor_list | vendor_update | trigger. Default bill_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "description": "HTTP verb to run. EXACT: bill_create | bill_get | bill_list | bill_update | bill_delete | customer_create | customer_get | customer_list | customer_update | employee_create | employee_get | employee_list | estimate_create | estimate_get | estimate_list | estimate_update | estimate_send | invoice_create | invoice_get | invoice_list | invoice_update | invoice_send | payment_create | payment_get | payment_list | payment_update | payment_delete | payment_void | purchase_get | purchase_list | report_transaction | vendor_create | vendor_get | vendor_list | vendor_update | trigger. Default bill_create. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "bill_create",
       "required": true,
       "instanceEditable": true,

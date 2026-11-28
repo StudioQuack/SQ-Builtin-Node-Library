@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Airtable",
   "label": "Airtable Web API",
-  "description": "Airtable Web API via OfficialApiNode (nodes/airtable/api_spec.json). Official Airtable Web API. Legacy API keys retired — use PAT or OAuth access token. Rate limits apply. ToS bars scraping. Official docs: https://airtable.com/developers/web/api/introduction. Secrets never appear on OUTPUT. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "description": "Airtable Web API via OfficialApiNode (nodes/airtable/api_spec.json). Official Airtable Web API. Legacy API keys retired — use PAT or OAuth access token. Rate limits apply. ToS bars scraping. Official docs: https://airtable.com/developers/web/api/introduction. Secrets never appear on OUTPUT. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
   "icon": "grid_on",
   "tags": [
     "airtable",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "create",
-          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'create', 'list', 'get', 'update', 'upsert', 'delete', 'listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'create'.",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'create', 'list', 'get', 'update', 'upsert', 'delete', 'listen'. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'create'.",
           "children": []
         },
         {
@@ -160,7 +160,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -205,7 +205,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: create, list, get, update, upsert, delete, listen. Default: create. Example: create.",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: create, list, get, update, upsert, delete, listen. Default: create. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event. Example: create.",
       "value": "create",
       "required": true,
       "instanceEditable": true,

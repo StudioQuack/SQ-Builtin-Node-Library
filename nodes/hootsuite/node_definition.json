@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Hootsuite",
   "label": "Hootsuite REST — schedule, list, analytics",
-  "description": "Official Hootsuite REST API 1.0 at https://platform.hootsuite.com/v1. OfficialApiNode: POST /messages, GET /messages, POST /analytics/posts. Auth is StudioQuack secret access_token (Bearer). trigger is BPMN message-event ingress (com.hootsuite.messages.event.v1), not a socket. Analytics needs Advanced Analytics and scope analytics:read. Customer owns the Developer Portal app. Never log access_token.",
+  "description": "Official Hootsuite REST API 1.0 at https://platform.hootsuite.com/v1. OfficialApiNode: POST /messages, GET /messages, POST /analytics/posts. Auth is StudioQuack secret access_token (Bearer). Supports com.hootsuite.messages.event.v1 webhooks. Analytics needs Advanced Analytics and scope analytics:read. Customer owns the Developer Portal app. Never log access_token. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "campaign",
   "tags": [
     "hootsuite",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "message_schedule",
-          "description": "Overrides config operation when non-blank. EXACT: message_schedule | message_list | analytics_get | trigger.",
+          "description": "Overrides config operation when non-blank. EXACT: message_schedule | message_list | analytics_get | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -132,7 +132,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). trigger returns an ingress instruction, not HTTP. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -177,7 +177,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: message_schedule | message_list | analytics_get | trigger.",
+      "description": "Default operation when input.operation is blank. EXACT: message_schedule | message_list | analytics_get | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "message_list",
       "required": true,
       "instanceEditable": true,

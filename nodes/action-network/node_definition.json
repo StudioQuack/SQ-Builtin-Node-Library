@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Action Network",
   "label": "Action Network — advocacy CRM (OSDI REST v2)",
-  "description": "Official Action Network REST API v2 (OSDI 1.1.1 / HAL+JSON) at https://actionnetwork.org/api/v2. Handler: OfficialApiNode. Partner API key header OSDI-API-Token. person.create uses the person signup helper (POST /people/). Advocacy PII — minimize fields. Customer owns the Action Network list. api_key is never logged or returned. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "description": "Official Action Network REST API v2 (OSDI 1.1.1 / HAL+JSON) at https://actionnetwork.org/api/v2. Handler: OfficialApiNode. Partner API key header OSDI-API-Token. person.create uses the person signup helper (POST /people/). Advocacy PII — minimize fields. Customer owns the Action Network list. api_key is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
   "icon": "campaign",
   "tags": [
     "crm"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "person.create",
-          "description": "Overrides config operation when non-blank. EXACT catalog verb.",
+          "description": "Overrides config operation when non-blank. EXACT catalog verb. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -293,7 +293,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -338,7 +338,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: person.create | person.get | person.list | person.update | event.create | event.get | event.list | attendance.create | attendance.get | attendance.list | petition.create | petition.get | petition.list | petition.update | signature.create | signature.get | signature.list | signature.update | tag.create | tag.get | tag.list | personTag.add | personTag.remove | trigger.listen.",
+      "description": "Default operation when input.operation is blank. EXACT: person.create | person.get | person.list | person.update | event.create | event.get | event.list | attendance.create | attendance.get | attendance.list | petition.create | petition.get | petition.list | petition.update | signature.create | signature.get | signature.list | signature.update | tag.create | tag.get | tag.list | personTag.add | personTag.remove | trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "person.create",
       "required": true,
       "instanceEditable": true,

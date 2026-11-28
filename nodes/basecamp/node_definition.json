@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Basecamp",
   "label": "Basecamp 3 API",
-  "description": "Official Basecamp 3/4 API via OfficialApiNode (nodes/basecamp/api_spec.json). extraHeaders send required User-Agent: {user_agent} (app name + contact). Official docs: https://github.com/basecamp/bc3-api. Secrets never appear on OUTPUT. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+  "description": "Official Basecamp 3/4 API via OfficialApiNode (nodes/basecamp/api_spec.json). extraHeaders send required User-Agent: {user_agent} (app name + contact). Official docs: https://github.com/basecamp/bc3-api. Secrets never appear on OUTPUT. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
   "icon": "campaign",
   "tags": [
     "basecamp",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "project_list",
-          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'project_list', 'project_get', 'todo_create', 'todo_get', 'todo_complete', 'todo_list_create', 'message_create', 'document_create', 'comment_create', 'person_list', 'campfire_line', 'schedule_entry', 'listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'project_list'.",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'project_list', 'project_get', 'todo_create', 'todo_get', 'todo_complete', 'todo_list_create', 'message_create', 'document_create', 'comment_create', 'person_list', 'campfire_line', 'schedule_entry', 'listen'. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'project_list'.",
           "children": []
         },
         {
@@ -214,7 +214,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -259,7 +259,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: project_list, project_get, todo_create, todo_get, todo_complete, todo_list_create, message_create, document_create, comment_create, person_list, campfire_line, schedule_entry, listen. Default: project_list. Example: project_list.",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: project_list, project_get, todo_create, todo_get, todo_complete, todo_list_create, message_create, document_create, comment_create, person_list, campfire_line, schedule_entry, listen. Default: project_list. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event. Example: project_list.",
       "value": "project_list",
       "required": true,
       "instanceEditable": true,

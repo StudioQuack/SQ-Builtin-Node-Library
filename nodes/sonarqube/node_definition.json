@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "SonarQube",
   "label": "SonarQube Web API",
-  "description": "SonarQube Web API via OfficialApiNode. Docs: https://docs.sonarsource.com/sonarqube-server/latest/extension-guide/web-api/. Operations: project_get, project_create, issue_search, measures_get, qualitygate_get, qualitygate_status, listen. Auth secret token is instance config only (never on INPUT, never logged). listen/trigger are kind:ingress — use a BPMN message start/catch/boundary event. Failures are output.error. JDK HTTP, official API only.",
+  "description": "SonarQube Web API via OfficialApiNode. Docs: https://docs.sonarsource.com/sonarqube-server/latest/extension-guide/web-api/. Operations: project_get, project_create, issue_search, measures_get, qualitygate_get, qualitygate_status, listen. Auth secret token is instance config only (never on INPUT, never logged). Failures are output.error. JDK HTTP, official API only. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "hub",
   "tags": [
     "sonarqube",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "project_get",
-          "description": "Which official API call to run. EXACT values: project_get | project_create | issue_search | measures_get | qualitygate_get | qualitygate_status | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'project_get'.",
+          "description": "Which official API call to run. EXACT values: project_get | project_create | issue_search | measures_get | qualitygate_get | qualitygate_status | listen. Prefer the instance config operation select. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'project_get'.",
           "children": []
         },
         {
@@ -232,7 +232,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status:ok, http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -277,7 +277,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official API operation. EXACT: project_get, project_create, issue_search, measures_get, qualitygate_get, qualitygate_status, listen. listen is BPMN ingress, not a socket.",
+      "description": "Official API operation. EXACT: project_get, project_create, issue_search, measures_get, qualitygate_get, qualitygate_status, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "project_get",
       "required": true,
       "instanceEditable": true,

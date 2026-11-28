@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Invoice Ninja",
   "label": "Invoice Ninja — Invoice Ninja API v5",
-  "description": "Official Invoice Ninja API v5. Docs: https://api-docs.invoicing.co/. One node; operations via `operation`. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node. Self-host: OfficialApiNode baseUrl is invoicing.co; self-host URL must be the engine egress target. Keep URL on customer overlay. Official also requires X-Requested-With: XMLHttpRequest (engine may not send it).",
+  "description": "Official Invoice Ninja API v5. Docs: https://api-docs.invoicing.co/. One node; operations via `operation`. Self-host: OfficialApiNode baseUrl is invoicing.co; self-host URL must be the engine egress target. Keep URL on customer overlay. Official also requires X-Requested-With: XMLHttpRequest (engine may not send it). Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "invoice",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "client_create",
-          "description": "Overrides config operation. EXACT: client_create | client_delete | client_get | client_list | expense_create | expense_delete | expense_get | expense_list | invoice_create | invoice_delete | invoice_email | invoice_get | invoice_list | payment_create | payment_delete | payment_get | payment_list | quote_create | quote_delete | quote_email | quote_get | quote_list | task_create | task_delete | task_get | task_list | trigger. trigger is ingress (BPMN message event), not HTTP.",
+          "description": "Overrides config operation. EXACT: client_create | client_delete | client_get | client_list | expense_create | expense_delete | expense_get | expense_list | invoice_create | invoice_delete | invoice_email | invoice_get | invoice_list | payment_create | payment_delete | payment_get | payment_list | quote_create | quote_delete | quote_email | quote_get | quote_list | task_create | task_delete | task_get | task_list | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -340,7 +340,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -385,7 +385,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: client_create | client_delete | client_get | client_list | expense_create | expense_delete | expense_get | expense_list | invoice_create | invoice_delete | invoice_email | invoice_get | invoice_list | payment_create | payment_delete | payment_get | payment_list | quote_create | quote_delete | quote_email | quote_get | quote_list | task_create | task_delete | task_get | task_list | trigger. Default client_create. operation=trigger is kind:ingress — it does not open a socket. Use a BPMN message start / catch / boundary event; StudioQuack webhook ingress correlates onto those events. There is no Webhook node.",
+      "description": "HTTP verb to run. EXACT: client_create | client_delete | client_get | client_list | expense_create | expense_delete | expense_get | expense_list | invoice_create | invoice_delete | invoice_email | invoice_get | invoice_list | payment_create | payment_delete | payment_get | payment_list | quote_create | quote_delete | quote_email | quote_get | quote_list | task_create | task_delete | task_get | task_list | trigger. Default client_create. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "client_create",
       "required": true,
       "instanceEditable": true,

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Insightly",
   "label": "Insightly — REST v3.1 CRM",
-  "description": "Official Insightly REST v3.1 at https://api.{pod}.insightly.com/v3.1/. Handler: OfficialApiNode. HTTP Basic with the API key as username (pod from User Settings). JSON only. trigger.listen is ingress (webhook URL in Insightly System Settings). Customer owns the instance. Contacts/leads are PII. Never log api_key.",
+  "description": "Official Insightly REST v3.1 at https://api.{pod}.insightly.com/v3.1/. Handler: OfficialApiNode. HTTP Basic with the API key as username (pod from User Settings). JSON only. Configure the webhook URL in Insightly System Settings. Customer owns the instance. Contacts/leads are PII. Never log api_key. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "contacts",
   "tags": [
     "crm"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "contact.create",
-          "description": "Overrides config. EXACT catalog verb including trigger.listen.",
+          "description": "Overrides config. EXACT catalog verb including trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -473,7 +473,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (record or list). trigger.listen: BPMN message event. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (record or list). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -518,7 +518,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank.",
+      "description": "Default operation when input.operation is blank. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.list",
       "required": true,
       "instanceEditable": true,

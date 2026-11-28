@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Discourse",
   "label": "Discourse REST — topics, posts, users, search",
-  "description": "Official Discourse REST at the forum origin (api_spec.json baseUrl defaults to https://try.discourse.org — replace with the customer forum origin). Handler: OfficialApiNode. Auth header Api-Key from secret api_key; extraHeaders send required Api-Username: {api_username}. Customer owns the forum and key. Never log api_key. Docs: https://docs.discourse.org/",
+  "description": "Official Discourse REST at the forum origin (api_spec.json baseUrl defaults to https://try.discourse.org — replace with the customer forum origin). Handler: OfficialApiNode. Auth header Api-Key from secret api_key; extraHeaders send required Api-Username: {api_username}. Customer owns the forum and key. Never log api_key. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Docs: https://docs.discourse.org/",
   "icon": "forum",
   "tags": [
     "discourse",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "topic_create",
-          "description": "Overrides config operation when non-blank. EXACT: topic_create | topic_get | post_create | user_get | search | trigger.",
+          "description": "Overrides config operation when non-blank. EXACT: topic_create | topic_get | post_create | user_get | search | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -132,7 +132,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (forum JSON). trigger returns the BPMN message-event instruction — it does not open a socket. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (forum JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -177,7 +177,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: topic_create | topic_get | post_create | user_get | search | trigger.",
+      "description": "Default operation when input.operation is blank. EXACT: topic_create | topic_get | post_create | user_get | search | trigger. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "topic_create",
       "required": true,
       "instanceEditable": true,

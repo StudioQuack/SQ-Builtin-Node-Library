@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Facebook Pages",
   "label": "Facebook Pages — Graph API v26.0",
-  "description": "Official Meta Graph API v26.0 for a Facebook Page on https://graph.facebook.com/v26.0. Handler: OfficialApiNode. Page feed publish/list, insights, Lead Ads form list, generic Page-scoped GET/POST/DELETE. page_access_token is never logged or returned. Instagram stays on the Instagram node. Do not scrape facebook.com. Customer owns the Meta app.",
+  "description": "Official Meta Graph API v26.0 for a Facebook Page on https://graph.facebook.com/v26.0. Handler: OfficialApiNode. Page feed publish/list, insights, Lead Ads form list, generic Page-scoped GET/POST/DELETE. page_access_token is never logged or returned. Instagram stays on the Instagram node. Do not scrape facebook.com. Customer owns the Meta app. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) + provider signing/verification secrets (app_secret, verify_token) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "flag",
   "tags": [
     "facebook",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "graph_get",
-          "description": "Overrides config operation when non-blank. EXACT: graph_get | page_post_create | page_feed_get | insights_get | lead_list | graph_post | graph_delete | trigger.",
+          "description": "Overrides config operation when non-blank. EXACT: graph_get | page_post_create | page_feed_get | insights_get | lead_list | graph_post | graph_delete | trigger. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -151,7 +151,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data. Lead payloads are PII — do not log data. trigger is ingress. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data. Lead payloads are PII — do not log data. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -196,7 +196,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT values listed in options. trigger does not open a socket.",
+      "description": "Default operation when input.operation is blank. EXACT values listed in options. Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef) and provider verification fields (app_secret, verify_token), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "page_post_create",
       "required": true,
       "instanceEditable": true,

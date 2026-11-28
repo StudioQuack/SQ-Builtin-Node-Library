@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Intercom",
   "label": "Intercom — contacts, companies, conversations",
-  "description": "Official Intercom REST. Handler: OfficialApiNode. Bearer private-app or OAuth access token. baseUrl is https://{region} (api.intercom.io / api.eu.intercom.io / api.au.intercom.io — https://developers.intercom.com/docs/build-an-integration/learn-more/rest-apis). extraHeaders send Intercom-Version: 2.16 (https://developers.intercom.com/docs/references/introduction). Legacy /users and /leads collections are retired. trigger.listen is ingress. Customer owns the workspace. Conversations are PII. Never log access_token.",
+  "description": "Official Intercom REST. Handler: OfficialApiNode. Bearer private-app or OAuth access token. baseUrl is https://{region} (api.intercom.io / api.eu.intercom.io / api.au.intercom.io — https://developers.intercom.com/docs/build-an-integration/learn-more/rest-apis). extraHeaders send Intercom-Version: 2.16 (https://developers.intercom.com/docs/references/introduction). Legacy /users and /leads collections are retired. Customer owns the workspace. Conversations are PII. Never log access_token. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "chat",
   "tags": [
     "chat",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "contact.create",
-          "description": "Overrides config. EXACT catalog verb including trigger.listen.",
+          "description": "Overrides config. EXACT catalog verb including trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -267,7 +267,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data. trigger.listen: BPMN message event (verify X-Hub-Signature on ingress). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data. Inbound webhook events (:listen, X-Hub-Signature verified) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -312,7 +312,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank.",
+      "description": "Default operation when input.operation is blank. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "contact.get",
       "required": true,
       "instanceEditable": true,

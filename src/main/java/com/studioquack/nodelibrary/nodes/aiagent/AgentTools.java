@@ -451,7 +451,11 @@ final class AgentTools {
             Map<String, Object> msg = "delegate_to_agent".equals(name)
                     ? handleDelegation(session, name, args, tid)
                     : handleToolCall(session, name, args, tid);
-            recentCalls.put(key, contentOf(msg));
+            String body = contentOf(msg);
+            if (isMutatingCall(name, args) && !errorToolContent(body)) {
+                evictOtherCallsForTool(recentCalls, name, key);
+            }
+            recentCalls.put(key, body);
             return msg;
         } catch (Exception e) {
             recentCalls.remove(key);
@@ -499,6 +503,48 @@ final class AgentTools {
 
     private static boolean presentError(Object err) {
         return err != null && !String.valueOf(err).isBlank();
+    }
+
+    private static final java.util.Set<String> MUTATING_TOKENS = java.util.Set.of(
+            "create", "update", "delete", "remove", "add", "put", "post", "patch",
+            "upsert", "set", "unset", "archive", "restore", "cancel", "retry", "merge",
+            "accept", "publish", "send", "subscribe", "unsubscribe", "assign", "unassign",
+            "close", "reopen", "revoke", "reset", "clear", "purge", "flush", "drop",
+            "write", "append", "insert", "move", "copy", "rename", "upload", "ingest");
+
+    /** True when the operation/action (or tool name) looks like a state-changing call. */
+    static boolean isMutatingCall(String name, Map<String, Object> args) {
+        if (args != null) {
+            for (String k : List.of("operation", "action")) {
+                Object v = args.get(k);
+                if (v instanceof String s && hasMutatingToken(s)) {
+                    return true;
+                }
+            }
+        }
+        return hasMutatingToken(name);
+    }
+
+    private static boolean hasMutatingToken(String text) {
+        if (text == null || text.isBlank()) {
+            return false;
+        }
+        for (String tok : text.toLowerCase(java.util.Locale.ROOT).split("[^a-z0-9]+")) {
+            if (!tok.isEmpty() && MUTATING_TOKENS.contains(tok)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Evict cached reads/calls for the same tool so post-mutation GET/LIST sees fresh state. */
+    static void evictOtherCallsForTool(ConcurrentMap<String, String> recentCalls,
+                                       String name, String keepKey) {
+        if (recentCalls == null || name == null || name.isBlank()) {
+            return;
+        }
+        String prefix = name + "\0";
+        recentCalls.keySet().removeIf(k -> k.startsWith(prefix) && !k.equals(keepKey));
     }
 
     private static String contentOf(Map<String, Object> msg) {

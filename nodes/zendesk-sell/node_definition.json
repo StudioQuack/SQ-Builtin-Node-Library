@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Zendesk Sell",
   "label": "Zendesk Sell — Sales CRM API v2 (not Support)",
-  "description": "Official Zendesk Sell (Sales CRM, formerly Base) REST API v2 at https://api.getbase.com/v2. Handler: OfficialApiNode. Not Zendesk Support. Bearer OAuth access token (or dashboard personal token) from a Sell OAuth app. Leads, contacts, and deals are PII. Customer owns the Sell account. Minimize; never log access_token, emails, or phones. trigger.listen is BPMN message-event ingress. Docs: https://developer.zendesk.com/api-reference/sales-crm/introduction/",
+  "description": "Official Zendesk Sell (Sales CRM, formerly Base) REST API v2 at https://api.getbase.com/v2. Handler: OfficialApiNode. Not Zendesk Support. Bearer OAuth access token (or dashboard personal token) from a Sell OAuth app. Leads, contacts, and deals are PII. Customer owns the Sell account. Minimize; never log access_token, emails, or phones. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event). Docs: https://developer.zendesk.com/api-reference/sales-crm/introduction/",
   "icon": "handshake",
   "tags": [
     "crm"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "lead.create",
-          "description": "Overrides config operation when non-blank. EXACT: lead.create | lead.get | lead.list | lead.update | contact.create | contact.get | contact.list | contact.update | deal.create | deal.get | deal.list | deal.update | deal.delete | note.create | task.create | task.get | pipeline.list | stage.list | trigger.listen.",
+          "description": "Overrides config operation when non-blank. EXACT: lead.create | lead.get | lead.list | lead.update | contact.create | contact.get | contact.list | contact.update | deal.create | deal.get | deal.list | deal.update | deal.delete | note.create | task.create | task.get | pipeline.list | stage.list | trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -473,7 +473,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -518,7 +518,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: lead.create | lead.get | lead.list | lead.update | contact.create | contact.get | contact.list | contact.update | deal.create | deal.get | deal.list | deal.update | deal.delete | note.create | task.create | task.get | pipeline.list | stage.list | trigger.listen. trigger.listen is ingress.",
+      "description": "Default operation when input.operation is blank. EXACT: lead.create | lead.get | lead.list | lead.update | contact.create | contact.get | contact.list | contact.update | deal.create | deal.get | deal.list | deal.update | deal.delete | note.create | task.create | task.get | pipeline.list | stage.list | trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "lead.list",
       "required": true,
       "instanceEditable": true,

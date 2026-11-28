@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Close",
   "label": "Close REST API v1 — leads, contacts, opportunities, activities",
-  "description": "Official Close REST API v1 at https://api.close.com/api/v1. Handler: OfficialApiNode. API key as HTTP Basic (key = username). Trailing slashes required. Call recordings and activity bodies are PII — do not log. trigger.listen is BPMN ingress. Customer owns the Close account. api_key is never logged or returned.",
+  "description": "Official Close REST API v1 at https://api.close.com/api/v1. Handler: OfficialApiNode. API key as HTTP Basic (key = username). Trailing slashes required. Call recordings and activity bodies are PII — do not log. Customer owns the Close account. api_key is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "contacts",
   "tags": [
     "crm"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "lead.create",
-          "description": "Overrides config operation when non-blank. EXACT: lead.create | lead.get | lead.list | lead.update | lead.delete | contact.create | contact.get | contact.list | contact.update | opportunity.create | opportunity.get | opportunity.list | opportunity.update | call.create | call.get | email.create | sms.create | task.create | task.get | activity.list | customActivity.create | customObject.create | customObject.update | membership.add | membership.remove | trigger.listen. trigger.listen is ingress (BPMN message event, no socket).",
+          "description": "Overrides config operation when non-blank. EXACT: lead.create | lead.get | lead.list | lead.update | lead.delete | contact.create | contact.get | contact.list | contact.update | opportunity.create | opportunity.get | opportunity.list | opportunity.update | call.create | call.get | email.create | sms.create | task.create | task.get | activity.list | customActivity.create | customObject.create | customObject.update | membership.add | membership.remove | trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -383,7 +383,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -428,7 +428,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: lead.create, lead.get, lead.list, lead.update, lead.delete, contact.create, contact.get, contact.list, contact.update, opportunity.create, opportunity.get, opportunity.list, opportunity.update, call.create, call.get, email.create, sms.create, task.create, task.get, activity.list, customActivity.create, customObject.create, customObject.update, membership.add, membership.remove, trigger.listen.",
+      "description": "Default operation when input.operation is blank. EXACT: lead.create, lead.get, lead.list, lead.update, lead.delete, contact.create, contact.get, contact.list, contact.update, opportunity.create, opportunity.get, opportunity.list, opportunity.update, call.create, call.get, email.create, sms.create, task.create, task.get, activity.list, customActivity.create, customObject.create, customObject.update, membership.add, membership.remove, trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "lead.get",
       "required": true,
       "instanceEditable": true,

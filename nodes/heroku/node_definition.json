@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Heroku",
   "label": "Heroku Platform API",
-  "description": "Heroku Platform API v3 at https://api.heroku.com. Handler: OfficialApiNode. Accept: application/vnd.heroku+json; version=3. Auth: Bearer api_key (Heroku API token). config_set sends a flat JSON map as the whole body. listen is ingress. Docs: https://devcenter.heroku.com/articles/platform-api-reference. Never log api_key.",
+  "description": "Heroku Platform API v3 at https://api.heroku.com. Handler: OfficialApiNode. Accept: application/vnd.heroku+json; version=3. Auth: Bearer api_key (Heroku API token). config_set sends a flat JSON map as the whole body. Docs: https://devcenter.heroku.com/articles/platform-api-reference. Never log api_key. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "hub",
   "tags": [
     "heroku",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "app_get",
-          "description": "Which official API call to run. EXACT values: app_get | app_list | app_create | dyno_create | dyno_restart | config_get | config_set | release_list | build_create | listen. Prefer the instance config operation select. listen/trigger are ingress: they do not call HTTP — use a BPMN message event. Example: 'app_get'.",
+          "description": "Which official API call to run. EXACT values: app_get | app_list | app_create | dyno_create | dyno_restart | config_get | config_set | release_list | build_create | listen. Prefer the instance config operation select. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'app_get'.",
           "children": []
         },
         {
@@ -151,7 +151,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success {status:ok, http_status, data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success {status:ok, http_status, data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -196,7 +196,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Official API operation. EXACT: app_get, app_list, app_create, dyno_create, dyno_restart, config_get, config_set, release_list, build_create, listen. listen is BPMN ingress, not a socket.",
+      "description": "Official API operation. EXACT: app_get, app_list, app_create, dyno_create, dyno_restart, config_get, config_set, release_list, build_create, listen. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "app_get",
       "required": true,
       "instanceEditable": true,

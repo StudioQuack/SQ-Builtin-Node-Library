@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "TrueLayer",
   "label": "TrueLayer — Payments API v3 + Data API v3",
-  "description": "Official TrueLayer Payments API v3 + Data API v3 (recommended for new data integrations; Data v1 remains documented separately). Docs: https://docs.truelayer.com/docs/enable-your-users-to-connect-their-bank-account. auth_link = POST /v3/data-connections. accounts_list = GET /v3/connected-accounts with Connection-Id. transactions_list = GET /v3/connected-accounts/{account_id}/transactions/requests/{request_id} (v3 is async; pass request_id from a prior create-request). Payments stay /v3/payments. UK only for Data v3. Consent receipts required. Verify Tl-Signature on BPMN ingress. Sandbox: api.truelayer-sandbox.com.",
+  "description": "Official TrueLayer Payments API v3 + Data API v3 (recommended for new data integrations; Data v1 remains documented separately). Docs: https://docs.truelayer.com/docs/enable-your-users-to-connect-their-bank-account. auth_link = POST /v3/data-connections. accounts_list = GET /v3/connected-accounts with Connection-Id. transactions_list = GET /v3/connected-accounts/{account_id}/transactions/requests/{request_id} (v3 is async; pass request_id from a prior create-request). Payments stay /v3/payments. UK only for Data v3. Consent receipts required. Verify Tl-Signature on inbound webhooks. Sandbox: api.truelayer-sandbox.com. Inbound webhooks: selecting the :listen operation (trigger) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "account_balance",
   "tags": [
     "truelayer",
@@ -30,7 +30,7 @@
           "type": "string",
           "required": false,
           "value": "auth_link",
-          "description": "Overrides config operation. EXACT: auth_link | accounts_list | transactions_list | payment_create | payment_get | trigger. Data ops are Data API v3. trigger is ingress (BPMN message event), not HTTP.",
+          "description": "Overrides config operation. EXACT: auth_link | accounts_list | transactions_list | payment_create | payment_get | trigger. Data ops are Data API v3. trigger (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -213,7 +213,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "OfficialApiNode result: {status,http_status,data}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "OfficialApiNode result: {status,http_status,data}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -258,7 +258,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "HTTP verb to run. EXACT: auth_link | accounts_list | transactions_list | payment_create | payment_get | trigger. Default auth_link = POST /v3/data-connections. Data list ops require config/input connection_id (Connection-Id header). operation=trigger is kind:ingress — it does not open a socket.",
+      "description": "HTTP verb to run. EXACT: auth_link | accounts_list | transactions_list | payment_create | payment_get | trigger. Default auth_link = POST /v3/data-connections. Data list ops require config/input connection_id (Connection-Id header). Selecting trigger (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "auth_link",
       "required": true,
       "instanceEditable": true,

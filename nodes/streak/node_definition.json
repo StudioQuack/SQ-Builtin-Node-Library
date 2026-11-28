@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Streak",
   "label": "Streak REST v1 — pipelines, boxes, contacts",
-  "description": "Official Streak REST v1 at https://api.streak.com/api/v1. Boxes = deals. Handler: OfficialApiNode. Auth: HTTP Basic with api_key. trigger.listen is ingress (pipeline webhooks) — use a BPMN message event. Customer owns the Gmail/Streak account. Minimize emails and comments. api_key is never logged or returned.",
+  "description": "Official Streak REST v1 at https://api.streak.com/api/v1. Boxes = deals. Handler: OfficialApiNode. Auth: HTTP Basic with api_key. Supports pipeline webhooks. Customer owns the Gmail/Streak account. Minimize emails and comments. api_key is never logged or returned. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "view_kanban",
   "tags": [
     "crm"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "pipeline.list",
-          "description": "Overrides config operation when non-blank. EXACT: 'pipeline.list' | 'pipeline.get' | 'box.create' | 'box.get' | 'box.list' | 'box.update' | 'box.delete' | 'contact.create' | 'contact.get' | 'contact.update' | 'field.update' | 'task.create' | 'comment.create' | 'file.get' | 'trigger.listen'.",
+          "description": "Overrides config operation when non-blank. EXACT: 'pipeline.list' | 'pipeline.get' | 'box.create' | 'box.get' | 'box.list' | 'box.update' | 'box.delete' | 'contact.create' | 'contact.get' | 'contact.update' | 'field.update' | 'task.create' | 'comment.create' | 'file.get' | 'trigger.listen'. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -221,7 +221,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data (provider JSON). Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data (provider JSON). Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -266,7 +266,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank. EXACT: pipeline.list | pipeline.get | box.create | box.get | box.list | box.update | box.delete | contact.create | contact.get | contact.update | field.update | task.create | comment.create | file.get | trigger.listen.",
+      "description": "Default operation when input.operation is blank. EXACT: pipeline.list | pipeline.get | box.create | box.get | box.list | box.update | box.delete | contact.create | contact.get | contact.update | field.update | task.create | comment.create | file.get | trigger.listen. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "box.list",
       "required": true,
       "instanceEditable": true,

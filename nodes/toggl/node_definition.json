@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Toggl",
   "label": "Toggl Track API v9",
-  "description": "Toggl Track API v9 via OfficialApiNode (nodes/toggl/api_spec.json). Official Toggl Track API v9. Basic auth: username is the API token, password is the literal 'api_token'. time_entry_create requires created_with (client identifier) in the JSON body. Official docs: https://engineering.toggl.com/docs/track/api/time_entries/. OUTPUT is {status, http_status, data} or {error}. Secrets never appear on OUTPUT.",
+  "description": "Toggl Track API v9 via OfficialApiNode (nodes/toggl/api_spec.json). Official Toggl Track API v9. Basic auth: username is the API token, password is the literal 'api_token'. time_entry_create requires created_with (client identifier) in the JSON body. Official docs: https://engineering.toggl.com/docs/track/api/time_entries/. OUTPUT is {status, http_status, data} or {error}. Secrets never appear on OUTPUT. Inbound webhooks: selecting the :listen operation (listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "timer",
   "tags": [
     "toggl",
@@ -31,7 +31,7 @@
           "type": "string",
           "required": false,
           "value": "time_entry_create",
-          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'time_entry_create', 'time_entry_get', 'time_entry_update', 'time_entry_delete', 'time_entry_start', 'time_entry_stop', 'project_list', 'client_list', 'workspace_list', 'listen'. listen/trigger/webhook_listen never open a socket — they return an error telling you to use a BPMN message event. Example: 'time_entry_create'.",
+          "description": "Which official HTTP verb to run. Overrides instance operation when non-blank. EXACT accepted values: 'time_entry_create', 'time_entry_get', 'time_entry_update', 'time_entry_delete', 'time_entry_start', 'time_entry_stop', 'project_list', 'client_list', 'workspace_list', 'listen'. listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port). Example: 'time_entry_create'.",
           "children": []
         },
         {
@@ -142,7 +142,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Handler result object. Success: status='ok', http_status, data (parsed JSON). Example: {\"status\":\"ok\",\"http_status\":200,\"data\":{}}. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -187,7 +187,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: time_entry_create, time_entry_get, time_entry_update, time_entry_delete, time_entry_start, time_entry_stop, project_list, client_list, workspace_list, listen. Default: time_entry_create. Example: time_entry_create.",
+      "description": "Default official API call for this instance when input.operation is blank. EXACT accepted values: time_entry_create, time_entry_get, time_entry_update, time_entry_delete, time_entry_start, time_entry_stop, project_list, client_list, workspace_list, listen. Default: time_entry_create. Selecting listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event. Example: time_entry_create.",
       "value": "time_entry_create",
       "required": true,
       "instanceEditable": true,

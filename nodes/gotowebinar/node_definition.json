@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "GoToWebinar",
   "label": "GoTo Webinar REST API v2 — webinars, registrants, attendees",
-  "description": "Official GoTo Webinar REST API v2 at https://api.getgo.com/G2W/rest/v2. Handler: OfficialApiNode. Auth: OAuth access token as Bearer (customer supplies a current token; ~60 minute lifetime). Token host authentication.logmeininc.com. Registrant/attendee emails are PII. Customer owns the GoTo account. trigger.listen is ingress (official webhooks: registrant.added, registrant.joined, webinar.created, webinar.changed, survey.submitted). Never log tokens or joinUrl.",
+  "description": "Official GoTo Webinar REST API v2 at https://api.getgo.com/G2W/rest/v2. Handler: OfficialApiNode. Auth: OAuth access token as Bearer (customer supplies a current token; ~60 minute lifetime). Token host authentication.logmeininc.com. Registrant/attendee emails are PII. Customer owns the GoTo account. Official webhooks: registrant.added, registrant.joined, webinar.created, webinar.changed, survey.submitted. Never log tokens or joinUrl. Inbound webhooks: selecting the :listen operation (trigger.listen) via webhook_key ($webhookKeyRef) blocks the canvas INPUT port and compiles as a webhook-triggered Message Start (or binds to any Activity's MESSAGE Boundary Event).",
   "icon": "video_camera_front",
   "tags": [
     "webinar"
@@ -29,7 +29,7 @@
           "type": "string",
           "required": false,
           "value": "webinar.create",
-          "description": "Overrides config operation when non-blank. EXACT catalog verbs: webinar.* session.* registrant.* attendee.* panelist.* coOrganizer.* trigger.listen. trigger.listen never opens a socket.",
+          "description": "Overrides config operation when non-blank. EXACT catalog verbs: webinar.* session.* registrant.* attendee.* panelist.* coOrganizer.* trigger.listen. trigger.listen (:listen role) is configured on the node via webhook_key ($webhookKeyRef) for inbound webhooks (blocks the canvas INPUT port).",
           "children": []
         },
         {
@@ -293,7 +293,7 @@
       "name": "output",
       "type": "OUTPUT",
       "value": "output",
-      "description": "Success: status=ok, http_status, data. registrant.create is 201; joinUrl is sensitive — do not log. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
+      "description": "Success: status=ok, http_status, data. registrant.create is 201; joinUrl is sensitive — do not log. Inbound webhook events (:listen) emit normalized event data on output. Errors raise a BPMN error for the error boundary event (INVALID_INPUT, AUTH_FAILED, RATE_LIMITED, HTTP_<status>, REQUEST_FAILED); secrets are redacted.",
       "required": true,
       "isDefault": false,
       "expandable": false,
@@ -338,7 +338,7 @@
       "shortCode": "operation",
       "label": "Operation",
       "type": "select",
-      "description": "Default operation when input.operation is blank.",
+      "description": "Default operation when input.operation is blank. Selecting trigger.listen (:listen role) reveals webhook_key ($webhookKeyRef), blocks the canvas INPUT port, and compiles as a webhook-triggered Message Start or Activity MESSAGE Boundary Event.",
       "value": "webinar.list",
       "required": true,
       "instanceEditable": true,
